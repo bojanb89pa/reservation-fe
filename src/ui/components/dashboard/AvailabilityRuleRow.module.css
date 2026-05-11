@@ -1,0 +1,46 @@
+.rule {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.rule:first-child { border-top: 0; }
+
+.day {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--ink-900);
+}
+
+.hours {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bar {
+  position: relative;
+  height: 28px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  flex: 1;
+}
+
+.block {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+.time {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--ink-500);
+  white-space: nowrap;
+}
