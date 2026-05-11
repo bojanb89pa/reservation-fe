@@ -1,0 +1,52 @@
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.dayTitle {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+.slot {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  padding: 12px 0;
+  text-align: center;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  color: var(--ink-900);
+  cursor: pointer;
+  transition: border-color var(--dur-fast), background var(--dur-fast);
+}
+
+.slot:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.gone {
+  background: var(--surface-2);
+  color: var(--ink-300);
+  text-decoration: line-through;
+  cursor: not-allowed;
+  border-color: var(--border);
+}
+
+.selected {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
