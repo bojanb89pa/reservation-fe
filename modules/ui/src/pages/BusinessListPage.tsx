@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useBusinesses, useSearchBusinesses } from '../hooks/useBusinesses';
+import { useSearchBusinesses } from '../hooks/useBusinesses';
 import { BusinessCard } from '../components/business/BusinessCard';
 import styles from './BusinessListPage.module.css';
 
@@ -33,10 +33,7 @@ export function BusinessListPage() {
     };
   }, [searchInput]);
 
-  const isSearching = debouncedSearch.length > 0;
-  const browsResult = useBusinesses(page, 12);
-  const searchResult = useSearchBusinesses(debouncedSearch, page, 12);
-  const { data, isLoading, isError } = isSearching ? searchResult : browsResult;
+  const { data, isLoading, isError } = useSearchBusinesses(debouncedSearch, page, 12);
 
   return (
     <div className={styles.page}>
