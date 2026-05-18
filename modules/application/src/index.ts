@@ -7,6 +7,7 @@ export { GetAvailabilityRulesUseCaseImpl } from './use-cases/availabilityrule/Ge
 
 export { CreateBusinessUseCaseImpl } from './use-cases/business/CreateBusinessUseCaseImpl';
 export { GetAllBusinessesUseCaseImpl } from './use-cases/business/GetAllBusinessesUseCaseImpl';
+export { SearchBusinessesUseCaseImpl } from './use-cases/business/SearchBusinessesUseCaseImpl';
 export { GetBusinessUseCaseImpl } from './use-cases/business/GetBusinessUseCaseImpl';
 
 export { CreateReservationUseCaseImpl } from './use-cases/reservation/CreateReservationUseCaseImpl';
