@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useBusinesses } from '../hooks/useBusinesses';
+import { useSearchBusinesses } from '../hooks/useBusinesses';
 import { BusinessCard } from '../components/business/BusinessCard';
 import styles from './HomePage.module.css';
 
@@ -26,7 +26,7 @@ export function HomePage() {
   const navigate = useNavigate();
   const [what, setWhat] = useState('');
   const [where, setWhere] = useState('');
-  const { data: businesses, isLoading } = useBusinesses(0, 6);
+  const { data: businesses, isLoading } = useSearchBusinesses('', 0, 6);
 
   const handleSearch = () => {
     const params = new URLSearchParams();

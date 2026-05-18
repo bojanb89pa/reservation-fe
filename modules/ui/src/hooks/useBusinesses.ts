@@ -24,7 +24,6 @@ export function useSearchBusinesses(query: string, page = 0, size = 12) {
   return useQuery({
     queryKey: businessKeys.search(query, page, size),
     queryFn: () => searchBusinessesUseCase.execute(query, { page, size }),
-    enabled: query.length > 0,
   });
 }
 
