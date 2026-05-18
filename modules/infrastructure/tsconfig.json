@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": "./dist",
+    "rootDir": "./src",
+    "types": ["vite/client"],
+    "paths": {
+      "@domain": ["../domain/src/index.ts"],
+      "@application": ["../application/src/index.ts"]
+    }
+  },
+  "exclude": ["**/__tests__/**", "**/*.test.ts", "**/*.test.tsx"],
+  "include": ["src"],
+  "references": [
+    { "path": "../domain" },
+    { "path": "../application" }
+  ]
+}

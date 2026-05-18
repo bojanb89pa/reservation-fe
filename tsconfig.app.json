@@ -17,14 +17,13 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@domain/*": ["./src/domain/*"],
-      "@application/*": ["./src/application/*"],
-      "@infrastructure/*": ["./src/infrastructure/*"],
-      "@ui/*": ["./src/ui/*"]
+      "@domain": ["./modules/domain/src/index.ts"],
+      "@application": ["./modules/application/src/index.ts"],
+      "@infrastructure": ["./modules/infrastructure/src/index.ts"],
+      "@ui": ["./modules/ui/src/index.ts"],
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "modules/*/src"]
 }

@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": "./dist",
+    "rootDir": "./src",
+    "paths": {
+      "@domain": ["../domain/src/index.ts"]
+    }
+  },
+  "exclude": ["**/__tests__/**", "**/*.test.ts", "**/*.test.tsx"],
+  "include": ["src"],
+  "references": [
+    { "path": "../domain" }
+  ]
+}
