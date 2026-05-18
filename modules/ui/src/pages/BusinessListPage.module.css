@@ -4,6 +4,27 @@
   padding: 60px 28px;
 }
 
+.searchRow {
+  padding: 16px 0 0;
+}
+
+.searchInput {
+  width: 100%;
+  max-width: 480px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: var(--text-sm);
+  color: var(--ink-900);
+  background: var(--surface);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.searchInput:focus {
+  border-color: var(--accent);
+}
+
 .filters {
   display: flex;
   gap: 8px;

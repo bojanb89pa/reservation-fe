@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useBusinesses } from '../hooks/useBusinesses';
+import { useBusinesses, useSearchBusinesses } from '../hooks/useBusinesses';
 import { BusinessCard } from '../components/business/BusinessCard';
 import styles from './BusinessListPage.module.css';
 
@@ -17,8 +17,26 @@ const RESOURCE_TYPES = [
 export function BusinessListPage() {
   const [searchParams] = useSearchParams();
   const [page, setPage] = useState(0);
+  const [searchInput, setSearchInput] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const activeType = searchParams.get('type') ?? '';
-  const { data, isLoading, isError } = useBusinesses(page, 12);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setDebouncedSearch(searchInput);
+      setPage(0);
+    }, 700);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [searchInput]);
+
+  const isSearching = debouncedSearch.length > 0;
+  const browsResult = useBusinesses(page, 12);
+  const searchResult = useSearchBusinesses(debouncedSearch, page, 12);
+  const { data, isLoading, isError } = isSearching ? searchResult : browsResult;
 
   return (
     <div className={styles.page}>
@@ -26,6 +44,16 @@ export function BusinessListPage() {
       <h1 className="section-title">
         {data ? `${data.totalElements} businesses near you.` : 'Businesses near you.'}
       </h1>
+
+      <div className={styles.searchRow}>
+        <input
+          type="text"
+          className={styles.searchInput}
+          placeholder="Search businesses…"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+        />
+      </div>
 
       <div className={styles.filters}>
         {RESOURCE_TYPES.map((rt) => (

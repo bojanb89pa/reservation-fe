@@ -35,6 +35,7 @@ export type { DeleteAvailabilityRuleUseCase } from './use-cases/availabilityrule
 export type { GetAvailabilityRulesUseCase } from './use-cases/availabilityrule/GetAvailabilityRulesUseCase';
 export type { CreateBusinessUseCase } from './use-cases/business/CreateBusinessUseCase';
 export type { GetAllBusinessesUseCase } from './use-cases/business/GetAllBusinessesUseCase';
+export type { SearchBusinessesUseCase } from './use-cases/business/SearchBusinessesUseCase';
 export type { GetBusinessUseCase } from './use-cases/business/GetBusinessUseCase';
 export type { CreateReservationUseCase } from './use-cases/reservation/CreateReservationUseCase';
 export type { GetReservationUseCase } from './use-cases/reservation/GetReservationUseCase';

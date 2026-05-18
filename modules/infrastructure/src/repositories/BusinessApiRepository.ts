@@ -11,6 +11,13 @@ export class BusinessApiRepository implements BusinessRepository {
     return response.data;
   }
 
+  async search(query: string, pageRequest: PageRequest): Promise<PageResponse<Business>> {
+    const response = await this.client.get<PageResponse<Business>>('/api/businesses/search', {
+      params: { search: query, page: pageRequest.page, size: pageRequest.size },
+    });
+    return response.data;
+  }
+
   async getById(id: string): Promise<Business> {
     const response = await this.client.get<Business>(`/api/businesses/${id}`);
     return response.data;

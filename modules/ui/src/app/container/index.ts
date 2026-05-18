@@ -9,6 +9,7 @@ import {
 import {
   RegisterUseCaseImpl,
   GetAllBusinessesUseCaseImpl,
+  SearchBusinessesUseCaseImpl,
   GetBusinessUseCaseImpl,
   CreateBusinessUseCaseImpl,
   GetAllResourcesUseCaseImpl,
@@ -37,6 +38,7 @@ const availabilityRuleRepository = new ResourceAvailabilityRuleApiRepository(res
 export const registerUseCase = new RegisterUseCaseImpl(authApiRepository);
 
 export const getAllBusinessesUseCase = new GetAllBusinessesUseCaseImpl(businessRepository);
+export const searchBusinessesUseCase = new SearchBusinessesUseCaseImpl(businessRepository);
 export const getBusinessUseCase = new GetBusinessUseCaseImpl(businessRepository);
 export const createBusinessUseCase = new CreateBusinessUseCaseImpl(businessRepository);
 
