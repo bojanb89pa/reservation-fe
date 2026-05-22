@@ -11,14 +11,12 @@ TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 LOG_DIR="logs"
 mkdir -p $LOG_DIR
 
-echo "=== Phase 1: Domain (interactive) ==="
-echo "Review the BE brief before proceeding:"
-cat $BE_BRIEF
-echo ""
-echo "Starting domain session — approve TypeScript interfaces..."
+echo "=== Phase 1: Domain (headless) ==="
 
-claude --add-dir modules/domain \
-  --context "Feature: $FEATURE. BE API brief: $(cat $BE_BRIEF)"
+claude -p \
+  "Feature: $FEATURE. Implement domain layer (TypeScript interfaces, types, enums). Reference: @skills/implementation-workflow.md. BE API brief: $(cat $BE_BRIEF)" \
+  --add-dir modules/domain \
+  > $LOG_DIR/fe-$FEATURE-domain-$TIMESTAMP.log 2>&1
 
 echo "Domain session finished. Starting parallel sessions..."
 
@@ -49,7 +47,7 @@ wait
 echo ""
 echo "=== Done: $FEATURE ==="
 echo "Logs:"
-ls -la $LOG_DIR/fe-$FEATURE-*-$TIMESTAMP.log
+ls -la $LOG_DIR/fe-$FEATURE-*$TIMESTAMP.log
 echo ""
 echo "Review changes:"
 echo "./scripts/review-implementation.sh"
