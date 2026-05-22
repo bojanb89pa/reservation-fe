@@ -1,4 +1,9 @@
-import type { BusinessMembershipRepository, ListBusinessMembersUseCase, BusinessMembership, BusinessMemberRole } from '@domain';
+import type {
+  BusinessMembershipRepository,
+  ListBusinessMembersUseCase,
+  BusinessMembership,
+  BusinessMemberRole,
+} from '@domain';
 
 export class ListBusinessMembersUseCaseImpl implements ListBusinessMembersUseCase {
   constructor(private readonly businessMembershipRepository: BusinessMembershipRepository) {}

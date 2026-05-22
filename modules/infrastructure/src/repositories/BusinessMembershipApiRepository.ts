@@ -1,9 +1,5 @@
 import type { AxiosInstance } from 'axios';
-import type {
-  BusinessMembership,
-  BusinessMemberRole,
-  BusinessMembershipRepository,
-} from '@domain';
+import type { BusinessMembership, BusinessMemberRole, BusinessMembershipRepository } from '@domain';
 
 function roleSegment(role: BusinessMemberRole): string {
   return role === 'OWNER' ? 'owners' : 'employees';
@@ -12,7 +8,11 @@ function roleSegment(role: BusinessMemberRole): string {
 export class BusinessMembershipApiRepository implements BusinessMembershipRepository {
   constructor(private readonly client: AxiosInstance) {}
 
-  async add(businessId: string, userId: string, role: BusinessMemberRole): Promise<BusinessMembership> {
+  async add(
+    businessId: string,
+    userId: string,
+    role: BusinessMemberRole,
+  ): Promise<BusinessMembership> {
     const response = await this.client.post<BusinessMembership>(
       `/api/businesses/${businessId}/${roleSegment(role)}`,
       { userId },

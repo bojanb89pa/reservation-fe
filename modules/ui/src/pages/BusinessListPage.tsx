@@ -62,20 +62,16 @@ export function BusinessListPage() {
             {rt.label}
           </a>
         ))}
-        {data && (
-          <span className={styles.filterCount}>
-            {data.totalElements} results
-          </span>
-        )}
+        {data && <span className={styles.filterCount}>{data.totalElements} results</span>}
       </div>
 
       {isLoading && (
-        <div className="page-loading"><div className="spinner" /></div>
+        <div className="page-loading">
+          <div className="spinner" />
+        </div>
       )}
 
-      {isError && (
-        <div className="error-box">Failed to load businesses. Please try again.</div>
-      )}
+      {isError && <div className="error-box">Failed to load businesses. Please try again.</div>}
 
       {data && (
         <>
@@ -98,7 +94,10 @@ export function BusinessListPage() {
               >
                 ← Previous
               </button>
-              <span className="mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-500)' }}>
+              <span
+                className="mono"
+                style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-500)' }}
+              >
                 Page {page + 1} of {data.totalPages}
               </span>
               <button

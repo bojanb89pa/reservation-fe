@@ -29,7 +29,9 @@
   align-items: baseline;
 }
 
-.list > div:first-child { border-top: 0; }
+.list > div:first-child {
+  border-top: 0;
+}
 
 .list dt {
   font-size: var(--text-xs);
@@ -60,7 +62,9 @@
   transition: border-color var(--dur-fast);
 }
 
-.textarea:focus { border-color: var(--primary); }
+.textarea:focus {
+  border-color: var(--primary);
+}
 
 .fineprint {
   font-size: var(--text-2xs);

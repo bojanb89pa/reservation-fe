@@ -24,10 +24,7 @@ export function AvailabilityRuleRow({ rule, onDelete, isDeleting }: Props) {
       <div className={styles.hours}>
         <span className={styles.time}>{rule.startTime}</span>
         <div className={styles.bar}>
-          <div
-            className={styles.block}
-            style={{ left: `${startPct}%`, width: `${widthPct}%` }}
-          />
+          <div className={styles.block} style={{ left: `${startPct}%`, width: `${widthPct}%` }} />
         </div>
         <span className={styles.time}>{rule.endTime}</span>
       </div>

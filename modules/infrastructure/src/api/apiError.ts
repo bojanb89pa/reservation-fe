@@ -32,7 +32,6 @@ export class ApiError extends Error {
 export function normalizeAxiosError(error: AxiosError<ApiErrorBody>): ApiError {
   const status = error.response?.status ?? 0;
   const body = error.response?.data;
-  const message =
-    body?.message ?? body?.error ?? error.message ?? 'An unexpected error occurred';
+  const message = body?.message ?? body?.error ?? error.message ?? 'An unexpected error occurred';
   return new ApiError(message, status, body);
 }

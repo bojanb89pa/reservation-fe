@@ -3,6 +3,7 @@
 ## Isolated context instructions
 
 When working inside this module:
+
 - Read ONLY this CLAUDE.md
 - Do NOT read CLAUDE.md files from other modules
 - Do NOT modify files outside `modules/infrastructure/` unless explicitly requested

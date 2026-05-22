@@ -1,4 +1,10 @@
-import type { BusinessRepository, GetAllBusinessesUseCase, Business, PageRequest, PageResponse } from '@domain';
+import type {
+  BusinessRepository,
+  GetAllBusinessesUseCase,
+  Business,
+  PageRequest,
+  PageResponse,
+} from '@domain';
 
 export class GetAllBusinessesUseCaseImpl implements GetAllBusinessesUseCase {
   constructor(private readonly businessRepository: BusinessRepository) {}

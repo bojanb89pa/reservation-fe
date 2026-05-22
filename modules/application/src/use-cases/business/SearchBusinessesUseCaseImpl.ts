@@ -1,4 +1,10 @@
-import type { BusinessRepository, SearchBusinessesUseCase, Business, PageRequest, PageResponse } from '@domain';
+import type {
+  BusinessRepository,
+  SearchBusinessesUseCase,
+  Business,
+  PageRequest,
+  PageResponse,
+} from '@domain';
 
 export class SearchBusinessesUseCaseImpl implements SearchBusinessesUseCase {
   constructor(private readonly businessRepository: BusinessRepository) {}

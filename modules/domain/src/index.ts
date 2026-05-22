@@ -21,7 +21,13 @@ export type { Role } from './entities/Role';
 export type { User, UserRegistration } from './entities/User';
 
 // Errors
-export { DomainError, NotFoundError, UnauthorizedError, ValidationError, ConflictError } from './errors/DomainError';
+export {
+  DomainError,
+  NotFoundError,
+  UnauthorizedError,
+  ValidationError,
+  ConflictError,
+} from './errors/DomainError';
 
 // Repository interfaces
 export type { AuthRepository } from './repositories/AuthRepository';

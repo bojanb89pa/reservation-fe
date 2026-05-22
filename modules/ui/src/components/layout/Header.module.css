@@ -70,7 +70,9 @@
   font-weight: 500;
   padding: 6px 12px;
   border-radius: var(--r-pill);
-  transition: background var(--dur-fast), color var(--dur-fast);
+  transition:
+    background var(--dur-fast),
+    color var(--dur-fast);
 }
 
 .nav a:hover {
@@ -95,7 +97,9 @@
   padding: 6px 10px;
   font-family: var(--font-ui);
   border-radius: var(--r-pill);
-  transition: color var(--dur-fast), background var(--dur-fast);
+  transition:
+    color var(--dur-fast),
+    background var(--dur-fast);
 }
 
 .quietLink:hover {

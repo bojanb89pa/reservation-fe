@@ -39,11 +39,14 @@ export function RegisterPage() {
           <div className="eyebrow-rule">Almost there</div>
           <h1 className={styles.title}>Check your inbox.</h1>
           <p style={{ color: 'var(--ink-700)', fontSize: 'var(--text-md)', lineHeight: 1.6 }}>
-            We've sent an activation link to <strong>{form.email}</strong>. Click it to enable
-            your account, then sign in.
+            We've sent an activation link to <strong>{form.email}</strong>. Click it to enable your
+            account, then sign in.
           </p>
-          <button className="btn btn-primary btn-block" style={{ marginTop: 24 }}
-            onClick={() => navigate('/')}>
+          <button
+            className="btn btn-primary btn-block"
+            style={{ marginTop: 24 }}
+            onClick={() => navigate('/')}
+          >
             Back to home
           </button>
         </div>
@@ -57,30 +60,57 @@ export function RegisterPage() {
         <div className="eyebrow-rule">Create account</div>
         <h1 className={styles.title}>Join Reserva.</h1>
 
-        {error && <div className="error-box" style={{ marginBottom: 16 }}>{error}</div>}
+        {error && (
+          <div className="error-box" style={{ marginBottom: 16 }}>
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <div className="form-field">
               <label className="form-label">First name</label>
-              <input name="firstName" required className="form-input"
-                value={form.firstName} onChange={handleChange} />
+              <input
+                name="firstName"
+                required
+                className="form-input"
+                value={form.firstName}
+                onChange={handleChange}
+              />
             </div>
             <div className="form-field">
               <label className="form-label">Last name</label>
-              <input name="lastName" required className="form-input"
-                value={form.lastName} onChange={handleChange} />
+              <input
+                name="lastName"
+                required
+                className="form-input"
+                value={form.lastName}
+                onChange={handleChange}
+              />
             </div>
           </div>
           <div className="form-field">
             <label className="form-label">Email</label>
-            <input name="email" type="email" required className="form-input"
-              value={form.email} onChange={handleChange} />
+            <input
+              name="email"
+              type="email"
+              required
+              className="form-input"
+              value={form.email}
+              onChange={handleChange}
+            />
           </div>
           <div className="form-field">
             <label className="form-label">Password</label>
-            <input name="password" type="password" required minLength={6} className="form-input"
-              value={form.password} onChange={handleChange} />
+            <input
+              name="password"
+              type="password"
+              required
+              minLength={6}
+              className="form-input"
+              value={form.password}
+              onChange={handleChange}
+            />
           </div>
           <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
             {loading ? 'Creating account…' : 'Create account'}
@@ -89,7 +119,9 @@ export function RegisterPage() {
 
         <p className={styles.footer}>
           Already have an account?{' '}
-          <Link to="/" style={{ color: 'var(--primary)' }}>Sign in</Link>
+          <Link to="/" style={{ color: 'var(--primary)' }}>
+            Sign in
+          </Link>
         </p>
       </div>
     </div>

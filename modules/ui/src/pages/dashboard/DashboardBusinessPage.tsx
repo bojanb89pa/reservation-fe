@@ -2,14 +2,25 @@ import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useBusiness } from '../../hooks/useBusinesses';
 import { useResources, useCreateResource } from '../../hooks/useResources';
-import { useAvailabilityRules, useCreateAvailabilityRule, useDeleteAvailabilityRule } from '../../hooks/useAvailabilityRules';
+import {
+  useAvailabilityRules,
+  useCreateAvailabilityRule,
+  useDeleteAvailabilityRule,
+} from '../../hooks/useAvailabilityRules';
 import { AvailabilityRuleRow } from '../../components/dashboard/AvailabilityRuleRow';
 import { MemberSection } from '../../components/dashboard/MemberSection';
 import type { ResourceType, DayOfWeek } from '@domain';
 import { DAYS_ORDERED, DAY_LABELS } from '@domain';
 import styles from './DashboardBusinessPage.module.css';
 
-const RESOURCE_TYPES: ResourceType[] = ['EMPLOYEE', 'ROOM', 'APARTMENT', 'TABLE', 'COURT', 'VEHICLE'];
+const RESOURCE_TYPES: ResourceType[] = [
+  'EMPLOYEE',
+  'ROOM',
+  'APARTMENT',
+  'TABLE',
+  'COURT',
+  'VEHICLE',
+];
 
 export function DashboardBusinessPage() {
   const { id } = useParams<{ id: string }>();
@@ -25,8 +36,12 @@ export function DashboardBusinessPage() {
   // Selected resource for availability rules
   const [activeResourceId, setActiveResourceId] = useState<string | null>(null);
   const { data: rules } = useAvailabilityRules(activeResourceId ?? '');
-  const { mutateAsync: createRule, isPending: creatingRule } = useCreateAvailabilityRule(activeResourceId ?? '');
-  const { mutateAsync: deleteRule, isPending: deletingRule } = useDeleteAvailabilityRule(activeResourceId ?? '');
+  const { mutateAsync: createRule, isPending: creatingRule } = useCreateAvailabilityRule(
+    activeResourceId ?? '',
+  );
+  const { mutateAsync: deleteRule, isPending: deletingRule } = useDeleteAvailabilityRule(
+    activeResourceId ?? '',
+  );
 
   // Add rule form
   const [ruleDay, setRuleDay] = useState<DayOfWeek>('MONDAY');
@@ -46,14 +61,21 @@ export function DashboardBusinessPage() {
     await createRule({ dayOfWeek: ruleDay, startTime: ruleStart, endTime: ruleEnd });
   };
 
-  if (bLoading) return <div className="page-loading"><div className="spinner" /></div>;
+  if (bLoading)
+    return (
+      <div className="page-loading">
+        <div className="spinner" />
+      </div>
+    );
   if (!business) return <div className="error-box">Business not found.</div>;
 
   return (
     <div>
       <div className={styles.topbar}>
         <div>
-          <Link to="/dashboard/businesses" className={styles.breadcrumb}>← Businesses</Link>
+          <Link to="/dashboard/businesses" className={styles.breadcrumb}>
+            ← Businesses
+          </Link>
           <h1 className={styles.pageTitle}>{business.name}</h1>
         </div>
       </div>
@@ -73,7 +95,10 @@ export function DashboardBusinessPage() {
                 <span className={styles.reqSub}>{r.type}</span>
               </div>
               <button
-                className={['btn btn-ghost btn-sm', activeResourceId === r.id ? styles.activeBtn : ''].join(' ')}
+                className={[
+                  'btn btn-ghost btn-sm',
+                  activeResourceId === r.id ? styles.activeBtn : '',
+                ].join(' ')}
                 onClick={() => setActiveResourceId(r.id === activeResourceId ? null : r.id)}
               >
                 {activeResourceId === r.id ? 'Hide rules' : 'Availability rules'}
@@ -89,7 +114,9 @@ export function DashboardBusinessPage() {
             onChange={(e) => setResourceType(e.target.value as ResourceType)}
           >
             {RESOURCE_TYPES.map((t) => (
-              <option key={t} value={t}>{t}</option>
+              <option key={t} value={t}>
+                {t}
+              </option>
             ))}
           </select>
           <input
@@ -118,7 +145,13 @@ export function DashboardBusinessPage() {
 
           <div className={styles.reqList}>
             {rules?.length === 0 && (
-              <div style={{ padding: '14px 20px', color: 'var(--ink-500)', fontSize: 'var(--text-sm)' }}>
+              <div
+                style={{
+                  padding: '14px 20px',
+                  color: 'var(--ink-500)',
+                  fontSize: 'var(--text-sm)',
+                }}
+              >
                 No availability rules yet.
               </div>
             )}
@@ -139,14 +172,28 @@ export function DashboardBusinessPage() {
               onChange={(e) => setRuleDay(e.target.value as DayOfWeek)}
             >
               {DAYS_ORDERED.map((d) => (
-                <option key={d} value={d}>{DAY_LABELS[d]}</option>
+                <option key={d} value={d}>
+                  {DAY_LABELS[d]}
+                </option>
               ))}
             </select>
-            <input type="time" className="form-input" value={ruleStart}
-              onChange={(e) => setRuleStart(e.target.value)} />
-            <span style={{ alignSelf: 'center', color: 'var(--ink-500)', fontSize: 'var(--text-sm)' }}>to</span>
-            <input type="time" className="form-input" value={ruleEnd}
-              onChange={(e) => setRuleEnd(e.target.value)} />
+            <input
+              type="time"
+              className="form-input"
+              value={ruleStart}
+              onChange={(e) => setRuleStart(e.target.value)}
+            />
+            <span
+              style={{ alignSelf: 'center', color: 'var(--ink-500)', fontSize: 'var(--text-sm)' }}
+            >
+              to
+            </span>
+            <input
+              type="time"
+              className="form-input"
+              value={ruleEnd}
+              onChange={(e) => setRuleEnd(e.target.value)}
+            />
             <button type="submit" className="btn btn-primary" disabled={creatingRule}>
               + Add rule
             </button>

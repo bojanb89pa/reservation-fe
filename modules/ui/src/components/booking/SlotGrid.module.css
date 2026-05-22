@@ -29,7 +29,9 @@
   border-radius: var(--r-sm);
   color: var(--ink-900);
   cursor: pointer;
-  transition: border-color var(--dur-fast), background var(--dur-fast);
+  transition:
+    border-color var(--dur-fast),
+    background var(--dur-fast);
 }
 
 .slot:hover:not(:disabled) {

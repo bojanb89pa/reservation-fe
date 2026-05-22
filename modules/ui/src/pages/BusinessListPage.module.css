@@ -49,11 +49,15 @@
 }
 
 @media (max-width: 900px) {
-  .grid { grid-template-columns: 1fr 1fr; }
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 600px) {
-  .grid { grid-template-columns: 1fr; }
+  .grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .pagination {

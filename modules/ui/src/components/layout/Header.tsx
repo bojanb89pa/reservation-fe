@@ -21,7 +21,9 @@ export function Header() {
         <div className={styles.right}>
           {isAuthenticated ? (
             <>
-              <Link to="/dashboard" className={styles.quietLink}>Dashboard</Link>
+              <Link to="/dashboard" className={styles.quietLink}>
+                Dashboard
+              </Link>
               <button className="btn btn-ghost btn-sm" onClick={logout}>
                 Sign out
               </button>

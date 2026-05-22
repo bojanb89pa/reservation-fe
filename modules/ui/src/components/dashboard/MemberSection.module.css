@@ -1,4 +1,6 @@
-.section { margin-bottom: 36px; }
+.section {
+  margin-bottom: 36px;
+}
 
 .sectionHead {
   display: flex;
@@ -17,7 +19,10 @@
   color: var(--ink-900);
 }
 
-.sectionMeta { font-size: var(--text-xs); color: var(--ink-500); }
+.sectionMeta {
+  font-size: var(--text-xs);
+  color: var(--ink-500);
+}
 
 .list {
   background: var(--surface);
@@ -38,7 +43,9 @@
   border-top: 1px solid var(--border);
 }
 
-.row:first-child { border-top: 0; }
+.row:first-child {
+  border-top: 0;
+}
 
 .userId {
   font-size: var(--text-sm);
@@ -60,7 +67,10 @@
   align-items: center;
 }
 
-.addForm .formInput { flex: 1; min-width: 200px; }
+.addForm .formInput {
+  flex: 1;
+  min-width: 200px;
+}
 
 .error {
   margin-top: 8px;

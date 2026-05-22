@@ -5,9 +5,7 @@ import type {
   CreateAvailabilityRuleCommand,
 } from '@domain';
 
-export class ResourceAvailabilityRuleApiRepository
-  implements ResourceAvailabilityRuleRepository
-{
+export class ResourceAvailabilityRuleApiRepository implements ResourceAvailabilityRuleRepository {
   constructor(private readonly client: AxiosInstance) {}
 
   async getAllByResource(resourceId: string): Promise<ResourceAvailabilityRule[]> {
@@ -29,8 +27,6 @@ export class ResourceAvailabilityRuleApiRepository
   }
 
   async delete(resourceId: string, ruleId: string): Promise<void> {
-    await this.client.delete(
-      `/api/resources/${resourceId}/availability-rules/${ruleId}`,
-    );
+    await this.client.delete(`/api/resources/${resourceId}/availability-rules/${ruleId}`);
   }
 }

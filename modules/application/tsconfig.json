@@ -12,7 +12,5 @@
   },
   "exclude": ["**/__tests__/**", "**/*.test.ts", "**/*.test.tsx"],
   "include": ["src"],
-  "references": [
-    { "path": "../domain" }
-  ]
+  "references": [{ "path": "../domain" }]
 }

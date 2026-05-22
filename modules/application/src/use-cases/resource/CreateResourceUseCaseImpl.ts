@@ -1,4 +1,9 @@
-import type { ResourceRepository, CreateResourceUseCase, Resource, CreateResourceCommand } from '@domain';
+import type {
+  ResourceRepository,
+  CreateResourceUseCase,
+  Resource,
+  CreateResourceCommand,
+} from '@domain';
 
 export class CreateResourceUseCaseImpl implements CreateResourceUseCase {
   constructor(private readonly resourceRepository: ResourceRepository) {}

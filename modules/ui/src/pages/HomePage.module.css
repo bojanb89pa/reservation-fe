@@ -18,7 +18,7 @@
   width: 520px;
   height: 520px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(79,70,229,0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, transparent 70%);
   top: -120px;
   right: -60px;
   pointer-events: none;
@@ -29,7 +29,7 @@
   width: 360px;
   height: 360px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,111,97,0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 111, 97, 0.12) 0%, transparent 70%);
   bottom: -80px;
   left: 20%;
   pointer-events: none;
@@ -40,7 +40,7 @@
   width: 280px;
   height: 280px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(0,194,168,0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 194, 168, 0.1) 0%, transparent 70%);
   top: 40px;
   left: -40px;
   pointer-events: none;
@@ -51,7 +51,7 @@
   font-size: clamp(48px, 8vw, var(--text-6xl));
   font-weight: 700;
   letter-spacing: -0.03em;
-  line-height: 1.0;
+  line-height: 1;
   color: var(--ink-900);
   margin: 0 0 24px;
   max-width: 900px;
@@ -111,7 +111,9 @@
   color: var(--ink-900);
 }
 
-.searchField input::placeholder { color: var(--ink-300); }
+.searchField input::placeholder {
+  color: var(--ink-300);
+}
 
 .searchGo {
   width: 46px;
@@ -126,7 +128,9 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: background var(--dur-fast) var(--ease-spring), transform var(--dur-fast) var(--ease-spring);
+  transition:
+    background var(--dur-fast) var(--ease-spring),
+    transform var(--dur-fast) var(--ease-spring);
 }
 .searchGo:hover {
   background: var(--primary-hover);
@@ -148,11 +152,15 @@
 }
 
 @media (max-width: 1024px) {
-  .categoryGrid { grid-template-columns: repeat(3, 1fr); }
+  .categoryGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (max-width: 600px) {
-  .categoryGrid { grid-template-columns: repeat(2, 1fr); }
+  .categoryGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .categoryCard {
@@ -165,7 +173,10 @@
   align-items: flex-start;
   gap: 12px;
   cursor: pointer;
-  transition: border-color var(--dur-fast), box-shadow var(--dur-fast), transform var(--dur-fast) var(--ease-spring);
+  transition:
+    border-color var(--dur-fast),
+    box-shadow var(--dur-fast),
+    transform var(--dur-fast) var(--ease-spring);
   text-align: left;
   font-family: var(--font-ui);
 }
@@ -210,12 +221,27 @@
 }
 
 @media (max-width: 900px) {
-  .listingGrid { grid-template-columns: 1fr 1fr; }
+  .listingGrid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 600px) {
-  .listingGrid { grid-template-columns: 1fr; }
-  .search { flex-wrap: wrap; border-radius: var(--r-xl); padding: 16px; }
-  .searchDivider { display: none; }
-  .searchGo { width: 100%; height: 44px; border-radius: var(--r-pill); margin-top: 8px; }
+  .listingGrid {
+    grid-template-columns: 1fr;
+  }
+  .search {
+    flex-wrap: wrap;
+    border-radius: var(--r-xl);
+    padding: 16px;
+  }
+  .searchDivider {
+    display: none;
+  }
+  .searchGo {
+    width: 100%;
+    height: 44px;
+    border-radius: var(--r-pill);
+    margin-top: 8px;
+  }
 }

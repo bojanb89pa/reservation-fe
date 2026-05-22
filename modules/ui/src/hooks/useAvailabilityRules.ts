@@ -23,8 +23,7 @@ export function useCreateAvailabilityRule(resourceId: string) {
   return useMutation({
     mutationFn: (command: CreateAvailabilityRuleCommand) =>
       createAvailabilityRuleUseCase.execute(resourceId, command),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ruleKeys.byResource(resourceId) }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ruleKeys.byResource(resourceId) }),
   });
 }
 
@@ -32,7 +31,6 @@ export function useDeleteAvailabilityRule(resourceId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (ruleId: string) => deleteAvailabilityRuleUseCase.execute(resourceId, ruleId),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ruleKeys.byResource(resourceId) }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ruleKeys.byResource(resourceId) }),
   });
 }

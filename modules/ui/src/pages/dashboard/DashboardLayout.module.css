@@ -7,7 +7,7 @@
 /* Sidebar */
 .side {
   background: var(--ink-900);
-  color: rgba(255,255,255,0.9);
+  color: rgba(255, 255, 255, 0.9);
   padding: 24px 0;
   position: sticky;
   top: 0;
@@ -22,7 +22,7 @@
   align-items: center;
   gap: 10px;
   padding: 0 22px 22px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   margin-bottom: 18px;
 }
 
@@ -54,18 +54,20 @@
 
 .brandSub {
   font-size: var(--text-2xs);
-  color: rgba(255,255,255,0.4);
+  color: rgba(255, 255, 255, 0.4);
   margin-top: 2px;
 }
 
-.nav { padding: 0 12px; }
+.nav {
+  padding: 0 12px;
+}
 
 .navSection {
   font-size: var(--text-2xs);
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.35);
+  color: rgba(255, 255, 255, 0.35);
   padding: 12px 10px 6px;
 }
 
@@ -75,16 +77,18 @@
   gap: 10px;
   padding: 9px 12px;
   border-radius: var(--r-md);
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
   font-size: var(--text-sm);
   cursor: pointer;
   font-weight: 500;
   text-decoration: none;
-  transition: background var(--dur-fast), color var(--dur-fast);
+  transition:
+    background var(--dur-fast),
+    color var(--dur-fast);
 }
 
 .navItem:hover {
-  background: rgba(255,255,255,0.07);
+  background: rgba(255, 255, 255, 0.07);
   color: #fff;
 }
 
@@ -106,12 +110,12 @@
 .foot {
   margin-top: auto;
   padding: 16px 22px;
-  border-top: 1px solid rgba(255,255,255,0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .footBtn {
   font-size: var(--text-xs);
-  color: rgba(255,255,255,0.45);
+  color: rgba(255, 255, 255, 0.45);
   background: none;
   border: none;
   cursor: pointer;
@@ -119,12 +123,22 @@
   padding: 0;
   transition: color var(--dur-fast);
 }
-.footBtn:hover { color: #fff; }
+.footBtn:hover {
+  color: #fff;
+}
 
 /* Main content */
-.main { padding: 28px 36px 64px; overflow-y: auto; background: var(--bg); }
+.main {
+  padding: 28px 36px 64px;
+  overflow-y: auto;
+  background: var(--bg);
+}
 
 @media (max-width: 768px) {
-  .app { grid-template-columns: 1fr; }
-  .side { display: none; }
+  .app {
+    grid-template-columns: 1fr;
+  }
+  .side {
+    display: none;
+  }
 }

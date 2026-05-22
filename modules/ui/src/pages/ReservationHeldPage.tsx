@@ -12,8 +12,11 @@ interface HeldState {
 
 function formatDateTime(iso: string) {
   return new Date(iso).toLocaleString('en-GB', {
-    weekday: 'short', day: 'numeric', month: 'short',
-    hour: '2-digit', minute: '2-digit',
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
   });
 }
 
@@ -25,7 +28,9 @@ export function ReservationHeldPage() {
     return (
       <div className={styles.page}>
         <p style={{ color: 'var(--ink-500)' }}>Reservation not found.</p>
-        <Link to="/" className="btn btn-primary" style={{ marginTop: 16 }}>Back to home</Link>
+        <Link to="/" className="btn btn-primary" style={{ marginTop: 16 }}>
+          Back to home
+        </Link>
       </div>
     );
   }
@@ -38,15 +43,17 @@ export function ReservationHeldPage() {
       <div className="eyebrow-rule">You're held</div>
       <h1 className={styles.title}>We've sent the provider a note.</h1>
       <p className={styles.subtitle}>
-        Your slot is held while <strong>{business.name}</strong> confirms. We'll let you
-        know the moment they say yes — usually within 14 minutes.
+        Your slot is held while <strong>{business.name}</strong> confirms. We'll let you know the
+        moment they say yes — usually within 14 minutes.
       </p>
 
       <div className={styles.card}>
         <dl>
           <div className={styles.row}>
             <dt>Where</dt>
-            <dd>{business.name} — {resource.name}</dd>
+            <dd>
+              {business.name} — {resource.name}
+            </dd>
           </div>
           <div className={styles.row}>
             <dt>Start</dt>

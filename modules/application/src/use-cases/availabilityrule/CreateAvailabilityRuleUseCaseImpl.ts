@@ -6,9 +6,7 @@ import type {
 } from '@domain';
 
 export class CreateAvailabilityRuleUseCaseImpl implements CreateAvailabilityRuleUseCase {
-  constructor(
-    private readonly ruleRepository: ResourceAvailabilityRuleRepository,
-  ) {}
+  constructor(private readonly ruleRepository: ResourceAvailabilityRuleRepository) {}
 
   execute(
     resourceId: string,

@@ -19,12 +19,14 @@
   font-size: var(--text-4xl);
   font-weight: 700;
   letter-spacing: -0.03em;
-  line-height: 1.0;
+  line-height: 1;
   color: var(--ink-900);
   margin: 0;
 }
 
-.section { margin-bottom: 36px; }
+.section {
+  margin-bottom: 36px;
+}
 
 .sectionHead {
   display: flex;
@@ -44,7 +46,10 @@
   color: var(--ink-900);
 }
 
-.sectionMeta { font-size: var(--text-xs); color: var(--ink-500); }
+.sectionMeta {
+  font-size: var(--text-xs);
+  color: var(--ink-500);
+}
 
 .reqList {
   background: var(--surface);
@@ -65,15 +70,31 @@
   border-top: 1px solid var(--border);
 }
 
-.reqRow:first-child { border-top: 0; }
+.reqRow:first-child {
+  border-top: 0;
+}
 
-.reqMeta { display: flex; flex-direction: column; gap: 4px; }
+.reqMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
-.reqName { font-size: var(--text-md); font-weight: 600; color: var(--ink-900); }
+.reqName {
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--ink-900);
+}
 
-.reqSub { font-size: var(--text-xs); color: var(--ink-500); }
+.reqSub {
+  font-size: var(--text-xs);
+  color: var(--ink-500);
+}
 
-.activeBtn { border-color: var(--primary) !important; color: var(--primary) !important; }
+.activeBtn {
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+}
 
 .addForm {
   display: flex;
@@ -83,4 +104,7 @@
   align-items: center;
 }
 
-.addForm .form-input { flex: 1; min-width: 140px; }
+.addForm .form-input {
+  flex: 1;
+  min-width: 140px;
+}

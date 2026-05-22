@@ -15,8 +15,15 @@ interface Props {
 
 export function MemberSection({ businessId, role, title }: Props) {
   const { data: members = [] } = useBusinessMembers(businessId, role);
-  const { mutateAsync: addMember, isPending: adding, error: addError } = useAddBusinessMember(businessId, role);
-  const { mutateAsync: removeMember, isPending: removing } = useRemoveBusinessMember(businessId, role);
+  const {
+    mutateAsync: addMember,
+    isPending: adding,
+    error: addError,
+  } = useAddBusinessMember(businessId, role);
+  const { mutateAsync: removeMember, isPending: removing } = useRemoveBusinessMember(
+    businessId,
+    role,
+  );
 
   const [userId, setUserId] = useState('');
 
@@ -36,9 +43,7 @@ export function MemberSection({ businessId, role, title }: Props) {
       </div>
 
       <div className={styles.list}>
-        {members.length === 0 && (
-          <div className={styles.empty}>No {title.toLowerCase()} yet.</div>
-        )}
+        {members.length === 0 && <div className={styles.empty}>No {title.toLowerCase()} yet.</div>}
         {members.map((m) => (
           <div key={m.id} className={styles.row}>
             <span className={styles.userId}>{m.userId}</span>

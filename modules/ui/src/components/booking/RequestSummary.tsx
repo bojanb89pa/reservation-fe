@@ -18,12 +18,18 @@ export function RequestSummary({ resource, businessName, when, onConfirm, isLoad
       <div className="eyebrow-rule">Booking details</div>
       <h3 className={styles.title}>{resource.name}</h3>
       <dl className={styles.list}>
-        <div><dt>Business</dt><dd>{businessName}</dd></div>
+        <div>
+          <dt>Business</dt>
+          <dd>{businessName}</dd>
+        </div>
         <div>
           <dt>When</dt>
           <dd className="mono">{when ?? '—'}</dd>
         </div>
-        <div><dt>Resource type</dt><dd>{resource.type}</dd></div>
+        <div>
+          <dt>Resource type</dt>
+          <dd>{resource.type}</dd>
+        </div>
       </dl>
       <textarea
         className={styles.textarea}

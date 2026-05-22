@@ -9,7 +9,8 @@ import {
 export const businessKeys = {
   all: ['businesses'] as const,
   list: (page: number, size: number) => ['businesses', 'list', page, size] as const,
-  search: (query: string, page: number, size: number) => ['businesses', 'search', query, page, size] as const,
+  search: (query: string, page: number, size: number) =>
+    ['businesses', 'search', query, page, size] as const,
   detail: (id: string) => ['businesses', 'detail', id] as const,
 };
 

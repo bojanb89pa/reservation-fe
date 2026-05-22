@@ -38,7 +38,11 @@ export function DashboardBusinessesPage() {
       {showForm && (
         <div className={styles.formCard}>
           <h3 className={styles.formTitle}>Add a business</h3>
-          {error && <div className="error-box" style={{ marginBottom: 12 }}>{error}</div>}
+          {error && (
+            <div className="error-box" style={{ marginBottom: 12 }}>
+              {error}
+            </div>
+          )}
           <form onSubmit={handleCreate} className={styles.form}>
             <div className="form-field">
               <label className="form-label">Business name</label>
@@ -63,7 +67,11 @@ export function DashboardBusinessesPage() {
           <span className={styles.sectionMeta}>{data?.totalElements ?? 0} registered</span>
         </div>
 
-        {isLoading && <div className="page-loading"><div className="spinner" /></div>}
+        {isLoading && (
+          <div className="page-loading">
+            <div className="spinner" />
+          </div>
+        )}
 
         <div className={styles.bizList}>
           {data?.content.map((b) => (
@@ -79,7 +87,9 @@ export function DashboardBusinessesPage() {
           ))}
 
           {data?.content.length === 0 && (
-            <div style={{ padding: '28px 20px', color: 'var(--ink-500)', fontSize: 'var(--text-sm)' }}>
+            <div
+              style={{ padding: '28px 20px', color: 'var(--ink-500)', fontSize: 'var(--text-sm)' }}
+            >
               No businesses yet. Add your first one above.
             </div>
           )}

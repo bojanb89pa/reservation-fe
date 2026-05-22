@@ -47,9 +47,15 @@ export const searchBusinessesUseCase = new SearchBusinessesUseCaseImpl(businessR
 export const getBusinessUseCase = new GetBusinessUseCaseImpl(businessRepository);
 export const createBusinessUseCase = new CreateBusinessUseCaseImpl(businessRepository);
 
-export const listBusinessMembersUseCase = new ListBusinessMembersUseCaseImpl(businessMembershipRepository);
-export const addBusinessMemberUseCase = new AddBusinessMemberUseCaseImpl(businessMembershipRepository);
-export const removeBusinessMemberUseCase = new RemoveBusinessMemberUseCaseImpl(businessMembershipRepository);
+export const listBusinessMembersUseCase = new ListBusinessMembersUseCaseImpl(
+  businessMembershipRepository,
+);
+export const addBusinessMemberUseCase = new AddBusinessMemberUseCaseImpl(
+  businessMembershipRepository,
+);
+export const removeBusinessMemberUseCase = new RemoveBusinessMemberUseCaseImpl(
+  businessMembershipRepository,
+);
 
 export const getAllResourcesUseCase = new GetAllResourcesUseCaseImpl(resourceRepository);
 export const createResourceUseCase = new CreateResourceUseCaseImpl(resourceRepository);
@@ -57,6 +63,12 @@ export const createResourceUseCase = new CreateResourceUseCaseImpl(resourceRepos
 export const createReservationUseCase = new CreateReservationUseCaseImpl(reservationRepository);
 export const getReservationUseCase = new GetReservationUseCaseImpl(reservationRepository);
 
-export const getAvailabilityRulesUseCase = new GetAvailabilityRulesUseCaseImpl(availabilityRuleRepository);
-export const createAvailabilityRuleUseCase = new CreateAvailabilityRuleUseCaseImpl(availabilityRuleRepository);
-export const deleteAvailabilityRuleUseCase = new DeleteAvailabilityRuleUseCaseImpl(availabilityRuleRepository);
+export const getAvailabilityRulesUseCase = new GetAvailabilityRulesUseCaseImpl(
+  availabilityRuleRepository,
+);
+export const createAvailabilityRuleUseCase = new CreateAvailabilityRuleUseCaseImpl(
+  availabilityRuleRepository,
+);
+export const deleteAvailabilityRuleUseCase = new DeleteAvailabilityRuleUseCaseImpl(
+  availabilityRuleRepository,
+);

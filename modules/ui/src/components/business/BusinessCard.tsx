@@ -23,10 +23,7 @@ function getGradient(id: string | null): string {
 export function BusinessCard({ business }: Props) {
   return (
     <Link to={`/businesses/${business.id}`} className={styles.card}>
-      <div
-        className={styles.image}
-        style={{ background: getGradient(business.id) }}
-      />
+      <div className={styles.image} style={{ background: getGradient(business.id) }} />
       <div className={styles.body}>
         <div className={styles.meta}>
           <span className="badge badge-avail">

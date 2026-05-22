@@ -11,13 +11,25 @@ import { RESOURCE_TYPE_LABELS } from '@domain';
 import styles from './BusinessDetailPage.module.css';
 
 const DEFAULT_SLOTS = [
-  '9:00', '9:45', '10:30', '11:15', '12:00', '12:45',
-  '13:30', '14:30', '15:15', '16:00', '16:45', '17:30',
+  '9:00',
+  '9:45',
+  '10:30',
+  '11:15',
+  '12:00',
+  '12:45',
+  '13:30',
+  '14:30',
+  '15:15',
+  '16:00',
+  '16:45',
+  '17:30',
 ];
 
 function formatLocalDate(date: Date): string {
   return date.toLocaleDateString('en-GB', {
-    weekday: 'long', day: 'numeric', month: 'long',
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
   });
 }
 
@@ -60,7 +72,11 @@ export function BusinessDetailPage() {
   };
 
   if (bLoading || rLoading) {
-    return <div className="page-loading"><div className="spinner" /></div>;
+    return (
+      <div className="page-loading">
+        <div className="spinner" />
+      </div>
+    );
   }
 
   if (bError || !business) {
@@ -79,17 +95,18 @@ export function BusinessDetailPage() {
     'linear-gradient(135deg,#d4b89a 0%,#8a6e4f 100%)',
   ];
 
-  const when = selectedSlot
-    ? `${formatLocalDate(selectedDate)} · ${selectedSlot}`
-    : null;
+  const when = selectedSlot ? `${formatLocalDate(selectedDate)} · ${selectedSlot}` : null;
 
   return (
     <>
       <div className={styles.detailHead}>
         <div className={styles.images}>
           {gradients.map((g, i) => (
-            <div key={i} className={i === 0 ? styles.imgMain : styles.img}
-              style={{ background: g }} />
+            <div
+              key={i}
+              className={i === 0 ? styles.imgMain : styles.img}
+              style={{ background: g }}
+            />
           ))}
         </div>
         <div className={styles.detailMeta}>
@@ -97,7 +114,9 @@ export function BusinessDetailPage() {
           <h1 className={styles.detailTitle}>{business.name}</h1>
           <div className={styles.tags}>
             {resources.map((r) => (
-              <span key={r.id} className="tag">{RESOURCE_TYPE_LABELS[r.type]}</span>
+              <span key={r.id} className="tag">
+                {RESOURCE_TYPE_LABELS[r.type]}
+              </span>
             ))}
           </div>
         </div>
@@ -120,7 +139,10 @@ export function BusinessDetailPage() {
                       styles.resourceItem,
                       selectedResource?.id === r.id ? styles.resourceItemActive : '',
                     ].join(' ')}
-                    onClick={() => { setSelectedResource(r); setSelectedSlot(null); }}
+                    onClick={() => {
+                      setSelectedResource(r);
+                      setSelectedSlot(null);
+                    }}
                   >
                     <strong>{r.name}</strong>
                     <span className="eyebrow">{RESOURCE_TYPE_LABELS[r.type]}</span>

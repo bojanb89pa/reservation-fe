@@ -1,5 +1,11 @@
 import type { AxiosInstance } from 'axios';
-import type { ResourceRepository, Resource, CreateResourceCommand, PageRequest, PageResponse } from '@domain';
+import type {
+  ResourceRepository,
+  Resource,
+  CreateResourceCommand,
+  PageRequest,
+  PageResponse,
+} from '@domain';
 
 export class ResourceApiRepository implements ResourceRepository {
   constructor(private readonly client: AxiosInstance) {}
@@ -21,10 +27,11 @@ export class ResourceApiRepository implements ResourceRepository {
   }
 
   async create(businessId: string, command: CreateResourceCommand): Promise<Resource> {
-    const response = await this.client.post<Resource>(
-      `/api/businesses/${businessId}/resources`,
-      { id: null, businessId, ...command },
-    );
+    const response = await this.client.post<Resource>(`/api/businesses/${businessId}/resources`, {
+      id: null,
+      businessId,
+      ...command,
+    });
     return response.data;
   }
 }

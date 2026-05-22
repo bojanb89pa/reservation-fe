@@ -1,4 +1,10 @@
-import type { ResourceRepository, GetAllResourcesUseCase, Resource, PageRequest, PageResponse } from '@domain';
+import type {
+  ResourceRepository,
+  GetAllResourcesUseCase,
+  Resource,
+  PageRequest,
+  PageResponse,
+} from '@domain';
 
 export class GetAllResourcesUseCaseImpl implements GetAllResourcesUseCase {
   constructor(private readonly resourceRepository: ResourceRepository) {}

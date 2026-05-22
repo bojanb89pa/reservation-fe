@@ -41,9 +41,7 @@ export function DashboardLayout() {
               }
             >
               {item.label}
-              {item.badge !== undefined && (
-                <span className={styles.navBadge}>{item.badge}</span>
-              )}
+              {item.badge !== undefined && <span className={styles.navBadge}>{item.badge}</span>}
             </NavLink>
           ))}
         </nav>

@@ -50,12 +50,20 @@ export function DashboardOverviewPage() {
           </Link>
         </div>
 
-        {isLoading && <div className="page-loading"><div className="spinner" /></div>}
+        {isLoading && (
+          <div className="page-loading">
+            <div className="spinner" />
+          </div>
+        )}
 
         {data?.content.length === 0 && (
           <div className={styles.emptyState}>
             <p>You haven't added a business yet.</p>
-            <Link to="/dashboard/businesses/new" className="btn btn-primary" style={{ marginTop: 12 }}>
+            <Link
+              to="/dashboard/businesses/new"
+              className="btn btn-primary"
+              style={{ marginTop: 12 }}
+            >
               Add your first business
             </Link>
           </div>

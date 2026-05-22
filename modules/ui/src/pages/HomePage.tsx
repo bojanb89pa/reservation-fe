@@ -5,12 +5,18 @@ import { BusinessCard } from '../components/business/BusinessCard';
 import styles from './HomePage.module.css';
 
 const RESOURCE_TYPES = [
-  { id: 'EMPLOYEE', label: 'Salons & Staff', count: '1,309 nearby', color: '#4F46E5', bg: '#EEF2FF' },
-  { id: 'ROOM',     label: 'Rooms',          count: '412 nearby',   color: '#FF6F61', bg: '#FFF1EF' },
-  { id: 'APARTMENT',label: 'Apartments',     count: '876 nearby',   color: '#00C2A8', bg: '#E6FAF8' },
-  { id: 'TABLE',    label: 'Tables',         count: '289 nearby',   color: '#FFC83D', bg: '#FFFBEB' },
-  { id: 'COURT',    label: 'Courts',         count: '98 nearby',    color: '#4F46E5', bg: '#EEF2FF' },
-  { id: 'VEHICLE',  label: 'Vehicles',       count: '204 nearby',   color: '#FF6F61', bg: '#FFF1EF' },
+  {
+    id: 'EMPLOYEE',
+    label: 'Salons & Staff',
+    count: '1,309 nearby',
+    color: '#4F46E5',
+    bg: '#EEF2FF',
+  },
+  { id: 'ROOM', label: 'Rooms', count: '412 nearby', color: '#FF6F61', bg: '#FFF1EF' },
+  { id: 'APARTMENT', label: 'Apartments', count: '876 nearby', color: '#00C2A8', bg: '#E6FAF8' },
+  { id: 'TABLE', label: 'Tables', count: '289 nearby', color: '#FFC83D', bg: '#FFFBEB' },
+  { id: 'COURT', label: 'Courts', count: '98 nearby', color: '#4F46E5', bg: '#EEF2FF' },
+  { id: 'VEHICLE', label: 'Vehicles', count: '204 nearby', color: '#FF6F61', bg: '#FFF1EF' },
 ];
 
 const ICONS: Record<string, string> = {
@@ -44,11 +50,13 @@ export function HomePage() {
         <div className={styles.heroInner}>
           <div className="eyebrow-rule">Find · hold · book</div>
           <h1 className={styles.heroTitle}>
-            The smartest way<br />to book anything.
+            The smartest way
+            <br />
+            to book anything.
           </h1>
           <p className={styles.heroSub}>
-            Reserva connects you with local businesses near you — by the slot or the
-            hour. No payment until they say yes.
+            Reserva connects you with local businesses near you — by the slot or the hour. No
+            payment until they say yes.
           </p>
 
           <div className={styles.search}>
@@ -88,10 +96,7 @@ export function HomePage() {
               className={styles.categoryCard}
               onClick={() => navigate(`/businesses?type=${rt.id}`)}
             >
-              <div
-                className={styles.categoryIcon}
-                style={{ background: rt.bg, color: rt.color }}
-              >
+              <div className={styles.categoryIcon} style={{ background: rt.bg, color: rt.color }}>
                 {ICONS[rt.id]}
               </div>
               <span className={styles.categoryName}>{rt.label}</span>
@@ -105,7 +110,9 @@ export function HomePage() {
         <div className="eyebrow-rule">Browse all</div>
         <h2 className="section-title">Businesses near you.</h2>
         {isLoading ? (
-          <div className="page-loading"><div className="spinner" /></div>
+          <div className="page-loading">
+            <div className="spinner" />
+          </div>
         ) : (
           <div className={styles.listingGrid}>
             {businesses?.content?.map((b) => (
@@ -114,7 +121,9 @@ export function HomePage() {
             {!businesses?.content?.length && (
               <p style={{ color: 'var(--ink-500)', fontSize: 'var(--text-sm)' }}>
                 No businesses yet. Be the first to&nbsp;
-                <a href="/dashboard" style={{ color: 'var(--primary)' }}>list yours.</a>
+                <a href="/dashboard" style={{ color: 'var(--primary)' }}>
+                  list yours.
+                </a>
               </p>
             )}
           </div>

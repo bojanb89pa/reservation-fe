@@ -3,7 +3,10 @@
   border: 1.5px solid var(--border);
   border-radius: var(--r-xl);
   cursor: pointer;
-  transition: border-color var(--dur-fast), box-shadow var(--dur-fast), transform var(--dur-fast) var(--ease-spring);
+  transition:
+    border-color var(--dur-fast),
+    box-shadow var(--dur-fast),
+    transform var(--dur-fast) var(--ease-spring);
   display: block;
   overflow: hidden;
 }
@@ -19,7 +22,9 @@
   border-radius: 0;
 }
 
-.body { padding: 18px 20px; }
+.body {
+  padding: 18px 20px;
+}
 
 .meta {
   display: flex;
