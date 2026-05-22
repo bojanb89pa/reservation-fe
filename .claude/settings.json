@@ -16,9 +16,11 @@
     ],
     "allow": [
       "Bash(./scripts/implement-fe-feature.sh *)",
+      "Write(modules/domain/*)",
       "Write(modules/application/*)",
       "Write(modules/infrastructure/*)",
       "Write(modules/ui/*)",
+      "Edit(modules/domain/*)",
       "Edit(modules/application/*)",
       "Edit(modules/infrastructure/*)",
       "Edit(modules/ui/*)",
