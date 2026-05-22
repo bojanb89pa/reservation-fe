@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(.env)",
+      "Bash(rm *)",
+      "Bash(mv *)",
+      "Bash(ln *)",
+      "Bash(chmod *)",
+      "Bash(chown *)",
+      "Bash(sudo *)",
+      "Bash(apt-get *)",
+      "Bash(yum *)",
+      "Bash(pacman *)",
+      "Bash(dpkg *)",
+      "Bash(rpm *)"
+    ],
+    "allow": [
+      "Bash(./scripts/implement-fe-feature.sh *)",
+      "Write(modules/application/*)",
+      "Write(modules/infrastructure/*)",
+      "Write(modules/ui/*)",
+      "Edit(modules/application/*)",
+      "Edit(modules/infrastructure/*)",
+      "Edit(modules/ui/*)",
+      "Bash(yarn *)",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(mkdir *)"
+    ]
+  }
+}
