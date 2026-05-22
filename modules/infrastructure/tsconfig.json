@@ -5,6 +5,7 @@
     "emitDeclarationOnly": true,
     "declarationDir": "./dist",
     "rootDir": "./src",
+    "baseUrl": ".",
     "types": ["vite/client"],
     "paths": {
       "@domain": ["../domain/src/index.ts"],

@@ -17,6 +17,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+    "baseUrl": ".",
     "paths": {
       "@domain": ["./modules/domain/src/index.ts"],
       "@application": ["./modules/application/src/index.ts"],

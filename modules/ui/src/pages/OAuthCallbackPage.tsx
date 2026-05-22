@@ -21,7 +21,7 @@ export function OAuthCallbackPage() {
     handleCallback(code)
       .then(() => navigate('/dashboard'))
       .catch(() => navigate('/?error=auth_failed'));
-  }, []);
+  }, [params, handleCallback, navigate]);
 
   return (
     <div className="page-loading">

@@ -5,6 +5,7 @@
     "emitDeclarationOnly": true,
     "declarationDir": "./dist",
     "rootDir": "./src",
+    "baseUrl": ".",
     "jsx": "react-jsx",
     "types": ["vite/client"],
     "paths": {

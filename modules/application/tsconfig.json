@@ -5,6 +5,7 @@
     "emitDeclarationOnly": true,
     "declarationDir": "./dist",
     "rootDir": "./src",
+    "baseUrl": ".",
     "paths": {
       "@domain": ["../domain/src/index.ts"]
     }
