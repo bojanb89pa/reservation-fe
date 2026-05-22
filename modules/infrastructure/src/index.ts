@@ -14,3 +14,4 @@ export { BusinessApiRepository } from './repositories/BusinessApiRepository';
 export { ReservationApiRepository } from './repositories/ReservationApiRepository';
 export { ResourceApiRepository } from './repositories/ResourceApiRepository';
 export { ResourceAvailabilityRuleApiRepository } from './repositories/ResourceAvailabilityRuleApiRepository';
+export { BusinessMembershipApiRepository } from './repositories/BusinessMembershipApiRepository';

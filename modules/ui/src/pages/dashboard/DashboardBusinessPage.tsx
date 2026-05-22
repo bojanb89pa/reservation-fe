@@ -4,6 +4,7 @@ import { useBusiness } from '../../hooks/useBusinesses';
 import { useResources, useCreateResource } from '../../hooks/useResources';
 import { useAvailabilityRules, useCreateAvailabilityRule, useDeleteAvailabilityRule } from '../../hooks/useAvailabilityRules';
 import { AvailabilityRuleRow } from '../../components/dashboard/AvailabilityRuleRow';
+import { MemberSection } from '../../components/dashboard/MemberSection';
 import type { ResourceType, DayOfWeek } from '@domain';
 import { DAYS_ORDERED, DAY_LABELS } from '@domain';
 import styles from './DashboardBusinessPage.module.css';
@@ -102,6 +103,10 @@ export function DashboardBusinessPage() {
           </button>
         </form>
       </section>
+
+      {/* Members sections */}
+      <MemberSection businessId={id!} role="OWNER" title="Owners" />
+      <MemberSection businessId={id!} role="EMPLOYEE" title="Employees" />
 
       {/* Availability rules section */}
       {activeResourceId && (

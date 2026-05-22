@@ -2,6 +2,7 @@ import { authAxiosClient, resourceAxiosClient } from '@infrastructure';
 import {
   AuthApiRepository,
   BusinessApiRepository,
+  BusinessMembershipApiRepository,
   ResourceApiRepository,
   ReservationApiRepository,
   ResourceAvailabilityRuleApiRepository,
@@ -12,6 +13,9 @@ import {
   SearchBusinessesUseCaseImpl,
   GetBusinessUseCaseImpl,
   CreateBusinessUseCaseImpl,
+  AddBusinessMemberUseCaseImpl,
+  RemoveBusinessMemberUseCaseImpl,
+  ListBusinessMembersUseCaseImpl,
   GetAllResourcesUseCaseImpl,
   CreateResourceUseCaseImpl,
   CreateReservationUseCaseImpl,
@@ -30,6 +34,7 @@ export { tokenStorage } from '@infrastructure';
 // ── Repositories ──────────────────────────────────────────────────────────────
 export const authApiRepository = new AuthApiRepository(authAxiosClient);
 const businessRepository = new BusinessApiRepository(resourceAxiosClient);
+const businessMembershipRepository = new BusinessMembershipApiRepository(resourceAxiosClient);
 const resourceRepository = new ResourceApiRepository(resourceAxiosClient);
 const reservationRepository = new ReservationApiRepository(resourceAxiosClient);
 const availabilityRuleRepository = new ResourceAvailabilityRuleApiRepository(resourceAxiosClient);
@@ -41,6 +46,10 @@ export const getAllBusinessesUseCase = new GetAllBusinessesUseCaseImpl(businessR
 export const searchBusinessesUseCase = new SearchBusinessesUseCaseImpl(businessRepository);
 export const getBusinessUseCase = new GetBusinessUseCaseImpl(businessRepository);
 export const createBusinessUseCase = new CreateBusinessUseCaseImpl(businessRepository);
+
+export const listBusinessMembersUseCase = new ListBusinessMembersUseCaseImpl(businessMembershipRepository);
+export const addBusinessMemberUseCase = new AddBusinessMemberUseCaseImpl(businessMembershipRepository);
+export const removeBusinessMemberUseCase = new RemoveBusinessMemberUseCaseImpl(businessMembershipRepository);
 
 export const getAllResourcesUseCase = new GetAllResourcesUseCaseImpl(resourceRepository);
 export const createResourceUseCase = new CreateResourceUseCaseImpl(resourceRepository);

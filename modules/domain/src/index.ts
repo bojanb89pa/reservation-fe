@@ -1,6 +1,12 @@
 // Entities
 export type { AuthSession, AuthCredentials } from './entities/AuthSession';
 export type { Business } from './entities/Business';
+export type {
+  BusinessMembership,
+  BusinessMemberRole,
+  AddMemberCommand,
+  RemoveMemberCommand,
+} from './entities/BusinessMembership';
 export type { Reservation, CreateReservationCommand } from './entities/Reservation';
 export type { Resource, CreateResourceCommand } from './entities/Resource';
 export type {
@@ -15,11 +21,12 @@ export type { Role } from './entities/Role';
 export type { User, UserRegistration } from './entities/User';
 
 // Errors
-export { DomainError } from './errors/DomainError';
+export { DomainError, NotFoundError, UnauthorizedError, ValidationError, ConflictError } from './errors/DomainError';
 
 // Repository interfaces
 export type { AuthRepository } from './repositories/AuthRepository';
 export type { BusinessRepository } from './repositories/BusinessRepository';
+export type { BusinessMembershipRepository } from './repositories/BusinessMembershipRepository';
 export type { ReservationRepository } from './repositories/ReservationRepository';
 export type { ResourceAvailabilityRuleRepository } from './repositories/ResourceAvailabilityRuleRepository';
 export type { ResourceRepository } from './repositories/ResourceRepository';
@@ -37,6 +44,9 @@ export type { CreateBusinessUseCase } from './use-cases/business/CreateBusinessU
 export type { GetAllBusinessesUseCase } from './use-cases/business/GetAllBusinessesUseCase';
 export type { SearchBusinessesUseCase } from './use-cases/business/SearchBusinessesUseCase';
 export type { GetBusinessUseCase } from './use-cases/business/GetBusinessUseCase';
+export type { AddBusinessMemberUseCase } from './use-cases/business/AddBusinessMemberUseCase';
+export type { RemoveBusinessMemberUseCase } from './use-cases/business/RemoveBusinessMemberUseCase';
+export type { ListBusinessMembersUseCase } from './use-cases/business/ListBusinessMembersUseCase';
 export type { CreateReservationUseCase } from './use-cases/reservation/CreateReservationUseCase';
 export type { GetReservationUseCase } from './use-cases/reservation/GetReservationUseCase';
 export type { CreateResourceUseCase } from './use-cases/resource/CreateResourceUseCase';

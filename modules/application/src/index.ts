@@ -9,6 +9,9 @@ export { CreateBusinessUseCaseImpl } from './use-cases/business/CreateBusinessUs
 export { GetAllBusinessesUseCaseImpl } from './use-cases/business/GetAllBusinessesUseCaseImpl';
 export { SearchBusinessesUseCaseImpl } from './use-cases/business/SearchBusinessesUseCaseImpl';
 export { GetBusinessUseCaseImpl } from './use-cases/business/GetBusinessUseCaseImpl';
+export { AddBusinessMemberUseCaseImpl } from './use-cases/business/AddBusinessMemberUseCaseImpl';
+export { RemoveBusinessMemberUseCaseImpl } from './use-cases/business/RemoveBusinessMemberUseCaseImpl';
+export { ListBusinessMembersUseCaseImpl } from './use-cases/business/ListBusinessMembersUseCaseImpl';
 
 export { CreateReservationUseCaseImpl } from './use-cases/reservation/CreateReservationUseCaseImpl';
 export { GetReservationUseCaseImpl } from './use-cases/reservation/GetReservationUseCaseImpl';

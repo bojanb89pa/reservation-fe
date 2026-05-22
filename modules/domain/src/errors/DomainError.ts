@@ -31,3 +31,10 @@ export class ValidationError extends DomainError {
     this.name = 'ValidationError';
   }
 }
+
+export class ConflictError extends DomainError {
+  constructor(message: string) {
+    super(message, 'CONFLICT');
+    this.name = 'ConflictError';
+  }
+}
