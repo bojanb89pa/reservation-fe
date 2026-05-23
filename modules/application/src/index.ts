@@ -6,7 +6,7 @@ export { DeleteAvailabilityRuleUseCaseImpl } from './use-cases/availabilityrule/
 export { GetAvailabilityRulesUseCaseImpl } from './use-cases/availabilityrule/GetAvailabilityRulesUseCaseImpl';
 
 export { CreateBusinessUseCaseImpl } from './use-cases/business/CreateBusinessUseCaseImpl';
-export { GetAllBusinessesUseCaseImpl } from './use-cases/business/GetAllBusinessesUseCaseImpl';
+export { GetMyBusinessesUseCaseImpl } from './use-cases/business/GetMyBusinessesUseCaseImpl';
 export { SearchBusinessesUseCaseImpl } from './use-cases/business/SearchBusinessesUseCaseImpl';
 export { GetBusinessUseCaseImpl } from './use-cases/business/GetBusinessUseCaseImpl';
 export { AddBusinessMemberUseCaseImpl } from './use-cases/business/AddBusinessMemberUseCaseImpl';

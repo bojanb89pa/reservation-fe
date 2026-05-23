@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
-import { useBusinesses } from '../../hooks/useBusinesses';
+import { useMyBusinesses } from '../../hooks/useBusinesses';
 import styles from './DashboardOverviewPage.module.css';
 
 export function DashboardOverviewPage() {
-  const { data, isLoading } = useBusinesses(0, 4);
+  const { data, isLoading } = useMyBusinesses(0, 4);
 
   return (
     <div>

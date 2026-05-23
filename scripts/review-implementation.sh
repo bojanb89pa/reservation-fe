@@ -32,14 +32,10 @@ CHANGED="$(git diff --name-only HEAD 2>/dev/null || git status --short 2>/dev/nu
 if [[ -z "$CHANGED" ]]; then
   warn "No changes detected (working tree is clean)."
 else
-  declare -A LAYER_COUNTS
-  LAYER_COUNTS=([domain]=0 [application]=0 [infrastructure]=0 [ui]=0 [other]=0)
-
   for LAYER in domain application infrastructure ui; do
     FILES=$(printf '%s\n' "$CHANGED" | grep "^modules/$LAYER/" || true)
     if [[ -n "$FILES" ]]; then
       COUNT=$(printf '%s\n' "$FILES" | wc -l | tr -d ' ')
-      LAYER_COUNTS[$LAYER]=$COUNT
       printf "\n  [modules/%s]  (%s file(s))\n" "$LAYER" "$COUNT"
       printf '%s\n' "$FILES" | sed 's/^/    /'
     fi
@@ -48,7 +44,6 @@ else
   OTHER=$(printf '%s\n' "$CHANGED" | grep -v "^modules/" || true)
   if [[ -n "$OTHER" ]]; then
     COUNT=$(printf '%s\n' "$OTHER" | wc -l | tr -d ' ')
-    LAYER_COUNTS[other]=$COUNT
     printf "\n  [other]  (%s file(s))\n" "$COUNT"
     printf '%s\n' "$OTHER" | sed 's/^/    /'
   fi

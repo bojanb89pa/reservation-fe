@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useBusinesses, useCreateBusiness } from '../../hooks/useBusinesses';
+import { useMyBusinesses, useCreateBusiness } from '../../hooks/useBusinesses';
 import styles from './DashboardBusinessesPage.module.css';
 
 export function DashboardBusinessesPage() {
-  const { data, isLoading } = useBusinesses(0, 50);
+  const { data, isLoading } = useMyBusinesses(0, 50);
   const { mutateAsync: createBusiness, isPending } = useCreateBusiness();
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);

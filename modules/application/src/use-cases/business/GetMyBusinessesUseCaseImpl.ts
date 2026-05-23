@@ -1,15 +1,15 @@
 import type {
   BusinessRepository,
-  GetAllBusinessesUseCase,
+  GetMyBusinessesUseCase,
   Business,
   PageRequest,
   PageResponse,
 } from '@domain';
 
-export class GetAllBusinessesUseCaseImpl implements GetAllBusinessesUseCase {
+export class GetMyBusinessesUseCaseImpl implements GetMyBusinessesUseCase {
   constructor(private readonly businessRepository: BusinessRepository) {}
 
   execute(pageRequest: PageRequest): Promise<PageResponse<Business>> {
-    return this.businessRepository.getAll(pageRequest);
+    return this.businessRepository.getMyBusinesses(pageRequest);
   }
 }

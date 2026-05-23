@@ -14,6 +14,7 @@ import { DashboardLayout } from '../pages/dashboard/DashboardLayout';
 import { DashboardOverviewPage } from '../pages/dashboard/DashboardOverviewPage';
 import { DashboardBusinessesPage } from '../pages/dashboard/DashboardBusinessesPage';
 import { DashboardBusinessPage } from '../pages/dashboard/DashboardBusinessPage';
+import { DashboardMyBusinessesPage } from '../pages/dashboard/DashboardMyBusinessesPage';
 
 function PublicLayout() {
   return (
@@ -42,6 +43,7 @@ export function AppRouter() {
           <Route index element={<DashboardOverviewPage />} />
           <Route path="businesses" element={<DashboardBusinessesPage />} />
           <Route path="businesses/:id" element={<DashboardBusinessPage />} />
+          <Route path="my-businesses" element={<DashboardMyBusinessesPage />} />
         </Route>
       </Route>
       <Route path="*" element={<PublicLayout />} />

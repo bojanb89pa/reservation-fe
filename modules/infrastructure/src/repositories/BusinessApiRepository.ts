@@ -4,8 +4,8 @@ import type { BusinessRepository, Business, PageRequest, PageResponse } from '@d
 export class BusinessApiRepository implements BusinessRepository {
   constructor(private readonly client: AxiosInstance) {}
 
-  async getAll(pageRequest: PageRequest): Promise<PageResponse<Business>> {
-    const response = await this.client.get<PageResponse<Business>>('/api/businesses/all', {
+  async getMyBusinesses(pageRequest: PageRequest): Promise<PageResponse<Business>> {
+    const response = await this.client.get<PageResponse<Business>>('/api/businesses/me', {
       params: { page: pageRequest.page, size: pageRequest.size },
     });
     return response.data;

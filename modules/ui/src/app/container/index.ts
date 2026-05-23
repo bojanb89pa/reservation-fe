@@ -9,7 +9,7 @@ import {
 } from '@infrastructure';
 import {
   RegisterUseCaseImpl,
-  GetAllBusinessesUseCaseImpl,
+  GetMyBusinessesUseCaseImpl,
   SearchBusinessesUseCaseImpl,
   GetBusinessUseCaseImpl,
   CreateBusinessUseCaseImpl,
@@ -42,7 +42,7 @@ const availabilityRuleRepository = new ResourceAvailabilityRuleApiRepository(res
 // ── Use Cases ─────────────────────────────────────────────────────────────────
 export const registerUseCase = new RegisterUseCaseImpl(authApiRepository);
 
-export const getAllBusinessesUseCase = new GetAllBusinessesUseCaseImpl(businessRepository);
+export const getMyBusinessesUseCase = new GetMyBusinessesUseCaseImpl(businessRepository);
 export const searchBusinessesUseCase = new SearchBusinessesUseCaseImpl(businessRepository);
 export const getBusinessUseCase = new GetBusinessUseCaseImpl(businessRepository);
 export const createBusinessUseCase = new CreateBusinessUseCaseImpl(businessRepository);

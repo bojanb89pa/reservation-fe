@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  getAllBusinessesUseCase,
+  getMyBusinessesUseCase,
   searchBusinessesUseCase,
   getBusinessUseCase,
   createBusinessUseCase,
@@ -8,16 +8,16 @@ import {
 
 export const businessKeys = {
   all: ['businesses'] as const,
-  list: (page: number, size: number) => ['businesses', 'list', page, size] as const,
+  mine: (page: number, size: number) => ['businesses', 'my', page, size] as const,
   search: (query: string, page: number, size: number) =>
     ['businesses', 'search', query, page, size] as const,
   detail: (id: string) => ['businesses', 'detail', id] as const,
 };
 
-export function useBusinesses(page = 0, size = 20) {
+export function useMyBusinesses(page = 0, size = 20) {
   return useQuery({
-    queryKey: businessKeys.list(page, size),
-    queryFn: () => getAllBusinessesUseCase.execute({ page, size }),
+    queryKey: businessKeys.mine(page, size),
+    queryFn: () => getMyBusinessesUseCase.execute({ page, size }),
   });
 }
 
