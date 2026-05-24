@@ -3,6 +3,7 @@ import {
   AuthApiRepository,
   BusinessApiRepository,
   BusinessMembershipApiRepository,
+  BusinessContactInfoApiRepository,
   ResourceApiRepository,
   ReservationApiRepository,
   ResourceAvailabilityRuleApiRepository,
@@ -16,6 +17,10 @@ import {
   AddBusinessMemberUseCaseImpl,
   RemoveBusinessMemberUseCaseImpl,
   ListBusinessMembersUseCaseImpl,
+  AddContactInfoUseCaseImpl,
+  ListContactInfoUseCaseImpl,
+  RemoveContactInfoUseCaseImpl,
+  UpdateContactInfoUseCaseImpl,
   GetAllResourcesUseCaseImpl,
   CreateResourceUseCaseImpl,
   CreateReservationUseCaseImpl,
@@ -35,6 +40,7 @@ export { tokenStorage } from '@infrastructure';
 export const authApiRepository = new AuthApiRepository(authAxiosClient);
 const businessRepository = new BusinessApiRepository(resourceAxiosClient);
 const businessMembershipRepository = new BusinessMembershipApiRepository(resourceAxiosClient);
+const businessContactInfoRepository = new BusinessContactInfoApiRepository(resourceAxiosClient);
 const resourceRepository = new ResourceApiRepository(resourceAxiosClient);
 const reservationRepository = new ReservationApiRepository(resourceAxiosClient);
 const availabilityRuleRepository = new ResourceAvailabilityRuleApiRepository(resourceAxiosClient);
@@ -55,6 +61,15 @@ export const addBusinessMemberUseCase = new AddBusinessMemberUseCaseImpl(
 );
 export const removeBusinessMemberUseCase = new RemoveBusinessMemberUseCaseImpl(
   businessMembershipRepository,
+);
+
+export const listContactInfoUseCase = new ListContactInfoUseCaseImpl(businessContactInfoRepository);
+export const addContactInfoUseCase = new AddContactInfoUseCaseImpl(businessContactInfoRepository);
+export const removeContactInfoUseCase = new RemoveContactInfoUseCaseImpl(
+  businessContactInfoRepository,
+);
+export const updateContactInfoUseCase = new UpdateContactInfoUseCaseImpl(
+  businessContactInfoRepository,
 );
 
 export const getAllResourcesUseCase = new GetAllResourcesUseCaseImpl(resourceRepository);

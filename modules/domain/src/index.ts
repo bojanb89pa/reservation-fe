@@ -2,6 +2,13 @@
 export type { AuthSession, AuthCredentials } from './entities/AuthSession';
 export type { Business } from './entities/Business';
 export type {
+  BusinessContactInfo,
+  ContactInfoType,
+  AddContactInfoCommand,
+  UpdateContactInfoCommand,
+  RemoveContactInfoCommand,
+} from './entities/BusinessContactInfo';
+export type {
   BusinessMembership,
   BusinessMemberRole,
   AddMemberCommand,
@@ -32,6 +39,7 @@ export {
 // Repository interfaces
 export type { AuthRepository } from './repositories/AuthRepository';
 export type { BusinessRepository } from './repositories/BusinessRepository';
+export type { BusinessContactInfoRepository } from './repositories/BusinessContactInfoRepository';
 export type { BusinessMembershipRepository } from './repositories/BusinessMembershipRepository';
 export type { ReservationRepository } from './repositories/ReservationRepository';
 export type { ResourceAvailabilityRuleRepository } from './repositories/ResourceAvailabilityRuleRepository';
@@ -53,6 +61,10 @@ export type { GetBusinessUseCase } from './use-cases/business/GetBusinessUseCase
 export type { AddBusinessMemberUseCase } from './use-cases/business/AddBusinessMemberUseCase';
 export type { RemoveBusinessMemberUseCase } from './use-cases/business/RemoveBusinessMemberUseCase';
 export type { ListBusinessMembersUseCase } from './use-cases/business/ListBusinessMembersUseCase';
+export type { AddContactInfoUseCase } from './use-cases/business-contact-info/AddContactInfoUseCase';
+export type { ListContactInfoUseCase } from './use-cases/business-contact-info/ListContactInfoUseCase';
+export type { RemoveContactInfoUseCase } from './use-cases/business-contact-info/RemoveContactInfoUseCase';
+export type { UpdateContactInfoUseCase } from './use-cases/business-contact-info/UpdateContactInfoUseCase';
 export type { CreateReservationUseCase } from './use-cases/reservation/CreateReservationUseCase';
 export type { GetReservationUseCase } from './use-cases/reservation/GetReservationUseCase';
 export type { CreateResourceUseCase } from './use-cases/resource/CreateResourceUseCase';

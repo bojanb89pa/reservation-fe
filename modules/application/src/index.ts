@@ -13,6 +13,11 @@ export { AddBusinessMemberUseCaseImpl } from './use-cases/business/AddBusinessMe
 export { RemoveBusinessMemberUseCaseImpl } from './use-cases/business/RemoveBusinessMemberUseCaseImpl';
 export { ListBusinessMembersUseCaseImpl } from './use-cases/business/ListBusinessMembersUseCaseImpl';
 
+export { AddContactInfoUseCaseImpl } from './use-cases/business-contact-info/AddContactInfoUseCaseImpl';
+export { ListContactInfoUseCaseImpl } from './use-cases/business-contact-info/ListContactInfoUseCaseImpl';
+export { RemoveContactInfoUseCaseImpl } from './use-cases/business-contact-info/RemoveContactInfoUseCaseImpl';
+export { UpdateContactInfoUseCaseImpl } from './use-cases/business-contact-info/UpdateContactInfoUseCaseImpl';
+
 export { CreateReservationUseCaseImpl } from './use-cases/reservation/CreateReservationUseCaseImpl';
 export { GetReservationUseCaseImpl } from './use-cases/reservation/GetReservationUseCaseImpl';
 

@@ -14,7 +14,6 @@ const mockPage = {
 };
 
 const mockRepo: BusinessRepository = {
-  getAll: vi.fn(),
   getMyBusinesses: vi.fn().mockResolvedValue(mockPage),
   search: vi.fn(),
   getById: vi.fn(),

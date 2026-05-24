@@ -1,0 +1,119 @@
+.section {
+  margin-bottom: 36px;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--ink-900);
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--ink-900);
+}
+
+.sectionMeta {
+  font-size: var(--text-xs);
+  color: var(--ink-500);
+}
+
+.list {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-top: 0;
+  overflow: hidden;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.row:first-child {
+  border-top: 0;
+}
+
+.editRow {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.editRow:first-child {
+  border-top: 0;
+}
+
+.typeBadge {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  border-radius: var(--r-lg);
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+
+.value {
+  font-size: var(--text-sm);
+  color: var(--ink-900);
+  font-family: var(--font-mono);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.label {
+  font-size: var(--text-sm);
+  color: var(--ink-500);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.empty {
+  padding: 14px 20px;
+  color: var(--ink-500);
+  font-size: var(--text-sm);
+}
+
+.addForm {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.formInput {
+  flex: 1;
+  min-width: 160px;
+}
+
+.error {
+  margin-top: 8px;
+  font-size: var(--text-xs);
+  color: var(--danger, #ef4444);
+}

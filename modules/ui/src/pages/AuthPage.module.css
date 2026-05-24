@@ -63,9 +63,10 @@
   background: transparent;
   cursor: pointer;
   text-decoration: none;
-  transition: border-color var(--dur-fast) var(--ease-spring),
-              box-shadow var(--dur-fast) var(--ease-spring),
-              transform var(--dur-fast) var(--ease-spring);
+  transition:
+    border-color var(--dur-fast) var(--ease-spring),
+    box-shadow var(--dur-fast) var(--ease-spring),
+    transform var(--dur-fast) var(--ease-spring);
 }
 .btnGoogle:hover {
   border-color: var(--primary);
