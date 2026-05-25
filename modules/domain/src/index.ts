@@ -59,7 +59,6 @@ export type { RegisterUseCase } from './use-cases/auth/RegisterUseCase';
 export type { CreateAvailabilityRuleUseCase } from './use-cases/availabilityrule/CreateAvailabilityRuleUseCase';
 export type { DeleteAvailabilityRuleUseCase } from './use-cases/availabilityrule/DeleteAvailabilityRuleUseCase';
 export type { GetAvailabilityRulesUseCase } from './use-cases/availabilityrule/GetAvailabilityRulesUseCase';
-export type { CreateBusinessUseCase } from './use-cases/business/CreateBusinessUseCase';
 export type { GetMyBusinessesUseCase } from './use-cases/business/GetMyBusinessesUseCase';
 export type { SearchBusinessesUseCase } from './use-cases/business/SearchBusinessesUseCase';
 export type { GetBusinessUseCase } from './use-cases/business/GetBusinessUseCase';

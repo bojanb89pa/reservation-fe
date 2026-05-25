@@ -30,11 +30,6 @@ export class BusinessApiRepository implements BusinessRepository {
     return response.data;
   }
 
-  async create(business: Pick<Business, 'name'>): Promise<Business> {
-    const response = await this.client.post<Business>('/api/businesses', { id: null, ...business });
-    return response.data;
-  }
-
   async submit(command: SubmitBusinessCommand): Promise<Business> {
     const response = await this.client.post<Business>('/api/businesses/submit', command);
     return response.data;

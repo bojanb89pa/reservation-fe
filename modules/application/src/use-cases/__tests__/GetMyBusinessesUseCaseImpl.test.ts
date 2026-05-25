@@ -17,7 +17,11 @@ const mockRepo: BusinessRepository = {
   getMyBusinesses: vi.fn().mockResolvedValue(mockPage),
   search: vi.fn(),
   getById: vi.fn(),
-  create: vi.fn(),
+  submit: vi.fn(),
+  createByAdmin: vi.fn(),
+  activate: vi.fn(),
+  reject: vi.fn(),
+  delete: vi.fn(),
 };
 
 describe('GetMyBusinessesUseCaseImpl', () => {

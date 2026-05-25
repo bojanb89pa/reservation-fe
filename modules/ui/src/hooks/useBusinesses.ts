@@ -3,8 +3,10 @@ import {
   getMyBusinessesUseCase,
   searchBusinessesUseCase,
   getBusinessUseCase,
-  createBusinessUseCase,
+  submitBusinessUseCase,
+  createBusinessByAdminUseCase,
 } from '../app/container';
+import { useAuthStore } from '../state/authStore';
 
 export const businessKeys = {
   all: ['businesses'] as const,
@@ -38,8 +40,21 @@ export function useBusiness(id: string) {
 
 export function useCreateBusiness() {
   const queryClient = useQueryClient();
+  const { session } = useAuthStore();
+
   return useMutation({
-    mutationFn: (name: string) => createBusinessUseCase.execute({ name }),
+    mutationFn: (name: string) => {
+      if (!session) throw new Error('Not authenticated');
+      const payload = JSON.parse(atob(session.accessToken.split('.')[1])) as Record<
+        string,
+        unknown
+      >;
+      const roles = (payload['roles'] ?? payload['authorities'] ?? []) as string[];
+      if (roles.includes('ROLE_ADMIN')) {
+        return createBusinessByAdminUseCase.execute({ name, ownerId: payload['sub'] as string });
+      }
+      return submitBusinessUseCase.execute({ name });
+    },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: businessKeys.all }),
   });
 }

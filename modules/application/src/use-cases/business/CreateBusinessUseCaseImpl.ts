@@ -1,9 +1,14 @@
-import type { BusinessRepository, CreateBusinessUseCase, Business } from '@domain';
+import type {
+  BusinessRepository,
+  SubmitBusinessUseCase,
+  SubmitBusinessCommand,
+  Business,
+} from '@domain';
 
-export class CreateBusinessUseCaseImpl implements CreateBusinessUseCase {
+export class CreateBusinessUseCaseImpl implements SubmitBusinessUseCase {
   constructor(private readonly businessRepository: BusinessRepository) {}
 
-  execute(command: Pick<Business, 'name'>): Promise<Business> {
-    return this.businessRepository.create(command);
+  execute(command: SubmitBusinessCommand): Promise<Business> {
+    return this.businessRepository.submit(command);
   }
 }
