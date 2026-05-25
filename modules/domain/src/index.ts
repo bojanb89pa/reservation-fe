@@ -1,6 +1,11 @@
 // Entities
 export type { AuthSession, AuthCredentials } from './entities/AuthSession';
-export type { Business } from './entities/Business';
+export type {
+  Business,
+  BusinessStatus,
+  SubmitBusinessCommand,
+  CreateBusinessByAdminCommand,
+} from './entities/Business';
 export type {
   BusinessContactInfo,
   ContactInfoType,
@@ -61,6 +66,11 @@ export type { GetBusinessUseCase } from './use-cases/business/GetBusinessUseCase
 export type { AddBusinessMemberUseCase } from './use-cases/business/AddBusinessMemberUseCase';
 export type { RemoveBusinessMemberUseCase } from './use-cases/business/RemoveBusinessMemberUseCase';
 export type { ListBusinessMembersUseCase } from './use-cases/business/ListBusinessMembersUseCase';
+export type { SubmitBusinessUseCase } from './use-cases/business/SubmitBusinessUseCase';
+export type { CreateBusinessByAdminUseCase } from './use-cases/business/CreateBusinessByAdminUseCase';
+export type { ActivateBusinessUseCase } from './use-cases/business/ActivateBusinessUseCase';
+export type { RejectBusinessUseCase } from './use-cases/business/RejectBusinessUseCase';
+export type { DeleteBusinessUseCase } from './use-cases/business/DeleteBusinessUseCase';
 export type { AddContactInfoUseCase } from './use-cases/business-contact-info/AddContactInfoUseCase';
 export type { ListContactInfoUseCase } from './use-cases/business-contact-info/ListContactInfoUseCase';
 export type { RemoveContactInfoUseCase } from './use-cases/business-contact-info/RemoveContactInfoUseCase';

@@ -1,5 +1,12 @@
 import type { AxiosInstance } from 'axios';
-import type { BusinessRepository, Business, PageRequest, PageResponse } from '@domain';
+import type {
+  BusinessRepository,
+  Business,
+  PageRequest,
+  PageResponse,
+  SubmitBusinessCommand,
+  CreateBusinessByAdminCommand,
+} from '@domain';
 
 export class BusinessApiRepository implements BusinessRepository {
   constructor(private readonly client: AxiosInstance) {}
@@ -25,6 +32,31 @@ export class BusinessApiRepository implements BusinessRepository {
 
   async create(business: Pick<Business, 'name'>): Promise<Business> {
     const response = await this.client.post<Business>('/api/businesses', { id: null, ...business });
+    return response.data;
+  }
+
+  async submit(command: SubmitBusinessCommand): Promise<Business> {
+    const response = await this.client.post<Business>('/api/businesses/submit', command);
+    return response.data;
+  }
+
+  async createByAdmin(command: CreateBusinessByAdminCommand): Promise<Business> {
+    const response = await this.client.post<Business>('/api/businesses/admin', command);
+    return response.data;
+  }
+
+  async activate(id: string): Promise<Business> {
+    const response = await this.client.post<Business>(`/api/businesses/${id}/activate`);
+    return response.data;
+  }
+
+  async reject(id: string): Promise<Business> {
+    const response = await this.client.post<Business>(`/api/businesses/${id}/reject`);
+    return response.data;
+  }
+
+  async delete(id: string): Promise<Business> {
+    const response = await this.client.delete<Business>(`/api/businesses/${id}`);
     return response.data;
   }
 }
