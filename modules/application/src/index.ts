@@ -27,3 +27,9 @@ export { GetReservationUseCaseImpl } from './use-cases/reservation/GetReservatio
 
 export { CreateResourceUseCaseImpl } from './use-cases/resource/CreateResourceUseCaseImpl';
 export { GetAllResourcesUseCaseImpl } from './use-cases/resource/GetAllResourcesUseCaseImpl';
+
+export { ListBusinessCategoriesUseCaseImpl } from './use-cases/business-category/ListBusinessCategoriesUseCaseImpl';
+export { GetBusinessCategoryUseCaseImpl } from './use-cases/business-category/GetBusinessCategoryUseCaseImpl';
+export { CreateBusinessCategoryUseCaseImpl } from './use-cases/business-category/CreateBusinessCategoryUseCaseImpl';
+export { UpdateBusinessCategoryUseCaseImpl } from './use-cases/business-category/UpdateBusinessCategoryUseCaseImpl';
+export { DeleteBusinessCategoryUseCaseImpl } from './use-cases/business-category/DeleteBusinessCategoryUseCaseImpl';

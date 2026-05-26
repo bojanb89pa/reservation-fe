@@ -12,6 +12,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { to: '/dashboard', label: 'Overview', end: true },
   { to: '/dashboard/businesses', label: 'My businesses' },
+  { to: '/dashboard/categories', label: 'Categories' },
   { to: '/dashboard/reservations', label: 'Reservations' },
 ];
 

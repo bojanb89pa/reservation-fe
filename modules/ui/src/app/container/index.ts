@@ -4,6 +4,7 @@ import {
   BusinessApiRepository,
   BusinessMembershipApiRepository,
   BusinessContactInfoApiRepository,
+  BusinessCategoryApiRepository,
   ResourceApiRepository,
   ReservationApiRepository,
   ResourceAvailabilityRuleApiRepository,
@@ -29,6 +30,11 @@ import {
   GetAvailabilityRulesUseCaseImpl,
   CreateAvailabilityRuleUseCaseImpl,
   DeleteAvailabilityRuleUseCaseImpl,
+  ListBusinessCategoriesUseCaseImpl,
+  GetBusinessCategoryUseCaseImpl,
+  CreateBusinessCategoryUseCaseImpl,
+  UpdateBusinessCategoryUseCaseImpl,
+  DeleteBusinessCategoryUseCaseImpl,
 } from '@application';
 
 // Re-export infrastructure primitives consumed only within this module's hooks/state.
@@ -40,6 +46,7 @@ export { tokenStorage } from '@infrastructure';
 // ── Repositories ──────────────────────────────────────────────────────────────
 export const authApiRepository = new AuthApiRepository(authAxiosClient);
 const businessRepository = new BusinessApiRepository(resourceAxiosClient);
+const businessCategoryRepository = new BusinessCategoryApiRepository(resourceAxiosClient);
 const businessMembershipRepository = new BusinessMembershipApiRepository(resourceAxiosClient);
 const businessContactInfoRepository = new BusinessContactInfoApiRepository(resourceAxiosClient);
 const resourceRepository = new ResourceApiRepository(resourceAxiosClient);
@@ -90,4 +97,20 @@ export const createAvailabilityRuleUseCase = new CreateAvailabilityRuleUseCaseIm
 );
 export const deleteAvailabilityRuleUseCase = new DeleteAvailabilityRuleUseCaseImpl(
   availabilityRuleRepository,
+);
+
+export const listBusinessCategoriesUseCase = new ListBusinessCategoriesUseCaseImpl(
+  businessCategoryRepository,
+);
+export const getBusinessCategoryUseCase = new GetBusinessCategoryUseCaseImpl(
+  businessCategoryRepository,
+);
+export const createBusinessCategoryUseCase = new CreateBusinessCategoryUseCaseImpl(
+  businessCategoryRepository,
+);
+export const updateBusinessCategoryUseCase = new UpdateBusinessCategoryUseCaseImpl(
+  businessCategoryRepository,
+);
+export const deleteBusinessCategoryUseCase = new DeleteBusinessCategoryUseCaseImpl(
+  businessCategoryRepository,
 );

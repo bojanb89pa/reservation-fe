@@ -1,6 +1,11 @@
 // Entities
 export type { AuthSession, AuthCredentials } from './entities/AuthSession';
 export type {
+  BusinessCategory,
+  CreateBusinessCategoryCommand,
+  UpdateBusinessCategoryCommand,
+} from './entities/BusinessCategory';
+export type {
   Business,
   BusinessStatus,
   SubmitBusinessCommand,
@@ -39,10 +44,12 @@ export {
   UnauthorizedError,
   ValidationError,
   ConflictError,
+  UnprocessableEntityError,
 } from './errors/DomainError';
 
 // Repository interfaces
 export type { AuthRepository } from './repositories/AuthRepository';
+export type { BusinessCategoryRepository } from './repositories/BusinessCategoryRepository';
 export type { BusinessRepository } from './repositories/BusinessRepository';
 export type { BusinessContactInfoRepository } from './repositories/BusinessContactInfoRepository';
 export type { BusinessMembershipRepository } from './repositories/BusinessMembershipRepository';
@@ -78,3 +85,8 @@ export type { CreateReservationUseCase } from './use-cases/reservation/CreateRes
 export type { GetReservationUseCase } from './use-cases/reservation/GetReservationUseCase';
 export type { CreateResourceUseCase } from './use-cases/resource/CreateResourceUseCase';
 export type { GetAllResourcesUseCase } from './use-cases/resource/GetAllResourcesUseCase';
+export type { ListBusinessCategoriesUseCase } from './use-cases/business-category/ListBusinessCategoriesUseCase';
+export type { GetBusinessCategoryUseCase } from './use-cases/business-category/GetBusinessCategoryUseCase';
+export type { CreateBusinessCategoryUseCase } from './use-cases/business-category/CreateBusinessCategoryUseCase';
+export type { UpdateBusinessCategoryUseCase } from './use-cases/business-category/UpdateBusinessCategoryUseCase';
+export type { DeleteBusinessCategoryUseCase } from './use-cases/business-category/DeleteBusinessCategoryUseCase';
