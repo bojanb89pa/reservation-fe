@@ -4,6 +4,7 @@ export interface AuthSession {
   expiresIn: number;
   scope: string;
   refreshToken?: string;
+  idToken?: string;
 }
 
 export interface AuthCredentials {

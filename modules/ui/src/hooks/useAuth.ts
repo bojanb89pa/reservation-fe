@@ -1,8 +1,8 @@
 import { useAuthStore } from '../state/authStore';
-import { authApiRepository, env } from '../app/container';
+import { authApiRepository, env, tokenStorage } from '../app/container';
 
 export function useAuth() {
-  const { session, isAuthenticated, setSession, clearSession } = useAuthStore();
+  const { session, isAuthenticated, setSession, startLogout } = useAuthStore();
 
   const initiateLogin = () => {
     const params = new URLSearchParams({
@@ -21,8 +21,11 @@ export function useAuth() {
   };
 
   const logout = () => {
-    clearSession();
-    window.location.href = '/';
+    const idToken = tokenStorage.getIdToken();
+    startLogout();
+    const params = new URLSearchParams({ post_logout_redirect_uri: window.location.origin });
+    if (idToken) params.set('id_token_hint', idToken);
+    window.location.href = `${env.authBaseUrl}/connect/logout?${params.toString()}`;
   };
 
   return { session, isAuthenticated, initiateLogin, handleCallback, logout };

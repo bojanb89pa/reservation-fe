@@ -12,7 +12,6 @@ const mockSession: AuthSession = {
 const mockAuthRepository: AuthRepository = {
   login: vi.fn().mockResolvedValue(mockSession),
   register: vi.fn(),
-  logout: vi.fn(),
   refreshToken: vi.fn(),
 };
 

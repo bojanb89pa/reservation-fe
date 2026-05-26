@@ -8,6 +8,7 @@ interface TokenResponse {
   expires_in: number;
   scope: string;
   refresh_token?: string;
+  id_token?: string;
 }
 
 export class AuthApiRepository implements AuthRepository {
@@ -71,10 +72,6 @@ export class AuthApiRepository implements AuthRepository {
     return response.data;
   }
 
-  async logout(): Promise<void> {
-    // JWT-based auth — just clear local tokens
-  }
-
   private mapTokenResponse(data: TokenResponse): AuthSession {
     return {
       accessToken: data.access_token,
@@ -82,6 +79,7 @@ export class AuthApiRepository implements AuthRepository {
       expiresIn: data.expires_in,
       scope: data.scope,
       refreshToken: data.refresh_token,
+      idToken: data.id_token,
     };
   }
 }

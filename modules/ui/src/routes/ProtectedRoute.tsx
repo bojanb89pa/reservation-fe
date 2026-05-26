@@ -1,15 +1,25 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useAuthStore } from '../state/authStore';
-import { useAuth } from '../hooks/useAuth';
+import { env } from '../app/container';
 
 export function ProtectedRoute() {
-  const { isAuthenticated } = useAuthStore();
-  const { initiateLogin } = useAuth();
+  const { isAuthenticated, isLoggingOut } = useAuthStore();
+
+  useEffect(() => {
+    if (!isAuthenticated && !isLoggingOut) {
+      const params = new URLSearchParams({
+        response_type: 'code',
+        client_id: env.oauthClientId,
+        redirect_uri: env.oauthRedirectUri,
+        scope: 'openid profile read write',
+      });
+      window.location.href = `${env.authBaseUrl}/oauth2/authorize?${params.toString()}`;
+    }
+  }, [isAuthenticated, isLoggingOut]);
 
   if (!isAuthenticated) {
-    // Redirect to auth server rather than a local login page
-    initiateLogin();
-    return <Navigate to="/" replace />;
+    return null;
   }
 
   return <Outlet />;

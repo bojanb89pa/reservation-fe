@@ -22,8 +22,17 @@ resourceAxiosClient.interceptors.response.use(
   (error: AxiosError<ApiErrorBody>) => {
     const normalized = normalizeAxiosError(error);
     if (normalized.isUnauthorized) {
+      const hadToken = !!tokenStorage.getAccessToken();
       tokenStorage.clear();
-      window.location.href = '/login';
+      if (hadToken) {
+        const params = new URLSearchParams({
+          response_type: 'code',
+          client_id: env.oauthClientId,
+          redirect_uri: env.oauthRedirectUri,
+          scope: 'openid profile read write',
+        });
+        window.location.href = `${env.authBaseUrl}/oauth2/authorize?${params.toString()}`;
+      }
     }
     return Promise.reject(normalized);
   },
