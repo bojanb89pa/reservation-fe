@@ -5,6 +5,7 @@ export interface Business {
   name: string;
   status: BusinessStatus;
   ownerId: string | null;
+  categoryId: string | null;
 }
 
 export interface CreateBusinessCommand {
@@ -18,4 +19,8 @@ export interface SubmitBusinessCommand {
 export interface CreateBusinessByAdminCommand {
   name: string;
   ownerId: string;
+}
+
+export interface SetBusinessCategoryCommand {
+  categoryId: string | null;
 }

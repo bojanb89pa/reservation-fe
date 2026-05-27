@@ -5,6 +5,7 @@ import {
   getBusinessUseCase,
   submitBusinessUseCase,
   createBusinessByAdminUseCase,
+  setBusinessCategoryUseCase,
 } from '../app/container';
 import { useAuthStore } from '../state/authStore';
 
@@ -35,6 +36,15 @@ export function useBusiness(id: string) {
     queryKey: businessKeys.detail(id),
     queryFn: () => getBusinessUseCase.execute(id),
     enabled: !!id,
+  });
+}
+
+export function useSetBusinessCategory(businessId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (categoryId: string | null) =>
+      setBusinessCategoryUseCase.execute(businessId, categoryId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: businessKeys.detail(businessId) }),
   });
 }
 

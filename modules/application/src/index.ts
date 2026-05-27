@@ -16,6 +16,7 @@ export { CreateBusinessByAdminUseCaseImpl } from './use-cases/business/CreateBus
 export { ActivateBusinessUseCaseImpl } from './use-cases/business/ActivateBusinessUseCaseImpl';
 export { RejectBusinessUseCaseImpl } from './use-cases/business/RejectBusinessUseCaseImpl';
 export { DeleteBusinessUseCaseImpl } from './use-cases/business/DeleteBusinessUseCaseImpl';
+export { SetBusinessCategoryUseCaseImpl } from './use-cases/business/SetBusinessCategoryUseCaseImpl';
 
 export { AddContactInfoUseCaseImpl } from './use-cases/business-contact-info/AddContactInfoUseCaseImpl';
 export { ListContactInfoUseCaseImpl } from './use-cases/business-contact-info/ListContactInfoUseCaseImpl';

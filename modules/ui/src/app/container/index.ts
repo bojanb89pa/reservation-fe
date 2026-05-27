@@ -35,6 +35,7 @@ import {
   CreateBusinessCategoryUseCaseImpl,
   UpdateBusinessCategoryUseCaseImpl,
   DeleteBusinessCategoryUseCaseImpl,
+  SetBusinessCategoryUseCaseImpl,
 } from '@application';
 
 // Re-export infrastructure primitives consumed only within this module's hooks/state.
@@ -114,3 +115,4 @@ export const updateBusinessCategoryUseCase = new UpdateBusinessCategoryUseCaseIm
 export const deleteBusinessCategoryUseCase = new DeleteBusinessCategoryUseCaseImpl(
   businessCategoryRepository,
 );
+export const setBusinessCategoryUseCase = new SetBusinessCategoryUseCaseImpl(businessRepository);

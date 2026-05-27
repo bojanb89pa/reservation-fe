@@ -6,6 +6,7 @@ import type {
   PageResponse,
   SubmitBusinessCommand,
   CreateBusinessByAdminCommand,
+  SetBusinessCategoryCommand,
 } from '@domain';
 
 export class BusinessApiRepository implements BusinessRepository {
@@ -52,6 +53,11 @@ export class BusinessApiRepository implements BusinessRepository {
 
   async delete(id: string): Promise<Business> {
     const response = await this.client.delete<Business>(`/api/businesses/${id}`);
+    return response.data;
+  }
+
+  async setCategory(id: string, command: SetBusinessCategoryCommand): Promise<Business> {
+    const response = await this.client.put<Business>(`/api/businesses/${id}/category`, command);
     return response.data;
   }
 }

@@ -10,6 +10,7 @@ export type {
   BusinessStatus,
   SubmitBusinessCommand,
   CreateBusinessByAdminCommand,
+  SetBusinessCategoryCommand,
 } from './entities/Business';
 export type {
   BusinessContactInfo,
@@ -77,6 +78,7 @@ export type { CreateBusinessByAdminUseCase } from './use-cases/business/CreateBu
 export type { ActivateBusinessUseCase } from './use-cases/business/ActivateBusinessUseCase';
 export type { RejectBusinessUseCase } from './use-cases/business/RejectBusinessUseCase';
 export type { DeleteBusinessUseCase } from './use-cases/business/DeleteBusinessUseCase';
+export type { SetBusinessCategoryUseCase } from './use-cases/business/SetBusinessCategoryUseCase';
 export type { AddContactInfoUseCase } from './use-cases/business-contact-info/AddContactInfoUseCase';
 export type { ListContactInfoUseCase } from './use-cases/business-contact-info/ListContactInfoUseCase';
 export type { RemoveContactInfoUseCase } from './use-cases/business-contact-info/RemoveContactInfoUseCase';

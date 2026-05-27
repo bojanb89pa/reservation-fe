@@ -2,6 +2,7 @@ import type {
   Business,
   SubmitBusinessCommand,
   CreateBusinessByAdminCommand,
+  SetBusinessCategoryCommand,
 } from '../entities/Business';
 import type { PageRequest, PageResponse } from '../types/Page';
 
@@ -14,4 +15,5 @@ export interface BusinessRepository {
   activate(id: string): Promise<Business>;
   reject(id: string): Promise<Business>;
   delete(id: string): Promise<Business>;
+  setCategory(id: string, command: SetBusinessCategoryCommand): Promise<Business>;
 }
