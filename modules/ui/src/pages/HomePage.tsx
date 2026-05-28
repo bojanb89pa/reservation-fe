@@ -58,12 +58,14 @@ export function HomePage() {
         <div className={styles.heroInner}>
           <div className="eyebrow-rule">{t('home.eyebrow')}</div>
           <h1 className={styles.heroTitle}>
-            {t('home.heroTitle').split('\n').map((line, i) => (
-              <span key={i}>
-                {line}
-                {i === 0 && <br />}
-              </span>
-            ))}
+            {t('home.heroTitle')
+              .split('\n')
+              .map((line, i) => (
+                <span key={i}>
+                  {line}
+                  {i === 0 && <br />}
+                </span>
+              ))}
           </h1>
           <p className={styles.heroSub}>{t('home.heroSub')}</p>
 

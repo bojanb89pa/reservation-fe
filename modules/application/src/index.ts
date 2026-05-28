@@ -23,6 +23,12 @@ export { ListContactInfoUseCaseImpl } from './use-cases/business-contact-info/Li
 export { RemoveContactInfoUseCaseImpl } from './use-cases/business-contact-info/RemoveContactInfoUseCaseImpl';
 export { UpdateContactInfoUseCaseImpl } from './use-cases/business-contact-info/UpdateContactInfoUseCaseImpl';
 
+export { CreateBusinessServiceUseCaseImpl } from './use-cases/business-service/CreateBusinessServiceUseCaseImpl';
+export { ListBusinessServicesUseCaseImpl } from './use-cases/business-service/ListBusinessServicesUseCaseImpl';
+export { GetBusinessServiceUseCaseImpl } from './use-cases/business-service/GetBusinessServiceUseCaseImpl';
+export { UpdateBusinessServiceUseCaseImpl } from './use-cases/business-service/UpdateBusinessServiceUseCaseImpl';
+export { DeleteBusinessServiceUseCaseImpl } from './use-cases/business-service/DeleteBusinessServiceUseCaseImpl';
+
 export { CreateReservationUseCaseImpl } from './use-cases/reservation/CreateReservationUseCaseImpl';
 export { GetReservationUseCaseImpl } from './use-cases/reservation/GetReservationUseCaseImpl';
 

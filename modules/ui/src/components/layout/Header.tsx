@@ -51,7 +51,10 @@ export function Header() {
             {LANGS.map((lang) => (
               <button
                 key={lang}
-                className={[styles.langBtn, i18n.language === lang ? styles.langBtnActive : ''].join(' ')}
+                className={[
+                  styles.langBtn,
+                  i18n.language === lang ? styles.langBtnActive : '',
+                ].join(' ')}
                 onClick={() => switchLang(lang)}
               >
                 {lang.toUpperCase()}

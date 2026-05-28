@@ -27,7 +27,8 @@ export function BusinessCategorySection({ business }: Props) {
   };
 
   const currentName =
-    categories.find((c) => c.id === business.categoryId)?.name ?? t('businessCategory.othersDefault');
+    categories.find((c) => c.id === business.categoryId)?.name ??
+    t('businessCategory.othersDefault');
 
   return (
     <section className={styles.section}>

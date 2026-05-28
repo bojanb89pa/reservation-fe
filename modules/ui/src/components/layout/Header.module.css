@@ -127,7 +127,9 @@
   cursor: pointer;
   padding: 4px 7px;
   border-radius: 6px;
-  transition: background var(--dur-fast), color var(--dur-fast);
+  transition:
+    background var(--dur-fast),
+    color var(--dur-fast);
 }
 
 .langBtn:hover {

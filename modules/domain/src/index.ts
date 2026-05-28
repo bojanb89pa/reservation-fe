@@ -1,6 +1,12 @@
 // Entities
 export type { AuthSession, AuthCredentials } from './entities/AuthSession';
 export type {
+  BusinessService,
+  DurationUnit,
+  CreateBusinessServiceCommand,
+  UpdateBusinessServiceCommand,
+} from './entities/BusinessService';
+export type {
   BusinessCategory,
   CreateBusinessCategoryCommand,
   UpdateBusinessCategoryCommand,
@@ -54,6 +60,7 @@ export type { BusinessCategoryRepository } from './repositories/BusinessCategory
 export type { BusinessRepository } from './repositories/BusinessRepository';
 export type { BusinessContactInfoRepository } from './repositories/BusinessContactInfoRepository';
 export type { BusinessMembershipRepository } from './repositories/BusinessMembershipRepository';
+export type { BusinessServiceRepository } from './repositories/BusinessServiceRepository';
 export type { ReservationRepository } from './repositories/ReservationRepository';
 export type { ResourceAvailabilityRuleRepository } from './repositories/ResourceAvailabilityRuleRepository';
 export type { ResourceRepository } from './repositories/ResourceRepository';
@@ -83,6 +90,11 @@ export type { AddContactInfoUseCase } from './use-cases/business-contact-info/Ad
 export type { ListContactInfoUseCase } from './use-cases/business-contact-info/ListContactInfoUseCase';
 export type { RemoveContactInfoUseCase } from './use-cases/business-contact-info/RemoveContactInfoUseCase';
 export type { UpdateContactInfoUseCase } from './use-cases/business-contact-info/UpdateContactInfoUseCase';
+export type { CreateBusinessServiceUseCase } from './use-cases/business-service/CreateBusinessServiceUseCase';
+export type { ListBusinessServicesUseCase } from './use-cases/business-service/ListBusinessServicesUseCase';
+export type { GetBusinessServiceUseCase } from './use-cases/business-service/GetBusinessServiceUseCase';
+export type { UpdateBusinessServiceUseCase } from './use-cases/business-service/UpdateBusinessServiceUseCase';
+export type { DeleteBusinessServiceUseCase } from './use-cases/business-service/DeleteBusinessServiceUseCase';
 export type { CreateReservationUseCase } from './use-cases/reservation/CreateReservationUseCase';
 export type { GetReservationUseCase } from './use-cases/reservation/GetReservationUseCase';
 export type { CreateResourceUseCase } from './use-cases/resource/CreateResourceUseCase';

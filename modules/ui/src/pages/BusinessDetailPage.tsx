@@ -3,11 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useBusiness } from '../hooks/useBusinesses';
 import { useResources } from '../hooks/useResources';
+import { useBusinessServices } from '../hooks/useBusinessServices';
 import { useCreateReservation } from '../hooks/useReservations';
 import { useAuthStore } from '../state/authStore';
 import { SlotGrid } from '../components/booking/SlotGrid';
 import { RequestSummary } from '../components/booking/RequestSummary';
-import type { Resource } from '@domain';
+import type { Resource, BusinessService } from '@domain';
 import { RESOURCE_TYPE_LABELS } from '@domain';
 import styles from './BusinessDetailPage.module.css';
 
@@ -42,8 +43,10 @@ export function BusinessDetailPage() {
 
   const { data: business, isLoading: bLoading, isError: bError } = useBusiness(id!);
   const { data: resourcesPage, isLoading: rLoading } = useResources(id!);
+  const { data: servicesPage } = useBusinessServices(id!);
 
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
+  const [selectedService, setSelectedService] = useState<BusinessService | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [selectedDate] = useState(new Date());
 
@@ -52,7 +55,7 @@ export function BusinessDetailPage() {
   );
 
   const handleConfirm = async (_note: string) => {
-    if (!selectedResource?.id || !selectedSlot || !isAuthenticated) {
+    if (!selectedResource?.id || !selectedService?.id || !selectedSlot || !isAuthenticated) {
       navigate('/');
       return;
     }
@@ -64,6 +67,7 @@ export function BusinessDetailPage() {
 
     const reservation = await createReservation({
       resourceId: selectedResource.id,
+      serviceId: selectedService.id,
       startTime: start.toISOString().replace('Z', ''),
       endTime: end.toISOString().replace('Z', ''),
     });
@@ -90,6 +94,7 @@ export function BusinessDetailPage() {
   }
 
   const resources = resourcesPage?.content ?? [];
+  const services = servicesPage ?? [];
 
   const gradients = [
     'linear-gradient(135deg,#c8b89a 0%,#8a7c63 100%)',
@@ -126,6 +131,29 @@ export function BusinessDetailPage() {
 
       <div className={styles.body}>
         <div className={styles.main}>
+          {services.length > 0 && (
+            <section className={styles.section}>
+              <h3 className={styles.sectionTitle}>{t('businessDetail.services')}</h3>
+              <div className={styles.resourceList}>
+                {services.map((s) => (
+                  <button
+                    key={s.id}
+                    className={[
+                      styles.resourceItem,
+                      selectedService?.id === s.id ? styles.resourceItemActive : '',
+                    ].join(' ')}
+                    onClick={() => setSelectedService(s)}
+                  >
+                    <strong>{s.name}</strong>
+                    <span className="eyebrow">
+                      {s.duration} {s.durationUnit.toLowerCase()}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </section>
+          )}
+
           <section className={styles.section}>
             <h3 className={styles.sectionTitle}>{t('businessDetail.resources')}</h3>
             {resources.length === 0 ? (

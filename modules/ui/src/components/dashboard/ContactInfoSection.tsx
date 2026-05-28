@@ -75,7 +75,9 @@ export function ContactInfoSection({ businessId }: Props) {
     <section className={styles.section}>
       <div className={styles.sectionHead}>
         <h2 className={styles.sectionTitle}>{t('contactInfo.title')}</h2>
-        <span className={styles.sectionMeta}>{t('contactInfo.total', { count: entries.length })}</span>
+        <span className={styles.sectionMeta}>
+          {t('contactInfo.total', { count: entries.length })}
+        </span>
       </div>
 
       <div className={styles.list}>

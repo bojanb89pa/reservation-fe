@@ -5,6 +5,7 @@ import {
   BusinessMembershipApiRepository,
   BusinessContactInfoApiRepository,
   BusinessCategoryApiRepository,
+  BusinessServiceApiRepository,
   ResourceApiRepository,
   ReservationApiRepository,
   ResourceAvailabilityRuleApiRepository,
@@ -36,6 +37,10 @@ import {
   UpdateBusinessCategoryUseCaseImpl,
   DeleteBusinessCategoryUseCaseImpl,
   SetBusinessCategoryUseCaseImpl,
+  CreateBusinessServiceUseCaseImpl,
+  ListBusinessServicesUseCaseImpl,
+  UpdateBusinessServiceUseCaseImpl,
+  DeleteBusinessServiceUseCaseImpl,
 } from '@application';
 
 // Re-export infrastructure primitives consumed only within this module's hooks/state.
@@ -53,6 +58,7 @@ const businessContactInfoRepository = new BusinessContactInfoApiRepository(resou
 const resourceRepository = new ResourceApiRepository(resourceAxiosClient);
 const reservationRepository = new ReservationApiRepository(resourceAxiosClient);
 const availabilityRuleRepository = new ResourceAvailabilityRuleApiRepository(resourceAxiosClient);
+const businessServiceRepository = new BusinessServiceApiRepository(resourceAxiosClient);
 
 // ── Use Cases ─────────────────────────────────────────────────────────────────
 export const registerUseCase = new RegisterUseCaseImpl(authApiRepository);
@@ -116,3 +122,16 @@ export const deleteBusinessCategoryUseCase = new DeleteBusinessCategoryUseCaseIm
   businessCategoryRepository,
 );
 export const setBusinessCategoryUseCase = new SetBusinessCategoryUseCaseImpl(businessRepository);
+
+export const listBusinessServicesUseCase = new ListBusinessServicesUseCaseImpl(
+  businessServiceRepository,
+);
+export const createBusinessServiceUseCase = new CreateBusinessServiceUseCaseImpl(
+  businessServiceRepository,
+);
+export const updateBusinessServiceUseCase = new UpdateBusinessServiceUseCaseImpl(
+  businessServiceRepository,
+);
+export const deleteBusinessServiceUseCase = new DeleteBusinessServiceUseCaseImpl(
+  businessServiceRepository,
+);

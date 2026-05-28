@@ -16,6 +16,7 @@ export class ReservationApiRepository implements ReservationRepository {
       id: null,
       userId: null,
       resourceId,
+      serviceId: command.serviceId,
       startTime: command.startTime,
       endTime: command.endTime,
     };

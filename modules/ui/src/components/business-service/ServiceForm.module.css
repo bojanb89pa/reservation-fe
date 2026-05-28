@@ -1,0 +1,24 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.durationRow {
+  display: flex;
+  gap: 8px;
+}
+
+.durationInput {
+  flex: 2;
+}
+
+.unitSelect {
+  flex: 1;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}

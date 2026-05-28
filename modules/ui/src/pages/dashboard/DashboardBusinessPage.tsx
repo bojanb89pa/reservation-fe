@@ -12,6 +12,7 @@ import { AvailabilityRuleRow } from '../../components/dashboard/AvailabilityRule
 import { MemberSection } from '../../components/dashboard/MemberSection';
 import { ContactInfoSection } from '../../components/dashboard/ContactInfoSection';
 import { BusinessCategorySection } from '../../components/dashboard/BusinessCategorySection';
+import { ServiceSection } from '../../components/business-service/ServiceSection';
 import type { ResourceType, DayOfWeek } from '@domain';
 import { DAYS_ORDERED, DAY_LABELS } from '@domain';
 import styles from './DashboardBusinessPage.module.css';
@@ -136,6 +137,7 @@ export function DashboardBusinessPage() {
       </section>
 
       <BusinessCategorySection business={business} />
+      <ServiceSection businessId={id!} />
       <ContactInfoSection businessId={id!} />
       <MemberSection businessId={id!} role="OWNER" title={t('dashboardBusiness.owners')} />
       <MemberSection businessId={id!} role="EMPLOYEE" title={t('dashboardBusiness.employees')} />

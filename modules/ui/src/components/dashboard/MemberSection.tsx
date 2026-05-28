@@ -43,7 +43,9 @@ export function MemberSection({ businessId, role, title }: Props) {
     <section className={styles.section}>
       <div className={styles.sectionHead}>
         <h2 className={styles.sectionTitle}>{title}</h2>
-        <span className={styles.sectionMeta}>{t('memberSection.total', { count: members.length })}</span>
+        <span className={styles.sectionMeta}>
+          {t('memberSection.total', { count: members.length })}
+        </span>
       </div>
 
       <div className={styles.list}>
