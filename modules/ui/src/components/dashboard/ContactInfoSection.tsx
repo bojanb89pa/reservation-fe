@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { BusinessContactInfo, ContactInfoType } from '@domain';
 import {
   useBusinessContactInfo,
@@ -25,6 +26,7 @@ interface Props {
 }
 
 export function ContactInfoSection({ businessId }: Props) {
+  const { t } = useTranslation();
   const { data: entries = [] } = useBusinessContactInfo(businessId);
   const { mutateAsync: add, isPending: adding, error: addError } = useAddContactInfo(businessId);
   const { mutateAsync: remove, isPending: removing } = useRemoveContactInfo(businessId);
@@ -72,12 +74,12 @@ export function ContactInfoSection({ businessId }: Props) {
   return (
     <section className={styles.section}>
       <div className={styles.sectionHead}>
-        <h2 className={styles.sectionTitle}>Contact Info</h2>
-        <span className={styles.sectionMeta}>{entries.length} total</span>
+        <h2 className={styles.sectionTitle}>{t('contactInfo.title')}</h2>
+        <span className={styles.sectionMeta}>{t('contactInfo.total', { count: entries.length })}</span>
       </div>
 
       <div className={styles.list}>
-        {entries.length === 0 && <div className={styles.empty}>No contact info yet.</div>}
+        {entries.length === 0 && <div className={styles.empty}>{t('contactInfo.noEntries')}</div>}
         {entries.map((entry) =>
           editingId === entry.id ? (
             <div key={entry.id} className={styles.editRow}>
@@ -86,9 +88,9 @@ export function ContactInfoSection({ businessId }: Props) {
                 value={editType}
                 onChange={(e) => setEditType(e.target.value as ContactInfoType)}
               >
-                {CONTACT_INFO_TYPES.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
+                {CONTACT_INFO_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
                   </option>
                 ))}
               </select>
@@ -99,7 +101,7 @@ export function ContactInfoSection({ businessId }: Props) {
               />
               <input
                 className="form-input"
-                placeholder="Label (optional)"
+                placeholder={t('contactInfo.labelPlaceholder')}
                 value={editLabel}
                 onChange={(e) => setEditLabel(e.target.value)}
               />
@@ -109,10 +111,10 @@ export function ContactInfoSection({ businessId }: Props) {
                   onClick={() => handleSave(entry.id)}
                   disabled={updating}
                 >
-                  Save
+                  {t('contactInfo.save')}
                 </button>
                 <button className="btn btn-ghost btn-sm" onClick={() => setEditingId(null)}>
-                  Cancel
+                  {t('contactInfo.cancel')}
                 </button>
               </div>
             </div>
@@ -123,15 +125,15 @@ export function ContactInfoSection({ businessId }: Props) {
               <span className={styles.label}>{entry.label ?? '—'}</span>
               <div className={styles.actions}>
                 <button className="btn btn-ghost btn-sm" onClick={() => startEdit(entry)}>
-                  Edit
+                  {t('contactInfo.edit')}
                 </button>
                 <button
                   className="btn btn-ghost btn-sm"
                   onClick={() => remove(entry.id)}
                   disabled={removing || !canRemove}
-                  title={!canRemove ? 'Cannot remove the last contact info entry' : undefined}
+                  title={!canRemove ? t('contactInfo.cannotRemoveLast') : undefined}
                 >
-                  Remove
+                  {t('contactInfo.remove')}
                 </button>
               </div>
             </div>
@@ -145,31 +147,31 @@ export function ContactInfoSection({ businessId }: Props) {
           value={addType}
           onChange={(e) => setAddType(e.target.value as ContactInfoType)}
         >
-          {CONTACT_INFO_TYPES.map((t) => (
-            <option key={t} value={t}>
-              {t}
+          {CONTACT_INFO_TYPES.map((type) => (
+            <option key={type} value={type}>
+              {type}
             </option>
           ))}
         </select>
         <input
           className={`form-input ${styles.formInput}`}
-          placeholder="Value (e.g. +381601234567)"
+          placeholder={t('contactInfo.valuePlaceholder')}
           value={addValue}
           onChange={(e) => setAddValue(e.target.value)}
         />
         <input
           className={`form-input ${styles.formInput}`}
-          placeholder="Label (optional)"
+          placeholder={t('contactInfo.labelPlaceholder')}
           value={addLabel}
           onChange={(e) => setAddLabel(e.target.value)}
         />
         <button type="submit" className="btn btn-primary" disabled={adding}>
-          + Add contact info
+          {t('contactInfo.addButton')}
         </button>
       </form>
       {addError && (
         <div className={styles.error}>
-          {addError instanceof Error ? addError.message : 'Failed to add contact info.'}
+          {addError instanceof Error ? addError.message : t('contactInfo.errorAdd')}
         </div>
       )}
     </section>

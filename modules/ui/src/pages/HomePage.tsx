@@ -1,25 +1,23 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import type { Translation } from '../i18n/locales/en';
 import { useSearchBusinesses } from '../hooks/useBusinesses';
 import { BusinessCard } from '../components/business/BusinessCard';
 import styles from './HomePage.module.css';
 
-const RESOURCE_TYPES = [
-  {
-    id: 'EMPLOYEE',
-    label: 'Salons & Staff',
-    count: '1,309 nearby',
-    color: '#4F46E5',
-    bg: '#EEF2FF',
-  },
-  { id: 'ROOM', label: 'Rooms', count: '412 nearby', color: '#FF6F61', bg: '#FFF1EF' },
-  { id: 'APARTMENT', label: 'Apartments', count: '876 nearby', color: '#00C2A8', bg: '#E6FAF8' },
-  { id: 'TABLE', label: 'Tables', count: '289 nearby', color: '#FFC83D', bg: '#FFFBEB' },
-  { id: 'COURT', label: 'Courts', count: '98 nearby', color: '#4F46E5', bg: '#EEF2FF' },
-  { id: 'VEHICLE', label: 'Vehicles', count: '204 nearby', color: '#FF6F61', bg: '#FFF1EF' },
+type ResourceTypeId = keyof Translation['home']['resourceTypes'];
+
+const RESOURCE_TYPE_IDS: ResourceTypeId[] = [
+  'EMPLOYEE',
+  'ROOM',
+  'APARTMENT',
+  'TABLE',
+  'COURT',
+  'VEHICLE',
 ];
 
-const ICONS: Record<string, string> = {
+const ICONS: Record<ResourceTypeId, string> = {
   EMPLOYEE: '✂',
   ROOM: '🚪',
   APARTMENT: '🏠',
@@ -28,8 +26,18 @@ const ICONS: Record<string, string> = {
   VEHICLE: '🚗',
 };
 
+const COLORS: Record<ResourceTypeId, { color: string; bg: string }> = {
+  EMPLOYEE: { color: '#4F46E5', bg: '#EEF2FF' },
+  ROOM: { color: '#FF6F61', bg: '#FFF1EF' },
+  APARTMENT: { color: '#00C2A8', bg: '#E6FAF8' },
+  TABLE: { color: '#FFC83D', bg: '#FFFBEB' },
+  COURT: { color: '#4F46E5', bg: '#EEF2FF' },
+  VEHICLE: { color: '#FF6F61', bg: '#FFF1EF' },
+};
+
 export function HomePage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [what, setWhat] = useState('');
   const [where, setWhere] = useState('');
   const { data: businesses, isLoading } = useSearchBusinesses('', 0, 6);
@@ -48,22 +56,22 @@ export function HomePage() {
         <div className={styles.blob2} />
         <div className={styles.blob3} />
         <div className={styles.heroInner}>
-          <div className="eyebrow-rule">Find · hold · book</div>
+          <div className="eyebrow-rule">{t('home.eyebrow')}</div>
           <h1 className={styles.heroTitle}>
-            The smartest way
-            <br />
-            to book anything.
+            {t('home.heroTitle').split('\n').map((line, i) => (
+              <span key={i}>
+                {line}
+                {i === 0 && <br />}
+              </span>
+            ))}
           </h1>
-          <p className={styles.heroSub}>
-            Reserva connects you with local businesses near you — by the slot or the hour. No
-            payment until they say yes.
-          </p>
+          <p className={styles.heroSub}>{t('home.heroSub')}</p>
 
           <div className={styles.search}>
             <div className={styles.searchField}>
-              <span className={styles.searchLabel}>What</span>
+              <span className={styles.searchLabel}>{t('home.searchWhat')}</span>
               <input
-                placeholder="Salon, dentist, studio…"
+                placeholder={t('home.searchWhatPlaceholder')}
                 value={what}
                 onChange={(e) => setWhat(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -71,9 +79,9 @@ export function HomePage() {
             </div>
             <div className={styles.searchDivider} />
             <div className={styles.searchField}>
-              <span className={styles.searchLabel}>Where</span>
+              <span className={styles.searchLabel}>{t('home.searchWhere')}</span>
               <input
-                placeholder="City or neighbourhood"
+                placeholder={t('home.searchWherePlaceholder')}
                 value={where}
                 onChange={(e) => setWhere(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -87,28 +95,31 @@ export function HomePage() {
       </section>
 
       <section className={styles.section}>
-        <div className="eyebrow-rule">What kind of place?</div>
-        <h2 className="section-title">Pick a category to begin.</h2>
+        <div className="eyebrow-rule">{t('home.categoryEyebrow')}</div>
+        <h2 className="section-title">{t('home.categoryTitle')}</h2>
         <div className={styles.categoryGrid}>
-          {RESOURCE_TYPES.map((rt) => (
-            <button
-              key={rt.id}
-              className={styles.categoryCard}
-              onClick={() => navigate(`/businesses?type=${rt.id}`)}
-            >
-              <div className={styles.categoryIcon} style={{ background: rt.bg, color: rt.color }}>
-                {ICONS[rt.id]}
-              </div>
-              <span className={styles.categoryName}>{rt.label}</span>
-              <span className={styles.categoryCount}>{rt.count}</span>
-            </button>
-          ))}
+          {RESOURCE_TYPE_IDS.map((id) => {
+            const { color, bg } = COLORS[id];
+            return (
+              <button
+                key={id}
+                className={styles.categoryCard}
+                onClick={() => navigate(`/businesses?type=${id}`)}
+              >
+                <div className={styles.categoryIcon} style={{ background: bg, color }}>
+                  {ICONS[id]}
+                </div>
+                <span className={styles.categoryName}>{t(`home.resourceTypes.${id}.label`)}</span>
+                <span className={styles.categoryCount}>{t(`home.resourceTypes.${id}.count`)}</span>
+              </button>
+            );
+          })}
         </div>
       </section>
 
       <section className={styles.section} style={{ paddingTop: 0 }}>
-        <div className="eyebrow-rule">Browse all</div>
-        <h2 className="section-title">Businesses near you.</h2>
+        <div className="eyebrow-rule">{t('home.browseEyebrow')}</div>
+        <h2 className="section-title">{t('home.browseTitle')}</h2>
         {isLoading ? (
           <div className="page-loading">
             <div className="spinner" />
@@ -120,9 +131,9 @@ export function HomePage() {
             ))}
             {!businesses?.content?.length && (
               <p style={{ color: 'var(--ink-500)', fontSize: 'var(--text-sm)' }}>
-                No businesses yet. Be the first to&nbsp;
+                {t('home.noBusinessPrefix')}
                 <a href="/dashboard" style={{ color: 'var(--primary)' }}>
-                  list yours.
+                  {t('home.noBusinessLink')}
                 </a>
               </p>
             )}
@@ -131,7 +142,7 @@ export function HomePage() {
         {businesses && businesses.totalPages > 1 && (
           <div style={{ marginTop: 28 }}>
             <button className="btn btn-ghost" onClick={() => navigate('/businesses')}>
-              See all businesses →
+              {t('home.seeAll')}
             </button>
           </div>
         )}

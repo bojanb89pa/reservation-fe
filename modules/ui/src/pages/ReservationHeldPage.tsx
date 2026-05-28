@@ -1,4 +1,5 @@
 import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
 import type { Reservation } from '@domain';
 import type { Business } from '@domain';
 import type { Resource } from '@domain';
@@ -23,13 +24,14 @@ function formatDateTime(iso: string) {
 export function ReservationHeldPage() {
   const { state } = useLocation() as { state: HeldState | null };
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   if (!state) {
     return (
       <div className={styles.page}>
-        <p style={{ color: 'var(--ink-500)' }}>Reservation not found.</p>
+        <p style={{ color: 'var(--ink-500)' }}>{t('reservationHeld.notFound')}</p>
         <Link to="/" className="btn btn-primary" style={{ marginTop: 16 }}>
-          Back to home
+          {t('reservationHeld.backToHome')}
         </Link>
       </div>
     );
@@ -40,31 +42,34 @@ export function ReservationHeldPage() {
 
   return (
     <div className={styles.page}>
-      <div className="eyebrow-rule">You're held</div>
-      <h1 className={styles.title}>We've sent the provider a note.</h1>
+      <div className="eyebrow-rule">{t('reservationHeld.eyebrow')}</div>
+      <h1 className={styles.title}>{t('reservationHeld.title')}</h1>
       <p className={styles.subtitle}>
-        Your slot is held while <strong>{business.name}</strong> confirms. We'll let you know the
-        moment they say yes — usually within 14 minutes.
+        <Trans
+          i18nKey="reservationHeld.subtitle"
+          values={{ business: business.name }}
+          components={{ bold: <strong /> }}
+        />
       </p>
 
       <div className={styles.card}>
         <dl>
           <div className={styles.row}>
-            <dt>Where</dt>
+            <dt>{t('reservationHeld.where')}</dt>
             <dd>
               {business.name} — {resource.name}
             </dd>
           </div>
           <div className={styles.row}>
-            <dt>Start</dt>
+            <dt>{t('reservationHeld.start')}</dt>
             <dd className="mono">{formatDateTime(reservation.startTime)}</dd>
           </div>
           <div className={styles.row}>
-            <dt>End</dt>
+            <dt>{t('reservationHeld.end')}</dt>
             <dd className="mono">{formatDateTime(reservation.endTime)}</dd>
           </div>
           <div className={styles.row}>
-            <dt>Confirmation</dt>
+            <dt>{t('reservationHeld.confirmation')}</dt>
             <dd className="mono">{confCode}</dd>
           </div>
         </dl>
@@ -72,10 +77,10 @@ export function ReservationHeldPage() {
 
       <div className={styles.actions}>
         <button className="btn btn-secondary" onClick={() => navigate('/')}>
-          Back to home
+          {t('reservationHeld.backToHome')}
         </button>
         <button className="btn btn-ghost" onClick={() => navigate('/businesses')}>
-          Browse more
+          {t('reservationHeld.browseMore')}
         </button>
       </div>
     </div>

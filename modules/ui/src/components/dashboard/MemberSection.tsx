@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { BusinessMemberRole } from '@domain';
 import {
   useBusinessMembers,
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function MemberSection({ businessId, role, title }: Props) {
+  const { t } = useTranslation();
   const { data: members = [] } = useBusinessMembers(businessId, role);
   const {
     mutateAsync: addMember,
@@ -27,6 +29,8 @@ export function MemberSection({ businessId, role, title }: Props) {
 
   const [userId, setUserId] = useState('');
 
+  const roleKey = role.toLowerCase() as 'owner' | 'employee';
+
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = userId.trim();
@@ -39,11 +43,13 @@ export function MemberSection({ businessId, role, title }: Props) {
     <section className={styles.section}>
       <div className={styles.sectionHead}>
         <h2 className={styles.sectionTitle}>{title}</h2>
-        <span className={styles.sectionMeta}>{members.length} total</span>
+        <span className={styles.sectionMeta}>{t('memberSection.total', { count: members.length })}</span>
       </div>
 
       <div className={styles.list}>
-        {members.length === 0 && <div className={styles.empty}>No {title.toLowerCase()} yet.</div>}
+        {members.length === 0 && (
+          <div className={styles.empty}>{t(`memberSection.${roleKey}.empty`)}</div>
+        )}
         {members.map((m) => (
           <div key={m.id} className={styles.row}>
             <span className={styles.userId}>{m.userId}</span>
@@ -52,7 +58,7 @@ export function MemberSection({ businessId, role, title }: Props) {
               onClick={() => removeMember(m.userId)}
               disabled={removing}
             >
-              Remove
+              {t('memberSection.remove')}
             </button>
           </div>
         ))}
@@ -61,17 +67,17 @@ export function MemberSection({ businessId, role, title }: Props) {
       <form onSubmit={handleAdd} className={styles.addForm}>
         <input
           className={`form-input ${styles.formInput}`}
-          placeholder="User ID (UUID)"
+          placeholder={t('memberSection.userIdPlaceholder')}
           value={userId}
           onChange={(e) => setUserId(e.target.value)}
         />
         <button type="submit" className="btn btn-primary" disabled={adding}>
-          + Add {title.slice(0, -1).toLowerCase()}
+          {t(`memberSection.${roleKey}.addButton`)}
         </button>
       </form>
       {addError && (
         <div className={styles.error}>
-          {addError instanceof Error ? addError.message : 'Failed to add member.'}
+          {addError instanceof Error ? addError.message : t('memberSection.errorAdd')}
         </div>
       )}
     </section>

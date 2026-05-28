@@ -106,3 +106,36 @@
   color: var(--primary);
   background: var(--primary-light);
 }
+
+.langSwitch {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 4px;
+  padding-left: 8px;
+  border-left: 1px solid var(--ink-200);
+}
+
+.langBtn {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  font-family: var(--font-ui);
+  color: var(--ink-500);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 7px;
+  border-radius: 6px;
+  transition: background var(--dur-fast), color var(--dur-fast);
+}
+
+.langBtn:hover {
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+.langBtnActive {
+  color: var(--primary);
+  background: var(--primary-light);
+}

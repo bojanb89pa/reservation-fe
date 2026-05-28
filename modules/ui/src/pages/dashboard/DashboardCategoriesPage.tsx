@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { BusinessCategory } from '@domain';
 import {
   useBusinessCategories,
@@ -22,6 +23,7 @@ export function DashboardCategoriesPage() {
   const { mutateAsync: create, isPending: creating } = useCreateBusinessCategory();
   const { mutateAsync: update, isPending: updating } = useUpdateBusinessCategory();
   const { mutateAsync: remove, isPending: deleting } = useDeleteBusinessCategory();
+  const { t } = useTranslation();
 
   const [mode, setMode] = useState<Mode>({ type: 'idle' });
   const [formError, setFormError] = useState<string | null>(null);
@@ -43,7 +45,7 @@ export function DashboardCategoriesPage() {
       }
       reset();
     } catch (err: unknown) {
-      setFormError(err instanceof Error ? err.message : 'Failed to save category');
+      setFormError(err instanceof Error ? err.message : t('dashboardCategories.errorSave'));
     }
   };
 
@@ -54,7 +56,7 @@ export function DashboardCategoriesPage() {
       await remove(mode.category.id);
       reset();
     } catch (err: unknown) {
-      setDeleteError(err instanceof Error ? err.message : 'Failed to delete category');
+      setDeleteError(err instanceof Error ? err.message : t('dashboardCategories.errorDelete'));
     }
   };
 
@@ -62,12 +64,12 @@ export function DashboardCategoriesPage() {
     <div>
       <div className={styles.topbar}>
         <div>
-          <div className={styles.eyebrow}>Dashboard</div>
-          <h1 className={styles.pageTitle}>Business categories</h1>
+          <div className={styles.eyebrow}>{t('dashboard.eyebrow')}</div>
+          <h1 className={styles.pageTitle}>{t('dashboardCategories.title')}</h1>
         </div>
         {mode.type === 'idle' && (
           <button className="btn btn-primary" onClick={() => setMode({ type: 'create' })}>
-            + New category
+            {t('dashboardCategories.newCategory')}
           </button>
         )}
       </div>
@@ -75,7 +77,9 @@ export function DashboardCategoriesPage() {
       {(mode.type === 'create' || mode.type === 'edit') && (
         <div className={styles.formWrap}>
           <h3 className={styles.formTitle}>
-            {mode.type === 'create' ? 'Add a category' : 'Edit category'}
+            {mode.type === 'create'
+              ? t('dashboardCategories.addCategory')
+              : t('dashboardCategories.editCategory')}
           </h3>
           <CategoryForm
             categories={categories}
@@ -90,8 +94,10 @@ export function DashboardCategoriesPage() {
 
       <section className={styles.section}>
         <div className={styles.sectionHead}>
-          <h2 className={styles.sectionTitle}>All categories</h2>
-          <span className={styles.sectionMeta}>{categories.length} total</span>
+          <h2 className={styles.sectionTitle}>{t('dashboardCategories.allCategories')}</h2>
+          <span className={styles.sectionMeta}>
+            {t('dashboardCategories.total', { count: categories.length })}
+          </span>
         </div>
 
         {isLoading && (

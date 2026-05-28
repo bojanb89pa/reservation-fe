@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import type { Business } from '@domain';
 import styles from './BusinessCard.module.css';
 
@@ -21,6 +22,8 @@ function getGradient(id: string | null): string {
 }
 
 export function BusinessCard({ business }: Props) {
+  const { t } = useTranslation();
+
   return (
     <Link to={`/businesses/${business.id}`} className={styles.card}>
       <div className={styles.image} style={{ background: getGradient(business.id) }} />
@@ -28,12 +31,12 @@ export function BusinessCard({ business }: Props) {
         <div className={styles.meta}>
           <span className="badge badge-avail">
             <span className="dot" />
-            Available
+            {t('businessCard.available')}
           </span>
         </div>
         <h3 className={styles.title}>{business.name}</h3>
         <div className={styles.footer}>
-          <span className={styles.cta}>View resources →</span>
+          <span className={styles.cta}>{t('businessCard.viewResources')}</span>
         </div>
       </div>
     </Link>

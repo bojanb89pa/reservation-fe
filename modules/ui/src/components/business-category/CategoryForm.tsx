@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { BusinessCategory } from '@domain';
 import styles from './CategoryForm.module.css';
 
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function CategoryForm({ categories, initial, onSave, onCancel, isPending, error }: Props) {
+  const { t } = useTranslation();
   const [name, setName] = useState(initial?.name ?? '');
   const [parentId, setParentId] = useState<string>(initial?.parentId ?? '');
 
@@ -32,10 +34,10 @@ export function CategoryForm({ categories, initial, onSave, onCancel, isPending,
     <form onSubmit={handleSubmit} className={styles.form}>
       {error && <div className="error-box">{error}</div>}
       <div className="form-field">
-        <label className="form-label">Name</label>
+        <label className="form-label">{t('categoryForm.nameLabel')}</label>
         <input
           className="form-input"
-          placeholder="e.g. Beauty"
+          placeholder={t('categoryForm.namePlaceholder')}
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
@@ -43,13 +45,13 @@ export function CategoryForm({ categories, initial, onSave, onCancel, isPending,
         />
       </div>
       <div className="form-field">
-        <label className="form-label">Parent category</label>
+        <label className="form-label">{t('categoryForm.parentLabel')}</label>
         <select
           className="form-input"
           value={parentId}
           onChange={(e) => setParentId(e.target.value)}
         >
-          <option value="">— Top-level —</option>
+          <option value="">{t('categoryForm.topLevel')}</option>
           {topLevel.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
@@ -64,10 +66,14 @@ export function CategoryForm({ categories, initial, onSave, onCancel, isPending,
           onClick={onCancel}
           disabled={isPending}
         >
-          Cancel
+          {t('categoryForm.cancel')}
         </button>
         <button type="submit" className="btn btn-primary btn-sm" disabled={isPending}>
-          {isPending ? 'Saving…' : initial ? 'Save changes' : 'Create category'}
+          {isPending
+            ? t('categoryForm.saving')
+            : initial
+              ? t('categoryForm.saveChanges')
+              : t('categoryForm.createCategory')}
         </button>
       </div>
     </form>

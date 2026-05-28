@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { BusinessCategory } from '@domain';
 import styles from './CategoryTree.module.css';
 
@@ -37,11 +38,15 @@ function CategoryRow({
   depth,
   onEdit,
   onDelete,
+  editLabel,
+  deleteLabel,
 }: {
   node: CategoryNode;
   depth: number;
   onEdit: (c: BusinessCategory) => void;
   onDelete: (c: BusinessCategory) => void;
+  editLabel: string;
+  deleteLabel: string;
 }) {
   return (
     <>
@@ -52,10 +57,10 @@ function CategoryRow({
         </div>
         <div className={styles.rowActions}>
           <button className="btn btn-ghost btn-sm" onClick={() => onEdit(node)}>
-            Edit
+            {editLabel}
           </button>
           <button className="btn btn-ghost btn-sm" onClick={() => onDelete(node)}>
-            Delete
+            {deleteLabel}
           </button>
         </div>
       </div>
@@ -66,6 +71,8 @@ function CategoryRow({
           depth={depth + 1}
           onEdit={onEdit}
           onDelete={onDelete}
+          editLabel={editLabel}
+          deleteLabel={deleteLabel}
         />
       ))}
     </>
@@ -73,16 +80,25 @@ function CategoryRow({
 }
 
 export function CategoryTree({ categories, onEdit, onDelete }: Props) {
+  const { t } = useTranslation();
   const tree = buildTree(categories);
 
   if (tree.length === 0) {
-    return <div className={styles.empty}>No categories yet. Create your first one above.</div>;
+    return <div className={styles.empty}>{t('categoryTree.empty')}</div>;
   }
 
   return (
     <div className={styles.tree}>
       {tree.map((node) => (
-        <CategoryRow key={node.id} node={node} depth={0} onEdit={onEdit} onDelete={onDelete} />
+        <CategoryRow
+          key={node.id}
+          node={node}
+          depth={0}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          editLabel={t('categoryTree.edit')}
+          deleteLabel={t('categoryTree.delete')}
+        />
       ))}
     </div>
   );

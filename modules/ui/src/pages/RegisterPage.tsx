@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
 import { registerUseCase, env } from '../app/container';
 import styles from './AuthPage.module.css';
 
 export function RegisterPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
@@ -26,7 +28,7 @@ export function RegisterPage() {
       await registerUseCase.execute(form);
       setSuccess(true);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Registration failed');
+      setError(err instanceof Error ? err.message : t('auth.registrationFailed'));
     } finally {
       setLoading(false);
     }
@@ -36,18 +38,21 @@ export function RegisterPage() {
     return (
       <div className={styles.page}>
         <div className={styles.card}>
-          <div className="eyebrow-rule">Almost there</div>
-          <h1 className={styles.title}>Check your inbox.</h1>
+          <div className="eyebrow-rule">{t('auth.almostThere')}</div>
+          <h1 className={styles.title}>{t('auth.checkInbox')}</h1>
           <p style={{ color: 'var(--ink-700)', fontSize: 'var(--text-md)', lineHeight: 1.6 }}>
-            We've sent an activation link to <strong>{form.email}</strong>. Click it to enable your
-            account, then sign in.
+            <Trans
+              i18nKey="auth.activationSent"
+              values={{ email: form.email }}
+              components={{ bold: <strong /> }}
+            />
           </p>
           <button
             className="btn btn-primary btn-block"
             style={{ marginTop: 24 }}
             onClick={() => navigate('/')}
           >
-            Back to home
+            {t('auth.backToHome')}
           </button>
         </div>
       </div>
@@ -57,8 +62,8 @@ export function RegisterPage() {
   return (
     <div className={styles.page}>
       <div className={styles.card}>
-        <div className="eyebrow-rule">Create account</div>
-        <h1 className={styles.title}>Join Reserva.</h1>
+        <div className="eyebrow-rule">{t('auth.createAccount')}</div>
+        <h1 className={styles.title}>{t('auth.joinReserva')}</h1>
 
         {error && (
           <div className="error-box" style={{ marginBottom: 16 }}>
@@ -69,7 +74,7 @@ export function RegisterPage() {
         <form onSubmit={handleSubmit} className={styles.form}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <div className="form-field">
-              <label className="form-label">First name</label>
+              <label className="form-label">{t('auth.firstName')}</label>
               <input
                 name="firstName"
                 required
@@ -79,7 +84,7 @@ export function RegisterPage() {
               />
             </div>
             <div className="form-field">
-              <label className="form-label">Last name</label>
+              <label className="form-label">{t('auth.lastName')}</label>
               <input
                 name="lastName"
                 required
@@ -90,7 +95,7 @@ export function RegisterPage() {
             </div>
           </div>
           <div className="form-field">
-            <label className="form-label">Email</label>
+            <label className="form-label">{t('auth.email')}</label>
             <input
               name="email"
               type="email"
@@ -101,7 +106,7 @@ export function RegisterPage() {
             />
           </div>
           <div className="form-field">
-            <label className="form-label">Password</label>
+            <label className="form-label">{t('auth.password')}</label>
             <input
               name="password"
               type="password"
@@ -113,23 +118,23 @@ export function RegisterPage() {
             />
           </div>
           <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
-            {loading ? 'Creating account…' : 'Create account'}
+            {loading ? t('auth.creatingAccount') : t('auth.createAccount')}
           </button>
         </form>
 
         <p className={styles.footer}>
-          Already have an account?{' '}
+          {t('auth.alreadyHaveAccount')}{' '}
           <a href={`${env.authBaseUrl}/login`} style={{ color: 'var(--primary)' }}>
-            Sign in
+            {t('auth.signIn')}
           </a>
         </p>
 
-        <div className={styles.divider}>or</div>
+        <div className={styles.divider}>{t('auth.or')}</div>
 
         <a
           href={`${env.authBaseUrl}/oauth2/authorization/google`}
           className={styles.btnGoogle}
-          title="Sign up with Google"
+          title={t('auth.signUpGoogle')}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

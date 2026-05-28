@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { ResourceAvailabilityRule } from '@domain';
 import { DAY_LABELS } from '@domain';
 import styles from './AvailabilityRuleRow.module.css';
@@ -14,6 +15,7 @@ function timeToPercent(time: string): number {
 }
 
 export function AvailabilityRuleRow({ rule, onDelete, isDeleting }: Props) {
+  const { t } = useTranslation();
   const startPct = timeToPercent(rule.startTime);
   const endPct = timeToPercent(rule.endTime);
   const widthPct = endPct - startPct;
@@ -33,7 +35,7 @@ export function AvailabilityRuleRow({ rule, onDelete, isDeleting }: Props) {
         onClick={() => rule.id && onDelete(rule.id)}
         disabled={isDeleting}
       >
-        Delete
+        {t('categoryTree.delete')}
       </button>
     </div>
   );

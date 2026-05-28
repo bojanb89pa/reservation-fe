@@ -1,18 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useSearchBusinesses } from '../hooks/useBusinesses';
 import { BusinessCard } from '../components/business/BusinessCard';
 import styles from './BusinessListPage.module.css';
-
-const RESOURCE_TYPES = [
-  { id: '', label: 'All' },
-  { id: 'EMPLOYEE', label: 'Salons & Staff' },
-  { id: 'ROOM', label: 'Rooms' },
-  { id: 'APARTMENT', label: 'Apartments' },
-  { id: 'TABLE', label: 'Tables' },
-  { id: 'COURT', label: 'Courts' },
-  { id: 'VEHICLE', label: 'Vehicles' },
-];
 
 export function BusinessListPage() {
   const [searchParams] = useSearchParams();
@@ -21,6 +12,17 @@ export function BusinessListPage() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const activeType = searchParams.get('type') ?? '';
+  const { t } = useTranslation();
+
+  const RESOURCE_TYPES = [
+    { id: '', label: t('businessList.filterAll') },
+    { id: 'EMPLOYEE', label: t('home.resourceTypes.EMPLOYEE.label') },
+    { id: 'ROOM', label: t('home.resourceTypes.ROOM.label') },
+    { id: 'APARTMENT', label: t('home.resourceTypes.APARTMENT.label') },
+    { id: 'TABLE', label: t('home.resourceTypes.TABLE.label') },
+    { id: 'COURT', label: t('home.resourceTypes.COURT.label') },
+    { id: 'VEHICLE', label: t('home.resourceTypes.VEHICLE.label') },
+  ];
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -37,16 +39,18 @@ export function BusinessListPage() {
 
   return (
     <div className={styles.page}>
-      <div className="eyebrow-rule">Browse</div>
+      <div className="eyebrow-rule">{t('businessList.eyebrow')}</div>
       <h1 className="section-title">
-        {data ? `${data.totalElements} businesses near you.` : 'Businesses near you.'}
+        {data
+          ? t('businessList.titleWithCount', { count: data.totalElements })
+          : t('businessList.titleNoCount')}
       </h1>
 
       <div className={styles.searchRow}>
         <input
           type="text"
           className={styles.searchInput}
-          placeholder="Search businesses…"
+          placeholder={t('businessList.searchPlaceholder')}
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
         />
@@ -62,7 +66,11 @@ export function BusinessListPage() {
             {rt.label}
           </a>
         ))}
-        {data && <span className={styles.filterCount}>{data.totalElements} results</span>}
+        {data && (
+          <span className={styles.filterCount}>
+            {t('businessList.resultsCount', { count: data.totalElements })}
+          </span>
+        )}
       </div>
 
       {isLoading && (
@@ -71,7 +79,7 @@ export function BusinessListPage() {
         </div>
       )}
 
-      {isError && <div className="error-box">Failed to load businesses. Please try again.</div>}
+      {isError && <div className="error-box">{t('businessList.error')}</div>}
 
       {data && (
         <>
@@ -82,7 +90,7 @@ export function BusinessListPage() {
           </div>
 
           {data.content.length === 0 && (
-            <p style={{ color: 'var(--ink-500)' }}>No businesses found.</p>
+            <p style={{ color: 'var(--ink-500)' }}>{t('businessList.noResults')}</p>
           )}
 
           {data.totalPages > 1 && (
@@ -92,20 +100,20 @@ export function BusinessListPage() {
                 disabled={page === 0}
                 onClick={() => setPage((p) => p - 1)}
               >
-                ← Previous
+                {t('businessList.prevPage')}
               </button>
               <span
                 className="mono"
                 style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-500)' }}
               >
-                Page {page + 1} of {data.totalPages}
+                {t('businessList.pageOf', { page: page + 1, total: data.totalPages })}
               </span>
               <button
                 className="btn btn-ghost btn-sm"
                 disabled={page + 1 >= data.totalPages}
                 onClick={() => setPage((p) => p + 1)}
               >
-                Next →
+                {t('businessList.nextPage')}
               </button>
             </div>
           )}

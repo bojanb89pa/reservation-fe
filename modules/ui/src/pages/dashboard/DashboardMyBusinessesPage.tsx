@@ -1,22 +1,24 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useMyBusinesses } from '../../hooks/useBusinesses';
 import styles from './DashboardMyBusinessesPage.module.css';
 
 export function DashboardMyBusinessesPage() {
   const { data, isLoading } = useMyBusinesses(0, 20);
+  const { t } = useTranslation();
 
   return (
     <div>
       <div className={styles.topbar}>
         <div>
-          <div className={styles.eyebrow}>Dashboard</div>
-          <h1 className={styles.pageTitle}>My businesses</h1>
+          <div className={styles.eyebrow}>{t('dashboard.eyebrow')}</div>
+          <h1 className={styles.pageTitle}>{t('dashboardMyBusinesses.title')}</h1>
         </div>
       </div>
 
       <section className={styles.section}>
         <div className={styles.sectionHead}>
-          <h2 className={styles.sectionTitle}>Businesses you belong to</h2>
+          <h2 className={styles.sectionTitle}>{t('dashboardMyBusinesses.belongTo')}</h2>
           <span className={styles.sectionMeta}>{data?.totalElements ?? 0} total</span>
         </div>
 
@@ -35,12 +37,12 @@ export function DashboardMyBusinessesPage() {
                   {b.id?.slice(0, 8)}…
                 </span>
               </div>
-              <span className={styles.bizArrow}>Manage →</span>
+              <span className={styles.bizArrow}>{t('dashboardMyBusinesses.manage')}</span>
             </Link>
           ))}
 
           {!isLoading && data?.content.length === 0 && (
-            <div className={styles.emptyState}>You are not a member of any business yet.</div>
+            <div className={styles.emptyState}>{t('dashboardMyBusinesses.notMember')}</div>
           )}
         </div>
       </section>

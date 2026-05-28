@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useBusiness } from '../../hooks/useBusinesses';
 import { useResources, useCreateResource } from '../../hooks/useResources';
 import {
@@ -26,16 +27,15 @@ const RESOURCE_TYPES: ResourceType[] = [
 
 export function DashboardBusinessPage() {
   const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation();
   const { data: business, isLoading: bLoading } = useBusiness(id!);
   const { data: resourcesPage } = useResources(id!);
   const resources = resourcesPage?.content ?? [];
 
-  // Add resource form
   const [resourceName, setResourceName] = useState('');
   const [resourceType, setResourceType] = useState<ResourceType>('EMPLOYEE');
   const { mutateAsync: createResource, isPending: creatingResource } = useCreateResource(id!);
 
-  // Selected resource for availability rules
   const [activeResourceId, setActiveResourceId] = useState<string | null>(null);
   const { data: rules } = useAvailabilityRules(activeResourceId ?? '');
   const { mutateAsync: createRule, isPending: creatingRule } = useCreateAvailabilityRule(
@@ -45,7 +45,6 @@ export function DashboardBusinessPage() {
     activeResourceId ?? '',
   );
 
-  // Add rule form
   const [ruleDay, setRuleDay] = useState<DayOfWeek>('MONDAY');
   const [ruleStart, setRuleStart] = useState('09:00');
   const [ruleEnd, setRuleEnd] = useState('17:00');
@@ -69,24 +68,25 @@ export function DashboardBusinessPage() {
         <div className="spinner" />
       </div>
     );
-  if (!business) return <div className="error-box">Business not found.</div>;
+  if (!business) return <div className="error-box">{t('dashboardBusiness.notFound')}</div>;
 
   return (
     <div>
       <div className={styles.topbar}>
         <div>
           <Link to="/dashboard/businesses" className={styles.breadcrumb}>
-            ← Businesses
+            {t('dashboardBusiness.backToBusinesses')}
           </Link>
           <h1 className={styles.pageTitle}>{business.name}</h1>
         </div>
       </div>
 
-      {/* Resources section */}
       <section className={styles.section}>
         <div className={styles.sectionHead}>
-          <h2 className={styles.sectionTitle}>Resources</h2>
-          <span className={styles.sectionMeta}>{resources.length} total</span>
+          <h2 className={styles.sectionTitle}>{t('dashboardBusiness.resources')}</h2>
+          <span className={styles.sectionMeta}>
+            {t('dashboardBusiness.total', { count: resources.length })}
+          </span>
         </div>
 
         <div className={styles.reqList}>
@@ -103,7 +103,9 @@ export function DashboardBusinessPage() {
                 ].join(' ')}
                 onClick={() => setActiveResourceId(r.id === activeResourceId ? null : r.id)}
               >
-                {activeResourceId === r.id ? 'Hide rules' : 'Availability rules'}
+                {activeResourceId === r.id
+                  ? t('dashboardBusiness.hideRules')
+                  : t('dashboardBusiness.availabilityRules')}
               </button>
             </div>
           ))}
@@ -115,40 +117,34 @@ export function DashboardBusinessPage() {
             value={resourceType}
             onChange={(e) => setResourceType(e.target.value as ResourceType)}
           >
-            {RESOURCE_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {t}
+            {RESOURCE_TYPES.map((type) => (
+              <option key={type} value={type}>
+                {type}
               </option>
             ))}
           </select>
           <input
             className="form-input"
-            placeholder="Resource name (e.g. Anna – Stylist)"
+            placeholder={t('dashboardBusiness.resourceNamePlaceholder')}
             value={resourceName}
             onChange={(e) => setResourceName(e.target.value)}
           />
           <button type="submit" className="btn btn-primary" disabled={creatingResource}>
-            + Add resource
+            {t('dashboardBusiness.addResource')}
           </button>
         </form>
       </section>
 
-      {/* Category section */}
       <BusinessCategorySection business={business} />
-
-      {/* Contact info section */}
       <ContactInfoSection businessId={id!} />
+      <MemberSection businessId={id!} role="OWNER" title={t('dashboardBusiness.owners')} />
+      <MemberSection businessId={id!} role="EMPLOYEE" title={t('dashboardBusiness.employees')} />
 
-      {/* Members sections */}
-      <MemberSection businessId={id!} role="OWNER" title="Owners" />
-      <MemberSection businessId={id!} role="EMPLOYEE" title="Employees" />
-
-      {/* Availability rules section */}
       {activeResourceId && (
         <section className={styles.section}>
           <div className={styles.sectionHead}>
-            <h2 className={styles.sectionTitle}>Availability rules</h2>
-            <span className={styles.sectionMeta}>Recurring weekly</span>
+            <h2 className={styles.sectionTitle}>{t('dashboardBusiness.availabilityRules')}</h2>
+            <span className={styles.sectionMeta}>{t('dashboardBusiness.recurringWeekly')}</span>
           </div>
 
           <div className={styles.reqList}>
@@ -160,7 +156,7 @@ export function DashboardBusinessPage() {
                   fontSize: 'var(--text-sm)',
                 }}
               >
-                No availability rules yet.
+                {t('dashboardBusiness.noRulesYet')}
               </div>
             )}
             {rules?.map((rule) => (
@@ -194,7 +190,7 @@ export function DashboardBusinessPage() {
             <span
               style={{ alignSelf: 'center', color: 'var(--ink-500)', fontSize: 'var(--text-sm)' }}
             >
-              to
+              {t('dashboardBusiness.to')}
             </span>
             <input
               type="time"
@@ -203,7 +199,7 @@ export function DashboardBusinessPage() {
               onChange={(e) => setRuleEnd(e.target.value)}
             />
             <button type="submit" className="btn btn-primary" disabled={creatingRule}>
-              + Add rule
+              {t('dashboardBusiness.addRule')}
             </button>
           </form>
         </section>

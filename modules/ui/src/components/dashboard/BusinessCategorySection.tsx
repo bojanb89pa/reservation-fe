@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { Business } from '@domain';
 import { useBusinessCategories } from '../../hooks/useBusinessCategories';
 import { useSetBusinessCategory } from '../../hooks/useBusinesses';
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export function BusinessCategorySection({ business }: Props) {
+  const { t } = useTranslation();
   const { data: categories = [] } = useBusinessCategories();
   const { mutateAsync: setCategory, isPending, error } = useSetBusinessCategory(business.id!);
   const [selectedId, setSelectedId] = useState<string | null>(business.categoryId ?? null);
@@ -24,12 +26,13 @@ export function BusinessCategorySection({ business }: Props) {
     await setCategory(selectedId);
   };
 
-  const currentName = categories.find((c) => c.id === business.categoryId)?.name ?? 'Others';
+  const currentName =
+    categories.find((c) => c.id === business.categoryId)?.name ?? t('businessCategory.othersDefault');
 
   return (
     <section className={styles.section}>
       <div className={styles.sectionHead}>
-        <h2 className={styles.sectionTitle}>Category</h2>
+        <h2 className={styles.sectionTitle}>{t('businessCategory.title')}</h2>
         <span className={styles.sectionMeta}>{currentName}</span>
       </div>
 
@@ -39,7 +42,7 @@ export function BusinessCategorySection({ business }: Props) {
           value={selectedId ?? ''}
           onChange={(e) => setSelectedId(e.target.value || null)}
         >
-          <option value="">Others (no category)</option>
+          <option value="">{t('businessCategory.othersOption')}</option>
           {categories.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
@@ -47,13 +50,13 @@ export function BusinessCategorySection({ business }: Props) {
           ))}
         </select>
         <button type="submit" className="btn btn-primary" disabled={isPending || !isDirty}>
-          Save
+          {t('businessCategory.save')}
         </button>
       </form>
 
       {error && (
         <div className={styles.error}>
-          {error instanceof Error ? error.message : 'Failed to update category.'}
+          {error instanceof Error ? error.message : t('businessCategory.errorUpdate')}
         </div>
       )}
     </section>

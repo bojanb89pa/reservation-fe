@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { Resource } from '@domain';
 import styles from './RequestSummary.module.css';
 
@@ -12,28 +13,29 @@ interface Props {
 
 export function RequestSummary({ resource, businessName, when, onConfirm, isLoading }: Props) {
   const [note, setNote] = useState('');
+  const { t } = useTranslation();
 
   return (
     <aside className={styles.summary}>
-      <div className="eyebrow-rule">Booking details</div>
+      <div className="eyebrow-rule">{t('booking.title')}</div>
       <h3 className={styles.title}>{resource.name}</h3>
       <dl className={styles.list}>
         <div>
-          <dt>Business</dt>
+          <dt>{t('booking.business')}</dt>
           <dd>{businessName}</dd>
         </div>
         <div>
-          <dt>When</dt>
+          <dt>{t('booking.when')}</dt>
           <dd className="mono">{when ?? '—'}</dd>
         </div>
         <div>
-          <dt>Resource type</dt>
+          <dt>{t('booking.resourceType')}</dt>
           <dd>{resource.type}</dd>
         </div>
       </dl>
       <textarea
         className={styles.textarea}
-        placeholder="Add a note (optional)"
+        placeholder={t('booking.notePlaceholder')}
         value={note}
         onChange={(e) => setNote(e.target.value)}
       />
@@ -42,9 +44,9 @@ export function RequestSummary({ resource, businessName, when, onConfirm, isLoad
         onClick={() => onConfirm(note)}
         disabled={!when || isLoading}
       >
-        {isLoading ? 'Sending…' : 'Request to book'}
+        {isLoading ? t('booking.sending') : t('booking.requestToBook')}
       </button>
-      <p className={styles.fineprint}>No charge until the provider confirms.</p>
+      <p className={styles.fineprint}>{t('booking.noCharge')}</p>
     </aside>
   );
 }

@@ -1,23 +1,25 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import styles from './DashboardLayout.module.css';
 
 interface NavItem {
   to: string;
-  label: string;
+  labelKey: string;
   badge?: number;
   end?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { to: '/dashboard', label: 'Overview', end: true },
-  { to: '/dashboard/businesses', label: 'My businesses' },
-  { to: '/dashboard/categories', label: 'Categories' },
-  { to: '/dashboard/reservations', label: 'Reservations' },
+  { to: '/dashboard', labelKey: 'dashboard.overview', end: true },
+  { to: '/dashboard/businesses', labelKey: 'dashboard.myBusinesses' },
+  { to: '/dashboard/categories', labelKey: 'dashboard.categories' },
+  { to: '/dashboard/reservations', labelKey: 'dashboard.reservations' },
 ];
 
 export function DashboardLayout() {
   const { logout } = useAuth();
+  const { t } = useTranslation();
 
   return (
     <div className={styles.app}>
@@ -26,12 +28,12 @@ export function DashboardLayout() {
           <div className={styles.logoMark}>R</div>
           <div>
             <div className={styles.brandName}>Reserva</div>
-            <div className={styles.brandSub}>Business dashboard</div>
+            <div className={styles.brandSub}>{t('dashboard.brand')}</div>
           </div>
         </div>
 
         <nav className={styles.nav}>
-          <div className={styles.navSection}>Manage</div>
+          <div className={styles.navSection}>{t('dashboard.navSection')}</div>
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}
@@ -41,7 +43,7 @@ export function DashboardLayout() {
                 [styles.navItem, isActive ? styles.navItemActive : ''].join(' ')
               }
             >
-              {item.label}
+              {t(item.labelKey)}
               {item.badge !== undefined && <span className={styles.navBadge}>{item.badge}</span>}
             </NavLink>
           ))}
@@ -49,7 +51,7 @@ export function DashboardLayout() {
 
         <div className={styles.foot}>
           <button className={styles.footBtn} onClick={logout}>
-            Sign out
+            {t('dashboard.signOut')}
           </button>
         </div>
       </aside>

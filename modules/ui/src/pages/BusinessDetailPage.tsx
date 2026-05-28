@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useBusiness } from '../hooks/useBusinesses';
 import { useResources } from '../hooks/useResources';
 import { useCreateReservation } from '../hooks/useReservations';
@@ -37,6 +38,7 @@ export function BusinessDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();
+  const { t } = useTranslation();
 
   const { data: business, isLoading: bLoading, isError: bError } = useBusiness(id!);
   const { data: resourcesPage, isLoading: rLoading } = useResources(id!);
@@ -82,7 +84,7 @@ export function BusinessDetailPage() {
   if (bError || !business) {
     return (
       <div className={styles.page}>
-        <div className="error-box">Business not found.</div>
+        <div className="error-box">{t('businessDetail.notFound')}</div>
       </div>
     );
   }
@@ -110,7 +112,7 @@ export function BusinessDetailPage() {
           ))}
         </div>
         <div className={styles.detailMeta}>
-          <div className="eyebrow-rule">Business</div>
+          <div className="eyebrow-rule">{t('businessDetail.eyebrow')}</div>
           <h1 className={styles.detailTitle}>{business.name}</h1>
           <div className={styles.tags}>
             {resources.map((r) => (
@@ -125,10 +127,10 @@ export function BusinessDetailPage() {
       <div className={styles.body}>
         <div className={styles.main}>
           <section className={styles.section}>
-            <h3 className={styles.sectionTitle}>Resources</h3>
+            <h3 className={styles.sectionTitle}>{t('businessDetail.resources')}</h3>
             {resources.length === 0 ? (
               <p style={{ color: 'var(--ink-500)', fontSize: 'var(--text-sm)' }}>
-                No resources available yet.
+                {t('businessDetail.noResources')}
               </p>
             ) : (
               <div className={styles.resourceList}>
@@ -154,7 +156,7 @@ export function BusinessDetailPage() {
 
           {selectedResource && (
             <section className={styles.section}>
-              <h3 className={styles.sectionTitle}>Pick a time slot</h3>
+              <h3 className={styles.sectionTitle}>{t('businessDetail.pickTime')}</h3>
               <SlotGrid
                 slots={DEFAULT_SLOTS}
                 selected={selectedSlot}
