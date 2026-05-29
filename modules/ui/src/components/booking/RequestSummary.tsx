@@ -1,17 +1,25 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { Resource } from '@domain';
+import type { Resource, BusinessService } from '@domain';
 import styles from './RequestSummary.module.css';
 
 interface Props {
   resource: Resource;
+  service?: BusinessService | null;
   businessName: string;
   when: string | null;
   onConfirm: (note: string) => void;
   isLoading?: boolean;
 }
 
-export function RequestSummary({ resource, businessName, when, onConfirm, isLoading }: Props) {
+export function RequestSummary({
+  resource,
+  service,
+  businessName,
+  when,
+  onConfirm,
+  isLoading,
+}: Props) {
   const [note, setNote] = useState('');
   const { t } = useTranslation();
 
@@ -24,6 +32,14 @@ export function RequestSummary({ resource, businessName, when, onConfirm, isLoad
           <dt>{t('booking.business')}</dt>
           <dd>{businessName}</dd>
         </div>
+        {service && (
+          <div>
+            <dt>{t('booking.service')}</dt>
+            <dd>
+              {service.name} · {service.duration} {service.durationUnit.toLowerCase()}
+            </dd>
+          </div>
+        )}
         <div>
           <dt>{t('booking.when')}</dt>
           <dd className="mono">{when ?? '—'}</dd>

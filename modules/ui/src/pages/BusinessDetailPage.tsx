@@ -5,35 +5,13 @@ import { useBusiness } from '../hooks/useBusinesses';
 import { useResources } from '../hooks/useResources';
 import { useBusinessServices } from '../hooks/useBusinessServices';
 import { useCreateReservation } from '../hooks/useReservations';
+import { useAvailabilityRules } from '../hooks/useAvailabilityRules';
 import { useAuthStore } from '../state/authStore';
-import { SlotGrid } from '../components/booking/SlotGrid';
-import { RequestSummary } from '../components/booking/RequestSummary';
-import type { Resource, BusinessService } from '@domain';
+import { BookingWidget } from '../components/booking/BookingWidget';
+import type { BookingSelection } from '../components/booking/BookingWidget';
+import type { Resource } from '@domain';
 import { RESOURCE_TYPE_LABELS } from '@domain';
 import styles from './BusinessDetailPage.module.css';
-
-const DEFAULT_SLOTS = [
-  '9:00',
-  '9:45',
-  '10:30',
-  '11:15',
-  '12:00',
-  '12:45',
-  '13:30',
-  '14:30',
-  '15:15',
-  '16:00',
-  '16:45',
-  '17:30',
-];
-
-function formatLocalDate(date: Date): string {
-  return date.toLocaleDateString('en-GB', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-  });
-}
 
 export function BusinessDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -46,34 +24,26 @@ export function BusinessDetailPage() {
   const { data: servicesPage } = useBusinessServices(id!);
 
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
-  const [selectedService, setSelectedService] = useState<BusinessService | null>(null);
-  const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
-  const [selectedDate] = useState(new Date());
+
+  const { data: availabilityRules = [] } = useAvailabilityRules(selectedResource?.id ?? '');
 
   const { mutateAsync: createReservation, isPending } = useCreateReservation(
     selectedResource?.id ?? '',
   );
 
-  const handleConfirm = async (_note: string) => {
-    if (!selectedResource?.id || !selectedService?.id || !selectedSlot || !isAuthenticated) {
+  const handleConfirm = async (selection: BookingSelection) => {
+    if (!isAuthenticated) {
       navigate('/');
       return;
     }
-    const [h, m] = selectedSlot.split(':').map(Number);
-    const start = new Date(selectedDate);
-    start.setHours(h!, m!, 0, 0);
-    const end = new Date(start);
-    end.setMinutes(end.getMinutes() + 45);
-
     const reservation = await createReservation({
-      resourceId: selectedResource.id,
-      serviceId: selectedService.id,
-      startTime: start.toISOString().replace('Z', ''),
-      endTime: end.toISOString().replace('Z', ''),
+      resourceId: selection.resource.id!,
+      serviceId: selection.service.id,
+      startTime: selection.startTime,
+      endTime: selection.endTime,
     });
-
     navigate(`/reservation/${reservation.id}/held`, {
-      state: { reservation, business, resource: selectedResource },
+      state: { reservation, business, resource: selection.resource },
     });
   };
 
@@ -102,8 +72,6 @@ export function BusinessDetailPage() {
     'linear-gradient(135deg,#d4b89a 0%,#8a6e4f 100%)',
   ];
 
-  const when = selectedSlot ? `${formatLocalDate(selectedDate)} · ${selectedSlot}` : null;
-
   return (
     <>
       <div className={styles.detailHead}>
@@ -129,83 +97,16 @@ export function BusinessDetailPage() {
         </div>
       </div>
 
-      <div className={styles.body}>
-        <div className={styles.main}>
-          {services.length > 0 && (
-            <section className={styles.section}>
-              <h3 className={styles.sectionTitle}>{t('businessDetail.services')}</h3>
-              <div className={styles.resourceList}>
-                {services.map((s) => (
-                  <button
-                    key={s.id}
-                    className={[
-                      styles.resourceItem,
-                      selectedService?.id === s.id ? styles.resourceItemActive : '',
-                    ].join(' ')}
-                    onClick={() => setSelectedService(s)}
-                  >
-                    <strong>{s.name}</strong>
-                    <span className="eyebrow">
-                      {s.duration} {s.durationUnit.toLowerCase()}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </section>
-          )}
-
-          <section className={styles.section}>
-            <h3 className={styles.sectionTitle}>{t('businessDetail.resources')}</h3>
-            {resources.length === 0 ? (
-              <p style={{ color: 'var(--ink-500)', fontSize: 'var(--text-sm)' }}>
-                {t('businessDetail.noResources')}
-              </p>
-            ) : (
-              <div className={styles.resourceList}>
-                {resources.map((r) => (
-                  <button
-                    key={r.id}
-                    className={[
-                      styles.resourceItem,
-                      selectedResource?.id === r.id ? styles.resourceItemActive : '',
-                    ].join(' ')}
-                    onClick={() => {
-                      setSelectedResource(r);
-                      setSelectedSlot(null);
-                    }}
-                  >
-                    <strong>{r.name}</strong>
-                    <span className="eyebrow">{RESOURCE_TYPE_LABELS[r.type]}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </section>
-
-          {selectedResource && (
-            <section className={styles.section}>
-              <h3 className={styles.sectionTitle}>{t('businessDetail.pickTime')}</h3>
-              <SlotGrid
-                slots={DEFAULT_SLOTS}
-                selected={selectedSlot}
-                onSelect={setSelectedSlot}
-                date={formatLocalDate(selectedDate)}
-              />
-            </section>
-          )}
-        </div>
-
-        {selectedResource && (
-          <div>
-            <RequestSummary
-              resource={selectedResource}
-              businessName={business.name}
-              when={when}
-              onConfirm={handleConfirm}
-              isLoading={isPending}
-            />
-          </div>
-        )}
+      <div className={styles.bookingWrap}>
+        <BookingWidget
+          services={services}
+          resources={resources}
+          selectedResource={selectedResource}
+          onResourceChange={setSelectedResource}
+          availabilityRules={availabilityRules}
+          onConfirm={handleConfirm}
+          isLoading={isPending}
+        />
       </div>
     </>
   );
