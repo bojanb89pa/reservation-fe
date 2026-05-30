@@ -1,10 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import type { CreateBusinessCategoryCommand, UpdateBusinessCategoryCommand } from '@domain';
+import type {
+  CreateBusinessCategoryCommand,
+  UpdateBusinessCategoryCommand,
+  UpdateBusinessCategoryAppearanceCommand,
+} from '@domain';
 import {
   listBusinessCategoriesUseCase,
   createBusinessCategoryUseCase,
   updateBusinessCategoryUseCase,
+  updateBusinessCategoryAppearanceUseCase,
   deleteBusinessCategoryUseCase,
 } from '../app/container';
 
@@ -36,6 +41,15 @@ export function useUpdateBusinessCategory() {
   return useMutation({
     mutationFn: (args: { id: string; command: UpdateBusinessCategoryCommand }) =>
       updateBusinessCategoryUseCase.execute(args.id, args.command),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: categoryKeys.all }),
+  });
+}
+
+export function useUpdateBusinessCategoryAppearance() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (args: { id: string; command: UpdateBusinessCategoryAppearanceCommand }) =>
+      updateBusinessCategoryAppearanceUseCase.execute(args.id, args.command),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: categoryKeys.all }),
   });
 }

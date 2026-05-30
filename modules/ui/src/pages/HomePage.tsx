@@ -1,39 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import type { Translation } from '../i18n/locales/en';
+import { DEFAULT_CATEGORY_SYMBOL, DEFAULT_CATEGORY_COLOR } from '@domain';
 import { useSearchBusinesses } from '../hooks/useBusinesses';
+import { useBusinessCategories } from '../hooks/useBusinessCategories';
 import { BusinessCard } from '../components/business/BusinessCard';
 import styles from './HomePage.module.css';
-
-type ResourceTypeId = keyof Translation['home']['resourceTypes'];
-
-const RESOURCE_TYPE_IDS: ResourceTypeId[] = [
-  'EMPLOYEE',
-  'ROOM',
-  'APARTMENT',
-  'TABLE',
-  'COURT',
-  'VEHICLE',
-];
-
-const ICONS: Record<ResourceTypeId, string> = {
-  EMPLOYEE: '✂',
-  ROOM: '🚪',
-  APARTMENT: '🏠',
-  TABLE: '🪑',
-  COURT: '🎾',
-  VEHICLE: '🚗',
-};
-
-const COLORS: Record<ResourceTypeId, { color: string; bg: string }> = {
-  EMPLOYEE: { color: '#4F46E5', bg: '#EEF2FF' },
-  ROOM: { color: '#FF6F61', bg: '#FFF1EF' },
-  APARTMENT: { color: '#00C2A8', bg: '#E6FAF8' },
-  TABLE: { color: '#FFC83D', bg: '#FFFBEB' },
-  COURT: { color: '#4F46E5', bg: '#EEF2FF' },
-  VEHICLE: { color: '#FF6F61', bg: '#FFF1EF' },
-};
 
 export function HomePage() {
   const navigate = useNavigate();
@@ -41,6 +13,7 @@ export function HomePage() {
   const [what, setWhat] = useState('');
   const [where, setWhere] = useState('');
   const { data: businesses, isLoading } = useSearchBusinesses('', 0, 6);
+  const { data: categories = [] } = useBusinessCategories();
 
   const handleSearch = () => {
     const params = new URLSearchParams();
@@ -100,22 +73,24 @@ export function HomePage() {
         <div className="eyebrow-rule">{t('home.categoryEyebrow')}</div>
         <h2 className="section-title">{t('home.categoryTitle')}</h2>
         <div className={styles.categoryGrid}>
-          {RESOURCE_TYPE_IDS.map((id) => {
-            const { color, bg } = COLORS[id];
-            return (
-              <button
-                key={id}
-                className={styles.categoryCard}
-                onClick={() => navigate(`/businesses?type=${id}`)}
-              >
-                <div className={styles.categoryIcon} style={{ background: bg, color }}>
-                  {ICONS[id]}
-                </div>
-                <span className={styles.categoryName}>{t(`home.resourceTypes.${id}.label`)}</span>
-                <span className={styles.categoryCount}>{t(`home.resourceTypes.${id}.count`)}</span>
-              </button>
-            );
-          })}
+          {categories
+            .filter((c) => c.parentId === null)
+            .map((c) => {
+              const symbol = c.symbol ?? DEFAULT_CATEGORY_SYMBOL;
+              const color = c.color ?? DEFAULT_CATEGORY_COLOR;
+              return (
+                <button
+                  key={c.id}
+                  className={styles.categoryCard}
+                  onClick={() => navigate(`/businesses?categoryId=${c.id}`)}
+                >
+                  <div className={styles.categoryIcon} style={{ background: `${color}1A`, color }}>
+                    {symbol}
+                  </div>
+                  <span className={styles.categoryName}>{c.name}</span>
+                </button>
+              );
+            })}
         </div>
       </section>
 

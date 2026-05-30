@@ -35,6 +35,7 @@ import {
   GetBusinessCategoryUseCaseImpl,
   CreateBusinessCategoryUseCaseImpl,
   UpdateBusinessCategoryUseCaseImpl,
+  UpdateBusinessCategoryAppearanceUseCaseImpl,
   DeleteBusinessCategoryUseCaseImpl,
   SetBusinessCategoryUseCaseImpl,
   CreateBusinessServiceUseCaseImpl,
@@ -118,6 +119,8 @@ export const createBusinessCategoryUseCase = new CreateBusinessCategoryUseCaseIm
 export const updateBusinessCategoryUseCase = new UpdateBusinessCategoryUseCaseImpl(
   businessCategoryRepository,
 );
+export const updateBusinessCategoryAppearanceUseCase =
+  new UpdateBusinessCategoryAppearanceUseCaseImpl(businessCategoryRepository);
 export const deleteBusinessCategoryUseCase = new DeleteBusinessCategoryUseCaseImpl(
   businessCategoryRepository,
 );

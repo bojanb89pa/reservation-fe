@@ -10,7 +10,9 @@ export type {
   BusinessCategory,
   CreateBusinessCategoryCommand,
   UpdateBusinessCategoryCommand,
+  UpdateBusinessCategoryAppearanceCommand,
 } from './entities/BusinessCategory';
+export { DEFAULT_CATEGORY_SYMBOL, DEFAULT_CATEGORY_COLOR } from './entities/BusinessCategory';
 export type {
   LocalizedBusinessCategory,
   BusinessCategoryTranslation,
@@ -110,6 +112,7 @@ export type { ListBusinessCategoriesUseCase } from './use-cases/business-categor
 export type { GetBusinessCategoryUseCase } from './use-cases/business-category/GetBusinessCategoryUseCase';
 export type { CreateBusinessCategoryUseCase } from './use-cases/business-category/CreateBusinessCategoryUseCase';
 export type { UpdateBusinessCategoryUseCase } from './use-cases/business-category/UpdateBusinessCategoryUseCase';
+export type { UpdateBusinessCategoryAppearanceUseCase } from './use-cases/business-category/UpdateBusinessCategoryAppearanceUseCase';
 export type { DeleteBusinessCategoryUseCase } from './use-cases/business-category/DeleteBusinessCategoryUseCase';
 export type { ListLocalizedBusinessCategoriesUseCase } from './use-cases/localized-business-category/ListLocalizedBusinessCategoriesUseCase';
 export type { GetLocalizedBusinessCategoryUseCase } from './use-cases/localized-business-category/GetLocalizedBusinessCategoryUseCase';

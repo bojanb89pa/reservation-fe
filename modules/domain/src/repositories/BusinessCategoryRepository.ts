@@ -2,6 +2,7 @@ import type {
   BusinessCategory,
   CreateBusinessCategoryCommand,
   UpdateBusinessCategoryCommand,
+  UpdateBusinessCategoryAppearanceCommand,
 } from '../entities/BusinessCategory';
 
 export interface BusinessCategoryRepository {
@@ -10,4 +11,8 @@ export interface BusinessCategoryRepository {
   create(command: CreateBusinessCategoryCommand): Promise<BusinessCategory>;
   update(id: string, command: UpdateBusinessCategoryCommand): Promise<BusinessCategory>;
   delete(id: string): Promise<BusinessCategory>;
+  updateAppearance(
+    id: string,
+    command: UpdateBusinessCategoryAppearanceCommand,
+  ): Promise<BusinessCategory>;
 }

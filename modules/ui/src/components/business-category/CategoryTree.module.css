@@ -27,6 +27,17 @@
   gap: 8px;
 }
 
+.categoryIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-sm);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
 .indent {
   display: inline-block;
   width: 16px;

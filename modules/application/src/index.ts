@@ -39,6 +39,7 @@ export { ListBusinessCategoriesUseCaseImpl } from './use-cases/business-category
 export { GetBusinessCategoryUseCaseImpl } from './use-cases/business-category/GetBusinessCategoryUseCaseImpl';
 export { CreateBusinessCategoryUseCaseImpl } from './use-cases/business-category/CreateBusinessCategoryUseCaseImpl';
 export { UpdateBusinessCategoryUseCaseImpl } from './use-cases/business-category/UpdateBusinessCategoryUseCaseImpl';
+export { UpdateBusinessCategoryAppearanceUseCaseImpl } from './use-cases/business-category/UpdateBusinessCategoryAppearanceUseCaseImpl';
 export { DeleteBusinessCategoryUseCaseImpl } from './use-cases/business-category/DeleteBusinessCategoryUseCaseImpl';
 export { ListLocalizedBusinessCategoriesUseCaseImpl } from './use-cases/localized-business-category/ListLocalizedBusinessCategoriesUseCaseImpl';
 export { GetLocalizedBusinessCategoryUseCaseImpl } from './use-cases/localized-business-category/GetLocalizedBusinessCategoryUseCaseImpl';

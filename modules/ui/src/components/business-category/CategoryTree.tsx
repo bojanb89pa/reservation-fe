@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { BusinessCategory } from '@domain';
+import { DEFAULT_CATEGORY_SYMBOL, DEFAULT_CATEGORY_COLOR } from '@domain';
 import styles from './CategoryTree.module.css';
 
 interface CategoryNode extends BusinessCategory {
@@ -31,6 +32,7 @@ interface Props {
   categories: BusinessCategory[];
   onEdit: (category: BusinessCategory) => void;
   onDelete: (category: BusinessCategory) => void;
+  onEditAppearance: (category: BusinessCategory) => void;
 }
 
 function CategoryRow({
@@ -38,24 +40,36 @@ function CategoryRow({
   depth,
   onEdit,
   onDelete,
+  onEditAppearance,
   editLabel,
   deleteLabel,
+  appearanceLabel,
 }: {
   node: CategoryNode;
   depth: number;
   onEdit: (c: BusinessCategory) => void;
   onDelete: (c: BusinessCategory) => void;
+  onEditAppearance: (c: BusinessCategory) => void;
   editLabel: string;
   deleteLabel: string;
+  appearanceLabel: string;
 }) {
+  const symbol = node.symbol ?? DEFAULT_CATEGORY_SYMBOL;
+  const color = node.color ?? DEFAULT_CATEGORY_COLOR;
   return (
     <>
       <div className={styles.row} style={{ paddingLeft: `${20 + depth * 24}px` }}>
         <div className={styles.nameWrapper}>
           {depth > 0 && <span className={styles.indent} />}
+          <span className={styles.categoryIcon} style={{ background: `${color}1A`, color }}>
+            {symbol}
+          </span>
           <span className={styles.name}>{node.name}</span>
         </div>
         <div className={styles.rowActions}>
+          <button className="btn btn-ghost btn-sm" onClick={() => onEditAppearance(node)}>
+            {appearanceLabel}
+          </button>
           <button className="btn btn-ghost btn-sm" onClick={() => onEdit(node)}>
             {editLabel}
           </button>
@@ -71,15 +85,17 @@ function CategoryRow({
           depth={depth + 1}
           onEdit={onEdit}
           onDelete={onDelete}
+          onEditAppearance={onEditAppearance}
           editLabel={editLabel}
           deleteLabel={deleteLabel}
+          appearanceLabel={appearanceLabel}
         />
       ))}
     </>
   );
 }
 
-export function CategoryTree({ categories, onEdit, onDelete }: Props) {
+export function CategoryTree({ categories, onEdit, onDelete, onEditAppearance }: Props) {
   const { t } = useTranslation();
   const tree = buildTree(categories);
 
@@ -96,8 +112,10 @@ export function CategoryTree({ categories, onEdit, onDelete }: Props) {
           depth={0}
           onEdit={onEdit}
           onDelete={onDelete}
+          onEditAppearance={onEditAppearance}
           editLabel={t('categoryTree.edit')}
           deleteLabel={t('categoryTree.delete')}
+          appearanceLabel={t('categoryTree.appearance')}
         />
       ))}
     </div>

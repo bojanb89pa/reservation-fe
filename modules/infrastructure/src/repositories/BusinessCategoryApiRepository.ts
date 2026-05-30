@@ -4,6 +4,7 @@ import type {
   BusinessCategory,
   CreateBusinessCategoryCommand,
   UpdateBusinessCategoryCommand,
+  UpdateBusinessCategoryAppearanceCommand,
 } from '@domain';
 
 export class BusinessCategoryApiRepository implements BusinessCategoryRepository {
@@ -38,6 +39,17 @@ export class BusinessCategoryApiRepository implements BusinessCategoryRepository
 
   async delete(id: string): Promise<BusinessCategory> {
     const response = await this.client.delete<BusinessCategory>(`/api/business-categories/${id}`);
+    return response.data;
+  }
+
+  async updateAppearance(
+    id: string,
+    command: UpdateBusinessCategoryAppearanceCommand,
+  ): Promise<BusinessCategory> {
+    const response = await this.client.patch<BusinessCategory>(
+      `/api/business-categories/${id}/appearance`,
+      command,
+    );
     return response.data;
   }
 }

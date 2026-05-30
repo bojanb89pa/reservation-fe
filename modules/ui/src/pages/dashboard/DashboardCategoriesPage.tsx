@@ -5,10 +5,12 @@ import {
   useBusinessCategories,
   useCreateBusinessCategory,
   useUpdateBusinessCategory,
+  useUpdateBusinessCategoryAppearance,
   useDeleteBusinessCategory,
 } from '../../hooks/useBusinessCategories';
 import { CategoryTree } from '../../components/business-category/CategoryTree';
 import { CategoryForm } from '../../components/business-category/CategoryForm';
+import { CategoryAppearanceForm } from '../../components/business-category/CategoryAppearanceForm';
 import { DeleteCategoryDialog } from '../../components/business-category/DeleteCategoryDialog';
 import styles from './DashboardCategoriesPage.module.css';
 
@@ -16,12 +18,15 @@ type Mode =
   | { type: 'idle' }
   | { type: 'create' }
   | { type: 'edit'; category: BusinessCategory }
+  | { type: 'appearance'; category: BusinessCategory }
   | { type: 'delete'; category: BusinessCategory };
 
 export function DashboardCategoriesPage() {
   const { data: categories = [], isLoading } = useBusinessCategories();
   const { mutateAsync: create, isPending: creating } = useCreateBusinessCategory();
   const { mutateAsync: update, isPending: updating } = useUpdateBusinessCategory();
+  const { mutateAsync: updateAppearance, isPending: updatingAppearance } =
+    useUpdateBusinessCategoryAppearance();
   const { mutateAsync: remove, isPending: deleting } = useDeleteBusinessCategory();
   const { t } = useTranslation();
 
@@ -53,6 +58,17 @@ export function DashboardCategoriesPage() {
       reset();
     } catch (err: unknown) {
       setFormError(err instanceof Error ? err.message : t('dashboardCategories.errorSave'));
+    }
+  };
+
+  const handleSaveAppearance = async (symbol: string | null, color: string | null) => {
+    if (mode.type !== 'appearance') return;
+    setFormError(null);
+    try {
+      await updateAppearance({ id: mode.category.id, command: { symbol, color } });
+      reset();
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : t('dashboardCategories.errorAppearance'));
     }
   };
 
@@ -99,6 +115,19 @@ export function DashboardCategoriesPage() {
         </div>
       )}
 
+      {mode.type === 'appearance' && (
+        <div className={styles.formWrap}>
+          <h3 className={styles.formTitle}>{t('dashboardCategories.editAppearance')}</h3>
+          <CategoryAppearanceForm
+            category={mode.category}
+            onSave={handleSaveAppearance}
+            onCancel={reset}
+            isPending={updatingAppearance}
+            error={formError}
+          />
+        </div>
+      )}
+
       <section className={styles.section}>
         <div className={styles.sectionHead}>
           <h2 className={styles.sectionTitle}>{t('dashboardCategories.allCategories')}</h2>
@@ -123,6 +152,10 @@ export function DashboardCategoriesPage() {
             onDelete={(c) => {
               setDeleteError(null);
               setMode({ type: 'delete', category: c });
+            }}
+            onEditAppearance={(c) => {
+              setFormError(null);
+              setMode({ type: 'appearance', category: c });
             }}
           />
         )}
