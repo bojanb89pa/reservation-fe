@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import type { CreateBusinessCategoryCommand, UpdateBusinessCategoryCommand } from '@domain';
 import {
   listBusinessCategoriesUseCase,
@@ -9,13 +10,15 @@ import {
 
 export const categoryKeys = {
   all: ['business-categories'] as const,
-  list: () => ['business-categories', 'list'] as const,
+  list: (locale: string) => ['business-categories', 'list', locale] as const,
 };
 
 export function useBusinessCategories() {
+  const { i18n } = useTranslation();
+  const locale = i18n.language;
   return useQuery({
-    queryKey: categoryKeys.list(),
-    queryFn: () => listBusinessCategoriesUseCase.execute(),
+    queryKey: categoryKeys.list(locale),
+    queryFn: () => listBusinessCategoriesUseCase.execute(locale),
   });
 }
 

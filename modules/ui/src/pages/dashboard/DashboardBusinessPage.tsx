@@ -120,7 +120,7 @@ export function DashboardBusinessPage() {
           >
             {RESOURCE_TYPES.map((type) => (
               <option key={type} value={type}>
-                {type}
+                {t(`resourceType.${type}`)}
               </option>
             ))}
           </select>

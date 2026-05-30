@@ -10,7 +10,6 @@ import { useAuthStore } from '../state/authStore';
 import { BookingWidget } from '../components/booking/BookingWidget';
 import type { BookingSelection } from '../components/booking/BookingWidget';
 import type { Resource } from '@domain';
-import { RESOURCE_TYPE_LABELS } from '@domain';
 import styles from './BusinessDetailPage.module.css';
 
 export function BusinessDetailPage() {
@@ -90,7 +89,7 @@ export function BusinessDetailPage() {
           <div className={styles.tags}>
             {resources.map((r) => (
               <span key={r.id} className="tag">
-                {RESOURCE_TYPE_LABELS[r.type]}
+                {t(`resourceType.${r.type}`)}
               </span>
             ))}
           </div>

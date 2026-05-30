@@ -9,3 +9,25 @@
   gap: 8px;
   justify-content: flex-end;
 }
+
+.optional {
+  font-weight: 400;
+  color: var(--text-muted, #888);
+  font-size: 0.85em;
+}
+
+.translationsFieldset {
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: var(--r-md, 8px);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.translationsLegend {
+  padding: 0 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary, #6b7280);
+}

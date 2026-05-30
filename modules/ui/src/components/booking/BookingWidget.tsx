@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { BusinessService, Resource, ResourceAvailabilityRule, DayOfWeek } from '@domain';
-import { RESOURCE_TYPE_LABELS } from '@domain';
 import styles from './BookingWidget.module.css';
 
 // ─── Pure helpers ─────────────────────────────────────────────────────────────
@@ -172,6 +172,7 @@ export function BookingWidget({
   onConfirm,
   isLoading,
 }: BookingWidgetProps) {
+  const { t } = useTranslation();
   const now = new Date();
 
   const [selectedService, setSelectedService] = useState<BusinessService | null>(
@@ -187,10 +188,7 @@ export function BookingWidget({
   const isDays = selectedService?.durationUnit === 'DAYS';
   const canPickDateTime = !!selectedService && !!selectedResource;
 
-  const calendarDays = useMemo(
-    () => buildMonth(viewYear, viewMonth),
-    [viewYear, viewMonth],
-  );
+  const calendarDays = useMemo(() => buildMonth(viewYear, viewMonth), [viewYear, viewMonth]);
 
   const availableSlots = useMemo(() => {
     if (!selectedService || !selectedDate || isDays) return [];
@@ -238,13 +236,13 @@ export function BookingWidget({
   }
 
   const canGoPrev =
-    viewYear > now.getFullYear() ||
-    (viewYear === now.getFullYear() && viewMonth > now.getMonth());
+    viewYear > now.getFullYear() || (viewYear === now.getFullYear() && viewMonth > now.getMonth());
 
   const summaryWhen = (() => {
     if (!selectedService) return null;
     if (isDays) {
-      if (selectedDate && selectedEndDate) return fmtDateRangeSummary(selectedDate, selectedEndDate);
+      if (selectedDate && selectedEndDate)
+        return fmtDateRangeSummary(selectedDate, selectedEndDate);
       return null;
     }
     if (selectedDate && selectedSlot) return fmtSlotSummary(selectedDate, selectedSlot);
@@ -301,16 +299,15 @@ export function BookingWidget({
                 key={svc.id}
                 role="tab"
                 aria-pressed={selectedService?.id === svc.id}
-                className={[
-                  styles.tab,
-                  selectedService?.id === svc.id ? styles.tabActive : '',
-                ]
+                className={[styles.tab, selectedService?.id === svc.id ? styles.tabActive : '']
                   .filter(Boolean)
                   .join(' ')}
                 onClick={() => handleServiceSelect(svc)}
               >
                 {svc.name}
-                <span className={styles.tabMeta}>&nbsp;· {fmtDuration(svc.duration, svc.durationUnit)}</span>
+                <span className={styles.tabMeta}>
+                  &nbsp;· {fmtDuration(svc.duration, svc.durationUnit)}
+                </span>
               </button>
             ))}
           </div>
@@ -327,16 +324,13 @@ export function BookingWidget({
                 key={res.id}
                 role="tab"
                 aria-pressed={selectedResource?.id === res.id}
-                className={[
-                  styles.tab,
-                  selectedResource?.id === res.id ? styles.tabActive : '',
-                ]
+                className={[styles.tab, selectedResource?.id === res.id ? styles.tabActive : '']
                   .filter(Boolean)
                   .join(' ')}
                 onClick={() => handleResourceSelect(res)}
               >
                 {res.name}
-                <span className={styles.tabMeta}>&nbsp;· {RESOURCE_TYPE_LABELS[res.type]}</span>
+                <span className={styles.tabMeta}>&nbsp;· {t(`resourceType.${res.type}`)}</span>
               </button>
             ))}
           </div>
@@ -465,9 +459,7 @@ export function BookingWidget({
         <>
           <div className={styles.summary}>
             <div className={styles.summaryText}>
-              <span className={styles.summaryWhen}>
-                {summaryWhen ?? '— pick a date & time —'}
-              </span>
+              <span className={styles.summaryWhen}>{summaryWhen ?? '— pick a date & time —'}</span>
               <span className={styles.summaryMeta}>
                 {selectedService.name}&nbsp;· {selectedResource.name}
               </span>

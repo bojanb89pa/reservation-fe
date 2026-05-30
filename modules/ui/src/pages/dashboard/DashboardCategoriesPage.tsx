@@ -35,13 +35,20 @@ export function DashboardCategoriesPage() {
     setDeleteError(null);
   };
 
-  const handleSave = async (name: string, parentId: string | null) => {
+  const handleSave = async (
+    code: string | undefined,
+    translations: Record<string, string>,
+    parentId: string | null,
+  ) => {
     setFormError(null);
     try {
       if (mode.type === 'create') {
-        await create({ name, parentId: parentId ?? undefined });
+        await create({ code: code!, parentId: parentId ?? undefined, translations });
       } else if (mode.type === 'edit') {
-        await update({ id: mode.category.id, command: { name, parentId: parentId ?? undefined } });
+        await update({
+          id: mode.category.id,
+          command: { code: code || undefined, parentId: parentId ?? undefined, translations },
+        });
       }
       reset();
     } catch (err: unknown) {

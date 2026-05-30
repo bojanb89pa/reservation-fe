@@ -5,11 +5,13 @@ export interface BusinessCategory {
 }
 
 export interface CreateBusinessCategoryCommand {
-  name: string;
+  code: string;
   parentId?: string;
+  translations: Record<string, string>;
 }
 
 export interface UpdateBusinessCategoryCommand {
-  name: string;
+  code?: string;
   parentId?: string;
+  translations: Record<string, string>;
 }

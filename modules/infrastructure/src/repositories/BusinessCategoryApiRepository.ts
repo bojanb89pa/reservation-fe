@@ -9,13 +9,17 @@ import type {
 export class BusinessCategoryApiRepository implements BusinessCategoryRepository {
   constructor(private readonly client: AxiosInstance) {}
 
-  async list(): Promise<BusinessCategory[]> {
-    const response = await this.client.get<BusinessCategory[]>('/api/business-categories');
+  async list(locale: string): Promise<BusinessCategory[]> {
+    const response = await this.client.get<BusinessCategory[]>('/api/business-categories', {
+      params: { locale },
+    });
     return response.data;
   }
 
-  async get(id: string): Promise<BusinessCategory> {
-    const response = await this.client.get<BusinessCategory>(`/api/business-categories/${id}`);
+  async get(id: string, locale: string): Promise<BusinessCategory> {
+    const response = await this.client.get<BusinessCategory>(`/api/business-categories/${id}`, {
+      params: { locale },
+    });
     return response.data;
   }
 

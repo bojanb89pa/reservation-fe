@@ -181,8 +181,13 @@ const sr: Translation = {
     errorDelete: 'Greška pri brisanju kategorije',
   },
   categoryForm: {
-    nameLabel: 'Naziv',
-    namePlaceholder: 'npr. Lepota',
+    codeLabel: 'Kod',
+    codePlaceholder: 'npr. frizerski_salon',
+    codeOptional: '(opciono)',
+    translationsLabel: 'Prevodi',
+    translationPlaceholder: 'Prevedeni naziv',
+    locale_en: 'Engleski',
+    locale_sr: 'Srpski',
     parentLabel: 'Nadređena kategorija',
     topLevel: '— Najviši nivo —',
     cancel: 'Otkaži',
@@ -221,11 +226,11 @@ const sr: Translation = {
     userIdPlaceholder: 'ID korisnika (UUID)',
     remove: 'Ukloni',
     errorAdd: 'Greška pri dodavanju člana.',
-    owner: {
+    OWNER: {
       empty: 'Nema vlasnika.',
       addButton: '+ Dodaj vlasnika',
     },
-    employee: {
+    EMPLOYEE: {
       empty: 'Nema zaposlenih.',
       addButton: '+ Dodaj zaposlenog',
     },
@@ -265,6 +270,18 @@ const sr: Translation = {
     cancel: 'Otkaži',
     deleting: 'Brisanje…',
     delete: 'Obriši',
+  },
+  resourceType: {
+    EMPLOYEE: 'Zaposleni',
+    ROOM: 'Soba',
+    APARTMENT: 'Apartman',
+    TABLE: 'Sto',
+    COURT: 'Teren',
+    VEHICLE: 'Vozilo',
+  },
+  memberRole: {
+    OWNER: 'Vlasnik',
+    EMPLOYEE: 'Zaposleni',
   },
   footer: {
     tagline: 'Nađi mesto. Rezerviši termin.',

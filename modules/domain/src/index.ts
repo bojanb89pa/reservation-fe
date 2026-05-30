@@ -12,6 +12,13 @@ export type {
   UpdateBusinessCategoryCommand,
 } from './entities/BusinessCategory';
 export type {
+  LocalizedBusinessCategory,
+  BusinessCategoryTranslation,
+  CreateLocalizedBusinessCategoryCommand,
+  UpdateLocalizedBusinessCategoryCommand,
+  UpsertTranslationCommand,
+} from './entities/LocalizedBusinessCategory';
+export type {
   Business,
   BusinessStatus,
   SubmitBusinessCommand,
@@ -40,7 +47,6 @@ export type {
 } from './entities/ResourceAvailabilityRule';
 export { DAY_LABELS, DAYS_ORDERED } from './entities/ResourceAvailabilityRule';
 export type { ResourceType } from './entities/ResourceType';
-export { RESOURCE_TYPE_LABELS } from './entities/ResourceType';
 export type { Role } from './entities/Role';
 export type { User, UserRegistration } from './entities/User';
 
@@ -57,6 +63,7 @@ export {
 // Repository interfaces
 export type { AuthRepository } from './repositories/AuthRepository';
 export type { BusinessCategoryRepository } from './repositories/BusinessCategoryRepository';
+export type { LocalizedBusinessCategoryRepository } from './repositories/LocalizedBusinessCategoryRepository';
 export type { BusinessRepository } from './repositories/BusinessRepository';
 export type { BusinessContactInfoRepository } from './repositories/BusinessContactInfoRepository';
 export type { BusinessMembershipRepository } from './repositories/BusinessMembershipRepository';
@@ -104,3 +111,8 @@ export type { GetBusinessCategoryUseCase } from './use-cases/business-category/G
 export type { CreateBusinessCategoryUseCase } from './use-cases/business-category/CreateBusinessCategoryUseCase';
 export type { UpdateBusinessCategoryUseCase } from './use-cases/business-category/UpdateBusinessCategoryUseCase';
 export type { DeleteBusinessCategoryUseCase } from './use-cases/business-category/DeleteBusinessCategoryUseCase';
+export type { ListLocalizedBusinessCategoriesUseCase } from './use-cases/localized-business-category/ListLocalizedBusinessCategoriesUseCase';
+export type { GetLocalizedBusinessCategoryUseCase } from './use-cases/localized-business-category/GetLocalizedBusinessCategoryUseCase';
+export type { CreateLocalizedBusinessCategoryUseCase } from './use-cases/localized-business-category/CreateLocalizedBusinessCategoryUseCase';
+export type { UpdateLocalizedBusinessCategoryUseCase } from './use-cases/localized-business-category/UpdateLocalizedBusinessCategoryUseCase';
+export type { UpsertLocalizedBusinessCategoryTranslationUseCase } from './use-cases/localized-business-category/UpsertLocalizedBusinessCategoryTranslationUseCase';

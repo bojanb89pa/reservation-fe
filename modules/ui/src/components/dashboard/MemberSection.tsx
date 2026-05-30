@@ -29,8 +29,6 @@ export function MemberSection({ businessId, role, title }: Props) {
 
   const [userId, setUserId] = useState('');
 
-  const roleKey = role.toLowerCase() as 'owner' | 'employee';
-
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = userId.trim();
@@ -50,7 +48,7 @@ export function MemberSection({ businessId, role, title }: Props) {
 
       <div className={styles.list}>
         {members.length === 0 && (
-          <div className={styles.empty}>{t(`memberSection.${roleKey}.empty`)}</div>
+          <div className={styles.empty}>{t(`memberSection.${role}.empty`)}</div>
         )}
         {members.map((m) => (
           <div key={m.id} className={styles.row}>
@@ -74,7 +72,7 @@ export function MemberSection({ businessId, role, title }: Props) {
           onChange={(e) => setUserId(e.target.value)}
         />
         <button type="submit" className="btn btn-primary" disabled={adding}>
-          {t(`memberSection.${roleKey}.addButton`)}
+          {t(`memberSection.${role}.addButton`)}
         </button>
       </form>
       {addError && (

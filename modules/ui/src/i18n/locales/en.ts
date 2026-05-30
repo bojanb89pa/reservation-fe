@@ -179,8 +179,13 @@ const en = {
     errorDelete: 'Failed to delete category',
   },
   categoryForm: {
-    nameLabel: 'Name',
-    namePlaceholder: 'e.g. Beauty',
+    codeLabel: 'Code',
+    codePlaceholder: 'e.g. hair_salon',
+    codeOptional: '(optional)',
+    translationsLabel: 'Translations',
+    translationPlaceholder: 'Translated name',
+    locale_en: 'English',
+    locale_sr: 'Serbian',
     parentLabel: 'Parent category',
     topLevel: '— Top-level —',
     cancel: 'Cancel',
@@ -219,11 +224,11 @@ const en = {
     userIdPlaceholder: 'User ID (UUID)',
     remove: 'Remove',
     errorAdd: 'Failed to add member.',
-    owner: {
+    OWNER: {
       empty: 'No owners yet.',
       addButton: '+ Add owner',
     },
-    employee: {
+    EMPLOYEE: {
       empty: 'No employees yet.',
       addButton: '+ Add employee',
     },
@@ -263,6 +268,18 @@ const en = {
     cancel: 'Cancel',
     deleting: 'Deleting…',
     delete: 'Delete',
+  },
+  resourceType: {
+    EMPLOYEE: 'Employee',
+    ROOM: 'Room',
+    APARTMENT: 'Apartment',
+    TABLE: 'Table',
+    COURT: 'Court',
+    VEHICLE: 'Vehicle',
+  },
+  memberRole: {
+    OWNER: 'Owner',
+    EMPLOYEE: 'Employee',
   },
   footer: {
     tagline: 'Find a place. Hold a slot.',
