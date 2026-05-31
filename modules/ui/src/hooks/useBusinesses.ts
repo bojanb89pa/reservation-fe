@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { BusinessSearchFilter } from '@domain';
+import type { BusinessSearchFilter, CreateBusinessLocationCommand } from '@domain';
 import {
   getMyBusinessesUseCase,
   searchBusinessesUseCase,
@@ -65,7 +65,13 @@ export function useCreateBusiness() {
   const { session } = useAuthStore();
 
   return useMutation({
-    mutationFn: (name: string) => {
+    mutationFn: ({
+      name,
+      location,
+    }: {
+      name: string;
+      location: CreateBusinessLocationCommand;
+    }) => {
       if (!session) throw new Error('Not authenticated');
       const payload = JSON.parse(atob(session.accessToken.split('.')[1])) as Record<
         string,
@@ -73,9 +79,13 @@ export function useCreateBusiness() {
       >;
       const roles = (payload['roles'] ?? payload['authorities'] ?? []) as string[];
       if (roles.includes('ROLE_ADMIN')) {
-        return createBusinessByAdminUseCase.execute({ name, ownerId: payload['sub'] as string });
+        return createBusinessByAdminUseCase.execute({
+          name,
+          ownerId: payload['sub'] as string,
+          location,
+        });
       }
-      return submitBusinessUseCase.execute({ name });
+      return submitBusinessUseCase.execute({ name, location });
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: businessKeys.all }),
   });

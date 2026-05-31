@@ -3,9 +3,9 @@ import {
   AuthApiRepository,
   BusinessApiRepository,
   BusinessMembershipApiRepository,
-  BusinessContactInfoApiRepository,
   BusinessCategoryApiRepository,
   BusinessServiceApiRepository,
+  BusinessLocationApiRepository,
   ResourceApiRepository,
   ReservationApiRepository,
   ResourceAvailabilityRuleApiRepository,
@@ -21,10 +21,6 @@ import {
   AddBusinessMemberUseCaseImpl,
   RemoveBusinessMemberUseCaseImpl,
   ListBusinessMembersUseCaseImpl,
-  AddContactInfoUseCaseImpl,
-  ListContactInfoUseCaseImpl,
-  RemoveContactInfoUseCaseImpl,
-  UpdateContactInfoUseCaseImpl,
   GetAllResourcesUseCaseImpl,
   CreateResourceUseCaseImpl,
   CreateReservationUseCaseImpl,
@@ -43,6 +39,9 @@ import {
   ListBusinessServicesUseCaseImpl,
   UpdateBusinessServiceUseCaseImpl,
   DeleteBusinessServiceUseCaseImpl,
+  CreateBusinessLocationUseCaseImpl,
+  ListBusinessLocationsUseCaseImpl,
+  GetBusinessLocationUseCaseImpl,
 } from '@application';
 
 // Re-export infrastructure primitives consumed only within this module's hooks/state.
@@ -56,11 +55,11 @@ export const authApiRepository = new AuthApiRepository(authAxiosClient);
 const businessRepository = new BusinessApiRepository(resourceAxiosClient);
 const businessCategoryRepository = new BusinessCategoryApiRepository(resourceAxiosClient);
 const businessMembershipRepository = new BusinessMembershipApiRepository(resourceAxiosClient);
-const businessContactInfoRepository = new BusinessContactInfoApiRepository(resourceAxiosClient);
 const resourceRepository = new ResourceApiRepository(resourceAxiosClient);
 const reservationRepository = new ReservationApiRepository(resourceAxiosClient);
 const availabilityRuleRepository = new ResourceAvailabilityRuleApiRepository(resourceAxiosClient);
 const businessServiceRepository = new BusinessServiceApiRepository(resourceAxiosClient);
+const businessLocationRepository = new BusinessLocationApiRepository(resourceAxiosClient);
 
 // ── Use Cases ─────────────────────────────────────────────────────────────────
 export const registerUseCase = new RegisterUseCaseImpl(authApiRepository);
@@ -84,15 +83,6 @@ export const addBusinessMemberUseCase = new AddBusinessMemberUseCaseImpl(
 );
 export const removeBusinessMemberUseCase = new RemoveBusinessMemberUseCaseImpl(
   businessMembershipRepository,
-);
-
-export const listContactInfoUseCase = new ListContactInfoUseCaseImpl(businessContactInfoRepository);
-export const addContactInfoUseCase = new AddContactInfoUseCaseImpl(businessContactInfoRepository);
-export const removeContactInfoUseCase = new RemoveContactInfoUseCaseImpl(
-  businessContactInfoRepository,
-);
-export const updateContactInfoUseCase = new UpdateContactInfoUseCaseImpl(
-  businessContactInfoRepository,
 );
 
 export const getAllResourcesUseCase = new GetAllResourcesUseCaseImpl(resourceRepository);
@@ -129,6 +119,16 @@ export const deleteBusinessCategoryUseCase = new DeleteBusinessCategoryUseCaseIm
   businessCategoryRepository,
 );
 export const setBusinessCategoryUseCase = new SetBusinessCategoryUseCaseImpl(businessRepository);
+
+export const createBusinessLocationUseCase = new CreateBusinessLocationUseCaseImpl(
+  businessLocationRepository,
+);
+export const listBusinessLocationsUseCase = new ListBusinessLocationsUseCaseImpl(
+  businessLocationRepository,
+);
+export const getBusinessLocationUseCase = new GetBusinessLocationUseCaseImpl(
+  businessLocationRepository,
+);
 
 export const listBusinessServicesUseCase = new ListBusinessServicesUseCaseImpl(
   businessServiceRepository,

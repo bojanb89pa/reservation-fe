@@ -1,3 +1,5 @@
+import type { CreateBusinessLocationCommand } from './BusinessLocation';
+
 export type BusinessStatus = 'PENDING' | 'ACTIVE' | 'REJECTED' | 'DELETED';
 
 export interface Business {
@@ -8,17 +10,15 @@ export interface Business {
   categoryId: string | null;
 }
 
-export interface CreateBusinessCommand {
-  name: string;
-}
-
 export interface SubmitBusinessCommand {
   name: string;
+  location: CreateBusinessLocationCommand;
 }
 
 export interface CreateBusinessByAdminCommand {
   name: string;
   ownerId: string;
+  location: CreateBusinessLocationCommand;
 }
 
 export interface SetBusinessCategoryCommand {

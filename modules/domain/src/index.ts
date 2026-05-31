@@ -28,18 +28,12 @@ export type {
   SetBusinessCategoryCommand,
 } from './entities/Business';
 export type {
-  BusinessContactInfo,
-  ContactInfoType,
-  AddContactInfoCommand,
-  UpdateContactInfoCommand,
-  RemoveContactInfoCommand,
-} from './entities/BusinessContactInfo';
-export type {
   BusinessMembership,
   BusinessMemberRole,
   AddMemberCommand,
   RemoveMemberCommand,
 } from './entities/BusinessMembership';
+export type { BusinessLocation, CreateBusinessLocationCommand } from './entities/BusinessLocation';
 export type { Reservation, CreateReservationCommand } from './entities/Reservation';
 export type { Resource, CreateResourceCommand } from './entities/Resource';
 export type {
@@ -67,12 +61,12 @@ export type { AuthRepository } from './repositories/AuthRepository';
 export type { BusinessCategoryRepository } from './repositories/BusinessCategoryRepository';
 export type { LocalizedBusinessCategoryRepository } from './repositories/LocalizedBusinessCategoryRepository';
 export type { BusinessRepository } from './repositories/BusinessRepository';
-export type { BusinessContactInfoRepository } from './repositories/BusinessContactInfoRepository';
 export type { BusinessMembershipRepository } from './repositories/BusinessMembershipRepository';
 export type { BusinessServiceRepository } from './repositories/BusinessServiceRepository';
 export type { ReservationRepository } from './repositories/ReservationRepository';
 export type { ResourceAvailabilityRuleRepository } from './repositories/ResourceAvailabilityRuleRepository';
 export type { ResourceRepository } from './repositories/ResourceRepository';
+export type { BusinessLocationRepository } from './repositories/BusinessLocationRepository';
 
 // Types
 export type { PageRequest, PageResponse } from './types/Page';
@@ -97,15 +91,14 @@ export type { ActivateBusinessUseCase } from './use-cases/business/ActivateBusin
 export type { RejectBusinessUseCase } from './use-cases/business/RejectBusinessUseCase';
 export type { DeleteBusinessUseCase } from './use-cases/business/DeleteBusinessUseCase';
 export type { SetBusinessCategoryUseCase } from './use-cases/business/SetBusinessCategoryUseCase';
-export type { AddContactInfoUseCase } from './use-cases/business-contact-info/AddContactInfoUseCase';
-export type { ListContactInfoUseCase } from './use-cases/business-contact-info/ListContactInfoUseCase';
-export type { RemoveContactInfoUseCase } from './use-cases/business-contact-info/RemoveContactInfoUseCase';
-export type { UpdateContactInfoUseCase } from './use-cases/business-contact-info/UpdateContactInfoUseCase';
 export type { CreateBusinessServiceUseCase } from './use-cases/business-service/CreateBusinessServiceUseCase';
 export type { ListBusinessServicesUseCase } from './use-cases/business-service/ListBusinessServicesUseCase';
 export type { GetBusinessServiceUseCase } from './use-cases/business-service/GetBusinessServiceUseCase';
 export type { UpdateBusinessServiceUseCase } from './use-cases/business-service/UpdateBusinessServiceUseCase';
 export type { DeleteBusinessServiceUseCase } from './use-cases/business-service/DeleteBusinessServiceUseCase';
+export type { CreateBusinessLocationUseCase } from './use-cases/business-location/CreateBusinessLocationUseCase';
+export type { ListBusinessLocationsUseCase } from './use-cases/business-location/ListBusinessLocationsUseCase';
+export type { GetBusinessLocationUseCase } from './use-cases/business-location/GetBusinessLocationUseCase';
 export type { CreateReservationUseCase } from './use-cases/reservation/CreateReservationUseCase';
 export type { GetReservationUseCase } from './use-cases/reservation/GetReservationUseCase';
 export type { CreateResourceUseCase } from './use-cases/resource/CreateResourceUseCase';

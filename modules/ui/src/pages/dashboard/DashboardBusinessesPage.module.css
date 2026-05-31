@@ -46,6 +46,34 @@
   gap: 14px;
 }
 
+.locationSection {
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  background: var(--surface-alt, var(--surface));
+}
+
+.locationSectionTitle {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--ink-500);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 14px;
+}
+
+.locationGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .locationGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .section {
   margin-bottom: 36px;
 }

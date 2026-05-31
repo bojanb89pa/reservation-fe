@@ -9,6 +9,11 @@ export function DashboardBusinessesPage() {
   const { mutateAsync: createBusiness, isPending } = useCreateBusiness();
   const { t } = useTranslation();
   const [name, setName] = useState('');
+  const [locationName, setLocationName] = useState('');
+  const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
 
@@ -17,8 +22,22 @@ export function DashboardBusinessesPage() {
     if (!name.trim()) return;
     setError(null);
     try {
-      await createBusiness(name.trim());
+      await createBusiness({
+        name: name.trim(),
+        location: {
+          name: locationName.trim() || undefined,
+          addressLine1: address.trim() || undefined,
+          city: city.trim() || undefined,
+          phone: phone.trim() || undefined,
+          email: email.trim() || undefined,
+        },
+      });
       setName('');
+      setLocationName('');
+      setAddress('');
+      setCity('');
+      setPhone('');
+      setEmail('');
       setShowForm(false);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : t('dashboardBusinesses.errorCreating'));
@@ -56,6 +75,60 @@ export function DashboardBusinessesPage() {
                 required
               />
             </div>
+
+            <div className={styles.locationSection}>
+              <div className={styles.locationSectionTitle}>
+                {t('dashboardBusinesses.locationFormTitle')}
+              </div>
+              <div className={styles.locationGrid}>
+                <div className="form-field">
+                  <label className="form-label">{t('dashboardBusinesses.locationName')}</label>
+                  <input
+                    className="form-input"
+                    placeholder={t('dashboardBusinesses.locationNamePlaceholder')}
+                    value={locationName}
+                    onChange={(e) => setLocationName(e.target.value)}
+                  />
+                </div>
+                <div className="form-field">
+                  <label className="form-label">{t('dashboardBusinesses.locationCity')}</label>
+                  <input
+                    className="form-input"
+                    placeholder={t('dashboardBusinesses.locationCityPlaceholder')}
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                  />
+                </div>
+                <div className="form-field">
+                  <label className="form-label">{t('dashboardBusinesses.locationAddress')}</label>
+                  <input
+                    className="form-input"
+                    placeholder={t('dashboardBusinesses.locationAddressPlaceholder')}
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
+                </div>
+                <div className="form-field">
+                  <label className="form-label">{t('dashboardBusinesses.locationPhone')}</label>
+                  <input
+                    className="form-input"
+                    placeholder={t('dashboardBusinesses.locationPhonePlaceholder')}
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
+                </div>
+                <div className="form-field">
+                  <label className="form-label">{t('dashboardBusinesses.locationEmail')}</label>
+                  <input
+                    className="form-input"
+                    placeholder={t('dashboardBusinesses.locationEmailPlaceholder')}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
             <button type="submit" className="btn btn-primary" disabled={isPending}>
               {isPending
                 ? t('dashboardBusinesses.creating')

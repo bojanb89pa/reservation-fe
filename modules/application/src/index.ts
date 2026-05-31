@@ -19,16 +19,15 @@ export { DeleteBusinessUseCaseImpl } from './use-cases/business/DeleteBusinessUs
 export { SetBusinessCategoryUseCaseImpl } from './use-cases/business/SetBusinessCategoryUseCaseImpl';
 export { GetBusinessesByCategoryUseCaseImpl } from './use-cases/business/GetBusinessesByCategoryUseCaseImpl';
 
-export { AddContactInfoUseCaseImpl } from './use-cases/business-contact-info/AddContactInfoUseCaseImpl';
-export { ListContactInfoUseCaseImpl } from './use-cases/business-contact-info/ListContactInfoUseCaseImpl';
-export { RemoveContactInfoUseCaseImpl } from './use-cases/business-contact-info/RemoveContactInfoUseCaseImpl';
-export { UpdateContactInfoUseCaseImpl } from './use-cases/business-contact-info/UpdateContactInfoUseCaseImpl';
-
 export { CreateBusinessServiceUseCaseImpl } from './use-cases/business-service/CreateBusinessServiceUseCaseImpl';
 export { ListBusinessServicesUseCaseImpl } from './use-cases/business-service/ListBusinessServicesUseCaseImpl';
 export { GetBusinessServiceUseCaseImpl } from './use-cases/business-service/GetBusinessServiceUseCaseImpl';
 export { UpdateBusinessServiceUseCaseImpl } from './use-cases/business-service/UpdateBusinessServiceUseCaseImpl';
 export { DeleteBusinessServiceUseCaseImpl } from './use-cases/business-service/DeleteBusinessServiceUseCaseImpl';
+
+export { CreateBusinessLocationUseCaseImpl } from './use-cases/business-location/CreateBusinessLocationUseCaseImpl';
+export { ListBusinessLocationsUseCaseImpl } from './use-cases/business-location/ListBusinessLocationsUseCaseImpl';
+export { GetBusinessLocationUseCaseImpl } from './use-cases/business-location/GetBusinessLocationUseCaseImpl';
 
 export { CreateReservationUseCaseImpl } from './use-cases/reservation/CreateReservationUseCaseImpl';
 export { GetReservationUseCaseImpl } from './use-cases/reservation/GetReservationUseCaseImpl';
