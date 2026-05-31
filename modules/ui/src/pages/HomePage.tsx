@@ -82,7 +82,7 @@ export function HomePage() {
                 <button
                   key={c.id}
                   className={styles.categoryCard}
-                  onClick={() => navigate(`/businesses?categoryId=${c.id}`)}
+                  onClick={() => navigate(`/businesses/category/${c.id}`)}
                 >
                   <div className={styles.categoryIcon} style={{ background: `${color}1A`, color }}>
                     {symbol}

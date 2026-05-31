@@ -9,4 +9,8 @@ export interface PageResponse<T> {
   size: number;
   totalElements: number;
   totalPages: number;
+  nextCursor: string | null;
+  prevCursor: string | null;
+  hasNext: boolean | null;
+  hasPrevious: boolean | null;
 }

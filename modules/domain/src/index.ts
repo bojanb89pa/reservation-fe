@@ -85,6 +85,7 @@ export type { DeleteAvailabilityRuleUseCase } from './use-cases/availabilityrule
 export type { GetAvailabilityRulesUseCase } from './use-cases/availabilityrule/GetAvailabilityRulesUseCase';
 export type { GetMyBusinessesUseCase } from './use-cases/business/GetMyBusinessesUseCase';
 export type { SearchBusinessesUseCase } from './use-cases/business/SearchBusinessesUseCase';
+export type { GetBusinessesByCategoryUseCase } from './use-cases/business/GetBusinessesByCategoryUseCase';
 export type { GetBusinessUseCase } from './use-cases/business/GetBusinessUseCase';
 export type { AddBusinessMemberUseCase } from './use-cases/business/AddBusinessMemberUseCase';
 export type { RemoveBusinessMemberUseCase } from './use-cases/business/RemoveBusinessMemberUseCase';

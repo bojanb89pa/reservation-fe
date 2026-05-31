@@ -35,6 +35,16 @@ const sr: Translation = {
       VEHICLE: { label: 'Vozila', count: '204 u blizini' },
     },
   },
+  businessByCategory: {
+    eyebrow: 'Pretraži',
+    titleWithCount: '{{count}} biznisa',
+    titleNoCount: 'Biznisi',
+    error: 'Greška pri učitavanju biznisa. Pokušaj ponovo.',
+    noResults: 'Nema biznisa u ovoj kategoriji.',
+    prevPage: '← Prethodna',
+    nextPage: 'Sledeća →',
+    pageOf: 'Strana {{page}} od {{total}}',
+  },
   businessList: {
     eyebrow: 'Pretraži',
     titleWithCount: '{{count}} biznisa u blizini.',

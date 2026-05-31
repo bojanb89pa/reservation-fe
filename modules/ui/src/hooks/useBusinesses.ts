@@ -6,6 +6,7 @@ import {
   submitBusinessUseCase,
   createBusinessByAdminUseCase,
   setBusinessCategoryUseCase,
+  getBusinessesByCategoryUseCase,
 } from '../app/container';
 import { useAuthStore } from '../state/authStore';
 
@@ -15,6 +16,8 @@ export const businessKeys = {
   search: (query: string, page: number, size: number) =>
     ['businesses', 'search', query, page, size] as const,
   detail: (id: string) => ['businesses', 'detail', id] as const,
+  byCategory: (categoryId: string, page: number, size: number) =>
+    ['businesses', 'category', categoryId, page, size] as const,
 };
 
 export function useMyBusinesses(page = 0, size = 20) {
@@ -28,6 +31,14 @@ export function useSearchBusinesses(query: string, page = 0, size = 12) {
   return useQuery({
     queryKey: businessKeys.search(query, page, size),
     queryFn: () => searchBusinessesUseCase.execute(query, { page, size }),
+  });
+}
+
+export function useBusinessesByCategory(categoryId: string, page = 0, size = 12) {
+  return useQuery({
+    queryKey: businessKeys.byCategory(categoryId, page, size),
+    queryFn: () => getBusinessesByCategoryUseCase.execute(categoryId, { page, size }),
+    enabled: !!categoryId,
   });
 }
 

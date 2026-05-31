@@ -9,6 +9,7 @@ import type { PageRequest, PageResponse } from '../types/Page';
 export interface BusinessRepository {
   getMyBusinesses(pageRequest: PageRequest): Promise<PageResponse<Business>>;
   search(query: string, pageRequest: PageRequest): Promise<PageResponse<Business>>;
+  getByCategory(categoryId: string, pageRequest: PageRequest): Promise<PageResponse<Business>>;
   getById(id: string): Promise<Business>;
   submit(command: SubmitBusinessCommand): Promise<Business>;
   createByAdmin(command: CreateBusinessByAdminCommand): Promise<Business>;

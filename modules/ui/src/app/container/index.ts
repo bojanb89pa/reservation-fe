@@ -15,6 +15,7 @@ import {
   GetMyBusinessesUseCaseImpl,
   SearchBusinessesUseCaseImpl,
   GetBusinessUseCaseImpl,
+  GetBusinessesByCategoryUseCaseImpl,
   SubmitBusinessUseCaseImpl,
   CreateBusinessByAdminUseCaseImpl,
   AddBusinessMemberUseCaseImpl,
@@ -67,6 +68,9 @@ export const registerUseCase = new RegisterUseCaseImpl(authApiRepository);
 export const getMyBusinessesUseCase = new GetMyBusinessesUseCaseImpl(businessRepository);
 export const searchBusinessesUseCase = new SearchBusinessesUseCaseImpl(businessRepository);
 export const getBusinessUseCase = new GetBusinessUseCaseImpl(businessRepository);
+export const getBusinessesByCategoryUseCase = new GetBusinessesByCategoryUseCaseImpl(
+  businessRepository,
+);
 export const submitBusinessUseCase = new SubmitBusinessUseCaseImpl(businessRepository);
 export const createBusinessByAdminUseCase = new CreateBusinessByAdminUseCaseImpl(
   businessRepository,

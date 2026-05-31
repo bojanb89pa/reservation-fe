@@ -33,6 +33,16 @@ const en = {
       VEHICLE: { label: 'Vehicles', count: '204 nearby' },
     },
   },
+  businessByCategory: {
+    eyebrow: 'Browse',
+    titleWithCount: '{{count}} businesses',
+    titleNoCount: 'Businesses',
+    error: 'Failed to load businesses. Please try again.',
+    noResults: 'No businesses found in this category.',
+    prevPage: '← Previous',
+    nextPage: 'Next →',
+    pageOf: 'Page {{page}} of {{total}}',
+  },
   businessList: {
     eyebrow: 'Browse',
     titleWithCount: '{{count}} businesses near you.',
