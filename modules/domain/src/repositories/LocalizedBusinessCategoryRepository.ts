@@ -6,8 +6,8 @@ import type {
 } from '../entities/LocalizedBusinessCategory';
 
 export interface LocalizedBusinessCategoryRepository {
-  list(locale?: string): Promise<LocalizedBusinessCategory[]>;
-  get(id: string, locale?: string): Promise<LocalizedBusinessCategory>;
+  list(): Promise<LocalizedBusinessCategory[]>;
+  get(id: string): Promise<LocalizedBusinessCategory>;
   create(command: CreateLocalizedBusinessCategoryCommand): Promise<LocalizedBusinessCategory>;
   update(
     id: string,

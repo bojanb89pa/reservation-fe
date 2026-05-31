@@ -2,27 +2,20 @@ import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSearchBusinesses } from '../hooks/useBusinesses';
+import { useBusinessCategories } from '../hooks/useBusinessCategories';
 import { BusinessCard } from '../components/business/BusinessCard';
 import styles from './BusinessListPage.module.css';
 
 export function BusinessListPage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [page, setPage] = useState(0);
   const [searchInput, setSearchInput] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const activeType = searchParams.get('type') ?? '';
+  const activeCategoryId = searchParams.get('category') ?? '';
   const { t } = useTranslation();
 
-  const RESOURCE_TYPES = [
-    { id: '', label: t('businessList.filterAll') },
-    { id: 'EMPLOYEE', label: t('home.resourceTypes.EMPLOYEE.label') },
-    { id: 'ROOM', label: t('home.resourceTypes.ROOM.label') },
-    { id: 'APARTMENT', label: t('home.resourceTypes.APARTMENT.label') },
-    { id: 'TABLE', label: t('home.resourceTypes.TABLE.label') },
-    { id: 'COURT', label: t('home.resourceTypes.COURT.label') },
-    { id: 'VEHICLE', label: t('home.resourceTypes.VEHICLE.label') },
-  ];
+  const { data: categories = [] } = useBusinessCategories();
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -35,7 +28,22 @@ export function BusinessListPage() {
     };
   }, [searchInput]);
 
-  const { data, isLoading, isError } = useSearchBusinesses(debouncedSearch, page, 12);
+  useEffect(() => {
+    setPage(0);
+  }, [activeCategoryId]);
+
+  const { data, isLoading, isError } = useSearchBusinesses(
+    {
+      query: debouncedSearch,
+      categoryIds: activeCategoryId ? [activeCategoryId] : undefined,
+    },
+    page,
+    12,
+  );
+
+  const handleCategoryClick = (categoryId: string) => {
+    setSearchParams(categoryId ? { category: categoryId } : {});
+  };
 
   return (
     <div className={styles.page}>
@@ -57,14 +65,20 @@ export function BusinessListPage() {
       </div>
 
       <div className={styles.filters}>
-        {RESOURCE_TYPES.map((rt) => (
-          <a
-            key={rt.id}
-            href={`/businesses${rt.id ? `?type=${rt.id}` : ''}`}
-            className={['chip', activeType === rt.id ? 'active' : ''].join(' ')}
+        <button
+          className={['chip', activeCategoryId === '' ? 'active' : ''].join(' ')}
+          onClick={() => handleCategoryClick('')}
+        >
+          {t('businessList.filterAll')}
+        </button>
+        {categories.map((cat) => (
+          <button
+            key={cat.id}
+            className={['chip', activeCategoryId === cat.id ? 'active' : ''].join(' ')}
+            onClick={() => handleCategoryClick(cat.id)}
           >
-            {rt.label}
-          </a>
+            {cat.name}
+          </button>
         ))}
         {data && (
           <span className={styles.filterCount}>

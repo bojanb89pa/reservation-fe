@@ -76,6 +76,7 @@ export type { ResourceRepository } from './repositories/ResourceRepository';
 
 // Types
 export type { PageRequest, PageResponse } from './types/Page';
+export type { BusinessSearchFilter } from './types/BusinessSearchFilter';
 
 // Use case interfaces
 export type { LoginUseCase } from './use-cases/auth/LoginUseCase';

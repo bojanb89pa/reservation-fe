@@ -1,6 +1,7 @@
 import type {
   BusinessRepository,
   SearchBusinessesUseCase,
+  BusinessSearchFilter,
   Business,
   PageRequest,
   PageResponse,
@@ -9,7 +10,7 @@ import type {
 export class SearchBusinessesUseCaseImpl implements SearchBusinessesUseCase {
   constructor(private readonly businessRepository: BusinessRepository) {}
 
-  execute(query: string, pageRequest: PageRequest): Promise<PageResponse<Business>> {
-    return this.businessRepository.search(query, pageRequest);
+  execute(filter: BusinessSearchFilter, pageRequest: PageRequest): Promise<PageResponse<Business>> {
+    return this.businessRepository.search(filter, pageRequest);
   }
 }

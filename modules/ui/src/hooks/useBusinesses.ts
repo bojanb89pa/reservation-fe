@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import type { BusinessSearchFilter } from '@domain';
 import {
   getMyBusinessesUseCase,
   searchBusinessesUseCase,
@@ -13,8 +14,8 @@ import { useAuthStore } from '../state/authStore';
 export const businessKeys = {
   all: ['businesses'] as const,
   mine: (page: number, size: number) => ['businesses', 'my', page, size] as const,
-  search: (query: string, page: number, size: number) =>
-    ['businesses', 'search', query, page, size] as const,
+  search: (filter: BusinessSearchFilter, page: number, size: number) =>
+    ['businesses', 'search', filter.query ?? '', filter.categoryIds ?? [], page, size] as const,
   detail: (id: string) => ['businesses', 'detail', id] as const,
   byCategory: (categoryId: string, page: number, size: number) =>
     ['businesses', 'category', categoryId, page, size] as const,
@@ -27,10 +28,10 @@ export function useMyBusinesses(page = 0, size = 20) {
   });
 }
 
-export function useSearchBusinesses(query: string, page = 0, size = 12) {
+export function useSearchBusinesses(filter: BusinessSearchFilter, page = 0, size = 12) {
   return useQuery({
-    queryKey: businessKeys.search(query, page, size),
-    queryFn: () => searchBusinessesUseCase.execute(query, { page, size }),
+    queryKey: businessKeys.search(filter, page, size),
+    queryFn: () => searchBusinessesUseCase.execute(filter, { page, size }),
   });
 }
 

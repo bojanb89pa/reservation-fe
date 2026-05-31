@@ -7,7 +7,7 @@ import type {
 export class ListBusinessCategoriesUseCaseImpl implements ListBusinessCategoriesUseCase {
   constructor(private readonly businessCategoryRepository: BusinessCategoryRepository) {}
 
-  execute(locale: string): Promise<BusinessCategory[]> {
-    return this.businessCategoryRepository.list(locale);
+  execute(): Promise<BusinessCategory[]> {
+    return this.businessCategoryRepository.list();
   }
 }

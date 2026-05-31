@@ -9,7 +9,7 @@ export class GetLocalizedBusinessCategoryUseCaseImpl implements GetLocalizedBusi
     private readonly localizedBusinessCategoryRepository: LocalizedBusinessCategoryRepository,
   ) {}
 
-  execute(id: string, locale?: string): Promise<LocalizedBusinessCategory> {
-    return this.localizedBusinessCategoryRepository.get(id, locale);
+  execute(id: string): Promise<LocalizedBusinessCategory> {
+    return this.localizedBusinessCategoryRepository.get(id);
   }
 }

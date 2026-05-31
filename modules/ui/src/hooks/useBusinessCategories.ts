@@ -23,7 +23,7 @@ export function useBusinessCategories() {
   const locale = i18n.language;
   return useQuery({
     queryKey: categoryKeys.list(locale),
-    queryFn: () => listBusinessCategoriesUseCase.execute(locale),
+    queryFn: () => listBusinessCategoriesUseCase.execute(),
   });
 }
 

@@ -2,6 +2,7 @@ import type { AxiosInstance } from 'axios';
 import type {
   BusinessRepository,
   Business,
+  BusinessSearchFilter,
   PageRequest,
   PageResponse,
   SubmitBusinessCommand,
@@ -19,9 +20,17 @@ export class BusinessApiRepository implements BusinessRepository {
     return response.data;
   }
 
-  async search(query: string, pageRequest: PageRequest): Promise<PageResponse<Business>> {
+  async search(
+    filter: BusinessSearchFilter,
+    pageRequest: PageRequest,
+  ): Promise<PageResponse<Business>> {
     const response = await this.client.get<PageResponse<Business>>('/api/businesses/search', {
-      params: { search: query, page: pageRequest.page, size: pageRequest.size },
+      params: {
+        search: filter.query,
+        categoryIds: filter.categoryIds,
+        page: pageRequest.page,
+        size: pageRequest.size,
+      },
     });
     return response.data;
   }

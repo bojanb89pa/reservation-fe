@@ -6,8 +6,8 @@ import type {
 } from '../entities/BusinessCategory';
 
 export interface BusinessCategoryRepository {
-  list(locale: string): Promise<BusinessCategory[]>;
-  get(id: string, locale: string): Promise<BusinessCategory>;
+  list(): Promise<BusinessCategory[]>;
+  get(id: string): Promise<BusinessCategory>;
   create(command: CreateBusinessCategoryCommand): Promise<BusinessCategory>;
   update(id: string, command: UpdateBusinessCategoryCommand): Promise<BusinessCategory>;
   delete(id: string): Promise<BusinessCategory>;

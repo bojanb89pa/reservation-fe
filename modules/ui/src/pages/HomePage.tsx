@@ -12,7 +12,7 @@ export function HomePage() {
   const { t } = useTranslation();
   const [what, setWhat] = useState('');
   const [where, setWhere] = useState('');
-  const { data: businesses, isLoading } = useSearchBusinesses('', 0, 6);
+  const { data: businesses, isLoading } = useSearchBusinesses({}, 0, 6);
   const { data: categories = [] } = useBusinessCategories();
 
   const handleSearch = () => {
