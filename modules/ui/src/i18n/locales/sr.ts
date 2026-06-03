@@ -5,6 +5,7 @@ const sr: Translation = {
     browse: 'Pretraži',
     howItWorks: 'Kako funkcioniše',
     forBusinesses: 'Za biznise',
+    myReservations: 'Moje rezervacije',
     dashboard: 'Kontrolna tabla',
     signOut: 'Odjavi se',
     signIn: 'Prijavi se',
@@ -323,6 +324,11 @@ const sr: Translation = {
   memberRole: {
     OWNER: 'Vlasnik',
     EMPLOYEE: 'Zaposleni',
+  },
+  myReservations: {
+    eyebrow: 'Tvoje rezervacije',
+    title: 'Moje rezervacije',
+    error: 'Greška pri učitavanju tvojih rezervacija. Pokušaj ponovo.',
   },
   dashboardReservations: {
     title: 'Rezervacije',

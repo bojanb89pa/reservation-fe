@@ -11,6 +11,16 @@ import {
 } from '../app/container';
 import { useAuthStore } from '../state/authStore';
 
+export function useHasBusinessMembership(): boolean {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const { data } = useQuery({
+    queryKey: ['businesses', 'my', 'membership-check'] as const,
+    queryFn: () => getMyBusinessesUseCase.execute({ page: 0, size: 1 }),
+    enabled: isAuthenticated,
+  });
+  return (data?.totalElements ?? 0) > 0;
+}
+
 export const businessKeys = {
   all: ['businesses'] as const,
   mine: (page: number, size: number) => ['businesses', 'my', page, size] as const,

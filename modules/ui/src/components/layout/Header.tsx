@@ -1,12 +1,14 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
+import { useHasBusinessMembership } from '../../hooks/useBusinesses';
 import styles from './Header.module.css';
 
 const LANGS = ['en', 'sr'] as const;
 
 export function Header() {
   const { isAuthenticated, logout, initiateLogin } = useAuth();
+  const hasMembership = useHasBusinessMembership();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
 
@@ -25,14 +27,19 @@ export function Header() {
         <nav className={styles.nav}>
           <Link to="/businesses">{t('nav.browse')}</Link>
           <a href="#how-it-works">{t('nav.howItWorks')}</a>
-          <Link to="/dashboard">{t('nav.forBusinesses')}</Link>
+          <a href="#for-businesses">{t('nav.forBusinesses')}</a>
         </nav>
         <div className={styles.right}>
           {isAuthenticated ? (
             <>
-              <Link to="/dashboard" className={styles.quietLink}>
-                {t('nav.dashboard')}
+              <Link to="/my-reservations" className={styles.quietLink}>
+                {t('nav.myReservations')}
               </Link>
+              {hasMembership && (
+                <Link to="/dashboard" className={styles.quietLink}>
+                  {t('nav.dashboard')}
+                </Link>
+              )}
               <button className="btn btn-ghost btn-sm" onClick={logout}>
                 {t('nav.signOut')}
               </button>

@@ -6,9 +6,10 @@ import styles from './ReservationList.module.css';
 interface Props {
   reservations: Reservation[];
   showUserId?: boolean;
+  showActions?: boolean;
 }
 
-export function ReservationList({ reservations, showUserId }: Props) {
+export function ReservationList({ reservations, showUserId, showActions }: Props) {
   const { t } = useTranslation();
 
   if (reservations.length === 0) {
@@ -22,6 +23,7 @@ export function ReservationList({ reservations, showUserId }: Props) {
           key={r.id}
           reservation={r}
           showUserId={showUserId}
+          showActions={showActions}
         />
       ))}
     </div>

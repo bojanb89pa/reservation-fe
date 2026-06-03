@@ -28,6 +28,7 @@ export function DashboardReservationsPage() {
         <ReservationList
           reservations={reservations}
           showUserId={isAdmin}
+          showActions
         />
       )}
     </div>

@@ -20,9 +20,10 @@ function truncate(id: string) {
 interface Props {
   reservation: Reservation;
   showUserId?: boolean;
+  showActions?: boolean;
 }
 
-export function ReservationListItem({ reservation, showUserId }: Props) {
+export function ReservationListItem({ reservation, showUserId, showActions }: Props) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
@@ -75,7 +76,7 @@ export function ReservationListItem({ reservation, showUserId }: Props) {
         )}
       </div>
 
-      {isPending && (
+      {showActions && isPending && (
         <div className={styles.actions}>
           <button className="btn btn-primary" onClick={handleApprove} disabled={busy}>
             {approving ? t('reservationCard.approving') : t('reservationCard.approve')}

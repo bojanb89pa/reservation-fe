@@ -1,0 +1,28 @@
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 28px 80px;
+}
+
+.topbar {
+  margin-bottom: 32px;
+}
+
+.eyebrow {
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--ink-900);
+  margin: 0;
+}

@@ -3,6 +3,7 @@ const en = {
     browse: 'Browse',
     howItWorks: 'How it works',
     forBusinesses: 'For businesses',
+    myReservations: 'My reservations',
     dashboard: 'Dashboard',
     signOut: 'Sign out',
     signIn: 'Sign in',
@@ -321,6 +322,11 @@ const en = {
   memberRole: {
     OWNER: 'Owner',
     EMPLOYEE: 'Employee',
+  },
+  myReservations: {
+    eyebrow: 'Your bookings',
+    title: 'My reservations',
+    error: 'Failed to load your reservations. Please try again.',
   },
   dashboardReservations: {
     title: 'Reservations',

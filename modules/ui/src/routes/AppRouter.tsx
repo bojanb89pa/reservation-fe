@@ -11,6 +11,7 @@ import { BusinessByCategoryPage } from '../pages/BusinessByCategoryPage';
 import { BusinessDetailPage } from '../pages/BusinessDetailPage';
 import { ReservationHeldPage } from '../pages/ReservationHeldPage';
 
+import { MyReservationsPage } from '../pages/MyReservationsPage';
 import { DashboardLayout } from '../pages/dashboard/DashboardLayout';
 import { DashboardOverviewPage } from '../pages/dashboard/DashboardOverviewPage';
 import { DashboardBusinessesPage } from '../pages/dashboard/DashboardBusinessesPage';
@@ -32,6 +33,7 @@ function PublicLayout() {
           <Route path="businesses/category/:categoryId" element={<BusinessByCategoryPage />} />
           <Route path="businesses/:id" element={<BusinessDetailPage />} />
           <Route path="reservation/:id/held" element={<ReservationHeldPage />} />
+          <Route path="my-reservations" element={<MyReservationsPage />} />
         </Routes>
       </main>
       <Footer />
