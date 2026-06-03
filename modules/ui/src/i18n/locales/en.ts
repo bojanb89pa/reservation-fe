@@ -328,6 +328,13 @@ const en = {
     idPlaceholder: 'Reservation ID (UUID)',
     lookup: 'Look up',
     notFound: 'Reservation not found.',
+    error: 'Failed to load reservations. Please try again.',
+  },
+  reservationList: {
+    empty: 'No reservations.',
+    labelService: 'Service',
+    labelResource: 'Resource',
+    labelUser: 'User',
   },
   reservationCard: {
     start: 'Start',

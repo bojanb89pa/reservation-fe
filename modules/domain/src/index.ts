@@ -100,6 +100,7 @@ export type { CreateBusinessLocationUseCase } from './use-cases/business-locatio
 export type { ListBusinessLocationsUseCase } from './use-cases/business-location/ListBusinessLocationsUseCase';
 export type { GetBusinessLocationUseCase } from './use-cases/business-location/GetBusinessLocationUseCase';
 export type { CreateReservationUseCase } from './use-cases/reservation/CreateReservationUseCase';
+export type { GetAllReservationsUseCase } from './use-cases/reservation/GetAllReservationsUseCase';
 export type { GetReservationUseCase } from './use-cases/reservation/GetReservationUseCase';
 export type { ApproveReservationUseCase } from './use-cases/reservation/ApproveReservationUseCase';
 export type { RejectReservationUseCase } from './use-cases/reservation/RejectReservationUseCase';

@@ -330,6 +330,13 @@ const sr: Translation = {
     idPlaceholder: 'ID rezervacije (UUID)',
     lookup: 'Pretraži',
     notFound: 'Rezervacija nije pronađena.',
+    error: 'Greška pri učitavanju rezervacija. Pokušaj ponovo.',
+  },
+  reservationList: {
+    empty: 'Nema rezervacija.',
+    labelService: 'Usluga',
+    labelResource: 'Resurs',
+    labelUser: 'Korisnik',
   },
   reservationCard: {
     start: 'Početak',

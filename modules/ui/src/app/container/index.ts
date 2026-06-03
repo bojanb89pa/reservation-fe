@@ -24,6 +24,7 @@ import {
   GetAllResourcesUseCaseImpl,
   CreateResourceUseCaseImpl,
   CreateReservationUseCaseImpl,
+  GetAllReservationsUseCaseImpl,
   GetReservationUseCaseImpl,
   ApproveReservationUseCaseImpl,
   RejectReservationUseCaseImpl,
@@ -91,6 +92,7 @@ export const getAllResourcesUseCase = new GetAllResourcesUseCaseImpl(resourceRep
 export const createResourceUseCase = new CreateResourceUseCaseImpl(resourceRepository);
 
 export const createReservationUseCase = new CreateReservationUseCaseImpl(reservationRepository);
+export const getAllReservationsUseCase = new GetAllReservationsUseCaseImpl(reservationRepository);
 export const getReservationUseCase = new GetReservationUseCaseImpl(reservationRepository);
 export const approveReservationUseCase = new ApproveReservationUseCaseImpl(reservationRepository);
 export const rejectReservationUseCase = new RejectReservationUseCaseImpl(reservationRepository);

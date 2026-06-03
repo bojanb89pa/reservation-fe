@@ -30,6 +30,7 @@ export { ListBusinessLocationsUseCaseImpl } from './use-cases/business-location/
 export { GetBusinessLocationUseCaseImpl } from './use-cases/business-location/GetBusinessLocationUseCaseImpl';
 
 export { CreateReservationUseCaseImpl } from './use-cases/reservation/CreateReservationUseCaseImpl';
+export { GetAllReservationsUseCaseImpl } from './use-cases/reservation/GetAllReservationsUseCaseImpl';
 export { GetReservationUseCaseImpl } from './use-cases/reservation/GetReservationUseCaseImpl';
 export { ApproveReservationUseCaseImpl } from './use-cases/reservation/ApproveReservationUseCaseImpl';
 export { RejectReservationUseCaseImpl } from './use-cases/reservation/RejectReservationUseCaseImpl';

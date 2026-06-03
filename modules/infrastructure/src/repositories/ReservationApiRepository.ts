@@ -4,9 +4,12 @@ import type { ReservationRepository, Reservation, CreateReservationCommand } fro
 export class ReservationApiRepository implements ReservationRepository {
   constructor(private readonly client: AxiosInstance) {}
 
+  async getAll(): Promise<Reservation[]> {
+    const response = await this.client.get<Reservation[]>('/api/reservations');
+    return response.data;
+  }
+
   async getById(id: string): Promise<Reservation> {
-    // The BE endpoint is GET /api/resources/{resourceId}/reservations/{id}
-    // We use a generic lookup — resourceId is embedded via the reservation itself
     const response = await this.client.get<Reservation>(`/api/reservations/${id}`);
     return response.data;
   }
