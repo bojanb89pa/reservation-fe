@@ -31,6 +31,8 @@ export { GetBusinessLocationUseCaseImpl } from './use-cases/business-location/Ge
 
 export { CreateReservationUseCaseImpl } from './use-cases/reservation/CreateReservationUseCaseImpl';
 export { GetReservationUseCaseImpl } from './use-cases/reservation/GetReservationUseCaseImpl';
+export { ApproveReservationUseCaseImpl } from './use-cases/reservation/ApproveReservationUseCaseImpl';
+export { RejectReservationUseCaseImpl } from './use-cases/reservation/RejectReservationUseCaseImpl';
 
 export { CreateResourceUseCaseImpl } from './use-cases/resource/CreateResourceUseCaseImpl';
 export { GetAllResourcesUseCaseImpl } from './use-cases/resource/GetAllResourcesUseCaseImpl';

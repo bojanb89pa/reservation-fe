@@ -34,7 +34,7 @@ export type {
   RemoveMemberCommand,
 } from './entities/BusinessMembership';
 export type { BusinessLocation, CreateBusinessLocationCommand } from './entities/BusinessLocation';
-export type { Reservation, CreateReservationCommand } from './entities/Reservation';
+export type { Reservation, ReservationStatus, CreateReservationCommand } from './entities/Reservation';
 export type { Resource, CreateResourceCommand } from './entities/Resource';
 export type {
   ResourceAvailabilityRule,
@@ -101,6 +101,8 @@ export type { ListBusinessLocationsUseCase } from './use-cases/business-location
 export type { GetBusinessLocationUseCase } from './use-cases/business-location/GetBusinessLocationUseCase';
 export type { CreateReservationUseCase } from './use-cases/reservation/CreateReservationUseCase';
 export type { GetReservationUseCase } from './use-cases/reservation/GetReservationUseCase';
+export type { ApproveReservationUseCase } from './use-cases/reservation/ApproveReservationUseCase';
+export type { RejectReservationUseCase } from './use-cases/reservation/RejectReservationUseCase';
 export type { CreateResourceUseCase } from './use-cases/resource/CreateResourceUseCase';
 export type { GetAllResourcesUseCase } from './use-cases/resource/GetAllResourcesUseCase';
 export type { ListBusinessCategoriesUseCase } from './use-cases/business-category/ListBusinessCategoriesUseCase';

@@ -12,17 +12,30 @@ export class ReservationApiRepository implements ReservationRepository {
   }
 
   async create(resourceId: string, command: CreateReservationCommand): Promise<Reservation> {
-    const body: Reservation = {
-      id: null,
-      userId: null,
-      resourceId,
-      serviceId: command.serviceId,
-      startTime: command.startTime,
-      endTime: command.endTime,
-    };
     const response = await this.client.post<Reservation>(
       `/api/resources/${resourceId}/reservations`,
-      body,
+      {
+        id: null,
+        userId: null,
+        resourceId,
+        serviceId: command.serviceId,
+        startTime: command.startTime,
+        endTime: command.endTime,
+      },
+    );
+    return response.data;
+  }
+
+  async approve(resourceId: string, id: string): Promise<Reservation> {
+    const response = await this.client.post<Reservation>(
+      `/api/resources/${resourceId}/reservations/${id}/approve`,
+    );
+    return response.data;
+  }
+
+  async reject(resourceId: string, id: string): Promise<Reservation> {
+    const response = await this.client.post<Reservation>(
+      `/api/resources/${resourceId}/reservations/${id}/reject`,
     );
     return response.data;
   }
