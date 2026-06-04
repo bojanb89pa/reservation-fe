@@ -109,7 +109,7 @@ export function ContactInfoSection({ businessId }: Props) {
               />
               <div className={styles.actions}>
                 <button
-                  className="btn btn-primary btn-sm"
+                  className="btn btn-secondary btn-sm"
                   onClick={() => handleSave(entry.id)}
                   disabled={updating}
                 >
@@ -167,7 +167,7 @@ export function ContactInfoSection({ businessId }: Props) {
           value={addLabel}
           onChange={(e) => setAddLabel(e.target.value)}
         />
-        <button type="submit" className="btn btn-primary" disabled={adding}>
+        <button type="submit" className="btn btn-secondary" disabled={adding}>
           {t('contactInfo.addButton')}
         </button>
       </form>

@@ -49,6 +49,10 @@
   flex-shrink: 0;
 }
 
+.logoMarkBusiness {
+  background: var(--secondary);
+}
+
 .logoText {
   font-family: var(--font-display);
   font-size: 19px;

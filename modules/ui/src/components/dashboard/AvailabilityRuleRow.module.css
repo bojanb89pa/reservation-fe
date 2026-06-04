@@ -36,7 +36,7 @@
   position: absolute;
   top: 3px;
   bottom: 3px;
-  background: var(--primary);
+  background: var(--secondary);
   border-radius: 4px;
 }
 

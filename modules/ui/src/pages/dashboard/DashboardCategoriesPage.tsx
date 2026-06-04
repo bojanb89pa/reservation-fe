@@ -91,7 +91,7 @@ export function DashboardCategoriesPage() {
           <h1 className={styles.pageTitle}>{t('dashboardCategories.title')}</h1>
         </div>
         {mode.type === 'idle' && (
-          <button className="btn btn-primary" onClick={() => setMode({ type: 'create' })}>
+          <button className="btn btn-secondary" onClick={() => setMode({ type: 'create' })}>
             {t('dashboardCategories.newCategory')}
           </button>
         )}

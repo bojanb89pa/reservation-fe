@@ -18,8 +18,11 @@ export function OAuthCallbackPage() {
       return;
     }
 
+    const returnTo = sessionStorage.getItem('auth_return_to') ?? '/';
+    sessionStorage.removeItem('auth_return_to');
+
     handleCallback(code)
-      .then(() => navigate('/dashboard'))
+      .then(() => navigate(returnTo, { replace: true }))
       .catch(() => navigate('/?error=auth_failed'));
   }, [params, handleCallback, navigate]);
 

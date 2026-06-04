@@ -26,9 +26,7 @@ export function BusinessCategorySection({ business }: Props) {
     await setCategory(selectedId);
   };
 
-  const currentName =
-    categories.find((c) => c.id === business.categoryId)?.name ??
-    t('businessCategory.othersDefault');
+  const currentName = business.category?.name ?? t('businessCategory.othersDefault');
 
   return (
     <section className={styles.section}>
@@ -50,7 +48,7 @@ export function BusinessCategorySection({ business }: Props) {
             </option>
           ))}
         </select>
-        <button type="submit" className="btn btn-primary" disabled={isPending || !isDirty}>
+        <button type="submit" className="btn btn-secondary" disabled={isPending || !isDirty}>
           {t('businessCategory.save')}
         </button>
       </form>

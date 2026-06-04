@@ -56,9 +56,25 @@ export function PendingReservationCard({ reservation }: Props) {
           <dd className={styles.value}>{formatDateTime(reservation.endTime)}</dd>
         </div>
         <div className={styles.row}>
-          <dt className={styles.label}>{t('reservationCard.serviceId')}</dt>
-          <dd className={`${styles.value} ${styles.mono}`}>{reservation.serviceId}</dd>
+          <dt className={styles.label}>{t('reservationCard.service')}</dt>
+          <dd className={styles.value}>
+            {reservation.service
+              ? `${reservation.service.name} · ${reservation.service.duration} ${reservation.service.durationUnit.toLowerCase()}`
+              : reservation.serviceId}
+          </dd>
         </div>
+        {reservation.resource && (
+          <div className={styles.row}>
+            <dt className={styles.label}>{t('reservationCard.resource')}</dt>
+            <dd className={styles.value}>{reservation.resource.name}</dd>
+          </div>
+        )}
+        {reservation.business && (
+          <div className={styles.row}>
+            <dt className={styles.label}>{t('reservationCard.business')}</dt>
+            <dd className={styles.value}>{reservation.business.name}</dd>
+          </div>
+        )}
         <div className={styles.row}>
           <dt className={styles.label}>{t('reservationCard.reservationId')}</dt>
           <dd className={`${styles.value} ${styles.mono}`}>{reservation.id}</dd>

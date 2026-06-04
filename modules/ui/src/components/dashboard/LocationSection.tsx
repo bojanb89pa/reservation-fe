@@ -132,7 +132,7 @@ export function LocationSection({ businessId }: Props) {
               </div>
             </div>
             <div className={styles.formActions}>
-              <button type="submit" className="btn btn-primary" disabled={isPending}>
+              <button type="submit" className="btn btn-secondary" disabled={isPending}>
                 {isPending ? t('locationSection.saving') : t('locationSection.addButton')}
               </button>
               <button

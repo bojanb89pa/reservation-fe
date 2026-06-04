@@ -1,16 +1,26 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
-import { useHasBusinessMembership } from '../../hooks/useBusinesses';
+import { useHasActiveBusiness } from '../../hooks/useBusinesses';
 import styles from './Header.module.css';
 
 const LANGS = ['en', 'sr'] as const;
 
+const BUSINESS_PATHS = ['/businesses', '/reservation'];
+
 export function Header() {
   const { isAuthenticated, logout, initiateLogin } = useAuth();
-  const hasMembership = useHasBusinessMembership();
+  const hasActiveBusiness = useHasActiveBusiness();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const { pathname } = useLocation();
+  const isBusinessPage = BUSINESS_PATHS.some((p) => pathname.startsWith(p));
+
+  const forBusinessesPath = isAuthenticated
+    ? hasActiveBusiness
+      ? '/dashboard'
+      : '/dashboard/businesses'
+    : '/register';
 
   const switchLang = (lang: string) => {
     i18n.changeLanguage(lang);
@@ -21,13 +31,12 @@ export function Header() {
     <header className={styles.wrapper}>
       <div className={styles.pill}>
         <Link to="/" className={styles.logo}>
-          <span className={styles.logoMark}>R</span>
+          <span className={[styles.logoMark, isBusinessPage ? styles.logoMarkBusiness : ''].join(' ').trim()}>R</span>
           <span className={styles.logoText}>Reserva</span>
         </Link>
         <nav className={styles.nav}>
           <Link to="/businesses">{t('nav.browse')}</Link>
-          <a href="#how-it-works">{t('nav.howItWorks')}</a>
-          <a href="#for-businesses">{t('nav.forBusinesses')}</a>
+          <Link to={forBusinessesPath}>{t('nav.forBusinesses')}</Link>
         </nav>
         <div className={styles.right}>
           {isAuthenticated ? (
@@ -35,11 +44,6 @@ export function Header() {
               <Link to="/my-reservations" className={styles.quietLink}>
                 {t('nav.myReservations')}
               </Link>
-              {hasMembership && (
-                <Link to="/dashboard" className={styles.quietLink}>
-                  {t('nav.dashboard')}
-                </Link>
-              )}
               <button className="btn btn-ghost btn-sm" onClick={logout}>
                 {t('nav.signOut')}
               </button>

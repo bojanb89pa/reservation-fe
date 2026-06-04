@@ -71,7 +71,7 @@ export function MemberSection({ businessId, role, title }: Props) {
           value={userId}
           onChange={(e) => setUserId(e.target.value)}
         />
-        <button type="submit" className="btn btn-primary" disabled={adding}>
+        <button type="submit" className="btn btn-secondary" disabled={adding}>
           {t(`memberSection.${role}.addButton`)}
         </button>
       </form>

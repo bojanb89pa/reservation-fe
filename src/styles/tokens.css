@@ -5,9 +5,12 @@
 
 :root {
   /* ── Brand palette ── */
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
+  --primary: #1b627e;
+  --primary-hover: #0b424e;
   --primary-light: #eef2ff;
+  --secondary: #186325;
+  --secondary-hover: #246105;
+  --secondary-light: #e6f4e8;
   --accent: #ff6f61;
   --accent-light: #fff1ef;
   --sun: #ffc83d;

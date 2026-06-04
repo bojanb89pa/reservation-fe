@@ -21,6 +21,16 @@ export function useHasBusinessMembership(): boolean {
   return (data?.totalElements ?? 0) > 0;
 }
 
+export function useHasActiveBusiness(): boolean {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const { data } = useQuery({
+    queryKey: ['businesses', 'my', 'active-check'] as const,
+    queryFn: () => getMyBusinessesUseCase.execute({ page: 0, size: 50 }),
+    enabled: isAuthenticated,
+  });
+  return (data?.content ?? []).some((b) => b.status === 'ACTIVE');
+}
+
 export const businessKeys = {
   all: ['businesses'] as const,
   mine: (page: number, size: number) => ['businesses', 'my', page, size] as const,

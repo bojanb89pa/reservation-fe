@@ -5,6 +5,7 @@ export function useAuth() {
   const { session, isAuthenticated, setSession, startLogout } = useAuthStore();
 
   const initiateLogin = () => {
+    sessionStorage.setItem('auth_return_to', window.location.pathname);
     const params = new URLSearchParams({
       response_type: 'code',
       client_id: env.oauthClientId,

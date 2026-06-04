@@ -85,6 +85,11 @@ export function BusinessDetailPage() {
         </div>
         <div className={styles.detailMeta}>
           <div className="eyebrow-rule">{t('businessDetail.eyebrow')}</div>
+          {business.category && (
+            <span className="tag" style={{ color: business.category.color ?? undefined }}>
+              {business.category.symbol} {business.category.name}
+            </span>
+          )}
           <h1 className={styles.detailTitle}>{business.name}</h1>
           <div className={styles.tags}>
             {resources.map((r) => (

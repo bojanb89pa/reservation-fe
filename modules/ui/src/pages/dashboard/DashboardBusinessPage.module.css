@@ -7,7 +7,7 @@
 
 .breadcrumb {
   font-size: var(--text-sm);
-  color: var(--primary);
+  color: var(--secondary);
   font-weight: 600;
   display: block;
   margin-bottom: 6px;
@@ -92,8 +92,8 @@
 }
 
 .activeBtn {
-  border-color: var(--primary) !important;
-  color: var(--primary) !important;
+  border-color: var(--secondary) !important;
+  color: var(--secondary) !important;
 }
 
 .addForm {

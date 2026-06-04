@@ -76,7 +76,7 @@ export function ServiceForm({ initial, onSave, onCancel, isPending, error }: Pro
         >
           {t('serviceSection.cancel')}
         </button>
-        <button type="submit" className="btn btn-primary btn-sm" disabled={isPending}>
+        <button type="submit" className="btn btn-secondary btn-sm" disabled={isPending}>
           {isPending
             ? t('serviceSection.saving')
             : initial

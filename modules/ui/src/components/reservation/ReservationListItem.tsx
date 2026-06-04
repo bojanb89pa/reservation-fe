@@ -56,16 +56,24 @@ export function ReservationListItem({ reservation, showUserId, showActions }: Pr
       <div className={styles.meta}>
         <span className={styles.metaItem}>
           <span className={styles.metaLabel}>{t('reservationList.labelService')}</span>
-          <span className={`${styles.metaValue} ${styles.mono}`} title={reservation.serviceId}>
-            {truncate(reservation.serviceId)}
+          <span className={styles.metaValue}>
+            {reservation.service
+              ? `${reservation.service.name} · ${reservation.service.duration} ${reservation.service.durationUnit.toLowerCase()}`
+              : truncate(reservation.serviceId)}
           </span>
         </span>
         <span className={styles.metaItem}>
           <span className={styles.metaLabel}>{t('reservationList.labelResource')}</span>
-          <span className={`${styles.metaValue} ${styles.mono}`} title={reservation.resourceId}>
-            {truncate(reservation.resourceId)}
+          <span className={styles.metaValue}>
+            {reservation.resource?.name ?? truncate(reservation.resourceId)}
           </span>
         </span>
+        {reservation.business && (
+          <span className={styles.metaItem}>
+            <span className={styles.metaLabel}>{t('reservationList.labelBusiness')}</span>
+            <span className={styles.metaValue}>{reservation.business.name}</span>
+          </span>
+        )}
         {showUserId && reservation.userId && (
           <span className={styles.metaItem}>
             <span className={styles.metaLabel}>{t('reservationList.labelUser')}</span>

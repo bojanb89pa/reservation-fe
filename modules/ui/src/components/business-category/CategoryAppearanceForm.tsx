@@ -88,7 +88,7 @@ export function CategoryAppearanceForm({ category, onSave, onCancel, isPending, 
         >
           {t('categoryAppearanceForm.cancel')}
         </button>
-        <button type="submit" className="btn btn-primary btn-sm" disabled={isPending}>
+        <button type="submit" className="btn btn-secondary btn-sm" disabled={isPending}>
           {isPending ? t('categoryAppearanceForm.saving') : t('categoryAppearanceForm.save')}
         </button>
       </div>

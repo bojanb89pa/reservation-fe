@@ -7,8 +7,8 @@ import styles from './ReservationHeldPage.module.css';
 
 interface HeldState {
   reservation: Reservation;
-  business: Business;
-  resource: Resource;
+  business?: Business;
+  resource?: Resource;
 }
 
 function formatDateTime(iso: string) {
@@ -38,6 +38,8 @@ export function ReservationHeldPage() {
   }
 
   const { reservation, business, resource } = state;
+  const businessName = business?.name ?? reservation.business?.name ?? '—';
+  const resourceName = resource?.name ?? reservation.resource?.name ?? '—';
   const confCode = `conf-${(reservation.id ?? 'XXXXXX').slice(0, 6).toUpperCase()}`;
 
   return (
@@ -47,7 +49,7 @@ export function ReservationHeldPage() {
       <p className={styles.subtitle}>
         <Trans
           i18nKey="reservationHeld.subtitle"
-          values={{ business: business.name }}
+          values={{ business: businessName }}
           components={{ bold: <strong /> }}
         />
       </p>
@@ -57,7 +59,7 @@ export function ReservationHeldPage() {
           <div className={styles.row}>
             <dt>{t('reservationHeld.where')}</dt>
             <dd>
-              {business.name} — {resource.name}
+              {businessName} — {resourceName}
             </dd>
           </div>
           <div className={styles.row}>
@@ -76,7 +78,7 @@ export function ReservationHeldPage() {
       </div>
 
       <div className={styles.actions}>
-        <button className="btn btn-secondary" onClick={() => navigate('/')}>
+        <button className="btn btn-ghost" onClick={() => navigate('/')}>
           {t('reservationHeld.backToHome')}
         </button>
         <button className="btn btn-ghost" onClick={() => navigate('/businesses')}>

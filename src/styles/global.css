@@ -128,14 +128,15 @@ button {
 }
 
 .btn-secondary {
-  background: var(--surface);
-  color: var(--ink-900);
-  border-color: var(--ink-900);
+  background: var(--secondary);
+  color: #fff;
+  border-color: var(--secondary);
 }
 .btn-secondary:hover {
-  background: var(--ink-900);
-  color: #fff;
+  background: var(--secondary-hover);
+  border-color: var(--secondary-hover);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-ghost {

@@ -51,7 +51,7 @@ export function DashboardBusinessesPage() {
           <div className={styles.eyebrow}>{t('dashboard.eyebrow')}</div>
           <h1 className={styles.pageTitle}>{t('dashboardBusinesses.title')}</h1>
         </div>
-        <button className="btn btn-primary" onClick={() => setShowForm((v) => !v)}>
+        <button className="btn btn-secondary" onClick={() => setShowForm((v) => !v)}>
           {showForm ? t('dashboardBusinesses.cancelButton') : t('dashboardBusinesses.newBusiness')}
         </button>
       </div>
@@ -129,7 +129,7 @@ export function DashboardBusinessesPage() {
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary" disabled={isPending}>
+            <button type="submit" className="btn btn-secondary" disabled={isPending}>
               {isPending
                 ? t('dashboardBusinesses.creating')
                 : t('dashboardBusinesses.createBusiness')}

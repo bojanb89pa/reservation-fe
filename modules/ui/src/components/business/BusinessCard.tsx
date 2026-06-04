@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { Business } from '@domain';
+import { DEFAULT_CATEGORY_COLOR } from '@domain';
 import styles from './BusinessCard.module.css';
 
 interface Props {
@@ -35,6 +36,15 @@ export function BusinessCard({ business }: Props) {
           </span>
         </div>
         <h3 className={styles.title}>{business.name}</h3>
+        {business.category && (
+          <span
+            className={styles.categoryChip}
+            style={{ backgroundColor: business.category.color ?? DEFAULT_CATEGORY_COLOR }}
+          >
+            {business.category.symbol && <span>{business.category.symbol}</span>}
+            {business.category.name}
+          </span>
+        )}
         <div className={styles.footer}>
           <span className={styles.cta}>{t('businessCard.viewResources')}</span>
         </div>

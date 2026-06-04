@@ -15,7 +15,7 @@ export function DashboardOverviewPage() {
           <h1 className={styles.pageTitle}>{t('dashboardOverview.title')}</h1>
         </div>
         <div className={styles.topbarRight}>
-          <Link to="/dashboard/businesses/new" className="btn btn-primary">
+          <Link to="/dashboard/businesses/new" className="btn btn-secondary">
             {t('dashboardOverview.newBusiness')}
           </Link>
         </div>
@@ -63,7 +63,7 @@ export function DashboardOverviewPage() {
             <p>{t('dashboardOverview.noBusinessYet')}</p>
             <Link
               to="/dashboard/businesses/new"
-              className="btn btn-primary"
+              className="btn btn-secondary"
               style={{ marginTop: 12 }}
             >
               {t('dashboardOverview.addFirstBusiness')}

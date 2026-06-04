@@ -130,7 +130,7 @@ export function DashboardBusinessPage() {
             value={resourceName}
             onChange={(e) => setResourceName(e.target.value)}
           />
-          <button type="submit" className="btn btn-primary" disabled={creatingResource}>
+          <button type="submit" className="btn btn-secondary" disabled={creatingResource}>
             {t('dashboardBusiness.addResource')}
           </button>
         </form>
@@ -200,7 +200,7 @@ export function DashboardBusinessPage() {
               value={ruleEnd}
               onChange={(e) => setRuleEnd(e.target.value)}
             />
-            <button type="submit" className="btn btn-primary" disabled={creatingRule}>
+            <button type="submit" className="btn btn-secondary" disabled={creatingRule}>
               {t('dashboardBusiness.addRule')}
             </button>
           </form>

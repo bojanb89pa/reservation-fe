@@ -34,7 +34,14 @@ export type {
   RemoveMemberCommand,
 } from './entities/BusinessMembership';
 export type { BusinessLocation, CreateBusinessLocationCommand } from './entities/BusinessLocation';
-export type { Reservation, ReservationStatus, CreateReservationCommand } from './entities/Reservation';
+export type {
+  Reservation,
+  ReservationStatus,
+  ReservationServiceInfo,
+  ReservationResourceInfo,
+  ReservationBusinessInfo,
+  CreateReservationCommand,
+} from './entities/Reservation';
 export type { Resource, CreateResourceCommand } from './entities/Resource';
 export type {
   ResourceAvailabilityRule,

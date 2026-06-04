@@ -112,7 +112,7 @@ export function CategoryForm({ categories, initial, onSave, onCancel, isPending,
         >
           {t('categoryForm.cancel')}
         </button>
-        <button type="submit" className="btn btn-primary btn-sm" disabled={isPending}>
+        <button type="submit" className="btn btn-secondary btn-sm" disabled={isPending}>
           {isPending
             ? t('categoryForm.saving')
             : initial
