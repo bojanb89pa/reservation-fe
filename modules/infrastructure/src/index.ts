@@ -18,3 +18,5 @@ export { BusinessMembershipApiRepository } from './repositories/BusinessMembersh
 export { BusinessCategoryApiRepository } from './repositories/BusinessCategoryApiRepository';
 export { BusinessServiceApiRepository } from './repositories/BusinessServiceApiRepository';
 export { BusinessLocationApiRepository } from './repositories/BusinessLocationApiRepository';
+export { BusinessLocationResourceApiRepository } from './repositories/BusinessLocationResourceApiRepository';
+export { BusinessLocationServiceApiRepository } from './repositories/BusinessLocationServiceApiRepository';

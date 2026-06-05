@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBusinessLocations, useCreateBusinessLocation } from '../../hooks/useBusinessLocations';
+import { LocationAssignmentsSection } from '../business-location/LocationAssignmentsSection';
 import styles from './LocationSection.module.css';
 
 interface Props {
@@ -12,6 +13,7 @@ export function LocationSection({ businessId }: Props) {
   const { data: locations = [] } = useBusinessLocations(businessId);
   const { mutateAsync: createLocation, isPending, error } = useCreateBusinessLocation(businessId);
 
+  const [activeLocationId, setActiveLocationId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [locationName, setLocationName] = useState('');
   const [address, setAddress] = useState('');
@@ -53,20 +55,35 @@ export function LocationSection({ businessId }: Props) {
           <div className={styles.empty}>{t('locationSection.noLocations')}</div>
         )}
         {locations.map((loc) => (
-          <div key={loc.id} className={styles.row}>
-            <div>
-              <div className={styles.locationName}>{loc.name ?? loc.city ?? '—'}</div>
-              {(loc.addressLine1 || loc.city) && (
-                <div className={styles.locationAddress}>
-                  {[loc.addressLine1, loc.city, loc.postalCode].filter(Boolean).join(', ')}
-                </div>
-              )}
+          <div key={loc.id} className={styles.locationItem}>
+            <div className={styles.row}>
+              <div>
+                <div className={styles.locationName}>{loc.name ?? loc.city ?? '—'}</div>
+                {(loc.addressLine1 || loc.city) && (
+                  <div className={styles.locationAddress}>
+                    {[loc.addressLine1, loc.city, loc.postalCode].filter(Boolean).join(', ')}
+                  </div>
+                )}
+              </div>
+              <div className={styles.locationContacts}>
+                {loc.phone && <span className={styles.contactItem}>{loc.phone}</span>}
+                {loc.email && <span className={styles.contactItem}>{loc.email}</span>}
+                {loc.website && <span className={styles.contactItem}>{loc.website}</span>}
+              </div>
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={() =>
+                  setActiveLocationId(activeLocationId === loc.id ? null : loc.id)
+                }
+              >
+                {activeLocationId === loc.id
+                  ? t('locationSection.collapse')
+                  : t('locationSection.manage')}
+              </button>
             </div>
-            <div className={styles.locationContacts}>
-              {loc.phone && <span className={styles.contactItem}>{loc.phone}</span>}
-              {loc.email && <span className={styles.contactItem}>{loc.email}</span>}
-              {loc.website && <span className={styles.contactItem}>{loc.website}</span>}
-            </div>
+            {activeLocationId === loc.id && (
+              <LocationAssignmentsSection businessId={businessId} locationId={loc.id} />
+            )}
           </div>
         ))}
       </div>

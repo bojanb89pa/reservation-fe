@@ -6,6 +6,8 @@ import {
   BusinessCategoryApiRepository,
   BusinessServiceApiRepository,
   BusinessLocationApiRepository,
+  BusinessLocationResourceApiRepository,
+  BusinessLocationServiceApiRepository,
   ResourceApiRepository,
   ReservationApiRepository,
   ResourceAvailabilityRuleApiRepository,
@@ -45,6 +47,12 @@ import {
   CreateBusinessLocationUseCaseImpl,
   ListBusinessLocationsUseCaseImpl,
   GetBusinessLocationUseCaseImpl,
+  AddResourceToLocationUseCaseImpl,
+  ListLocationResourcesUseCaseImpl,
+  RemoveResourceFromLocationUseCaseImpl,
+  AddServiceToLocationUseCaseImpl,
+  ListLocationServicesUseCaseImpl,
+  RemoveServiceFromLocationUseCaseImpl,
 } from '@application';
 
 // Re-export infrastructure primitives consumed only within this module's hooks/state.
@@ -63,6 +71,12 @@ const reservationRepository = new ReservationApiRepository(resourceAxiosClient);
 const availabilityRuleRepository = new ResourceAvailabilityRuleApiRepository(resourceAxiosClient);
 const businessServiceRepository = new BusinessServiceApiRepository(resourceAxiosClient);
 const businessLocationRepository = new BusinessLocationApiRepository(resourceAxiosClient);
+const businessLocationResourceRepository = new BusinessLocationResourceApiRepository(
+  resourceAxiosClient,
+);
+const businessLocationServiceRepository = new BusinessLocationServiceApiRepository(
+  resourceAxiosClient,
+);
 
 // ── Use Cases ─────────────────────────────────────────────────────────────────
 export const registerUseCase = new RegisterUseCaseImpl(authApiRepository);
@@ -134,6 +148,26 @@ export const listBusinessLocationsUseCase = new ListBusinessLocationsUseCaseImpl
 );
 export const getBusinessLocationUseCase = new GetBusinessLocationUseCaseImpl(
   businessLocationRepository,
+);
+
+export const addResourceToLocationUseCase = new AddResourceToLocationUseCaseImpl(
+  businessLocationResourceRepository,
+);
+export const listLocationResourcesUseCase = new ListLocationResourcesUseCaseImpl(
+  businessLocationResourceRepository,
+);
+export const removeResourceFromLocationUseCase = new RemoveResourceFromLocationUseCaseImpl(
+  businessLocationResourceRepository,
+);
+
+export const addServiceToLocationUseCase = new AddServiceToLocationUseCaseImpl(
+  businessLocationServiceRepository,
+);
+export const listLocationServicesUseCase = new ListLocationServicesUseCaseImpl(
+  businessLocationServiceRepository,
+);
+export const removeServiceFromLocationUseCase = new RemoveServiceFromLocationUseCaseImpl(
+  businessLocationServiceRepository,
 );
 
 export const listBusinessServicesUseCase = new ListBusinessServicesUseCaseImpl(

@@ -35,6 +35,14 @@ export type {
 } from './entities/BusinessMembership';
 export type { BusinessLocation, CreateBusinessLocationCommand } from './entities/BusinessLocation';
 export type {
+  BusinessLocationResource,
+  AddResourceToLocationCommand,
+} from './entities/BusinessLocationResource';
+export type {
+  BusinessLocationService,
+  AddServiceToLocationCommand,
+} from './entities/BusinessLocationService';
+export type {
   Reservation,
   ReservationStatus,
   ReservationServiceInfo,
@@ -74,6 +82,8 @@ export type { ReservationRepository } from './repositories/ReservationRepository
 export type { ResourceAvailabilityRuleRepository } from './repositories/ResourceAvailabilityRuleRepository';
 export type { ResourceRepository } from './repositories/ResourceRepository';
 export type { BusinessLocationRepository } from './repositories/BusinessLocationRepository';
+export type { BusinessLocationResourceRepository } from './repositories/BusinessLocationResourceRepository';
+export type { BusinessLocationServiceRepository } from './repositories/BusinessLocationServiceRepository';
 
 // Types
 export type { PageRequest, PageResponse } from './types/Page';
@@ -113,6 +123,12 @@ export type { ApproveReservationUseCase } from './use-cases/reservation/ApproveR
 export type { RejectReservationUseCase } from './use-cases/reservation/RejectReservationUseCase';
 export type { CreateResourceUseCase } from './use-cases/resource/CreateResourceUseCase';
 export type { GetAllResourcesUseCase } from './use-cases/resource/GetAllResourcesUseCase';
+export type { AddResourceToLocationUseCase } from './use-cases/business-location-resource/AddResourceToLocationUseCase';
+export type { ListLocationResourcesUseCase } from './use-cases/business-location-resource/ListLocationResourcesUseCase';
+export type { RemoveResourceFromLocationUseCase } from './use-cases/business-location-resource/RemoveResourceFromLocationUseCase';
+export type { AddServiceToLocationUseCase } from './use-cases/business-location-service/AddServiceToLocationUseCase';
+export type { ListLocationServicesUseCase } from './use-cases/business-location-service/ListLocationServicesUseCase';
+export type { RemoveServiceFromLocationUseCase } from './use-cases/business-location-service/RemoveServiceFromLocationUseCase';
 export type { ListBusinessCategoriesUseCase } from './use-cases/business-category/ListBusinessCategoriesUseCase';
 export type { GetBusinessCategoryUseCase } from './use-cases/business-category/GetBusinessCategoryUseCase';
 export type { CreateBusinessCategoryUseCase } from './use-cases/business-category/CreateBusinessCategoryUseCase';

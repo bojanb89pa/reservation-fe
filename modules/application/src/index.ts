@@ -38,6 +38,14 @@ export { RejectReservationUseCaseImpl } from './use-cases/reservation/RejectRese
 export { CreateResourceUseCaseImpl } from './use-cases/resource/CreateResourceUseCaseImpl';
 export { GetAllResourcesUseCaseImpl } from './use-cases/resource/GetAllResourcesUseCaseImpl';
 
+export { AddResourceToLocationUseCaseImpl } from './use-cases/business-location-resource/AddResourceToLocationUseCaseImpl';
+export { ListLocationResourcesUseCaseImpl } from './use-cases/business-location-resource/ListLocationResourcesUseCaseImpl';
+export { RemoveResourceFromLocationUseCaseImpl } from './use-cases/business-location-resource/RemoveResourceFromLocationUseCaseImpl';
+
+export { AddServiceToLocationUseCaseImpl } from './use-cases/business-location-service/AddServiceToLocationUseCaseImpl';
+export { ListLocationServicesUseCaseImpl } from './use-cases/business-location-service/ListLocationServicesUseCaseImpl';
+export { RemoveServiceFromLocationUseCaseImpl } from './use-cases/business-location-service/RemoveServiceFromLocationUseCaseImpl';
+
 export { ListBusinessCategoriesUseCaseImpl } from './use-cases/business-category/ListBusinessCategoriesUseCaseImpl';
 export { GetBusinessCategoryUseCaseImpl } from './use-cases/business-category/GetBusinessCategoryUseCaseImpl';
 export { CreateBusinessCategoryUseCaseImpl } from './use-cases/business-category/CreateBusinessCategoryUseCaseImpl';
