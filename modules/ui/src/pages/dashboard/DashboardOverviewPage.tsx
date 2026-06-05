@@ -15,7 +15,7 @@ export function DashboardOverviewPage() {
           <h1 className={styles.pageTitle}>{t('dashboardOverview.title')}</h1>
         </div>
         <div className={styles.topbarRight}>
-          <Link to="/dashboard/businesses/new" className="btn btn-secondary">
+          <Link to="/dashboard/businesses?new=1" className="btn btn-secondary">
             {t('dashboardOverview.newBusiness')}
           </Link>
         </div>
@@ -62,7 +62,7 @@ export function DashboardOverviewPage() {
           <div className={styles.emptyState}>
             <p>{t('dashboardOverview.noBusinessYet')}</p>
             <Link
-              to="/dashboard/businesses/new"
+              to="/dashboard/businesses?new=1"
               className="btn btn-secondary"
               style={{ marginTop: 12 }}
             >
@@ -73,7 +73,7 @@ export function DashboardOverviewPage() {
 
         <div className={styles.bizList}>
           {data?.content.map((b) => (
-            <Link key={b.id} to={`/dashboard/businesses/${b.id}`} className={styles.bizRow}>
+            <Link key={b.id} to={`/dashboard/businesses?new=1/${b.id}`} className={styles.bizRow}>
               <span className={styles.bizName}>{b.name}</span>
               <span className={styles.bizArrow}>→</span>
             </Link>

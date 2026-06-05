@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMyBusinesses, useCreateBusiness } from '../../hooks/useBusinesses';
 import styles from './DashboardBusinessesPage.module.css';
@@ -8,6 +8,7 @@ export function DashboardBusinessesPage() {
   const { data, isLoading } = useMyBusinesses(0, 50);
   const { mutateAsync: createBusiness, isPending } = useCreateBusiness();
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
   const [name, setName] = useState('');
   const [locationName, setLocationName] = useState('');
   const [address, setAddress] = useState('');
@@ -15,7 +16,7 @@ export function DashboardBusinessesPage() {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(() => searchParams.get('new') === '1');
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();

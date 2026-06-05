@@ -20,7 +20,7 @@ const NAV_ITEMS: NavItem[] = [
 
 export function DashboardLayout() {
   const { logout } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isAdmin = useIsAdmin();
   const { data: myBusinesses, isLoading: checkingBusinesses } = useMyBusinesses(0, 50);
 
@@ -67,6 +67,17 @@ export function DashboardLayout() {
         </nav>
 
         <div className={styles.foot}>
+          <div className={styles.langSwitch}>
+            {(['en', 'sr'] as const).map((lang) => (
+              <button
+                key={lang}
+                className={[styles.langBtn, i18n.language === lang ? styles.langBtnActive : ''].join(' ')}
+                onClick={() => { i18n.changeLanguage(lang); localStorage.setItem('lang', lang); }}
+              >
+                {lang.toUpperCase()}
+              </button>
+            ))}
+          </div>
           <button className={styles.footBtn} onClick={logout}>
             {t('dashboard.signOut')}
           </button>

@@ -111,6 +111,9 @@
   margin-top: auto;
   padding: 16px 22px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .footBtn {
@@ -125,6 +128,38 @@
 }
 .footBtn:hover {
   color: #fff;
+}
+
+.langSwitch {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.langBtn {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  font-family: var(--font-ui);
+  color: rgba(255, 255, 255, 0.35);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 3px 7px;
+  border-radius: 6px;
+  transition:
+    background var(--dur-fast),
+    color var(--dur-fast);
+}
+
+.langBtn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.langBtnActive {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
 }
 
 /* Main content */
