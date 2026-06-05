@@ -1,6 +1,7 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth, useIsAdmin } from '../../hooks/useAuth';
+import { useMyBusinesses } from '../../hooks/useBusinesses';
 import styles from './DashboardLayout.module.css';
 
 interface NavItem {
@@ -20,6 +21,22 @@ const NAV_ITEMS: NavItem[] = [
 export function DashboardLayout() {
   const { logout } = useAuth();
   const { t } = useTranslation();
+  const isAdmin = useIsAdmin();
+  const { data: myBusinesses, isLoading: checkingBusinesses } = useMyBusinesses(0, 50);
+
+  if (!isAdmin) {
+    if (checkingBusinesses) {
+      return (
+        <div className="page-loading">
+          <div className="spinner" />
+        </div>
+      );
+    }
+    const hasActive = (myBusinesses?.content ?? []).some((b) => b.status === 'ACTIVE');
+    if (!hasActive) {
+      return <Navigate to="/business-onboarding" replace />;
+    }
+  }
 
   return (
     <div className={styles.app}>

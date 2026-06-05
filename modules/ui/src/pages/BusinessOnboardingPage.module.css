@@ -1,0 +1,109 @@
+.page {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-8) var(--s-6);
+}
+
+.content {
+  width: 100%;
+  max-width: 560px;
+}
+
+.header {
+  margin-bottom: var(--s-8);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--ink-900);
+  margin: var(--s-3) 0 var(--s-3);
+  line-height: 1.1;
+}
+
+.subtitle {
+  font-size: var(--text-md);
+  color: var(--ink-500);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.locationSection {
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--s-5);
+  background: var(--surface-2);
+}
+
+.locationTitle {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+  margin-bottom: var(--s-4);
+}
+
+.locationGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-3);
+}
+
+@media (max-width: 480px) {
+  .locationGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Pending state */
+.pendingCard {
+  max-width: 480px;
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: var(--s-12) var(--s-8);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.pendingIcon {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.pendingTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink-900);
+  margin: 0;
+}
+
+.pendingSubtitle {
+  font-size: var(--text-md);
+  color: var(--ink-700);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.pendingInfo {
+  font-size: var(--text-sm);
+  color: var(--ink-500);
+  margin: 0;
+}

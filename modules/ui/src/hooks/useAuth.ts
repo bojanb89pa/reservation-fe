@@ -1,6 +1,18 @@
 import { useAuthStore } from '../state/authStore';
 import { authApiRepository, env, tokenStorage } from '../app/container';
 
+export function useIsAdmin(): boolean {
+  const session = useAuthStore((s) => s.session);
+  if (!session) return false;
+  try {
+    const payload = JSON.parse(atob(session.accessToken.split('.')[1])) as Record<string, unknown>;
+    const roles = (payload['roles'] ?? payload['authorities'] ?? []) as string[];
+    return roles.includes('ROLE_ADMIN');
+  } catch {
+    return false;
+  }
+}
+
 export function useAuth() {
   const { session, isAuthenticated, setSession, startLogout } = useAuthStore();
 

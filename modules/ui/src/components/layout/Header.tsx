@@ -6,7 +6,7 @@ import styles from './Header.module.css';
 
 const LANGS = ['en', 'sr'] as const;
 
-const BUSINESS_PATHS = ['/businesses', '/reservation'];
+const BUSINESS_PATHS = ['/business-onboarding'];
 
 export function Header() {
   const { isAuthenticated, logout, initiateLogin } = useAuth();
@@ -19,7 +19,7 @@ export function Header() {
   const forBusinessesPath = isAuthenticated
     ? hasActiveBusiness
       ? '/dashboard'
-      : '/dashboard/businesses'
+      : '/business-onboarding'
     : '/register';
 
   const switchLang = (lang: string) => {
