@@ -20,6 +20,8 @@ export function BusinessOnboardingPage() {
   const [city, setCity] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
@@ -60,6 +62,8 @@ export function BusinessOnboardingPage() {
           city: city.trim() || undefined,
           phone: phone.trim() || undefined,
           email: email.trim() || undefined,
+          latitude: parseFloat(latitude),
+          longitude: parseFloat(longitude),
         },
       });
       setSubmitted(true);
@@ -163,6 +167,30 @@ export function BusinessOnboardingPage() {
                   placeholder={t('businessOnboarding.locationEmailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div className="form-field">
+                <label className="form-label">{t('businessOnboarding.locationLatitude')} *</label>
+                <input
+                  className="form-input"
+                  type="number"
+                  step="any"
+                  placeholder={t('businessOnboarding.locationLatitudePlaceholder')}
+                  value={latitude}
+                  onChange={(e) => setLatitude(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-field">
+                <label className="form-label">{t('businessOnboarding.locationLongitude')} *</label>
+                <input
+                  className="form-input"
+                  type="number"
+                  step="any"
+                  placeholder={t('businessOnboarding.locationLongitudePlaceholder')}
+                  value={longitude}
+                  onChange={(e) => setLongitude(e.target.value)}
+                  required
                 />
               </div>
             </div>

@@ -24,8 +24,8 @@ export interface CreateBusinessLocationCommand {
   city?: string;
   postalCode?: string;
   countryCode?: string;
-  latitude?: number;
-  longitude?: number;
+  latitude: number;
+  longitude: number;
   timezone?: string;
   phone?: string;
   email?: string;

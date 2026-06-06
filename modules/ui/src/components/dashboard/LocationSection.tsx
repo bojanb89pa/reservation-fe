@@ -21,6 +21,8 @@ export function LocationSection({ businessId }: Props) {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [website, setWebsite] = useState('');
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,6 +33,8 @@ export function LocationSection({ businessId }: Props) {
       phone: phone.trim() || undefined,
       email: email.trim() || undefined,
       website: website.trim() || undefined,
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
     });
     setLocationName('');
     setAddress('');
@@ -38,6 +42,8 @@ export function LocationSection({ businessId }: Props) {
     setPhone('');
     setEmail('');
     setWebsite('');
+    setLatitude('');
+    setLongitude('');
     setShowForm(false);
   };
 
@@ -145,6 +151,30 @@ export function LocationSection({ businessId }: Props) {
                   placeholder={t('locationSection.websitePlaceholder')}
                   value={website}
                   onChange={(e) => setWebsite(e.target.value)}
+                />
+              </div>
+              <div className="form-field">
+                <label className="form-label">{t('locationSection.latitudeLabel')} *</label>
+                <input
+                  className="form-input"
+                  type="number"
+                  step="any"
+                  placeholder={t('locationSection.latitudePlaceholder')}
+                  value={latitude}
+                  onChange={(e) => setLatitude(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-field">
+                <label className="form-label">{t('locationSection.longitudeLabel')} *</label>
+                <input
+                  className="form-input"
+                  type="number"
+                  step="any"
+                  placeholder={t('locationSection.longitudePlaceholder')}
+                  value={longitude}
+                  onChange={(e) => setLongitude(e.target.value)}
+                  required
                 />
               </div>
             </div>

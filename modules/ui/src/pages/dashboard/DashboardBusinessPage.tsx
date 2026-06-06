@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useBusiness } from '../../hooks/useBusinesses';
+import { useBusiness, useActivateBusiness, useRejectBusiness } from '../../hooks/useBusinesses';
+import { useIsAdmin } from '../../hooks/useAuth';
 import { useResources, useCreateResource } from '../../hooks/useResources';
 import {
   useAvailabilityRules,
@@ -29,7 +30,10 @@ const RESOURCE_TYPES: ResourceType[] = [
 export function DashboardBusinessPage() {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
+  const isAdmin = useIsAdmin();
   const { data: business, isLoading: bLoading } = useBusiness(id!);
+  const { mutateAsync: activateBusiness, isPending: activating } = useActivateBusiness(id!);
+  const { mutateAsync: rejectBusiness, isPending: rejecting } = useRejectBusiness(id!);
   const { data: resourcesPage } = useResources(id!);
   const resources = resourcesPage?.content ?? [];
 
@@ -81,6 +85,28 @@ export function DashboardBusinessPage() {
           <h1 className={styles.pageTitle}>{business.name}</h1>
         </div>
       </div>
+
+      {isAdmin && business.status === 'PENDING' && (
+        <div className={styles.adminPanel}>
+          <span className={styles.adminPanelLabel}>{t('dashboardBusiness.pendingApproval')}</span>
+          <div className={styles.adminPanelActions}>
+            <button
+              className="btn btn-secondary"
+              onClick={() => activateBusiness()}
+              disabled={activating || rejecting}
+            >
+              {activating ? t('dashboardBusiness.activating') : t('dashboardBusiness.activate')}
+            </button>
+            <button
+              className="btn btn-ghost"
+              onClick={() => rejectBusiness()}
+              disabled={activating || rejecting}
+            >
+              {rejecting ? t('dashboardBusiness.rejecting') : t('dashboardBusiness.reject')}
+            </button>
+          </div>
+        </div>
+      )}
 
       <section className={styles.section}>
         <div className={styles.sectionHead}>

@@ -20,6 +20,13 @@ export class BusinessApiRepository implements BusinessRepository {
     return response.data;
   }
 
+  async getAllForAdmin(pageRequest: PageRequest): Promise<PageResponse<Business>> {
+    const response = await this.client.get<PageResponse<Business>>('/api/businesses/admin', {
+      params: { page: pageRequest.page, size: pageRequest.size },
+    });
+    return response.data;
+  }
+
   async search(
     filter: BusinessSearchFilter,
     pageRequest: PageRequest,

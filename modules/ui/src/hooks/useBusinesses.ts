@@ -2,10 +2,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { BusinessSearchFilter, CreateBusinessLocationCommand } from '@domain';
 import {
   getMyBusinessesUseCase,
+  getAllBusinessesForAdminUseCase,
   searchBusinessesUseCase,
   getBusinessUseCase,
   submitBusinessUseCase,
   createBusinessByAdminUseCase,
+  activateBusinessUseCase,
+  rejectBusinessUseCase,
   setBusinessCategoryUseCase,
   getBusinessesByCategoryUseCase,
 } from '../app/container';
@@ -29,6 +32,13 @@ export function useHasActiveBusiness(): boolean {
     enabled: isAuthenticated,
   });
   return (data?.content ?? []).some((b) => b.status === 'ACTIVE');
+}
+
+export function useAllBusinessesForAdmin(page = 0, size = 50) {
+  return useQuery({
+    queryKey: ['businesses', 'admin', page, size] as const,
+    queryFn: () => getAllBusinessesForAdminUseCase.execute({ page, size }),
+  });
 }
 
 export const businessKeys = {
@@ -68,6 +78,28 @@ export function useBusiness(id: string) {
     queryKey: businessKeys.detail(id),
     queryFn: () => getBusinessUseCase.execute(id),
     enabled: !!id,
+  });
+}
+
+export function useActivateBusiness(businessId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => activateBusinessUseCase.execute(businessId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: businessKeys.detail(businessId) });
+      queryClient.invalidateQueries({ queryKey: ['businesses', 'admin'] });
+    },
+  });
+}
+
+export function useRejectBusiness(businessId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => rejectBusinessUseCase.execute(businessId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: businessKeys.detail(businessId) });
+      queryClient.invalidateQueries({ queryKey: ['businesses', 'admin'] });
+    },
   });
 }
 

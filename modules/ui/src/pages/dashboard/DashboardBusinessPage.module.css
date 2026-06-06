@@ -24,6 +24,29 @@
   margin: 0;
 }
 
+.adminPanel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fef3c7;
+  border: 1.5px solid #fcd34d;
+  border-radius: var(--r-lg);
+  padding: 14px 20px;
+  margin-bottom: 28px;
+  gap: 16px;
+}
+
+.adminPanelLabel {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: #92400e;
+}
+
+.adminPanelActions {
+  display: flex;
+  gap: 8px;
+}
+
 .section {
   margin-bottom: 36px;
 }

@@ -15,7 +15,10 @@ import {
 import {
   RegisterUseCaseImpl,
   GetMyBusinessesUseCaseImpl,
+  GetAllBusinessesForAdminUseCaseImpl,
   SearchBusinessesUseCaseImpl,
+  ActivateBusinessUseCaseImpl,
+  RejectBusinessUseCaseImpl,
   GetBusinessUseCaseImpl,
   GetBusinessesByCategoryUseCaseImpl,
   SubmitBusinessUseCaseImpl,
@@ -82,7 +85,10 @@ const businessLocationServiceRepository = new BusinessLocationServiceApiReposito
 export const registerUseCase = new RegisterUseCaseImpl(authApiRepository);
 
 export const getMyBusinessesUseCase = new GetMyBusinessesUseCaseImpl(businessRepository);
+export const getAllBusinessesForAdminUseCase = new GetAllBusinessesForAdminUseCaseImpl(businessRepository);
 export const searchBusinessesUseCase = new SearchBusinessesUseCaseImpl(businessRepository);
+export const activateBusinessUseCase = new ActivateBusinessUseCaseImpl(businessRepository);
+export const rejectBusinessUseCase = new RejectBusinessUseCaseImpl(businessRepository);
 export const getBusinessUseCase = new GetBusinessUseCaseImpl(businessRepository);
 export const getBusinessesByCategoryUseCase = new GetBusinessesByCategoryUseCaseImpl(
   businessRepository,

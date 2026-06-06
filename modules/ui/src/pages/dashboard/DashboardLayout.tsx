@@ -11,18 +11,20 @@ interface NavItem {
   end?: boolean;
 }
 
-const NAV_ITEMS: NavItem[] = [
+const BASE_NAV_ITEMS: NavItem[] = [
   { to: '/dashboard', labelKey: 'dashboard.overview', end: true },
   { to: '/dashboard/businesses', labelKey: 'dashboard.myBusinesses' },
-  { to: '/dashboard/categories', labelKey: 'dashboard.categories' },
   { to: '/dashboard/reservations', labelKey: 'dashboard.reservations' },
 ];
+
+const ADMIN_NAV_ITEM: NavItem = { to: '/dashboard/categories', labelKey: 'dashboard.categories' };
 
 export function DashboardLayout() {
   const { logout } = useAuth();
   const { t, i18n } = useTranslation();
   const isAdmin = useIsAdmin();
   const { data: myBusinesses, isLoading: checkingBusinesses } = useMyBusinesses(0, 50);
+  const navItems = isAdmin ? [...BASE_NAV_ITEMS, ADMIN_NAV_ITEM] : BASE_NAV_ITEMS;
 
   if (!isAdmin) {
     if (checkingBusinesses) {
@@ -51,7 +53,7 @@ export function DashboardLayout() {
 
         <nav className={styles.nav}>
           <div className={styles.navSection}>{t('dashboard.navSection')}</div>
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}

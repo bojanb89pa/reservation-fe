@@ -9,6 +9,7 @@ import type { BusinessSearchFilter } from '../types/BusinessSearchFilter';
 
 export interface BusinessRepository {
   getMyBusinesses(pageRequest: PageRequest): Promise<PageResponse<Business>>;
+  getAllForAdmin(pageRequest: PageRequest): Promise<PageResponse<Business>>;
   search(filter: BusinessSearchFilter, pageRequest: PageRequest): Promise<PageResponse<Business>>;
   getByCategory(categoryId: string, pageRequest: PageRequest): Promise<PageResponse<Business>>;
   getById(id: string): Promise<Business>;

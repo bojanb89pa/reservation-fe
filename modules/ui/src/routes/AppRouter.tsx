@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { ProtectedRoute } from './ProtectedRoute';
+import { AdminRoute } from './AdminRoute';
 
 import { HomePage } from '../pages/HomePage';
 import { RegisterPage } from '../pages/RegisterPage';
@@ -52,7 +53,9 @@ export function AppRouter() {
           <Route path="businesses" element={<DashboardBusinessesPage />} />
           <Route path="businesses/:id" element={<DashboardBusinessPage />} />
           <Route path="my-businesses" element={<DashboardMyBusinessesPage />} />
-          <Route path="categories" element={<DashboardCategoriesPage />} />
+          <Route element={<AdminRoute />}>
+            <Route path="categories" element={<DashboardCategoriesPage />} />
+          </Route>
           <Route path="reservations" element={<DashboardReservationsPage />} />
         </Route>
       </Route>

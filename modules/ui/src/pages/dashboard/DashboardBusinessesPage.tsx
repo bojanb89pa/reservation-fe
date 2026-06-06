@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useMyBusinesses, useCreateBusiness } from '../../hooks/useBusinesses';
+import { useMyBusinesses, useAllBusinessesForAdmin, useCreateBusiness } from '../../hooks/useBusinesses';
+import { useIsAdmin } from '../../hooks/useAuth';
 import styles from './DashboardBusinessesPage.module.css';
 
 export function DashboardBusinessesPage() {
-  const { data, isLoading } = useMyBusinesses(0, 50);
+  const isAdmin = useIsAdmin();
+  const myBusinessesQuery = useMyBusinesses(0, 50);
+  const adminBusinessesQuery = useAllBusinessesForAdmin(0, 100);
+  const { data, isLoading } = isAdmin ? adminBusinessesQuery : myBusinessesQuery;
   const { mutateAsync: createBusiness, isPending } = useCreateBusiness();
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
@@ -15,6 +19,8 @@ export function DashboardBusinessesPage() {
   const [city, setCity] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(() => searchParams.get('new') === '1');
 
@@ -31,6 +37,8 @@ export function DashboardBusinessesPage() {
           city: city.trim() || undefined,
           phone: phone.trim() || undefined,
           email: email.trim() || undefined,
+          latitude: parseFloat(latitude),
+          longitude: parseFloat(longitude),
         },
       });
       setName('');
@@ -39,6 +47,8 @@ export function DashboardBusinessesPage() {
       setCity('');
       setPhone('');
       setEmail('');
+      setLatitude('');
+      setLongitude('');
       setShowForm(false);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : t('dashboardBusinesses.errorCreating'));
@@ -127,6 +137,30 @@ export function DashboardBusinessesPage() {
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
+                <div className="form-field">
+                  <label className="form-label">{t('dashboardBusinesses.locationLatitude')} *</label>
+                  <input
+                    className="form-input"
+                    type="number"
+                    step="any"
+                    placeholder={t('dashboardBusinesses.locationLatitudePlaceholder')}
+                    value={latitude}
+                    onChange={(e) => setLatitude(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-field">
+                  <label className="form-label">{t('dashboardBusinesses.locationLongitude')} *</label>
+                  <input
+                    className="form-input"
+                    type="number"
+                    step="any"
+                    placeholder={t('dashboardBusinesses.locationLongitudePlaceholder')}
+                    value={longitude}
+                    onChange={(e) => setLongitude(e.target.value)}
+                    required
+                  />
+                </div>
               </div>
             </div>
 
@@ -141,7 +175,9 @@ export function DashboardBusinessesPage() {
 
       <section className={styles.section}>
         <div className={styles.sectionHead}>
-          <h2 className={styles.sectionTitle}>{t('dashboardBusinesses.allBusinesses')}</h2>
+          <h2 className={styles.sectionTitle}>
+            {isAdmin ? t('dashboardBusinesses.allBusinessesAdmin') : t('dashboardBusinesses.allBusinesses')}
+          </h2>
           <span className={styles.sectionMeta}>
             {t('dashboardBusinesses.registered', { count: data?.totalElements ?? 0 })}
           </span>
@@ -161,6 +197,11 @@ export function DashboardBusinessesPage() {
                 <span className={styles.bizId} title={b.id ?? ''}>
                   {b.id?.slice(0, 8)}…
                 </span>
+                {isAdmin && (
+                  <span className={[styles.bizStatus, styles[`bizStatus${b.status}`]].join(' ')}>
+                    {b.status}
+                  </span>
+                )}
               </div>
               <span className={styles.bizArrow}>{t('dashboardBusinesses.manage')}</span>
             </Link>
