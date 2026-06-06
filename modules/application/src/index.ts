@@ -29,6 +29,11 @@ export { DeleteBusinessServiceUseCaseImpl } from './use-cases/business-service/D
 export { CreateBusinessLocationUseCaseImpl } from './use-cases/business-location/CreateBusinessLocationUseCaseImpl';
 export { ListBusinessLocationsUseCaseImpl } from './use-cases/business-location/ListBusinessLocationsUseCaseImpl';
 export { GetBusinessLocationUseCaseImpl } from './use-cases/business-location/GetBusinessLocationUseCaseImpl';
+export { UpdateLocationFromPlaceUseCaseImpl } from './use-cases/business-location/UpdateLocationFromPlaceUseCaseImpl';
+export { ConfirmLocationUseCaseImpl } from './use-cases/business-location/ConfirmLocationUseCaseImpl';
+
+export { SearchPlacesUseCaseImpl } from './use-cases/place/SearchPlacesUseCaseImpl';
+export { GetPlaceDetailsUseCaseImpl } from './use-cases/place/GetPlaceDetailsUseCaseImpl';
 
 export { CreateReservationUseCaseImpl } from './use-cases/reservation/CreateReservationUseCaseImpl';
 export { GetAllReservationsUseCaseImpl } from './use-cases/reservation/GetAllReservationsUseCaseImpl';

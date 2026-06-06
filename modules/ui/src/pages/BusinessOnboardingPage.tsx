@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import type { PlaceAutocompleteSuggestion } from '@domain';
 import { useMyBusinesses, useCreateBusiness } from '../hooks/useBusinesses';
 import { useAuthStore } from '../state/authStore';
 import { useAuth } from '../hooks/useAuth';
+import { usePlaceSearch } from '../hooks/usePlaceSearch';
+import { usePlaceDetails } from '../hooks/usePlaceDetails';
 import styles from './BusinessOnboardingPage.module.css';
 
 export function BusinessOnboardingPage() {
@@ -16,14 +19,43 @@ export function BusinessOnboardingPage() {
 
   const [name, setName] = useState('');
   const [locationName, setLocationName] = useState('');
-  const [address, setAddress] = useState('');
-  const [city, setCity] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [latitude, setLatitude] = useState('');
-  const [longitude, setLongitude] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+
+  // Place search
+  const [query, setQuery] = useState('');
+  const [sessionToken, setSessionToken] = useState(() => crypto.randomUUID());
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
+
+  const { data: suggestions = [], isFetching: isSearching } = usePlaceSearch(query, sessionToken);
+  const { data: placeDetails, isLoading: isLoadingDetails } = usePlaceDetails(
+    selectedPlaceId,
+    sessionToken,
+  );
+
+  useEffect(() => {
+    if (placeDetails) {
+      setPhone(placeDetails.phone ?? '');
+    }
+  }, [placeDetails]);
+
+  const canSubmit =
+    !!placeDetails &&
+    placeDetails.latitude != null &&
+    placeDetails.longitude != null;
+
+  const handleSelectSuggestion = (placeId: string) => {
+    setSelectedPlaceId(placeId);
+    setQuery('');
+  };
+
+  const handleChangePlace = () => {
+    setSelectedPlaceId(null);
+    setPhone('');
+    setSessionToken(crypto.randomUUID());
+  };
 
   if (!isAuthenticated) {
     initiateLogin();
@@ -52,18 +84,23 @@ export function BusinessOnboardingPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
+    if (!placeDetails || placeDetails.latitude == null || placeDetails.longitude == null) return;
     setError(null);
     try {
       await createBusiness({
         name: name.trim(),
         location: {
           name: locationName.trim() || undefined,
-          addressLine1: address.trim() || undefined,
-          city: city.trim() || undefined,
+          addressLine1: placeDetails.addressLine1 ?? undefined,
+          city: placeDetails.city ?? undefined,
+          postalCode: placeDetails.postalCode ?? undefined,
+          countryCode: placeDetails.countryCode ?? undefined,
+          latitude: placeDetails.latitude,
+          longitude: placeDetails.longitude,
           phone: phone.trim() || undefined,
           email: email.trim() || undefined,
-          latitude: parseFloat(latitude),
-          longitude: parseFloat(longitude),
+          googlePlaceId: placeDetails.placeId,
+          googleMapsUrl: placeDetails.googleMapsUrl ?? undefined,
         },
       });
       setSubmitted(true);
@@ -124,6 +161,76 @@ export function BusinessOnboardingPage() {
           <div className={styles.locationSection}>
             <div className={styles.locationTitle}>{t('businessOnboarding.locationTitle')}</div>
             <div className={styles.locationGrid}>
+              <div className="form-field" style={{ gridColumn: '1 / -1' }}>
+                <label className="form-label">{t('businessOnboarding.locationPlaceLabel')}</label>
+                {selectedPlaceId ? (
+                  isLoadingDetails ? (
+                    <div className={styles.placeLoading}>
+                      {t('businessOnboarding.locationSearching')}
+                    </div>
+                  ) : placeDetails ? (
+                    <>
+                      <div className={styles.selectedPlace}>
+                        <div className={styles.selectedPlaceInfo}>
+                          {placeDetails.name && (
+                            <span className={styles.selectedPlaceName}>{placeDetails.name}</span>
+                          )}
+                          {placeDetails.formattedAddress && (
+                            <span className={styles.selectedPlaceAddress}>
+                              {placeDetails.formattedAddress}
+                            </span>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-sm"
+                          onClick={handleChangePlace}
+                        >
+                          {t('businessOnboarding.locationChangePlace')}
+                        </button>
+                      </div>
+                      {placeDetails.latitude == null && (
+                        <div className={styles.fieldError}>
+                          {t('businessOnboarding.locationNoCoordinates')}
+                        </div>
+                      )}
+                    </>
+                  ) : null
+                ) : (
+                  <div className={styles.placeSearchWrapper}>
+                    <input
+                      className="form-input"
+                      placeholder={t('businessOnboarding.locationPlacePlaceholder')}
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                    />
+                    {isSearching && query.length >= 2 && (
+                      <div className={styles.searchHint}>
+                        {t('businessOnboarding.locationSearching')}
+                      </div>
+                    )}
+                    {suggestions.length > 0 && (
+                      <ul className={styles.suggestionList}>
+                        {suggestions.map((s: PlaceAutocompleteSuggestion) => (
+                          <li key={s.placeId}>
+                            <button
+                              type="button"
+                              className={styles.suggestionButton}
+                              onClick={() => handleSelectSuggestion(s.placeId)}
+                            >
+                              <span className={styles.suggestionName}>{s.displayName}</span>
+                              {s.address && (
+                                <span className={styles.suggestionAddress}>{s.address}</span>
+                              )}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div className="form-field">
                 <label className="form-label">{t('businessOnboarding.locationName')}</label>
                 <input
@@ -131,24 +238,6 @@ export function BusinessOnboardingPage() {
                   placeholder={t('businessOnboarding.locationNamePlaceholder')}
                   value={locationName}
                   onChange={(e) => setLocationName(e.target.value)}
-                />
-              </div>
-              <div className="form-field">
-                <label className="form-label">{t('businessOnboarding.locationCity')}</label>
-                <input
-                  className="form-input"
-                  placeholder={t('businessOnboarding.locationCityPlaceholder')}
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                />
-              </div>
-              <div className="form-field">
-                <label className="form-label">{t('businessOnboarding.locationAddress')}</label>
-                <input
-                  className="form-input"
-                  placeholder={t('businessOnboarding.locationAddressPlaceholder')}
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
                 />
               </div>
               <div className="form-field">
@@ -169,34 +258,14 @@ export function BusinessOnboardingPage() {
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-              <div className="form-field">
-                <label className="form-label">{t('businessOnboarding.locationLatitude')} *</label>
-                <input
-                  className="form-input"
-                  type="number"
-                  step="any"
-                  placeholder={t('businessOnboarding.locationLatitudePlaceholder')}
-                  value={latitude}
-                  onChange={(e) => setLatitude(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-field">
-                <label className="form-label">{t('businessOnboarding.locationLongitude')} *</label>
-                <input
-                  className="form-input"
-                  type="number"
-                  step="any"
-                  placeholder={t('businessOnboarding.locationLongitudePlaceholder')}
-                  value={longitude}
-                  onChange={(e) => setLongitude(e.target.value)}
-                  required
-                />
-              </div>
             </div>
           </div>
 
-          <button type="submit" className="btn btn-secondary btn-block" disabled={isPending}>
+          <button
+            type="submit"
+            className="btn btn-secondary btn-block"
+            disabled={isPending || !canSubmit}
+          >
             {isPending ? t('businessOnboarding.submitting') : t('businessOnboarding.submit')}
           </button>
         </form>

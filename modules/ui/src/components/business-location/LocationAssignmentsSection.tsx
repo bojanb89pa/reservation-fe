@@ -64,9 +64,7 @@ export function LocationAssignmentsSection({ businessId, locationId }: Props) {
       await addResource({ resourceId: selectedResourceId });
       setSelectedResourceId('');
     } catch (err) {
-      setResourceError(
-        err instanceof Error ? err.message : t('locationAssignments.errorAdd'),
-      );
+      setResourceError(err instanceof Error ? err.message : t('locationAssignments.errorAdd'));
     }
   };
 
@@ -75,9 +73,7 @@ export function LocationAssignmentsSection({ businessId, locationId }: Props) {
     try {
       await removeResource(resourceId);
     } catch (err) {
-      setResourceError(
-        err instanceof Error ? err.message : t('locationAssignments.errorRemove'),
-      );
+      setResourceError(err instanceof Error ? err.message : t('locationAssignments.errorRemove'));
     }
   };
 
@@ -88,9 +84,7 @@ export function LocationAssignmentsSection({ businessId, locationId }: Props) {
       await addService({ serviceId: selectedServiceId });
       setSelectedServiceId('');
     } catch (err) {
-      setServiceError(
-        err instanceof Error ? err.message : t('locationAssignments.errorAdd'),
-      );
+      setServiceError(err instanceof Error ? err.message : t('locationAssignments.errorAdd'));
     }
   };
 
@@ -99,9 +93,7 @@ export function LocationAssignmentsSection({ businessId, locationId }: Props) {
     try {
       await removeService(serviceId);
     } catch (err) {
-      setServiceError(
-        err instanceof Error ? err.message : t('locationAssignments.errorRemove'),
-      );
+      setServiceError(err instanceof Error ? err.message : t('locationAssignments.errorRemove'));
     }
   };
 

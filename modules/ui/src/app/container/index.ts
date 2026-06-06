@@ -11,6 +11,7 @@ import {
   ResourceApiRepository,
   ReservationApiRepository,
   ResourceAvailabilityRuleApiRepository,
+  PlaceApiRepository,
 } from '@infrastructure';
 import {
   RegisterUseCaseImpl,
@@ -50,6 +51,10 @@ import {
   CreateBusinessLocationUseCaseImpl,
   ListBusinessLocationsUseCaseImpl,
   GetBusinessLocationUseCaseImpl,
+  UpdateLocationFromPlaceUseCaseImpl,
+  ConfirmLocationUseCaseImpl,
+  SearchPlacesUseCaseImpl,
+  GetPlaceDetailsUseCaseImpl,
   AddResourceToLocationUseCaseImpl,
   ListLocationResourcesUseCaseImpl,
   RemoveResourceFromLocationUseCaseImpl,
@@ -80,12 +85,15 @@ const businessLocationResourceRepository = new BusinessLocationResourceApiReposi
 const businessLocationServiceRepository = new BusinessLocationServiceApiRepository(
   resourceAxiosClient,
 );
+const placeRepository = new PlaceApiRepository(resourceAxiosClient);
 
 // ── Use Cases ─────────────────────────────────────────────────────────────────
 export const registerUseCase = new RegisterUseCaseImpl(authApiRepository);
 
 export const getMyBusinessesUseCase = new GetMyBusinessesUseCaseImpl(businessRepository);
-export const getAllBusinessesForAdminUseCase = new GetAllBusinessesForAdminUseCaseImpl(businessRepository);
+export const getAllBusinessesForAdminUseCase = new GetAllBusinessesForAdminUseCaseImpl(
+  businessRepository,
+);
 export const searchBusinessesUseCase = new SearchBusinessesUseCaseImpl(businessRepository);
 export const activateBusinessUseCase = new ActivateBusinessUseCaseImpl(businessRepository);
 export const rejectBusinessUseCase = new RejectBusinessUseCaseImpl(businessRepository);
@@ -155,6 +163,13 @@ export const listBusinessLocationsUseCase = new ListBusinessLocationsUseCaseImpl
 export const getBusinessLocationUseCase = new GetBusinessLocationUseCaseImpl(
   businessLocationRepository,
 );
+export const updateLocationFromPlaceUseCase = new UpdateLocationFromPlaceUseCaseImpl(
+  businessLocationRepository,
+);
+export const confirmLocationUseCase = new ConfirmLocationUseCaseImpl(businessLocationRepository);
+
+export const searchPlacesUseCase = new SearchPlacesUseCaseImpl(placeRepository);
+export const getPlaceDetailsUseCase = new GetPlaceDetailsUseCaseImpl(placeRepository);
 
 export const addResourceToLocationUseCase = new AddResourceToLocationUseCaseImpl(
   businessLocationResourceRepository,

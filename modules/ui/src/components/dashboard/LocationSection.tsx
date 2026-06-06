@@ -1,7 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { BusinessLocation } from '@domain';
+import type { PlaceAutocompleteSuggestion } from '@domain';
 import { useBusinessLocations, useCreateBusinessLocation } from '../../hooks/useBusinessLocations';
+import { usePlaceSearch } from '../../hooks/usePlaceSearch';
+import { usePlaceDetails } from '../../hooks/usePlaceDetails';
 import { LocationAssignmentsSection } from '../business-location/LocationAssignmentsSection';
+import { ConfirmLocationBanner } from '../business-location/ConfirmLocationBanner';
 import styles from './LocationSection.module.css';
 
 interface Props {
@@ -15,35 +20,89 @@ export function LocationSection({ businessId }: Props) {
 
   const [activeLocationId, setActiveLocationId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+
+  // Place search
+  const [query, setQuery] = useState('');
+  const [sessionToken, setSessionToken] = useState(() => crypto.randomUUID());
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
+
+  // User-provided
   const [locationName, setLocationName] = useState('');
-  const [address, setAddress] = useState('');
-  const [city, setCity] = useState('');
-  const [phone, setPhone] = useState('');
+  const [addressLine2, setAddressLine2] = useState('');
+  const [timezone, setTimezone] = useState('');
   const [email, setEmail] = useState('');
+
+  // Pre-filled from place (user can override)
+  const [phone, setPhone] = useState('');
   const [website, setWebsite] = useState('');
-  const [latitude, setLatitude] = useState('');
-  const [longitude, setLongitude] = useState('');
+
+  const { data: suggestions = [], isFetching: isSearching } = usePlaceSearch(query, sessionToken);
+  const { data: placeDetails, isLoading: isLoadingDetails } = usePlaceDetails(
+    selectedPlaceId,
+    sessionToken,
+  );
+
+  useEffect(() => {
+    if (placeDetails) {
+      setPhone(placeDetails.phone ?? '');
+      setWebsite(placeDetails.website ?? '');
+    }
+  }, [placeDetails]);
+
+  const canSubmit =
+    !!placeDetails &&
+    placeDetails.latitude != null &&
+    placeDetails.longitude != null;
+
+  const handleSelectSuggestion = (placeId: string) => {
+    setSelectedPlaceId(placeId);
+    setQuery('');
+  };
+
+  const handleChangePlace = () => {
+    setSelectedPlaceId(null);
+    setPhone('');
+    setWebsite('');
+    setSessionToken(crypto.randomUUID());
+  };
+
+  const handleCancel = () => {
+    setShowForm(false);
+    setQuery('');
+    setSelectedPlaceId(null);
+    setSessionToken(crypto.randomUUID());
+  };
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!placeDetails || placeDetails.latitude == null || placeDetails.longitude == null) return;
+
     await createLocation({
       name: locationName.trim() || undefined,
-      addressLine1: address.trim() || undefined,
-      city: city.trim() || undefined,
+      addressLine1: placeDetails.addressLine1 ?? undefined,
+      addressLine2: addressLine2.trim() || undefined,
+      city: placeDetails.city ?? undefined,
+      postalCode: placeDetails.postalCode ?? undefined,
+      countryCode: placeDetails.countryCode ?? undefined,
+      latitude: placeDetails.latitude,
+      longitude: placeDetails.longitude,
+      timezone: timezone.trim() || undefined,
       phone: phone.trim() || undefined,
       email: email.trim() || undefined,
       website: website.trim() || undefined,
-      latitude: parseFloat(latitude),
-      longitude: parseFloat(longitude),
+      googlePlaceId: placeDetails.placeId,
+      googleMapsUrl: placeDetails.googleMapsUrl ?? undefined,
     });
+
     setLocationName('');
-    setAddress('');
-    setCity('');
-    setPhone('');
+    setAddressLine2('');
+    setTimezone('');
     setEmail('');
+    setPhone('');
     setWebsite('');
-    setLatitude('');
-    setLongitude('');
+    setQuery('');
+    setSelectedPlaceId(null);
+    setSessionToken(crypto.randomUUID());
     setShowForm(false);
   };
 
@@ -60,7 +119,7 @@ export function LocationSection({ businessId }: Props) {
         {locations.length === 0 && (
           <div className={styles.empty}>{t('locationSection.noLocations')}</div>
         )}
-        {locations.map((loc) => (
+        {locations.map((loc: BusinessLocation) => (
           <div key={loc.id} className={styles.locationItem}>
             <div className={styles.row}>
               <div>
@@ -78,15 +137,16 @@ export function LocationSection({ businessId }: Props) {
               </div>
               <button
                 className="btn btn-ghost btn-sm"
-                onClick={() =>
-                  setActiveLocationId(activeLocationId === loc.id ? null : loc.id)
-                }
+                onClick={() => setActiveLocationId(activeLocationId === loc.id ? null : loc.id)}
               >
                 {activeLocationId === loc.id
                   ? t('locationSection.collapse')
                   : t('locationSection.manage')}
               </button>
             </div>
+            {!loc.ownerConfirmed && (
+              <ConfirmLocationBanner businessId={businessId} locationId={loc.id} />
+            )}
             {activeLocationId === loc.id && (
               <LocationAssignmentsSection businessId={businessId} locationId={loc.id} />
             )}
@@ -98,6 +158,71 @@ export function LocationSection({ businessId }: Props) {
         <div className={styles.addForm}>
           <div className={styles.addFormTitle}>{t('locationSection.addFormTitle')}</div>
           <form onSubmit={handleAdd}>
+            <div className="form-field" style={{ marginBottom: 12 }}>
+              <label className="form-label">{t('locationSection.placeSearchLabel')}</label>
+              {selectedPlaceId ? (
+                isLoadingDetails ? (
+                  <div className={styles.placeLoading}>{t('locationSection.placeSearching')}</div>
+                ) : placeDetails ? (
+                  <>
+                    <div className={styles.selectedPlace}>
+                      <div className={styles.selectedPlaceInfo}>
+                        {placeDetails.name && (
+                          <span className={styles.selectedPlaceName}>{placeDetails.name}</span>
+                        )}
+                        {placeDetails.formattedAddress && (
+                          <span className={styles.selectedPlaceAddress}>
+                            {placeDetails.formattedAddress}
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-sm"
+                        onClick={handleChangePlace}
+                      >
+                        {t('locationSection.changePlace')}
+                      </button>
+                    </div>
+                    {placeDetails.latitude == null && (
+                      <div className={styles.error}>{t('locationSection.noCoordinates')}</div>
+                    )}
+                  </>
+                ) : null
+              ) : (
+                <div className={styles.placeSearchWrapper}>
+                  <input
+                    className="form-input"
+                    placeholder={t('locationSection.placeSearchPlaceholder')}
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    autoFocus
+                  />
+                  {isSearching && query.length >= 2 && (
+                    <div className={styles.searchHint}>{t('locationSection.placeSearching')}</div>
+                  )}
+                  {suggestions.length > 0 && (
+                    <ul className={styles.suggestionList}>
+                      {suggestions.map((s: PlaceAutocompleteSuggestion) => (
+                        <li key={s.placeId}>
+                          <button
+                            type="button"
+                            className={styles.suggestionButton}
+                            onClick={() => handleSelectSuggestion(s.placeId)}
+                          >
+                            <span className={styles.suggestionName}>{s.displayName}</span>
+                            {s.address && (
+                              <span className={styles.suggestionAddress}>{s.address}</span>
+                            )}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+            </div>
+
             <div className={styles.formGrid}>
               <div className="form-field">
                 <label className="form-label">{t('locationSection.nameLabel')}</label>
@@ -109,30 +234,21 @@ export function LocationSection({ businessId }: Props) {
                 />
               </div>
               <div className="form-field">
-                <label className="form-label">{t('locationSection.cityLabel')}</label>
+                <label className="form-label">{t('locationSection.addressLine2Label')}</label>
                 <input
                   className="form-input"
-                  placeholder={t('locationSection.cityPlaceholder')}
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
+                  placeholder={t('locationSection.addressLine2Placeholder')}
+                  value={addressLine2}
+                  onChange={(e) => setAddressLine2(e.target.value)}
                 />
               </div>
               <div className="form-field">
-                <label className="form-label">{t('locationSection.addressLabel')}</label>
+                <label className="form-label">{t('locationSection.timezoneLabel')}</label>
                 <input
                   className="form-input"
-                  placeholder={t('locationSection.addressPlaceholder')}
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                />
-              </div>
-              <div className="form-field">
-                <label className="form-label">{t('locationSection.phoneLabel')}</label>
-                <input
-                  className="form-input"
-                  placeholder={t('locationSection.phonePlaceholder')}
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder={t('locationSection.timezonePlaceholder')}
+                  value={timezone}
+                  onChange={(e) => setTimezone(e.target.value)}
                 />
               </div>
               <div className="form-field">
@@ -145,6 +261,15 @@ export function LocationSection({ businessId }: Props) {
                 />
               </div>
               <div className="form-field">
+                <label className="form-label">{t('locationSection.phoneLabel')}</label>
+                <input
+                  className="form-input"
+                  placeholder={t('locationSection.phonePlaceholder')}
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </div>
+              <div className="form-field">
                 <label className="form-label">{t('locationSection.websiteLabel')}</label>
                 <input
                   className="form-input"
@@ -153,40 +278,16 @@ export function LocationSection({ businessId }: Props) {
                   onChange={(e) => setWebsite(e.target.value)}
                 />
               </div>
-              <div className="form-field">
-                <label className="form-label">{t('locationSection.latitudeLabel')} *</label>
-                <input
-                  className="form-input"
-                  type="number"
-                  step="any"
-                  placeholder={t('locationSection.latitudePlaceholder')}
-                  value={latitude}
-                  onChange={(e) => setLatitude(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-field">
-                <label className="form-label">{t('locationSection.longitudeLabel')} *</label>
-                <input
-                  className="form-input"
-                  type="number"
-                  step="any"
-                  placeholder={t('locationSection.longitudePlaceholder')}
-                  value={longitude}
-                  onChange={(e) => setLongitude(e.target.value)}
-                  required
-                />
-              </div>
             </div>
             <div className={styles.formActions}>
-              <button type="submit" className="btn btn-secondary" disabled={isPending}>
+              <button
+                type="submit"
+                className="btn btn-secondary"
+                disabled={isPending || !canSubmit}
+              >
                 {isPending ? t('locationSection.saving') : t('locationSection.addButton')}
               </button>
-              <button
-                type="button"
-                className="btn btn-ghost"
-                onClick={() => setShowForm(false)}
-              >
+              <button type="button" className="btn btn-ghost" onClick={handleCancel}>
                 {t('locationSection.cancel')}
               </button>
             </div>

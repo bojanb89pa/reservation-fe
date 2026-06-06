@@ -1,5 +1,12 @@
-import type { BusinessLocationService, AddServiceToLocationCommand } from '../../entities/BusinessLocationService';
+import type {
+  BusinessLocationService,
+  AddServiceToLocationCommand,
+} from '../../entities/BusinessLocationService';
 
 export interface AddServiceToLocationUseCase {
-  execute(businessId: string, locationId: string, command: AddServiceToLocationCommand): Promise<BusinessLocationService>;
+  execute(
+    businessId: string,
+    locationId: string,
+    command: AddServiceToLocationCommand,
+  ): Promise<BusinessLocationService>;
 }

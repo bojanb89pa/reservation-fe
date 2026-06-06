@@ -117,13 +117,7 @@ export function useCreateBusiness() {
   const { session } = useAuthStore();
 
   return useMutation({
-    mutationFn: ({
-      name,
-      location,
-    }: {
-      name: string;
-      location: CreateBusinessLocationCommand;
-    }) => {
+    mutationFn: ({ name, location }: { name: string; location: CreateBusinessLocationCommand }) => {
       if (!session) throw new Error('Not authenticated');
       const payload = JSON.parse(atob(session.accessToken.split('.')[1])) as Record<
         string,

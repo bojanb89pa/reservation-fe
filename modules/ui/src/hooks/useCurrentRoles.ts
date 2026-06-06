@@ -19,10 +19,7 @@ export function useCurrentRoles(): string[] {
   const session = useAuthStore((s) => s.session);
   if (!session) return [];
   const claims = parseJwtClaims(session.accessToken);
-  return [
-    ...toStringArray(claims['authorities']),
-    ...toStringArray(claims['roles']),
-  ];
+  return [...toStringArray(claims['authorities']), ...toStringArray(claims['roles'])];
 }
 
 export function useIsAdmin(): boolean {

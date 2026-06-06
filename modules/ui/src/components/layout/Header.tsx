@@ -31,7 +31,13 @@ export function Header() {
     <header className={styles.wrapper}>
       <div className={styles.pill}>
         <Link to="/" className={styles.logo}>
-          <span className={[styles.logoMark, isBusinessPage ? styles.logoMarkBusiness : ''].join(' ').trim()}>R</span>
+          <span
+            className={[styles.logoMark, isBusinessPage ? styles.logoMarkBusiness : '']
+              .join(' ')
+              .trim()}
+          >
+            R
+          </span>
           <span className={styles.logoText}>Reserva</span>
         </Link>
         <nav className={styles.nav}>

@@ -20,3 +20,4 @@ export { BusinessServiceApiRepository } from './repositories/BusinessServiceApiR
 export { BusinessLocationApiRepository } from './repositories/BusinessLocationApiRepository';
 export { BusinessLocationResourceApiRepository } from './repositories/BusinessLocationResourceApiRepository';
 export { BusinessLocationServiceApiRepository } from './repositories/BusinessLocationServiceApiRepository';
+export { PlaceApiRepository } from './repositories/PlaceApiRepository';

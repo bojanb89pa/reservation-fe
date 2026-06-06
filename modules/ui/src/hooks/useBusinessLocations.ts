@@ -1,9 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { CreateBusinessLocationCommand } from '@domain';
-import {
-  listBusinessLocationsUseCase,
-  createBusinessLocationUseCase,
-} from '../app/container';
+import { listBusinessLocationsUseCase, createBusinessLocationUseCase } from '../app/container';
 
 const locationKeys = {
   byBusiness: (businessId: string) => ['businesses', businessId, 'locations'] as const,

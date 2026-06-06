@@ -25,11 +25,7 @@ export function DashboardReservationsPage() {
       {isError && <div className="error-box">{t('dashboardReservations.error')}</div>}
 
       {!isLoading && !isError && (
-        <ReservationList
-          reservations={reservations}
-          showUserId={isAdmin}
-          showActions
-        />
+        <ReservationList reservations={reservations} showUserId={isAdmin} showActions />
       )}
     </div>
   );

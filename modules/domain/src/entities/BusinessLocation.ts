@@ -15,6 +15,12 @@ export interface BusinessLocation {
   website: string | null;
   googlePlaceId: string | null;
   googleMapsUrl: string | null;
+  ownerConfirmed: boolean;
+}
+
+export interface UpdateBusinessLocationFromPlaceCommand {
+  placeId: string;
+  sessionToken?: string;
 }
 
 export interface CreateBusinessLocationCommand {

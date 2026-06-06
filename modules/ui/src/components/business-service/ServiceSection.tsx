@@ -78,7 +78,10 @@ export function ServiceSection({ businessId }: Props) {
             {t('serviceSection.total', { count: services.length })}
           </span>
           {mode.type === 'idle' && (
-            <button className="btn btn-secondary btn-sm" onClick={() => setMode({ type: 'create' })}>
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={() => setMode({ type: 'create' })}
+            >
               {t('serviceSection.addButton')}
             </button>
           )}

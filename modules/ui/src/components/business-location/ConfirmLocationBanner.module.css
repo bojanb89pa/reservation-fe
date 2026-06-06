@@ -1,0 +1,150 @@
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 20px;
+  background: var(--warning-surface, #fefce8);
+  border-top: 1px solid var(--warning-border, #fde68a);
+}
+
+.bannerText {
+  font-size: var(--text-xs);
+  color: var(--ink-700);
+}
+
+.bannerActions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ── Search mode ── */
+
+.searchContainer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.searchHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.searchTitle {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--ink-700);
+}
+
+.searchInput {
+  width: 100%;
+}
+
+.searchHint {
+  margin-top: 6px;
+  font-size: var(--text-xs);
+  color: var(--ink-500);
+}
+
+.suggestionList {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md, 6px);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.suggestionButton {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  border-top: 1px solid var(--border);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.suggestionButton:first-child {
+  border-top: none;
+}
+
+.suggestionButton:hover {
+  background: var(--surface-hover, #f5f5f5);
+}
+
+.suggestionName {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--ink-900);
+}
+
+.suggestionAddress {
+  font-size: var(--text-xs);
+  color: var(--ink-500);
+}
+
+/* ── Preview mode ── */
+
+.previewContainer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.previewHeader {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.previewLoading {
+  font-size: var(--text-sm);
+  color: var(--ink-500);
+}
+
+.previewCard {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.previewName {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--ink-900);
+}
+
+.previewAddress {
+  font-size: var(--text-xs);
+  color: var(--ink-500);
+}
+
+.previewMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  color: var(--ink-500);
+  margin-top: 2px;
+}
+
+.previewActions {
+  margin-top: 10px;
+}
+
+.error {
+  margin-top: 8px;
+  font-size: var(--text-xs);
+  color: var(--danger, #ef4444);
+}

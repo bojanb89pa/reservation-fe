@@ -73,8 +73,14 @@ export function DashboardLayout() {
             {(['en', 'sr'] as const).map((lang) => (
               <button
                 key={lang}
-                className={[styles.langBtn, i18n.language === lang ? styles.langBtnActive : ''].join(' ')}
-                onClick={() => { i18n.changeLanguage(lang); localStorage.setItem('lang', lang); }}
+                className={[
+                  styles.langBtn,
+                  i18n.language === lang ? styles.langBtnActive : '',
+                ].join(' ')}
+                onClick={() => {
+                  i18n.changeLanguage(lang);
+                  localStorage.setItem('lang', lang);
+                }}
               >
                 {lang.toUpperCase()}
               </button>

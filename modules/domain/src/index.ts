@@ -33,7 +33,12 @@ export type {
   AddMemberCommand,
   RemoveMemberCommand,
 } from './entities/BusinessMembership';
-export type { BusinessLocation, CreateBusinessLocationCommand } from './entities/BusinessLocation';
+export type {
+  BusinessLocation,
+  CreateBusinessLocationCommand,
+  UpdateBusinessLocationFromPlaceCommand,
+} from './entities/BusinessLocation';
+export type { PlaceAutocompleteSuggestion, PlaceDetails } from './entities/Place';
 export type {
   BusinessLocationResource,
   AddResourceToLocationCommand,
@@ -70,6 +75,7 @@ export {
   ConflictError,
   UnprocessableEntityError,
 } from './errors/DomainError';
+export { PlaceErrorCode } from './errors/PlaceError';
 
 // Repository interfaces
 export type { AuthRepository } from './repositories/AuthRepository';
@@ -82,6 +88,7 @@ export type { ReservationRepository } from './repositories/ReservationRepository
 export type { ResourceAvailabilityRuleRepository } from './repositories/ResourceAvailabilityRuleRepository';
 export type { ResourceRepository } from './repositories/ResourceRepository';
 export type { BusinessLocationRepository } from './repositories/BusinessLocationRepository';
+export type { PlaceRepository } from './repositories/PlaceRepository';
 export type { BusinessLocationResourceRepository } from './repositories/BusinessLocationResourceRepository';
 export type { BusinessLocationServiceRepository } from './repositories/BusinessLocationServiceRepository';
 
@@ -117,6 +124,10 @@ export type { DeleteBusinessServiceUseCase } from './use-cases/business-service/
 export type { CreateBusinessLocationUseCase } from './use-cases/business-location/CreateBusinessLocationUseCase';
 export type { ListBusinessLocationsUseCase } from './use-cases/business-location/ListBusinessLocationsUseCase';
 export type { GetBusinessLocationUseCase } from './use-cases/business-location/GetBusinessLocationUseCase';
+export type { UpdateLocationFromPlaceUseCase } from './use-cases/business-location/UpdateLocationFromPlaceUseCase';
+export type { ConfirmLocationUseCase } from './use-cases/business-location/ConfirmLocationUseCase';
+export type { SearchPlacesUseCase } from './use-cases/place/SearchPlacesUseCase';
+export type { GetPlaceDetailsUseCase } from './use-cases/place/GetPlaceDetailsUseCase';
 export type { CreateReservationUseCase } from './use-cases/reservation/CreateReservationUseCase';
 export type { GetAllReservationsUseCase } from './use-cases/reservation/GetAllReservationsUseCase';
 export type { GetReservationUseCase } from './use-cases/reservation/GetReservationUseCase';

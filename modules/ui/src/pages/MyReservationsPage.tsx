@@ -31,9 +31,7 @@ export function MyReservationsPage() {
 
       {isError && <div className="error-box">{t('myReservations.error')}</div>}
 
-      {!isLoading && !isError && (
-        <ReservationList reservations={reservations} />
-      )}
+      {!isLoading && !isError && <ReservationList reservations={reservations} />}
     </div>
   );
 }
