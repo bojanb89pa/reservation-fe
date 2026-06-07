@@ -10,6 +10,7 @@ import { OAuthCallbackPage } from '../pages/OAuthCallbackPage';
 import { BusinessListPage } from '../pages/BusinessListPage';
 import { BusinessByCategoryPage } from '../pages/BusinessByCategoryPage';
 import { BusinessDetailPage } from '../pages/BusinessDetailPage';
+import { SearchResultsPage } from '../pages/SearchResultsPage';
 import { ReservationHeldPage } from '../pages/ReservationHeldPage';
 
 import { MyReservationsPage } from '../pages/MyReservationsPage';
@@ -31,6 +32,7 @@ function PublicLayout() {
           <Route index element={<HomePage />} />
           <Route path="register" element={<RegisterPage />} />
           <Route path="callback" element={<OAuthCallbackPage />} />
+          <Route path="search" element={<SearchResultsPage />} />
           <Route path="businesses" element={<BusinessListPage />} />
           <Route path="businesses/category/:categoryId" element={<BusinessByCategoryPage />} />
           <Route path="businesses/:id" element={<BusinessDetailPage />} />

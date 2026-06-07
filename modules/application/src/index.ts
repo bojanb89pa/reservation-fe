@@ -32,6 +32,7 @@ export { GetBusinessLocationUseCaseImpl } from './use-cases/business-location/Ge
 export { UpdateLocationFromPlaceUseCaseImpl } from './use-cases/business-location/UpdateLocationFromPlaceUseCaseImpl';
 export { ConfirmLocationUseCaseImpl } from './use-cases/business-location/ConfirmLocationUseCaseImpl';
 
+export { DiscoverySearchUseCaseImpl } from './use-cases/discovery/DiscoverySearchUseCaseImpl';
 export { SearchPlacesUseCaseImpl } from './use-cases/place/SearchPlacesUseCaseImpl';
 export { GetPlaceDetailsUseCaseImpl } from './use-cases/place/GetPlaceDetailsUseCaseImpl';
 

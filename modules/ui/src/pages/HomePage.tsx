@@ -16,10 +16,10 @@ export function HomePage() {
   const { data: categories = [] } = useBusinessCategories();
 
   const handleSearch = () => {
-    const params = new URLSearchParams();
-    if (what) params.set('q', what);
-    if (where) params.set('location', where);
-    navigate(`/businesses?${params.toString()}`);
+    if (!what.trim()) return;
+    const params = new URLSearchParams({ q: what.trim() });
+    if (where.trim()) params.set('city', where.trim());
+    navigate(`/search?${params.toString()}`);
   };
 
   return (

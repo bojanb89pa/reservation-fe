@@ -55,6 +55,7 @@ export type {
   ReservationBusinessInfo,
   CreateReservationCommand,
 } from './entities/Reservation';
+export type { SearchResult } from './entities/SearchResult';
 export type { Resource, CreateResourceCommand } from './entities/Resource';
 export type {
   ResourceAvailabilityRule,
@@ -89,12 +90,14 @@ export type { ResourceAvailabilityRuleRepository } from './repositories/Resource
 export type { ResourceRepository } from './repositories/ResourceRepository';
 export type { BusinessLocationRepository } from './repositories/BusinessLocationRepository';
 export type { PlaceRepository } from './repositories/PlaceRepository';
+export type { DiscoverySearchRepository } from './repositories/DiscoverySearchRepository';
 export type { BusinessLocationResourceRepository } from './repositories/BusinessLocationResourceRepository';
 export type { BusinessLocationServiceRepository } from './repositories/BusinessLocationServiceRepository';
 
 // Types
 export type { PageRequest, PageResponse } from './types/Page';
 export type { BusinessSearchFilter } from './types/BusinessSearchFilter';
+export type { DiscoverySearchQuery } from './types/DiscoverySearchQuery';
 
 // Use case interfaces
 export type { LoginUseCase } from './use-cases/auth/LoginUseCase';
@@ -126,6 +129,7 @@ export type { ListBusinessLocationsUseCase } from './use-cases/business-location
 export type { GetBusinessLocationUseCase } from './use-cases/business-location/GetBusinessLocationUseCase';
 export type { UpdateLocationFromPlaceUseCase } from './use-cases/business-location/UpdateLocationFromPlaceUseCase';
 export type { ConfirmLocationUseCase } from './use-cases/business-location/ConfirmLocationUseCase';
+export type { DiscoverySearchUseCase } from './use-cases/discovery/DiscoverySearchUseCase';
 export type { SearchPlacesUseCase } from './use-cases/place/SearchPlacesUseCase';
 export type { GetPlaceDetailsUseCase } from './use-cases/place/GetPlaceDetailsUseCase';
 export type { CreateReservationUseCase } from './use-cases/reservation/CreateReservationUseCase';

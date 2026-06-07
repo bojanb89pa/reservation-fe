@@ -12,6 +12,7 @@ import {
   ReservationApiRepository,
   ResourceAvailabilityRuleApiRepository,
   PlaceApiRepository,
+  DiscoverySearchApiRepository,
 } from '@infrastructure';
 import {
   RegisterUseCaseImpl,
@@ -53,6 +54,7 @@ import {
   GetBusinessLocationUseCaseImpl,
   UpdateLocationFromPlaceUseCaseImpl,
   ConfirmLocationUseCaseImpl,
+  DiscoverySearchUseCaseImpl,
   SearchPlacesUseCaseImpl,
   GetPlaceDetailsUseCaseImpl,
   AddResourceToLocationUseCaseImpl,
@@ -86,6 +88,7 @@ const businessLocationServiceRepository = new BusinessLocationServiceApiReposito
   resourceAxiosClient,
 );
 const placeRepository = new PlaceApiRepository(resourceAxiosClient);
+const discoverySearchRepository = new DiscoverySearchApiRepository(resourceAxiosClient);
 
 // ── Use Cases ─────────────────────────────────────────────────────────────────
 export const registerUseCase = new RegisterUseCaseImpl(authApiRepository);
@@ -167,6 +170,8 @@ export const updateLocationFromPlaceUseCase = new UpdateLocationFromPlaceUseCase
   businessLocationRepository,
 );
 export const confirmLocationUseCase = new ConfirmLocationUseCaseImpl(businessLocationRepository);
+
+export const discoverySearchUseCase = new DiscoverySearchUseCaseImpl(discoverySearchRepository);
 
 export const searchPlacesUseCase = new SearchPlacesUseCaseImpl(placeRepository);
 export const getPlaceDetailsUseCase = new GetPlaceDetailsUseCaseImpl(placeRepository);
