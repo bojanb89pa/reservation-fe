@@ -145,3 +145,153 @@
   color: var(--primary);
   background: var(--primary-light);
 }
+
+/* Mobile menu — hidden on desktop, rendered only when open */
+.menuBtn {
+  display: none;
+}
+
+.mobileMenu {
+  display: none;
+}
+
+/* ── Mobile ── */
+@media (max-width: 639px) {
+  .wrapper {
+    padding: 0;
+    display: block;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--ink-100);
+    box-shadow: 0 2px 8px rgba(26, 27, 31, 0.06);
+  }
+
+  /* Strip pill shape — becomes a flat top bar */
+  .pill {
+    border-radius: 0;
+    max-width: 100%;
+    box-shadow: none;
+    border: none;
+    background: transparent;
+    padding: 0 16px;
+    min-height: 56px;
+    gap: 0;
+  }
+
+  .logo {
+    flex: 1;
+  }
+
+  /* Hide desktop nav and auth section on mobile */
+  .nav,
+  .right {
+    display: none;
+  }
+
+  /* Show hamburger */
+  .menuBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-left: 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--ink-700);
+    border-radius: var(--r-sm);
+    flex-shrink: 0;
+    transition:
+      background var(--dur-fast),
+      color var(--dur-fast);
+  }
+
+  .menuBtn:hover,
+  .menuBtn:focus-visible {
+    background: var(--primary-light);
+    color: var(--primary);
+    outline: none;
+  }
+
+  /* Mobile menu panel — sits below the bar */
+  .mobileMenu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 16px 16px;
+    border-top: 1px solid var(--ink-100);
+    pointer-events: all;
+  }
+
+  /* Nav links */
+  .mobileNav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--ink-100);
+  }
+
+  .mobileNav a {
+    display: block;
+    font-size: var(--text-md);
+    font-weight: 500;
+    color: var(--ink-700);
+    text-decoration: none;
+    padding: 12px 10px;
+    border-radius: var(--r-sm);
+    transition:
+      background var(--dur-fast),
+      color var(--dur-fast);
+  }
+
+  .mobileNav a:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+
+  /* Auth buttons */
+  .mobileActions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--ink-100);
+  }
+
+  .mobileActionLink {
+    display: block;
+    width: 100%;
+    font-size: var(--text-md);
+    font-weight: 500;
+    color: var(--ink-700);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    text-decoration: none;
+    padding: 12px 10px;
+    font-family: var(--font-ui);
+    border-radius: var(--r-sm);
+    transition:
+      background var(--dur-fast),
+      color var(--dur-fast);
+  }
+
+  .mobileActionLink:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+
+  /* Lang switcher row */
+  .mobileLang {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding-top: 4px;
+  }
+}
