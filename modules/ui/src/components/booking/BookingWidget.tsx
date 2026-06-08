@@ -1,38 +1,10 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { BusinessService, Resource, ResourceAvailabilityRule, DayOfWeek } from '@domain';
+import type { BusinessService, Resource } from '@domain';
+import { useResourceSlots } from '../../hooks/useResourceSlots';
 import styles from './BookingWidget.module.css';
 
 // ─── Pure helpers ─────────────────────────────────────────────────────────────
-
-function gcd(a: number, b: number): number {
-  return b === 0 ? a : gcd(b, a % b);
-}
-
-function toMinutes(duration: number, unit: BusinessService['durationUnit']): number {
-  if (unit === 'HOURS') return duration * 60;
-  if (unit === 'DAYS') return duration * 24 * 60;
-  return duration;
-}
-
-/** GCD of all non-DAYS service durations — defines the slot grid step. */
-function computeSlotStep(services: BusinessService[]): number {
-  const mins = services
-    .filter((s) => s.durationUnit !== 'DAYS')
-    .map((s) => toMinutes(s.duration, s.durationUnit));
-  if (mins.length === 0) return 15;
-  return mins.reduce(gcd);
-}
-
-const JS_DAY_MAP: Record<number, DayOfWeek> = {
-  0: 'SUNDAY',
-  1: 'MONDAY',
-  2: 'TUESDAY',
-  3: 'WEDNESDAY',
-  4: 'THURSDAY',
-  5: 'FRIDAY',
-  6: 'SATURDAY',
-};
 
 function buildMonth(year: number, month: number): (Date | null)[] {
   const first = new Date(year, month, 1);
@@ -60,70 +32,23 @@ function sameDay(a: Date, b: Date): boolean {
   );
 }
 
-function getAvailableSlots(
-  date: string,
-  service: BusinessService,
-  rules: ResourceAvailabilityRule[],
-  slotStep: number,
-): string[] {
-  const d = new Date(date + 'T00:00:00');
-  const domainDay = JS_DAY_MAP[d.getDay()];
-  const dayRules = rules.filter((r) => r.dayOfWeek === domainDay);
-  if (dayRules.length === 0) return [];
-
-  const svcMins = toMinutes(service.duration, service.durationUnit);
-  const now = new Date();
-  const isToday = date === todayStr();
-
-  const slots = new Set<string>();
-  for (const rule of dayRules) {
-    const [sh, sm] = rule.startTime.split(':').map(Number);
-    const [eh, em] = rule.endTime.split(':').map(Number);
-    const rStart = sh! * 60 + sm!;
-    const rEnd = eh! * 60 + em!;
-    let cur = rStart;
-    while (cur + svcMins <= rEnd) {
-      if (isToday) {
-        const slotDt = new Date(date + 'T00:00:00');
-        slotDt.setHours(Math.floor(cur / 60), cur % 60, 0, 0);
-        if (slotDt <= now) {
-          cur += slotStep;
-          continue;
-        }
-      }
-      slots.add(`${Math.floor(cur / 60)}:${String(cur % 60).padStart(2, '0')}`);
-      cur += slotStep;
-    }
-  }
-
-  return [...slots].sort((a, b) => {
-    const [ah, am] = a.split(':').map(Number);
-    const [bh, bm] = b.split(':').map(Number);
-    return ah! * 60 + am! - (bh! * 60 + bm!);
-  });
-}
-
-function dateHasSlots(
-  date: string,
-  service: BusinessService,
-  rules: ResourceAvailabilityRule[],
-  slotStep: number,
-): boolean {
-  return getAvailableSlots(date, service, rules, slotStep).length > 0;
+function slotTime(isoStr: string): string {
+  return isoStr.slice(11, 16);
 }
 
 function fmtMonthYear(year: number, month: number): string {
   return new Date(year, month, 1).toLocaleString('en-US', { month: 'long', year: 'numeric' });
 }
 
-function fmtSlotSummary(dateStr: string, slot: string): string {
+function fmtSlotSummary(isoStartTime: string): string {
+  const dateStr = isoStartTime.slice(0, 10);
   const d = new Date(dateStr + 'T00:00:00');
   const datePart = d.toLocaleString('en-US', {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
   });
-  return `${datePart} · ${slot}`;
+  return `${datePart} · ${slotTime(isoStartTime)}`;
 }
 
 function fmtDateRangeSummary(start: string, end: string): string {
@@ -150,11 +75,8 @@ export interface BookingSelection {
 export interface BookingWidgetProps {
   services: BusinessService[];
   resources: Resource[];
-  /** Controlled: the currently selected resource (owned by parent, e.g. for rule fetching). */
   selectedResource: Resource | null;
   onResourceChange: (resource: Resource | null) => void;
-  /** Availability rules for the currently selected resource. */
-  availabilityRules: ResourceAvailabilityRule[];
   onConfirm: (selection: BookingSelection) => Promise<void>;
   isLoading?: boolean;
 }
@@ -162,13 +84,14 @@ export interface BookingWidgetProps {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 const DOW_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const PENDING_TOOLTIP =
+  "Someone has requested this slot — yours will be considered if theirs is rejected";
 
 export function BookingWidget({
   services,
   resources,
   selectedResource,
   onResourceChange,
-  availabilityRules,
   onConfirm,
   isLoading,
 }: BookingWidgetProps) {
@@ -182,18 +105,31 @@ export function BookingWidget({
   const [viewMonth, setViewMonth] = useState(now.getMonth());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedEndDate, setSelectedEndDate] = useState<string | null>(null);
+  // selectedSlot is the full ISO startTime of the chosen slot
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
 
-  const slotStep = useMemo(() => computeSlotStep(services), [services]);
   const isDays = selectedService?.durationUnit === 'DAYS';
   const canPickDateTime = !!selectedService && !!selectedResource;
 
   const calendarDays = useMemo(() => buildMonth(viewYear, viewMonth), [viewYear, viewMonth]);
 
-  const availableSlots = useMemo(() => {
-    if (!selectedService || !selectedDate || isDays) return [];
-    return getAvailableSlots(selectedDate, selectedService, availabilityRules, slotStep);
-  }, [selectedService, selectedDate, isDays, availabilityRules, slotStep]);
+  const monthFrom = toDateStr(new Date(viewYear, viewMonth, 1));
+  const monthTo = toDateStr(new Date(viewYear, viewMonth + 1, 0));
+
+  const { data: slots = [] } = useResourceSlots(
+    selectedResource?.id ?? '',
+    selectedService?.id ?? '',
+    monthFrom,
+    monthTo,
+    canPickDateTime && !isDays,
+  );
+
+  const daySlots = useMemo(
+    () => (selectedDate ? slots.filter((s) => s.startTime.startsWith(selectedDate)) : []),
+    [slots, selectedDate],
+  );
+
+  const availableCount = daySlots.filter((s) => s.status !== 'CONFIRMED').length;
 
   function handleServiceSelect(svc: BusinessService) {
     setSelectedService(svc);
@@ -231,8 +167,9 @@ export function BookingWidget({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     if (d < today) return true;
-    if (!selectedService || !selectedResource || isDays) return false;
-    return !dateHasSlots(toDateStr(d), selectedService, availabilityRules, slotStep);
+    if (!canPickDateTime || isDays) return false;
+    const ds = toDateStr(d);
+    return !slots.some((s) => s.startTime.startsWith(ds) && s.status !== 'CONFIRMED');
   }
 
   const canGoPrev =
@@ -245,7 +182,7 @@ export function BookingWidget({
         return fmtDateRangeSummary(selectedDate, selectedEndDate);
       return null;
     }
-    if (selectedDate && selectedSlot) return fmtSlotSummary(selectedDate, selectedSlot);
+    if (selectedSlot) return fmtSlotSummary(selectedSlot);
     return null;
   })();
 
@@ -264,16 +201,11 @@ export function BookingWidget({
       startTime = start.toISOString().replace('Z', '');
       endTime = end.toISOString().replace('Z', '');
     } else {
-      if (!selectedDate || !selectedSlot) return;
-      const [h, m] = selectedSlot.split(':').map(Number);
-      const start = new Date(selectedDate + 'T00:00:00');
-      start.setHours(h!, m!, 0, 0);
-      const end = new Date(start);
-      end.setMinutes(
-        end.getMinutes() + toMinutes(selectedService.duration, selectedService.durationUnit),
-      );
-      startTime = start.toISOString().replace('Z', '');
-      endTime = end.toISOString().replace('Z', '');
+      if (!selectedSlot) return;
+      const slot = slots.find((s) => s.startTime === selectedSlot);
+      if (!slot) return;
+      startTime = slot.startTime;
+      endTime = slot.endTime;
     }
 
     await onConfirm({ service: selectedService, resource: selectedResource, startTime, endTime });
@@ -429,26 +361,38 @@ export function BookingWidget({
         <div>
           <p className={styles.sectionLabel}>
             Time
-            {availableSlots.length > 0 && (
-              <span className={styles.slotCount}>&nbsp;· {availableSlots.length} available</span>
+            {availableCount > 0 && (
+              <span className={styles.slotCount}>&nbsp;· {availableCount} available</span>
             )}
           </p>
-          {availableSlots.length === 0 ? (
+          {daySlots.length === 0 ? (
             <p className={styles.noSlots}>No available slots for this date.</p>
           ) : (
             <div className={styles.slots}>
-              {availableSlots.map((slot) => (
-                <button
-                  key={slot}
-                  aria-pressed={selectedSlot === slot}
-                  className={[styles.slot, selectedSlot === slot ? styles.slotSelected : '']
-                    .filter(Boolean)
-                    .join(' ')}
-                  onClick={() => setSelectedSlot(slot)}
-                >
-                  {slot}
-                </button>
-              ))}
+              {daySlots.map((slot) => {
+                const isConfirmed = slot.status === 'CONFIRMED';
+                const isPending = slot.status === 'PENDING';
+                const isSelected = selectedSlot === slot.startTime;
+                return (
+                  <button
+                    key={slot.startTime}
+                    aria-pressed={isSelected}
+                    disabled={isConfirmed}
+                    title={isPending ? PENDING_TOOLTIP : undefined}
+                    className={[
+                      styles.slot,
+                      isConfirmed ? styles.slotConfirmed : '',
+                      isPending ? styles.slotPending : '',
+                      isSelected ? styles.slotSelected : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                    onClick={() => !isConfirmed && setSelectedSlot(slot.startTime)}
+                  >
+                    {slotTime(slot.startTime)}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>

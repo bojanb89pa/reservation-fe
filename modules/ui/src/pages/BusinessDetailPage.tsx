@@ -5,7 +5,6 @@ import { useBusiness } from '../hooks/useBusinesses';
 import { useResources } from '../hooks/useResources';
 import { useBusinessServices } from '../hooks/useBusinessServices';
 import { useCreateReservation } from '../hooks/useReservations';
-import { useAvailabilityRules } from '../hooks/useAvailabilityRules';
 import { useAuthStore } from '../state/authStore';
 import { BookingWidget } from '../components/booking/BookingWidget';
 import type { BookingSelection } from '../components/booking/BookingWidget';
@@ -23,8 +22,6 @@ export function BusinessDetailPage() {
   const { data: servicesPage } = useBusinessServices(id!);
 
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
-
-  const { data: availabilityRules = [] } = useAvailabilityRules(selectedResource?.id ?? '');
 
   const { mutateAsync: createReservation, isPending } = useCreateReservation(
     selectedResource?.id ?? '',
@@ -107,7 +104,6 @@ export function BusinessDetailPage() {
           resources={resources}
           selectedResource={selectedResource}
           onResourceChange={setSelectedResource}
-          availabilityRules={availabilityRules}
           onConfirm={handleConfirm}
           isLoading={isPending}
         />
