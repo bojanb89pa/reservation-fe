@@ -30,3 +30,10 @@ export function useIsEmployee(): boolean {
   const roles = useCurrentRoles();
   return roles.some((r) => r === 'ROLE_EMPLOYEE' || r === 'EMPLOYEE');
 }
+
+export function useCurrentUserId(): string | null {
+  const session = useAuthStore((s) => s.session);
+  if (!session) return null;
+  const claims = parseJwtClaims(session.accessToken);
+  return typeof claims['sub'] === 'string' ? claims['sub'] : null;
+}

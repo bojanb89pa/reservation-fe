@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import type { Reservation } from '@domain';
 import { useApproveReservation, useRejectReservation } from '../../hooks/useReservations';
+import { useIsBusinessMember } from '../../hooks/useBusinessMembers';
 import styles from './ReservationListItem.module.css';
 
 function formatDateTime(iso: string) {
@@ -30,6 +31,7 @@ export function ReservationListItem({ reservation, showUserId, showActions }: Pr
   const { mutate: approve, isPending: approving, error: approveError } = useApproveReservation();
   const { mutate: reject, isPending: rejecting, error: rejectError } = useRejectReservation();
 
+  const canManage = useIsBusinessMember(reservation.business?.id);
   const isPending = reservation.status === 'PENDING_APPROVAL';
   const busy = approving || rejecting;
   const error = approveError ?? rejectError;
@@ -84,7 +86,7 @@ export function ReservationListItem({ reservation, showUserId, showActions }: Pr
         )}
       </div>
 
-      {showActions && isPending && (
+      {showActions && isPending && canManage && (
         <div className={styles.actions}>
           <button className="btn btn-primary" onClick={handleApprove} disabled={busy}>
             {approving ? t('reservationCard.approving') : t('reservationCard.approve')}

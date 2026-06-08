@@ -5,6 +5,7 @@ import {
   addBusinessMemberUseCase,
   removeBusinessMemberUseCase,
 } from '../app/container';
+import { useCurrentUserId } from './useCurrentRoles';
 
 export const memberKeys = {
   byRole: (businessId: string, role: BusinessMemberRole) =>
@@ -36,4 +37,26 @@ export function useRemoveBusinessMember(businessId: string, role: BusinessMember
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: memberKeys.byRole(businessId, role) }),
   });
+}
+
+export function useIsBusinessMember(businessId: string | undefined): boolean {
+  const currentUserId = useCurrentUserId();
+  const enabled = !!businessId && !!currentUserId;
+
+  const { data: owners } = useQuery({
+    queryKey: memberKeys.byRole(businessId ?? '', 'OWNER'),
+    queryFn: () => listBusinessMembersUseCase.execute(businessId!, 'OWNER'),
+    enabled,
+  });
+  const { data: employees } = useQuery({
+    queryKey: memberKeys.byRole(businessId ?? '', 'EMPLOYEE'),
+    queryFn: () => listBusinessMembersUseCase.execute(businessId!, 'EMPLOYEE'),
+    enabled,
+  });
+
+  if (!currentUserId || !businessId) return false;
+  return (
+    (owners ?? []).some((m) => m.userId === currentUserId) ||
+    (employees ?? []).some((m) => m.userId === currentUserId)
+  );
 }
