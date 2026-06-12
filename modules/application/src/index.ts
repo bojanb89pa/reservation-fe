@@ -45,6 +45,7 @@ export { RejectReservationUseCaseImpl } from './use-cases/reservation/RejectRese
 export { CreateResourceUseCaseImpl } from './use-cases/resource/CreateResourceUseCaseImpl';
 export { GetAllResourcesUseCaseImpl } from './use-cases/resource/GetAllResourcesUseCaseImpl';
 export { GetResourceSlotsUseCaseImpl } from './use-cases/resource/GetResourceSlotsUseCaseImpl';
+export { GetAvailabilityBlocksUseCaseImpl } from './use-cases/resource/GetAvailabilityBlocksUseCaseImpl';
 
 export { AddResourceToLocationUseCaseImpl } from './use-cases/business-location-resource/AddResourceToLocationUseCaseImpl';
 export { ListLocationResourcesUseCaseImpl } from './use-cases/business-location-resource/ListLocationResourcesUseCaseImpl';

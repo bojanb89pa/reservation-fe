@@ -12,6 +12,7 @@ import {
   ReservationApiRepository,
   ResourceAvailabilityRuleApiRepository,
   ResourceSlotApiRepository,
+  AvailabilityBlockApiRepository,
   PlaceApiRepository,
   DiscoverySearchApiRepository,
 } from '@infrastructure';
@@ -32,6 +33,7 @@ import {
   GetAllResourcesUseCaseImpl,
   CreateResourceUseCaseImpl,
   GetResourceSlotsUseCaseImpl,
+  GetAvailabilityBlocksUseCaseImpl,
   CreateReservationUseCaseImpl,
   GetAllReservationsUseCaseImpl,
   GetReservationUseCaseImpl,
@@ -82,6 +84,7 @@ const resourceRepository = new ResourceApiRepository(resourceAxiosClient);
 const reservationRepository = new ReservationApiRepository(resourceAxiosClient);
 const availabilityRuleRepository = new ResourceAvailabilityRuleApiRepository(resourceAxiosClient);
 const resourceSlotRepository = new ResourceSlotApiRepository(resourceAxiosClient);
+const availabilityBlockRepository = new AvailabilityBlockApiRepository(resourceAxiosClient);
 const businessServiceRepository = new BusinessServiceApiRepository(resourceAxiosClient);
 const businessLocationRepository = new BusinessLocationApiRepository(resourceAxiosClient);
 const businessLocationResourceRepository = new BusinessLocationResourceApiRepository(
@@ -125,6 +128,9 @@ export const removeBusinessMemberUseCase = new RemoveBusinessMemberUseCaseImpl(
 export const getAllResourcesUseCase = new GetAllResourcesUseCaseImpl(resourceRepository);
 export const createResourceUseCase = new CreateResourceUseCaseImpl(resourceRepository);
 export const getResourceSlotsUseCase = new GetResourceSlotsUseCaseImpl(resourceSlotRepository);
+export const getAvailabilityBlocksUseCase = new GetAvailabilityBlocksUseCaseImpl(
+  availabilityBlockRepository,
+);
 
 export const createReservationUseCase = new CreateReservationUseCaseImpl(reservationRepository);
 export const getAllReservationsUseCase = new GetAllReservationsUseCaseImpl(reservationRepository);

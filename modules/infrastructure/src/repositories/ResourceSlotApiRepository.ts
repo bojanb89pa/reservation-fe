@@ -9,10 +9,11 @@ export class ResourceSlotApiRepository implements ResourceSlotRepository {
     serviceId: string,
     from: string,
     to: string,
+    duration?: number,
   ): Promise<ResourceSlot[]> {
     const response = await this.client.get<ResourceSlot[]>(
       `/api/resources/${resourceId}/slots`,
-      { params: { serviceId, from, to } },
+      { params: { serviceId, from, to, ...(duration != null ? { duration } : {}) } },
     );
     return response.data;
   }

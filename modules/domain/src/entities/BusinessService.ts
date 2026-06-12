@@ -4,18 +4,26 @@ export interface BusinessService {
   id: string;
   businessId: string;
   name: string;
-  duration: number;
+  minDuration: number;
+  maxDuration: number;
   durationUnit: DurationUnit;
+  durationStep: number;
+  /** Convenience flag from the BE: true when minDuration === maxDuration. */
+  fixedDuration: boolean;
 }
 
 export interface CreateBusinessServiceCommand {
   name: string;
-  duration: number;
+  minDuration: number;
+  maxDuration: number;
   durationUnit: DurationUnit;
+  durationStep: number;
 }
 
 export interface UpdateBusinessServiceCommand {
   name: string;
-  duration: number;
+  minDuration: number;
+  maxDuration: number;
   durationUnit: DurationUnit;
+  durationStep: number;
 }

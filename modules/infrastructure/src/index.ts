@@ -15,6 +15,7 @@ export { ReservationApiRepository } from './repositories/ReservationApiRepositor
 export { ResourceApiRepository } from './repositories/ResourceApiRepository';
 export { ResourceAvailabilityRuleApiRepository } from './repositories/ResourceAvailabilityRuleApiRepository';
 export { ResourceSlotApiRepository } from './repositories/ResourceSlotApiRepository';
+export { AvailabilityBlockApiRepository } from './repositories/AvailabilityBlockApiRepository';
 export { BusinessMembershipApiRepository } from './repositories/BusinessMembershipApiRepository';
 export { BusinessCategoryApiRepository } from './repositories/BusinessCategoryApiRepository';
 export { BusinessServiceApiRepository } from './repositories/BusinessServiceApiRepository';

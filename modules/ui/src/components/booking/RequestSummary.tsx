@@ -36,7 +36,11 @@ export function RequestSummary({
           <div>
             <dt>{t('booking.service')}</dt>
             <dd>
-              {service.name} · {service.duration} {service.durationUnit.toLowerCase()}
+              {service.name} ·{' '}
+              {service.fixedDuration
+                ? service.minDuration
+                : `${service.minDuration}–${service.maxDuration}`}{' '}
+              {service.durationUnit.toLowerCase()}
             </dd>
           </div>
         )}

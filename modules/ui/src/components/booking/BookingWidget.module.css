@@ -222,6 +222,54 @@
   transform: none !important;
 }
 
+/* ── Availability-block day states (DAYS services) ───────── */
+
+.dayPending {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(234, 179, 8, 0.14),
+    rgba(234, 179, 8, 0.14) 4px,
+    transparent 4px,
+    transparent 10px
+  );
+  box-shadow: inset 0 0 0 1px rgba(234, 179, 8, 0.5);
+}
+
+.dayConfirmed {
+  background: var(--surface-2);
+  color: var(--ink-300);
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+.dayInRange {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: 0;
+}
+
+/* ── Picker (duration / length select) ───────────────────── */
+
+.picker {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  color: var(--ink-900);
+  cursor: pointer;
+  transition: border-color var(--dur-fast);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.picker:hover,
+.picker:focus {
+  border-color: var(--primary);
+}
+
 /* ── Time slots ───────────────────────────────────────── */
 
 .slots {

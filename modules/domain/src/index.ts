@@ -64,6 +64,7 @@ export type {
 } from './entities/ResourceAvailabilityRule';
 export { DAY_LABELS, DAYS_ORDERED } from './entities/ResourceAvailabilityRule';
 export type { ResourceSlot, ResourceSlotStatus } from './entities/ResourceSlot';
+export type { AvailabilityBlock } from './entities/AvailabilityBlock';
 export type { ResourceType } from './entities/ResourceType';
 export type { Role } from './entities/Role';
 export type { User, UserRegistration } from './entities/User';
@@ -90,6 +91,7 @@ export type { ReservationRepository } from './repositories/ReservationRepository
 export type { ResourceAvailabilityRuleRepository } from './repositories/ResourceAvailabilityRuleRepository';
 export type { ResourceRepository } from './repositories/ResourceRepository';
 export type { ResourceSlotRepository } from './repositories/ResourceSlotRepository';
+export type { AvailabilityBlockRepository } from './repositories/AvailabilityBlockRepository';
 export type { BusinessLocationRepository } from './repositories/BusinessLocationRepository';
 export type { PlaceRepository } from './repositories/PlaceRepository';
 export type { DiscoverySearchRepository } from './repositories/DiscoverySearchRepository';
@@ -142,6 +144,7 @@ export type { RejectReservationUseCase } from './use-cases/reservation/RejectRes
 export type { CreateResourceUseCase } from './use-cases/resource/CreateResourceUseCase';
 export type { GetAllResourcesUseCase } from './use-cases/resource/GetAllResourcesUseCase';
 export type { GetResourceSlotsUseCase } from './use-cases/resource/GetResourceSlotsUseCase';
+export type { GetAvailabilityBlocksUseCase } from './use-cases/resource/GetAvailabilityBlocksUseCase';
 export type { AddResourceToLocationUseCase } from './use-cases/business-location-resource/AddResourceToLocationUseCase';
 export type { ListLocationResourcesUseCase } from './use-cases/business-location-resource/ListLocationResourcesUseCase';
 export type { RemoveResourceFromLocationUseCase } from './use-cases/business-location-resource/RemoveResourceFromLocationUseCase';

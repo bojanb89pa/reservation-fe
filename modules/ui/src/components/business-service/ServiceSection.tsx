@@ -8,6 +8,7 @@ import {
   useDeleteBusinessService,
 } from '../../hooks/useBusinessServices';
 import { ServiceForm } from './ServiceForm';
+import type { ServiceFormValues } from './ServiceForm';
 import { DeleteServiceDialog } from './DeleteServiceDialog';
 import styles from './ServiceSection.module.css';
 
@@ -44,13 +45,25 @@ export function ServiceSection({ businessId }: Props) {
     DAYS: t('serviceSection.days'),
   };
 
-  const handleSave = async (name: string, duration: number, durationUnit: DurationUnit) => {
+  const formatDuration = (s: BusinessService): string => {
+    const unit = durationLabels[s.durationUnit];
+    return s.fixedDuration
+      ? t('serviceSection.fixedRange', { value: s.minDuration, unit })
+      : t('serviceSection.customRange', {
+          min: s.minDuration,
+          max: s.maxDuration,
+          unit,
+          step: s.durationStep,
+        });
+  };
+
+  const handleSave = async (values: ServiceFormValues) => {
     setFormError(null);
     try {
       if (mode.type === 'create') {
-        await create({ name, duration, durationUnit });
+        await create(values);
       } else if (mode.type === 'edit') {
-        await update({ serviceId: mode.service.id, command: { name, duration, durationUnit } });
+        await update({ serviceId: mode.service.id, command: values });
       }
       reset();
     } catch (err: unknown) {
@@ -112,9 +125,7 @@ export function ServiceSection({ businessId }: Props) {
         {services.map((s) => (
           <div key={s.id} className={styles.row}>
             <span className={styles.name}>{s.name}</span>
-            <span className={styles.duration}>
-              {s.duration} {durationLabels[s.durationUnit]}
-            </span>
+            <span className={styles.duration}>{formatDuration(s)}</span>
             <div className={styles.rowActions}>
               <button
                 className="btn btn-ghost btn-sm"

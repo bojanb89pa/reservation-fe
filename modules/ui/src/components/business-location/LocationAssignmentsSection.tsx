@@ -171,7 +171,9 @@ export function LocationAssignmentsSection({ businessId, locationId }: Props) {
                 <span className={styles.rowName}>{s.service?.name ?? s.serviceId}</span>
                 {s.service && (
                   <span className={styles.rowSub}>
-                    {s.service.duration}{' '}
+                    {s.service.fixedDuration
+                      ? s.service.minDuration
+                      : `${s.service.minDuration}–${s.service.maxDuration}`}{' '}
                     {t(`serviceSection.${s.service.durationUnit.toLowerCase()}`)}
                   </span>
                 )}

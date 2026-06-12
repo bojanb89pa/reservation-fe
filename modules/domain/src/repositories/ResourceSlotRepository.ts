@@ -6,5 +6,6 @@ export interface ResourceSlotRepository {
     serviceId: string,
     from: string,
     to: string,
+    duration?: number,
   ): Promise<ResourceSlot[]>;
 }
