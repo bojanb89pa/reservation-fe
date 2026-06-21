@@ -1,4 +1,6 @@
-import { Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { ProtectedRoute } from './ProtectedRoute';
@@ -24,10 +26,23 @@ import { DashboardCategoriesPage } from '../pages/dashboard/DashboardCategoriesP
 import { DashboardReservationsPage } from '../pages/dashboard/DashboardReservationsPage';
 
 function PublicLayout() {
+  const { pathname } = useLocation();
+
+  // New page: scroll to top, then ease the content in (no hard cuts).
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+  }, [pathname]);
+
   return (
     <>
       <Header />
-      <main style={{ flex: 1 }}>
+      <motion.main
+        key={pathname}
+        style={{ flex: 1 }}
+        initial={{ opacity: 0, y: 10, filter: 'blur(6px)' }}
+        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        transition={{ type: 'spring', stiffness: 130, damping: 20, mass: 0.9 }}
+      >
         <Routes>
           <Route index element={<HomePage />} />
           <Route path="register" element={<RegisterPage />} />
@@ -40,7 +55,7 @@ function PublicLayout() {
           <Route path="my-reservations" element={<MyReservationsPage />} />
           <Route path="business-onboarding" element={<BusinessOnboardingPage />} />
         </Routes>
-      </main>
+      </motion.main>
       <Footer />
     </>
   );

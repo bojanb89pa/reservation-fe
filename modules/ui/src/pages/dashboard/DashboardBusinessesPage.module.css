@@ -113,7 +113,7 @@
 }
 
 .suggestionButton:hover {
-  background: var(--surface-hover, #f5f5f5);
+  background: var(--surface-2);
 }
 
 .suggestionName {
@@ -257,18 +257,18 @@
 }
 
 .bizStatusPENDING {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--sun-light);
+  color: var(--sun);
 }
 
 .bizStatusACTIVE {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--mint-light);
+  color: var(--mint);
 }
 
 .bizStatusREJECTED {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-danger-light);
+  color: var(--color-danger);
 }
 
 .bizStatusDELETED {

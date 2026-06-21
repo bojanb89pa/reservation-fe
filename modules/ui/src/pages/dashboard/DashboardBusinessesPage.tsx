@@ -45,9 +45,7 @@ export function DashboardBusinessesPage() {
   }, [placeDetails]);
 
   const canSubmit =
-    !!placeDetails &&
-    placeDetails.latitude != null &&
-    placeDetails.longitude != null;
+    !!placeDetails && placeDetails.latitude != null && placeDetails.longitude != null;
 
   const handleSelectSuggestion = (placeId: string) => {
     setSelectedPlaceId(placeId);

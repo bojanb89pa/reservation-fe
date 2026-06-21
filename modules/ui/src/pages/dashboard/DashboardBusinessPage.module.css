@@ -28,8 +28,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #fef3c7;
-  border: 1.5px solid #fcd34d;
+  background: var(--sun-light);
+  border: 1.5px solid var(--sun);
   border-radius: var(--r-lg);
   padding: 14px 20px;
   margin-bottom: 28px;
@@ -39,7 +39,7 @@
 .adminPanelLabel {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: #92400e;
+  color: var(--sun);
 }
 
 .adminPanelActions {

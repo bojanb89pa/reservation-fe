@@ -54,7 +54,9 @@ export function LocationAssignmentsSection({ businessId, locationId }: Props) {
   const assignedResourceIds = new Set(assignedResources.map((r) => r.resourceId));
   const assignedServiceIds = new Set(assignedServices.map((s) => s.serviceId));
 
-  const availableResources = allResources.filter((r) => !assignedResourceIds.has(r.id));
+  const availableResources = allResources.filter(
+    (r) => r.id !== null && !assignedResourceIds.has(r.id),
+  );
   const availableServices = allServices.filter((s) => !assignedServiceIds.has(s.id));
 
   const handleAddResource = async () => {
@@ -137,7 +139,7 @@ export function LocationAssignmentsSection({ businessId, locationId }: Props) {
             >
               <option value="">{t('locationAssignments.selectResource')}</option>
               {availableResources.map((r) => (
-                <option key={r.id} value={r.id}>
+                <option key={r.id} value={r.id ?? ''}>
                   {r.name} ({t(`resourceType.${r.type}`)})
                 </option>
               ))}

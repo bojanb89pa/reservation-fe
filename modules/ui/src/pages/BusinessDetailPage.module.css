@@ -18,6 +18,8 @@
   margin-bottom: 28px;
   border-radius: var(--r-xl);
   overflow: hidden;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-md);
 }
 
 .imgMain {

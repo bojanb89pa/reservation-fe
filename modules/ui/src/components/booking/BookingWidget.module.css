@@ -1,13 +1,33 @@
-/* BookingWidget — mirrors the Reserva design system widget.css using app tokens */
+/* BookingWidget — glass panel with an animated gradient border.
+   Depth: shell (border glow) → panel (glass) → controls (interactive layer). */
+
+.shell {
+  position: relative;
+  border-radius: calc(var(--r-2xl) + 1px);
+  padding: 1px;
+  background: var(--grad-border);
+  background-size: 220% 220%;
+  animation: border-drift 14s var(--ease-standard) infinite alternate;
+  box-shadow: var(--shadow-lg);
+}
+
+@keyframes border-drift {
+  from {
+    background-position: 0% 0%;
+  }
+  to {
+    background-position: 100% 100%;
+  }
+}
 
 .widget {
   font-family: var(--font-ui);
-  background: var(--surface);
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--blur-lg)) saturate(1.5);
+  -webkit-backdrop-filter: blur(var(--blur-lg)) saturate(1.5);
   color: var(--ink-900);
-  border-radius: 28px;
-  box-shadow:
-    0 24px 48px -16px rgba(26, 27, 31, 0.18),
-    0 4px 10px rgba(26, 27, 31, 0.06);
+  border-radius: var(--r-2xl);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
   padding: 28px;
   width: 100%;
   display: flex;
@@ -27,7 +47,7 @@
 .eyebrow {
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--primary);
   display: inline-flex;
@@ -41,8 +61,21 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--mint);
   flex-shrink: 0;
+  animation: live-pulse 2.4s var(--ease-standard) infinite;
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--mint-light);
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 0 5px var(--mint-light);
+    opacity: 0.65;
+  }
 }
 
 .title {
@@ -59,17 +92,30 @@
 .sectionLabel {
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink-500);
   margin: 0 0 10px;
+  display: flex;
+  align-items: center;
 }
 
 .slotCount {
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
   color: var(--mint);
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+}
+
+.slotCountDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--mint);
+  animation: live-pulse 2.4s var(--ease-standard) infinite;
 }
 
 /* ── Service / Resource chips ─────────────────────────── */
@@ -86,24 +132,39 @@
   font-weight: 500;
   padding: 8px 14px;
   border-radius: var(--r-pill);
-  background: var(--surface-2);
+  background: var(--glass-bg);
   color: var(--ink-700);
   border: 1px solid var(--border);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  transition: all 160ms var(--ease-standard);
+  transition:
+    border-color var(--dur-fast) var(--ease-standard),
+    background var(--dur-fast) var(--ease-standard),
+    color var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-base) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-spring);
 }
 
 .tab:hover {
   transform: translateY(-1px);
-  border-color: var(--ink-700);
+  border-color: var(--primary);
+  color: var(--ink-900);
+}
+
+.tab:active {
+  transform: translateY(0) scale(0.98);
 }
 
 .tabActive {
-  background: var(--ink-900);
+  background: var(--primary);
   color: #fff;
-  border-color: var(--ink-900);
+  border-color: transparent;
+  box-shadow: var(--glow-primary);
+}
+
+.tabActive:hover {
+  color: #fff;
 }
 
 .tabMeta {
@@ -111,7 +172,7 @@
 }
 
 .tabActive .tabMeta {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* ── Calendar ─────────────────────────────────────────── */
@@ -132,7 +193,7 @@
   width: 32px;
   height: 32px;
   border-radius: var(--r-pill);
-  background: var(--surface-2);
+  background: var(--glass-bg);
   border: 1px solid var(--border);
   cursor: pointer;
   display: inline-flex;
@@ -142,7 +203,11 @@
   font-size: 18px;
   line-height: 1;
   padding: 0;
-  transition: transform 160ms var(--ease-spring);
+  transition:
+    transform var(--dur-fast) var(--ease-spring),
+    background var(--dur-fast),
+    border-color var(--dur-fast),
+    color var(--dur-fast);
 }
 
 .iconBtn:hover:not(:disabled) {
@@ -150,6 +215,10 @@
   background: var(--primary-light);
   border-color: var(--primary);
   color: var(--primary);
+}
+
+.iconBtn:active:not(:disabled) {
+  transform: scale(0.96);
 }
 
 .iconBtn:disabled {
@@ -192,13 +261,21 @@
   color: var(--ink-900);
   cursor: pointer;
   padding: 0;
-  transition: all 140ms var(--ease-standard);
+  transition:
+    background var(--dur-fast) var(--ease-standard),
+    color var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-base) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-spring);
 }
 
 .day:hover:not(:disabled):not(.dayEmpty) {
   background: var(--primary-light);
   color: var(--primary);
-  transform: scale(1.06);
+  transform: scale(1.08);
+}
+
+.day:active:not(:disabled):not(.dayEmpty) {
+  transform: scale(0.96);
 }
 
 .dayEmpty {
@@ -218,7 +295,7 @@
 .daySelected {
   background: var(--primary) !important;
   color: #fff !important;
-  box-shadow: 0 6px 14px -4px rgba(79, 70, 229, 0.5) !important;
+  box-shadow: var(--glow-primary) !important;
   transform: none !important;
 }
 
@@ -227,12 +304,12 @@
 .dayPending {
   background: repeating-linear-gradient(
     45deg,
-    rgba(234, 179, 8, 0.14),
-    rgba(234, 179, 8, 0.14) 4px,
+    var(--sun-light),
+    var(--sun-light) 4px,
     transparent 4px,
     transparent 10px
   );
-  box-shadow: inset 0 0 0 1px rgba(234, 179, 8, 0.5);
+  box-shadow: inset 0 0 0 1px var(--sun);
 }
 
 .dayConfirmed {
@@ -254,13 +331,15 @@
   width: 100%;
   padding: 10px 14px;
   background: var(--surface);
-  border: 1.5px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--r-md);
   font-family: var(--font-ui);
   font-size: var(--text-sm);
   color: var(--ink-900);
   cursor: pointer;
-  transition: border-color var(--dur-fast);
+  transition:
+    border-color var(--dur-fast),
+    box-shadow var(--dur-base);
   outline: none;
   box-sizing: border-box;
 }
@@ -268,6 +347,7 @@
 .picker:hover,
 .picker:focus {
   border-color: var(--primary);
+  box-shadow: var(--glow-focus);
 }
 
 /* ── Time slots ───────────────────────────────────────── */
@@ -286,39 +366,59 @@
   text-align: center;
   border-radius: var(--r-pill);
   border: 1px solid var(--border);
-  background: var(--surface);
+  background: var(--glass-bg);
   color: var(--ink-900);
   cursor: pointer;
-  transition: all 140ms var(--ease-standard);
+  transition:
+    border-color var(--dur-fast) var(--ease-standard),
+    background var(--dur-fast) var(--ease-standard),
+    color var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-base) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-spring);
 }
 
-.slot:hover {
-  border-color: var(--ink-900);
-  transform: translateY(-1px);
+.slot:hover:not(:disabled) {
+  border-color: var(--mint);
+  color: var(--mint);
+  transform: translateY(-2px);
+}
+
+.slot:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
 }
 
 .slotSelected {
   background: var(--mint);
-  color: var(--ink-900);
-  border-color: var(--mint);
-  box-shadow: 0 4px 12px -4px rgba(0, 194, 168, 0.45);
+  color: #06251f;
+  border-color: transparent;
+  box-shadow: var(--glow-mint);
+}
+
+.slotSelected:hover:not(:disabled) {
+  color: #06251f;
+}
+
+.slotSkeleton {
+  height: 38px;
+  border-radius: var(--r-pill);
 }
 
 .slotPending {
   background: repeating-linear-gradient(
     45deg,
-    rgba(234, 179, 8, 0.12),
-    rgba(234, 179, 8, 0.12) 4px,
+    var(--sun-light),
+    var(--sun-light) 4px,
     transparent 4px,
     transparent 10px
   );
-  border-color: rgba(234, 179, 8, 0.5);
+  border-color: var(--sun);
   color: var(--ink-700);
   opacity: 0.85;
 }
 
-.slotPending:hover {
-  border-color: rgba(234, 179, 8, 0.9);
+.slotPending:hover:not(:disabled) {
+  border-color: var(--sun);
+  color: var(--sun);
 }
 
 .slotConfirmed {
@@ -336,67 +436,18 @@
   padding: 12px 0 4px;
 }
 
-/* ── Date range (DAYS) ────────────────────────────────── */
-
-.dateRange {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.dateRangeField {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.dateRangeLabel {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ink-500);
-}
-
-.dateInput {
-  width: 100%;
-  padding: 10px 14px;
-  background: var(--surface);
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-md);
-  font-family: var(--font-ui);
-  font-size: var(--text-sm);
-  color: var(--ink-900);
-  cursor: pointer;
-  transition: border-color var(--dur-fast);
-  outline: none;
-  box-sizing: border-box;
-}
-
-.dateInput:hover:not(:disabled) {
-  border-color: var(--primary);
-}
-
-.dateInput:focus {
-  border-color: var(--primary);
-}
-
-.dateInput:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
 /* ── Summary bar ──────────────────────────────────────── */
 
 .summary {
-  background: linear-gradient(135deg, var(--primary-light), #fff);
-  border: 1px solid var(--border);
+  background: var(--grad-brand-soft);
+  border: 1px solid var(--glass-border);
   border-radius: var(--r-md);
   padding: 14px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  margin-bottom: 16px;
 }
 
 .summaryText {
@@ -413,6 +464,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: block;
 }
 
 .summaryMeta {
@@ -423,7 +475,16 @@
   text-overflow: ellipsis;
 }
 
-/* ── Submit ───────────────────────────────────────────── */
+.summaryPulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--mint);
+  flex-shrink: 0;
+  animation: live-pulse 2s var(--ease-standard) infinite;
+}
+
+/* ── Submit — tactile: lifts on hover, presses on tap ──── */
 
 .submit {
   font: inherit;
@@ -431,7 +492,9 @@
   font-size: 15px;
   padding: 14px 20px;
   border-radius: var(--r-pill);
-  background: var(--ink-900);
+  background: var(--grad-brand);
+  background-size: 160% 160%;
+  background-position: 0% 50%;
   color: #fff;
   border: none;
   cursor: pointer;
@@ -440,17 +503,25 @@
   justify-content: center;
   gap: 10px;
   width: 100%;
-  transition: all 180ms var(--ease-spring);
+  transition:
+    transform var(--dur-fast) var(--ease-spring),
+    box-shadow var(--dur-base) var(--ease-standard),
+    background-position var(--dur-slow) var(--ease-standard);
 }
 
 .submit:hover:not(:disabled) {
-  background: var(--primary);
   transform: translateY(-2px);
-  box-shadow: 0 14px 30px -10px rgba(79, 70, 229, 0.5);
+  background-position: 100% 50%;
+  box-shadow: var(--glow-primary);
+}
+
+.submit:active:not(:disabled) {
+  transform: translateY(1px) scale(0.99);
+  transition-duration: 60ms;
 }
 
 .submit:disabled {
-  background: var(--border);
+  background: var(--surface-2);
   color: var(--ink-500);
   cursor: not-allowed;
   transform: none;
@@ -459,7 +530,7 @@
 
 .submit svg {
   flex-shrink: 0;
-  transition: transform 200ms;
+  transition: transform var(--dur-base) var(--ease-spring);
 }
 
 .submit:hover:not(:disabled) svg {
@@ -472,5 +543,5 @@
   font-size: 12px;
   color: var(--ink-500);
   text-align: center;
-  margin: -8px 0 0;
+  margin: 12px 0 0;
 }

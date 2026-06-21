@@ -6,8 +6,9 @@
 
 /* Sidebar */
 .side {
-  background: var(--ink-900);
-  color: rgba(255, 255, 255, 0.9);
+  background: var(--bg-elevated);
+  border-right: 1px solid var(--border);
+  color: var(--ink-700);
   padding: 24px 0;
   position: sticky;
   top: 0;
@@ -22,7 +23,7 @@
   align-items: center;
   gap: 10px;
   padding: 0 22px 22px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--border);
   margin-bottom: 18px;
 }
 
@@ -49,12 +50,12 @@
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.1;
-  color: #fff;
+  color: var(--ink-900);
 }
 
 .brandSub {
   font-size: var(--text-2xs);
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--ink-500);
   margin-top: 2px;
 }
 
@@ -67,7 +68,7 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--ink-500);
   padding: 12px 10px 6px;
 }
 
@@ -77,7 +78,7 @@
   gap: 10px;
   padding: 9px 12px;
   border-radius: var(--r-md);
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--ink-700);
   font-size: var(--text-sm);
   cursor: pointer;
   font-weight: 500;
@@ -88,8 +89,8 @@
 }
 
 .navItem:hover {
-  background: rgba(255, 255, 255, 0.07);
-  color: #fff;
+  background: var(--glass-bg);
+  color: var(--ink-900);
 }
 
 .navItemActive {
@@ -110,7 +111,7 @@
 .foot {
   margin-top: auto;
   padding: 16px 22px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -118,7 +119,7 @@
 
 .footBtn {
   font-size: var(--text-xs);
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--ink-500);
   background: none;
   border: none;
   cursor: pointer;
@@ -127,7 +128,7 @@
   transition: color var(--dur-fast);
 }
 .footBtn:hover {
-  color: #fff;
+  color: var(--ink-900);
 }
 
 .langSwitch {
@@ -141,7 +142,7 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   font-family: var(--font-ui);
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--ink-500);
   background: none;
   border: none;
   cursor: pointer;
@@ -153,13 +154,13 @@
 }
 
 .langBtn:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
+  color: var(--ink-900);
+  background: var(--glass-bg);
 }
 
 .langBtnActive {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.15);
+  color: var(--ink-900);
+  background: var(--surface-2);
 }
 
 /* Main content */

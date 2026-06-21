@@ -15,6 +15,7 @@ import {
   AvailabilityBlockApiRepository,
   PlaceApiRepository,
   DiscoverySearchApiRepository,
+  BusinessContactInfoApiRepository,
 } from '@infrastructure';
 import {
   RegisterUseCaseImpl,
@@ -67,6 +68,10 @@ import {
   AddServiceToLocationUseCaseImpl,
   ListLocationServicesUseCaseImpl,
   RemoveServiceFromLocationUseCaseImpl,
+  ListContactInfoUseCaseImpl,
+  AddContactInfoUseCaseImpl,
+  UpdateContactInfoUseCaseImpl,
+  RemoveContactInfoUseCaseImpl,
 } from '@application';
 
 // Re-export infrastructure primitives consumed only within this module's hooks/state.
@@ -95,6 +100,7 @@ const businessLocationServiceRepository = new BusinessLocationServiceApiReposito
 );
 const placeRepository = new PlaceApiRepository(resourceAxiosClient);
 const discoverySearchRepository = new DiscoverySearchApiRepository(resourceAxiosClient);
+const businessContactInfoRepository = new BusinessContactInfoApiRepository(resourceAxiosClient);
 
 // ── Use Cases ─────────────────────────────────────────────────────────────────
 export const registerUseCase = new RegisterUseCaseImpl(authApiRepository);
@@ -217,4 +223,13 @@ export const updateBusinessServiceUseCase = new UpdateBusinessServiceUseCaseImpl
 );
 export const deleteBusinessServiceUseCase = new DeleteBusinessServiceUseCaseImpl(
   businessServiceRepository,
+);
+
+export const listContactInfoUseCase = new ListContactInfoUseCaseImpl(businessContactInfoRepository);
+export const addContactInfoUseCase = new AddContactInfoUseCaseImpl(businessContactInfoRepository);
+export const updateContactInfoUseCase = new UpdateContactInfoUseCaseImpl(
+  businessContactInfoRepository,
+);
+export const removeContactInfoUseCase = new RemoveContactInfoUseCaseImpl(
+  businessContactInfoRepository,
 );

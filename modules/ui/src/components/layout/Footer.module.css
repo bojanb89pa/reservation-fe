@@ -1,8 +1,24 @@
 .footer {
-  background: var(--ink-900);
-  color: rgba(255, 255, 255, 0.9);
+  position: relative;
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--border);
+  color: var(--ink-700);
   margin-top: auto;
   padding: 64px 0 28px;
+  overflow: hidden;
+}
+
+/* Soft brand glow along the top edge */
+.footer::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(720px, 80%);
+  height: 1px;
+  background: var(--grad-brand);
+  opacity: 0.5;
 }
 
 .inner {
@@ -27,7 +43,7 @@
 .logoMark {
   width: 32px;
   height: 32px;
-  background: var(--primary);
+  background: var(--grad-brand);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -46,13 +62,13 @@
   font-size: 19px;
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: #fff;
+  color: var(--ink-900);
   line-height: 1;
 }
 
 .tagline {
   font-size: var(--text-xs);
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--ink-500);
   margin: 14px 0 0;
 }
 
@@ -67,19 +83,19 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--ink-500);
   margin: 0 0 14px;
 }
 
 .cols a {
   display: block;
   font-size: var(--text-sm);
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--ink-700);
   padding: 4px 0;
   transition: color var(--dur-fast);
 }
 .cols a:hover {
-  color: #fff;
+  color: var(--primary);
 }
 
 .rule {
@@ -87,7 +103,7 @@
   margin: 48px auto 0;
   padding: 0 28px;
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--border);
 }
 
 .fine {
@@ -95,5 +111,12 @@
   margin: 22px auto 0;
   padding: 0 28px;
   font-size: var(--text-2xs);
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--ink-500);
+}
+
+@media (max-width: 700px) {
+  .inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
 }

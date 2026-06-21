@@ -20,6 +20,7 @@ const sr: Translation = {
     searchWhere: 'Gde',
     searchWhatPlaceholder: 'Salon, zubar, studio…',
     searchWherePlaceholder: 'Grad ili kvart',
+    liveHint: 'Dostupnost uživo — termini se ažuriraju u realnom vremenu',
     categoryEyebrow: 'Kakvo mesto?',
     categoryTitle: 'Odaberi kategoriju.',
     browseEyebrow: 'Pretraži sve',

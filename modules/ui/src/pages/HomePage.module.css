@@ -1,6 +1,5 @@
 .hero {
-  background: var(--bg);
-  padding: 100px 28px 80px;
+  padding: 110px 28px 90px;
   position: relative;
   overflow: hidden;
 }
@@ -12,38 +11,105 @@
   z-index: 1;
 }
 
-/* Decorative color blobs */
-.blob1 {
+/* ── Faint structural grid — fades out toward the bottom ── */
+.gridOverlay {
   position: absolute;
-  width: 520px;
-  height: 520px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, transparent 70%);
-  top: -120px;
-  right: -60px;
+  inset: 0;
   pointer-events: none;
+  background-image:
+    linear-gradient(var(--glass-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, rgba(0, 0, 0, 0.5), transparent 78%);
+  -webkit-mask-image: radial-gradient(
+    ellipse 90% 70% at 50% 0%,
+    rgba(0, 0, 0, 0.5),
+    transparent 78%
+  );
 }
 
-.blob2 {
+/* ── Aurora orbs (parallax layers) ── */
+.orb1,
+.orb2,
+.orb3 {
   position: absolute;
-  width: 360px;
-  height: 360px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 111, 97, 0.12) 0%, transparent 70%);
-  bottom: -80px;
-  left: 20%;
   pointer-events: none;
+  filter: blur(8px);
 }
 
-.blob3 {
-  position: absolute;
-  width: 280px;
-  height: 280px;
+.orb1 {
+  width: 560px;
+  height: 560px;
+  background: radial-gradient(circle, rgba(124, 124, 248, 0.22) 0%, transparent 68%);
+  top: -140px;
+  right: -80px;
+}
+
+.orb2 {
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(62, 230, 196, 0.13) 0%, transparent 68%);
+  bottom: -120px;
+  left: 16%;
+}
+
+.orb3 {
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(103, 214, 255, 0.12) 0%, transparent 68%);
+  top: 30px;
+  left: -60px;
+}
+
+[data-theme='light'] .orb1 {
+  background: radial-gradient(circle, rgba(91, 91, 214, 0.16) 0%, transparent 68%);
+}
+[data-theme='light'] .orb2 {
+  background: radial-gradient(circle, rgba(13, 185, 160, 0.1) 0%, transparent 68%);
+}
+[data-theme='light'] .orb3 {
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.1) 0%, transparent 68%);
+}
+
+/* ── Eyebrow with live pulse ── */
+.heroEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-700);
+  padding: 7px 16px;
+  border-radius: var(--r-pill);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--blur-sm));
+  -webkit-backdrop-filter: blur(var(--blur-sm));
+  margin-bottom: 28px;
+}
+
+.livePulse {
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 194, 168, 0.1) 0%, transparent 70%);
-  top: 40px;
-  left: -40px;
-  pointer-events: none;
+  background: var(--mint);
+  flex-shrink: 0;
+  animation: live-pulse 2.4s var(--ease-standard) infinite;
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--mint-light);
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 0 5px var(--mint-light);
+    opacity: 0.65;
+  }
 }
 
 .heroTitle {
@@ -51,10 +117,10 @@
   font-size: clamp(48px, 8vw, var(--text-6xl));
   font-weight: 700;
   letter-spacing: -0.03em;
-  line-height: 1;
+  line-height: 1.02;
   color: var(--ink-900);
   margin: 0 0 24px;
-  max-width: 900px;
+  max-width: 940px;
 }
 
 .heroSub {
@@ -65,27 +131,45 @@
   max-width: 520px;
 }
 
-/* Pill search bar */
+/* ── Search — glass bar with gradient ring on focus ── */
+
+.searchShell {
+  max-width: 680px;
+  position: relative;
+  border-radius: var(--r-pill);
+  padding: 1px;
+  background: var(--glass-border);
+  transition: background var(--dur-base) var(--ease-standard);
+}
+
+.searchShell:focus-within {
+  background: var(--grad-brand);
+  box-shadow: 0 12px 48px -16px rgba(124, 124, 248, 0.45);
+}
+
 .search {
   display: flex;
   align-items: center;
-  background: var(--surface);
-  border: 1.5px solid var(--border);
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--blur-lg)) saturate(1.5);
+  -webkit-backdrop-filter: blur(var(--blur-lg)) saturate(1.5);
   border-radius: var(--r-pill);
-  padding: 6px 6px 6px 22px;
-  max-width: 680px;
-  box-shadow: var(--shadow-md);
+  padding: 6px 6px 6px 24px;
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    var(--shadow-md);
   gap: 0;
 }
 
 .searchField {
   flex: 1;
-  padding: 6px 16px 6px 0;
+  padding: 8px 16px 8px 0;
+  min-width: 0;
 }
 
 .searchDivider {
   width: 1px;
-  height: 32px;
+  height: 34px;
   background: var(--border);
   flex-shrink: 0;
   margin: 0 16px;
@@ -116,35 +200,48 @@
 }
 
 .searchGo {
-  width: 46px;
-  height: 46px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: var(--primary);
+  background: var(--grad-brand);
   color: #fff;
   border: none;
   cursor: pointer;
-  font-size: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   transition:
-    background var(--dur-fast) var(--ease-spring),
-    transform var(--dur-fast) var(--ease-spring);
+    transform var(--dur-fast) var(--ease-spring),
+    box-shadow var(--dur-base) var(--ease-standard),
+    filter var(--dur-fast) var(--ease-standard);
 }
 .searchGo:hover {
-  background: var(--primary-hover);
   transform: scale(1.06);
+  box-shadow: var(--glow-primary);
+  filter: brightness(1.1);
+}
+.searchGo:active {
+  transform: scale(0.96);
 }
 
-/* Section */
+.liveHint {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-xs);
+  color: var(--ink-500);
+  margin: 18px 0 0 6px;
+}
+
+/* ── Section ── */
 .section {
   max-width: 1200px;
   margin: 0 auto;
   padding: 72px 28px;
 }
 
-/* Category grid */
+/* ── Category grid — glass cards, depth shift on hover ── */
 .categoryGrid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -164,8 +261,11 @@
 }
 
 .categoryCard {
-  background: var(--surface);
-  border: 1.5px solid var(--border);
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-sm));
+  -webkit-backdrop-filter: blur(var(--blur-sm));
+  border: 1px solid var(--glass-border);
   border-radius: var(--r-xl);
   padding: 24px 18px 20px;
   display: flex;
@@ -174,17 +274,24 @@
   gap: 12px;
   cursor: pointer;
   transition:
-    border-color var(--dur-fast),
-    box-shadow var(--dur-fast),
-    transform var(--dur-fast) var(--ease-spring);
+    border-color var(--dur-base) var(--ease-standard),
+    box-shadow var(--dur-base) var(--ease-standard),
+    background var(--dur-base) var(--ease-standard),
+    transform var(--dur-base) var(--ease-spring);
   text-align: left;
   font-family: var(--font-ui);
+  overflow: hidden;
 }
 
 .categoryCard:hover {
-  border-color: var(--primary);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-2px);
+  border-color: rgba(124, 124, 248, 0.45);
+  background: var(--primary-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px) scale(1.01);
+}
+
+.categoryCard:active {
+  transform: translateY(-1px) scale(0.99);
 }
 
 .categoryIcon {
@@ -196,6 +303,11 @@
   justify-content: center;
   font-size: 22px;
   flex-shrink: 0;
+  transition: transform var(--dur-base) var(--ease-spring);
+}
+
+.categoryCard:hover .categoryIcon {
+  transform: scale(1.08) translateY(-1px);
 }
 
 .categoryName {
@@ -207,17 +319,48 @@
   color: var(--ink-900);
 }
 
-.categoryCount {
-  font-family: var(--font-mono);
-  font-size: var(--text-2xs);
-  color: var(--ink-500);
+.categoryArrow {
+  position: absolute;
+  top: 18px;
+  right: 16px;
+  color: var(--primary);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition:
+    opacity var(--dur-base) var(--ease-standard),
+    transform var(--dur-base) var(--ease-spring);
 }
 
-/* Business listing grid */
+.categoryCard:hover .categoryArrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ── Business listing grid ── */
 .listingGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 22px;
+}
+
+/* ── Skeleton loading (shimmer comes from the global .skeleton) ── */
+.skeletonCard {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  background: var(--glass-bg);
+}
+
+.skeletonImage {
+  height: 180px;
+  border-radius: 0;
+}
+
+.skeletonBody {
+  padding: 18px 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 @media (max-width: 900px) {
@@ -235,12 +378,16 @@
     border-radius: var(--r-xl);
     padding: 16px;
   }
+  .searchShell,
+  .searchShell:focus-within {
+    border-radius: calc(var(--r-xl) + 1px);
+  }
   .searchDivider {
     display: none;
   }
   .searchGo {
     width: 100%;
-    height: 44px;
+    height: 46px;
     border-radius: var(--r-pill);
     margin-top: 8px;
   }

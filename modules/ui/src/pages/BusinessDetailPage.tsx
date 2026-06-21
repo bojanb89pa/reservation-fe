@@ -63,9 +63,9 @@ export function BusinessDetailPage() {
   const services = servicesPage ?? [];
 
   const gradients = [
-    'linear-gradient(135deg,#c8b89a 0%,#8a7c63 100%)',
-    'linear-gradient(135deg,#5e7a6c 0%,#2d4a3d 100%)',
-    'linear-gradient(135deg,#d4b89a 0%,#8a6e4f 100%)',
+    'radial-gradient(120% 160% at 18% 0%,#7C7CF8 0%,#34346B 55%,#12132B 100%)',
+    'radial-gradient(120% 160% at 80% 10%,#3EE6C4 0%,#1E5E58 60%,#0B1B22 100%)',
+    'radial-gradient(120% 160% at 50% 0%,#67D6FF 0%,#2E4E7A 60%,#10142B 100%)',
   ];
 
   return (

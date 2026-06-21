@@ -92,9 +92,7 @@ export function SearchResultsPage() {
         </div>
       </div>
 
-      {isEmpty && (
-        <p className={styles.hint}>{t('search.hint')}</p>
-      )}
+      {isEmpty && <p className={styles.hint}>{t('search.hint')}</p>}
 
       {!isEmpty && isLoading && (
         <div className="page-loading">
@@ -102,9 +100,7 @@ export function SearchResultsPage() {
         </div>
       )}
 
-      {!isEmpty && isError && (
-        <div className="error-box">{t('search.error')}</div>
-      )}
+      {!isEmpty && isError && <div className="error-box">{t('search.error')}</div>}
 
       {data && data.content.length === 0 && (
         <p className={styles.noResults}>{t('search.noResults', { q: debouncedWhat })}</p>
@@ -132,7 +128,10 @@ export function SearchResultsPage() {
               >
                 {t('search.prevPage')}
               </button>
-              <span className="mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-500)' }}>
+              <span
+                className="mono"
+                style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-500)' }}
+              >
                 {t('search.pageOf', { page: page + 1, total: data.totalPages })}
               </span>
               <button

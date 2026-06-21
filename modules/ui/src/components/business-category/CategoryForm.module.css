@@ -12,12 +12,12 @@
 
 .optional {
   font-weight: 400;
-  color: var(--text-muted, #888);
+  color: var(--ink-500);
   font-size: 0.85em;
 }
 
 .translationsFieldset {
-  border: 1px solid var(--border, #e5e7eb);
+  border: 1px solid var(--border);
   border-radius: var(--r-md, 8px);
   padding: 12px 14px;
   display: flex;
@@ -29,5 +29,5 @@
   padding: 0 6px;
   font-size: 0.85rem;
   font-weight: 500;
-  color: var(--text-secondary, #6b7280);
+  color: var(--ink-700);
 }

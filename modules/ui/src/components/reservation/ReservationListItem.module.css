@@ -26,25 +26,25 @@
 }
 
 .PENDING_APPROVAL {
-  background: #fef9c3;
-  color: #92400e;
-  border-color: #fde68a;
+  background: var(--sun-light);
+  color: var(--sun);
+  border-color: var(--sun);
 }
 
 .CONFIRMED {
-  background: #dcfce7;
-  color: #166534;
-  border-color: #86efac;
+  background: var(--mint-light);
+  color: var(--mint);
+  border-color: var(--mint);
 }
 
 .REJECTED {
-  background: #fee2e2;
-  color: #991b1b;
-  border-color: #fca5a5;
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+  border-color: var(--color-danger);
 }
 
 .CANCELLED {
-  background: var(--ink-100, #f4f4f5);
+  background: var(--surface-2);
   color: var(--ink-500);
   border-color: var(--border);
 }

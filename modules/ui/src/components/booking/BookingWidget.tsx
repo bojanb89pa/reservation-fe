@@ -1,9 +1,25 @@
 import { useState, useMemo } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { AnimatePresence, motion } from 'framer-motion';
 import type { AvailabilityBlock, BusinessService, Resource } from '@domain';
 import { useResourceSlots } from '../../hooks/useResourceSlots';
 import { useAvailabilityBlocks } from '../../hooks/useAvailabilityBlocks';
 import styles from './BookingWidget.module.css';
+
+/** Step section — enters with fade + lift + blur-in as the flow progresses. */
+function Step({ children }: { children: ReactNode }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12, filter: 'blur(6px)' }}
+      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+      exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
+      transition={{ type: 'spring', stiffness: 150, damping: 20, mass: 0.8 }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 // ─── Pure helpers ─────────────────────────────────────────────────────────────
 
@@ -63,9 +79,7 @@ function unitSuffix(unit: BusinessService['durationUnit']): string {
 
 function fmtServiceMeta(svc: BusinessService): string {
   const s = unitSuffix(svc.durationUnit);
-  return svc.fixedDuration
-    ? `${svc.minDuration}${s}`
-    : `${svc.minDuration}–${svc.maxDuration}${s}`;
+  return svc.fixedDuration ? `${svc.minDuration}${s}` : `${svc.minDuration}–${svc.maxDuration}${s}`;
 }
 
 /** Inclusive→exclusive day count between two ISO dates (yyyy-mm-dd). */
@@ -150,16 +164,14 @@ export function BookingWidget({
   const isDays = selectedService?.durationUnit === 'DAYS';
   const isCustomTime = !!selectedService && !isDays && !selectedService.fixedDuration;
   const canPick = !!selectedService && !!selectedResource;
-  const slotDuration = isCustomTime
-    ? (chosenDuration ?? selectedService!.minDuration)
-    : undefined;
+  const slotDuration = isCustomTime ? (chosenDuration ?? selectedService!.minDuration) : undefined;
 
   const calendarDays = useMemo(() => buildMonth(viewYear, viewMonth), [viewYear, viewMonth]);
 
   const monthFrom = toDateStr(new Date(viewYear, viewMonth, 1));
   const monthTo = toDateStr(new Date(viewYear, viewMonth + 1, 0));
 
-  const { data: slots = [] } = useResourceSlots(
+  const { data: slots = [], isLoading: slotsLoading } = useResourceSlots(
     selectedResource?.id ?? '',
     selectedService?.id ?? '',
     monthFrom,
@@ -269,7 +281,9 @@ export function BookingWidget({
     if (isDays) {
       const block = blockForDay(dateStr, blocks);
       const status = block?.status;
-      const fits = block ? maxLengthFrom(dateStr, block, selectedService!) >= selectedService!.minDuration : false;
+      const fits = block
+        ? maxLengthFrom(dateStr, block, selectedService!) >= selectedService!.minDuration
+        : false;
       const selectable = !isPast && !!block && status !== 'CONFIRMED' && fits;
       const inStay =
         !!selectedDate &&
@@ -348,219 +362,242 @@ export function BookingWidget({
   }
 
   return (
-    <div className={styles.widget}>
-      {/* ── Header ── */}
-      <div className={styles.head}>
-        <div>
-          <div className={styles.eyebrow}>Book a slot</div>
-          <h3 className={styles.title}>When works for you?</h3>
-        </div>
-      </div>
-
-      {/* ── Services ── */}
-      {services.length > 0 && (
-        <div>
-          <p className={styles.sectionLabel}>Service</p>
-          <div className={styles.tabs} role="tablist">
-            {services.map((svc) => (
-              <button
-                key={svc.id}
-                role="tab"
-                aria-pressed={selectedService?.id === svc.id}
-                className={[styles.tab, selectedService?.id === svc.id ? styles.tabActive : '']
-                  .filter(Boolean)
-                  .join(' ')}
-                onClick={() => handleServiceSelect(svc)}
-              >
-                {svc.name}
-                <span className={styles.tabMeta}>&nbsp;· {fmtServiceMeta(svc)}</span>
-              </button>
-            ))}
+    <div className={styles.shell}>
+      <div className={styles.widget}>
+        {/* ── Header ── */}
+        <div className={styles.head}>
+          <div>
+            <div className={styles.eyebrow}>Book a slot</div>
+            <h3 className={styles.title}>When works for you?</h3>
           </div>
         </div>
-      )}
 
-      {/* ── Resources ── */}
-      {resources.length > 0 && (
-        <div>
-          <p className={styles.sectionLabel}>Resource</p>
-          <div className={styles.tabs} role="tablist">
-            {resources.map((res) => (
-              <button
-                key={res.id}
-                role="tab"
-                aria-pressed={selectedResource?.id === res.id}
-                className={[styles.tab, selectedResource?.id === res.id ? styles.tabActive : '']
-                  .filter(Boolean)
-                  .join(' ')}
-                onClick={() => handleResourceSelect(res)}
-              >
-                {res.name}
-                <span className={styles.tabMeta}>&nbsp;· {t(`resourceType.${res.type}`)}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ── Duration picker (custom MINUTES/HOURS) ── */}
-      {canPick && isCustomTime && (
-        <div>
-          <p className={styles.sectionLabel}>Duration</p>
-          <select
-            className={styles.picker}
-            value={slotDuration}
-            onChange={(e) => handleDurationChange(Number(e.target.value))}
-          >
-            {durationOptions.map((v) => (
-              <option key={v} value={v}>
-                {v} {unitSuffix(selectedService!.durationUnit)}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
-
-      {/* ── Calendar ── */}
-      {canPick && (
-        <div>
-          <p className={styles.sectionLabel}>{isDays ? 'Check-in date' : 'Date'}</p>
-          <div className={styles.calHead}>
-            <button
-              className={styles.iconBtn}
-              onClick={handlePrevMonth}
-              disabled={!canGoPrev}
-              aria-label="Previous month"
-            >
-              ‹
-            </button>
-            <span className={styles.calMonth}>{fmtMonthYear(viewYear, viewMonth)}</span>
-            <button className={styles.iconBtn} onClick={handleNextMonth} aria-label="Next month">
-              ›
-            </button>
-          </div>
-          <div className={styles.dow}>
-            {DOW_LABELS.map((l) => (
-              <span key={l}>{l}</span>
-            ))}
-          </div>
-          <div className={styles.days}>
-            {calendarDays.map((d, i) => {
-              if (!d) return <div key={`empty-${i}`} className={styles.dayEmpty} />;
-              const dateStr = toDateStr(d);
-              const info = describeDay(d);
-              return (
+        {/* ── Services ── */}
+        {services.length > 0 && (
+          <div>
+            <p className={styles.sectionLabel}>Service</p>
+            <div className={styles.tabs} role="tablist">
+              {services.map((svc) => (
                 <button
-                  key={dateStr}
-                  className={[styles.day, ...info.classes].join(' ')}
-                  disabled={info.disabled}
-                  title={info.title}
-                  onClick={info.onClick}
+                  key={svc.id}
+                  role="tab"
+                  aria-pressed={selectedService?.id === svc.id}
+                  className={[styles.tab, selectedService?.id === svc.id ? styles.tabActive : '']
+                    .filter(Boolean)
+                    .join(' ')}
+                  onClick={() => handleServiceSelect(svc)}
                 >
-                  {d.getDate()}
+                  {svc.name}
+                  <span className={styles.tabMeta}>&nbsp;· {fmtServiceMeta(svc)}</span>
                 </button>
-              );
-            })}
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* ── Length picker (DAYS) ── */}
-      {canPick && isDays && selectedDate && (
-        <div>
-          <p className={styles.sectionLabel}>Length</p>
-          {lengthOptions.length === 0 ? (
-            <p className={styles.noSlots}>No stay fits from this check-in date.</p>
-          ) : (
+        {/* ── Resources ── */}
+        {resources.length > 0 && (
+          <div>
+            <p className={styles.sectionLabel}>Resource</p>
+            <div className={styles.tabs} role="tablist">
+              {resources.map((res) => (
+                <button
+                  key={res.id}
+                  role="tab"
+                  aria-pressed={selectedResource?.id === res.id}
+                  className={[styles.tab, selectedResource?.id === res.id ? styles.tabActive : '']
+                    .filter(Boolean)
+                    .join(' ')}
+                  onClick={() => handleResourceSelect(res)}
+                >
+                  {res.name}
+                  <span className={styles.tabMeta}>&nbsp;· {t(`resourceType.${res.type}`)}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Duration picker (custom MINUTES/HOURS) ── */}
+        {canPick && isCustomTime && (
+          <Step>
+            <p className={styles.sectionLabel}>Duration</p>
             <select
               className={styles.picker}
-              value={selectedLength ?? ''}
-              onChange={(e) => setSelectedLength(Number(e.target.value))}
+              value={slotDuration}
+              onChange={(e) => handleDurationChange(Number(e.target.value))}
             >
-              {lengthOptions.map((v) => (
+              {durationOptions.map((v) => (
                 <option key={v} value={v}>
-                  {v} {v === 1 ? 'day' : 'days'}
+                  {v} {unitSuffix(selectedService!.durationUnit)}
                 </option>
               ))}
             </select>
-          )}
-        </div>
-      )}
+          </Step>
+        )}
 
-      {/* ── Time slots (MINUTES/HOURS) ── */}
-      {canPick && selectedDate && !isDays && (
-        <div>
-          <p className={styles.sectionLabel}>
-            Time
-            {availableCount > 0 && (
-              <span className={styles.slotCount}>&nbsp;· {availableCount} available</span>
-            )}
-          </p>
-          {daySlots.length === 0 ? (
-            <p className={styles.noSlots}>No available slots for this date.</p>
-          ) : (
-            <div className={styles.slots}>
-              {daySlots.map((slot) => {
-                const isConfirmed = slot.status === 'CONFIRMED';
-                const isPending = slot.status === 'PENDING';
-                const isSelected = selectedSlot === slot.startTime;
+        {/* ── Calendar ── */}
+        {canPick && (
+          <Step>
+            <p className={styles.sectionLabel}>{isDays ? 'Check-in date' : 'Date'}</p>
+            <div className={styles.calHead}>
+              <button
+                className={styles.iconBtn}
+                onClick={handlePrevMonth}
+                disabled={!canGoPrev}
+                aria-label="Previous month"
+              >
+                ‹
+              </button>
+              <span className={styles.calMonth}>{fmtMonthYear(viewYear, viewMonth)}</span>
+              <button className={styles.iconBtn} onClick={handleNextMonth} aria-label="Next month">
+                ›
+              </button>
+            </div>
+            <div className={styles.dow}>
+              {DOW_LABELS.map((l) => (
+                <span key={l}>{l}</span>
+              ))}
+            </div>
+            <div className={styles.days}>
+              {calendarDays.map((d, i) => {
+                if (!d) return <div key={`empty-${i}`} className={styles.dayEmpty} />;
+                const dateStr = toDateStr(d);
+                const info = describeDay(d);
                 return (
                   <button
-                    key={slot.startTime}
-                    aria-pressed={isSelected}
-                    disabled={isConfirmed}
-                    title={isPending ? PENDING_TOOLTIP : undefined}
-                    className={[
-                      styles.slot,
-                      isConfirmed ? styles.slotConfirmed : '',
-                      isPending ? styles.slotPending : '',
-                      isSelected ? styles.slotSelected : '',
-                    ]
-                      .filter(Boolean)
-                      .join(' ')}
-                    onClick={() => !isConfirmed && setSelectedSlot(slot.startTime)}
+                    key={dateStr}
+                    className={[styles.day, ...info.classes].join(' ')}
+                    disabled={info.disabled}
+                    title={info.title}
+                    onClick={info.onClick}
                   >
-                    {slotTime(slot.startTime)}
+                    {d.getDate()}
                   </button>
                 );
               })}
             </div>
-          )}
-        </div>
-      )}
+          </Step>
+        )}
 
-      {/* ── Summary + Confirm ── */}
-      {selectedService && selectedResource && (
-        <>
-          <div className={styles.summary}>
-            <div className={styles.summaryText}>
-              <span className={styles.summaryWhen}>{summaryWhen ?? '— pick a date & time —'}</span>
-              <span className={styles.summaryMeta}>
-                {selectedService.name}&nbsp;· {selectedResource.name}
-              </span>
+        {/* ── Length picker (DAYS) ── */}
+        {canPick && isDays && selectedDate && (
+          <Step key={`len-${selectedDate}`}>
+            <p className={styles.sectionLabel}>Length</p>
+            {lengthOptions.length === 0 ? (
+              <p className={styles.noSlots}>No stay fits from this check-in date.</p>
+            ) : (
+              <select
+                className={styles.picker}
+                value={selectedLength ?? ''}
+                onChange={(e) => setSelectedLength(Number(e.target.value))}
+              >
+                {lengthOptions.map((v) => (
+                  <option key={v} value={v}>
+                    {v} {v === 1 ? 'day' : 'days'}
+                  </option>
+                ))}
+              </select>
+            )}
+          </Step>
+        )}
+
+        {/* ── Time slots (MINUTES/HOURS) ── */}
+        {canPick && selectedDate && !isDays && (
+          <Step key={`slots-${selectedDate}-${slotDuration ?? ''}`}>
+            <p className={styles.sectionLabel}>
+              Time
+              {availableCount > 0 && (
+                <span className={styles.slotCount}>
+                  <span className={styles.slotCountDot} aria-hidden="true" />
+                  &nbsp;{availableCount} available
+                </span>
+              )}
+            </p>
+            {slotsLoading ? (
+              <div className={styles.slots}>
+                {Array.from({ length: 8 }, (_, i) => (
+                  <div key={i} className={`skeleton ${styles.slotSkeleton}`} />
+                ))}
+              </div>
+            ) : daySlots.length === 0 ? (
+              <p className={styles.noSlots}>No available slots for this date.</p>
+            ) : (
+              <div className={styles.slots}>
+                {daySlots.map((slot) => {
+                  const isConfirmed = slot.status === 'CONFIRMED';
+                  const isPending = slot.status === 'PENDING';
+                  const isSelected = selectedSlot === slot.startTime;
+                  return (
+                    <button
+                      key={slot.startTime}
+                      aria-pressed={isSelected}
+                      disabled={isConfirmed}
+                      title={isPending ? PENDING_TOOLTIP : undefined}
+                      className={[
+                        styles.slot,
+                        isConfirmed ? styles.slotConfirmed : '',
+                        isPending ? styles.slotPending : '',
+                        isSelected ? styles.slotSelected : '',
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
+                      onClick={() => !isConfirmed && setSelectedSlot(slot.startTime)}
+                    >
+                      {slotTime(slot.startTime)}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </Step>
+        )}
+
+        {/* ── Summary + Confirm ── */}
+        {selectedService && selectedResource && (
+          <Step>
+            <div className={styles.summary}>
+              <div className={styles.summaryText}>
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span
+                    key={summaryWhen ?? 'empty'}
+                    className={styles.summaryWhen}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.18 }}
+                  >
+                    {summaryWhen ?? '— pick a date & time —'}
+                  </motion.span>
+                </AnimatePresence>
+                <span className={styles.summaryMeta}>
+                  {selectedService.name}&nbsp;· {selectedResource.name}
+                </span>
+              </div>
+              {canConfirm && <span className={styles.summaryPulse} aria-hidden="true" />}
             </div>
-          </div>
-          <button
-            className={styles.submit}
-            disabled={!canConfirm || isLoading}
-            onClick={handleConfirm}
-          >
-            <span>{isLoading ? 'Sending…' : 'Confirm reservation'}</span>
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
+            <button
+              className={styles.submit}
+              disabled={!canConfirm || isLoading}
+              onClick={handleConfirm}
             >
-              <path d="M5 12h14M13 5l7 7-7 7" />
-            </svg>
-          </button>
-          <p className={styles.fineprint}>No charge until the provider confirms.</p>
-        </>
-      )}
+              <span>{isLoading ? 'Sending…' : 'Confirm reservation'}</span>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              >
+                <path d="M5 12h14M13 5l7 7-7 7" />
+              </svg>
+            </button>
+            <p className={styles.fineprint}>No charge until the provider confirms.</p>
+          </Step>
+        )}
+      </div>
     </div>
   );
 }

@@ -66,3 +66,7 @@ export { GetLocalizedBusinessCategoryUseCaseImpl } from './use-cases/localized-b
 export { CreateLocalizedBusinessCategoryUseCaseImpl } from './use-cases/localized-business-category/CreateLocalizedBusinessCategoryUseCaseImpl';
 export { UpdateLocalizedBusinessCategoryUseCaseImpl } from './use-cases/localized-business-category/UpdateLocalizedBusinessCategoryUseCaseImpl';
 export { UpsertLocalizedBusinessCategoryTranslationUseCaseImpl } from './use-cases/localized-business-category/UpsertLocalizedBusinessCategoryTranslationUseCaseImpl';
+export { ListContactInfoUseCaseImpl } from './use-cases/business-contact-info/ListContactInfoUseCaseImpl';
+export { AddContactInfoUseCaseImpl } from './use-cases/business-contact-info/AddContactInfoUseCaseImpl';
+export { UpdateContactInfoUseCaseImpl } from './use-cases/business-contact-info/UpdateContactInfoUseCaseImpl';
+export { RemoveContactInfoUseCaseImpl } from './use-cases/business-contact-info/RemoveContactInfoUseCaseImpl';

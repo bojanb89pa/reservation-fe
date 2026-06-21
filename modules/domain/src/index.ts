@@ -162,3 +162,17 @@ export type { GetLocalizedBusinessCategoryUseCase } from './use-cases/localized-
 export type { CreateLocalizedBusinessCategoryUseCase } from './use-cases/localized-business-category/CreateLocalizedBusinessCategoryUseCase';
 export type { UpdateLocalizedBusinessCategoryUseCase } from './use-cases/localized-business-category/UpdateLocalizedBusinessCategoryUseCase';
 export type { UpsertLocalizedBusinessCategoryTranslationUseCase } from './use-cases/localized-business-category/UpsertLocalizedBusinessCategoryTranslationUseCase';
+
+// Business contact info
+export type {
+  BusinessContactInfo,
+  ContactInfoType,
+  AddContactInfoCommand,
+  UpdateContactInfoCommand,
+  RemoveContactInfoCommand,
+} from './entities/BusinessContactInfo';
+export type { BusinessContactInfoRepository } from './repositories/BusinessContactInfoRepository';
+export type { ListContactInfoUseCase } from './use-cases/business-contact-info/ListContactInfoUseCase';
+export type { AddContactInfoUseCase } from './use-cases/business-contact-info/AddContactInfoUseCase';
+export type { UpdateContactInfoUseCase } from './use-cases/business-contact-info/UpdateContactInfoUseCase';
+export type { RemoveContactInfoUseCase } from './use-cases/business-contact-info/RemoveContactInfoUseCase';

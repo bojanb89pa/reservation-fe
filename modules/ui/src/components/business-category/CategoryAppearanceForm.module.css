@@ -25,7 +25,7 @@
 .colorPicker {
   width: 40px;
   height: 40px;
-  border: 1.5px solid var(--border, #e5e7eb);
+  border: 1.5px solid var(--border);
   border-radius: var(--r-sm, 4px);
   padding: 2px;
   cursor: pointer;
@@ -38,14 +38,14 @@
   align-items: center;
   gap: 10px;
   padding: 12px 16px;
-  background: var(--bg, #f9fafb);
-  border: 1.5px solid var(--border, #e5e7eb);
+  background: var(--bg);
+  border: 1.5px solid var(--border);
   border-radius: var(--r-md, 8px);
 }
 
 .previewLabel {
   font-size: var(--text-xs, 11px);
-  color: var(--ink-400, #9ca3af);
+  color: var(--ink-500);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   min-width: 52px;
@@ -65,7 +65,7 @@
 .previewName {
   font-size: var(--text-md, 14px);
   font-weight: 500;
-  color: var(--ink-900, #111827);
+  color: var(--ink-900);
 }
 
 .actions {

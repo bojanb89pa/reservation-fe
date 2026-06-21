@@ -18,6 +18,7 @@ const en = {
     searchWhere: 'Where',
     searchWhatPlaceholder: 'Salon, dentist, studio…',
     searchWherePlaceholder: 'City or neighbourhood',
+    liveHint: 'Live availability — slots update in real time',
     categoryEyebrow: 'What kind of place?',
     categoryTitle: 'Pick a category to begin.',
     browseEyebrow: 'Browse all',
