@@ -1,0 +1,94 @@
+name: Build & deploy (staging)
+
+# Deploys to the Raspberry Pi staging host on every push to main.
+#
+# The `deploy` job needs a self-hosted runner registered on the Pi:
+#   repo Settings -> Actions -> Runners -> New self-hosted runner
+#   (arm64 Linux), then when configuring it:
+#     ./config.sh --url <repo-url> --token <token> --labels raspberry-pi
+#     sudo ./svc.sh install && sudo ./svc.sh start
+#
+# The Pi must already have this repo cloned once, with a real `.env` in
+# place, at DEPLOY_DIR below (adjust to match).
+#
+# VITE_* values are baked into the JS bundle at build time (see repo secrets
+# below) — changing them requires a rebuild + redeploy, not just a restart.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-fe-staging
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  DEPLOY_DIR: /home/pi/apps/reservation-fe
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/arm64
+          push: true
+          build-args: |
+            VITE_AUTH_BASE_URL=${{ vars.VITE_AUTH_BASE_URL }}
+            VITE_RESOURCE_BASE_URL=${{ vars.VITE_RESOURCE_BASE_URL }}
+            VITE_OAUTH_CLIENT_ID=${{ vars.VITE_OAUTH_CLIENT_ID }}
+            VITE_OAUTH_CLIENT_SECRET=${{ secrets.VITE_OAUTH_CLIENT_SECRET }}
+            VITE_OAUTH_REDIRECT_URI=${{ vars.VITE_OAUTH_REDIRECT_URI }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/reservation-fe:latest
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/reservation-fe:${{ github.sha }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: [self-hosted, raspberry-pi]
+    steps:
+      - name: Pull latest compose config
+        run: |
+          cd "$DEPLOY_DIR"
+          git pull --ff-only
+
+      - name: Pull new image
+        run: |
+          cd "$DEPLOY_DIR"
+          docker compose pull reserva-fe
+
+      - name: Restart service
+        run: |
+          cd "$DEPLOY_DIR"
+          docker compose up -d
+
+      - name: Notify
+        if: always()
+        env:
+          NTFY_TOPIC_URL: ${{ secrets.NTFY_TOPIC_URL }}
+        run: |
+          [ -z "$NTFY_TOPIC_URL" ] && exit 0
+          curl -fsS -d "reservation-fe deploy: ${{ job.status }} (${{ github.sha }})" "$NTFY_TOPIC_URL" || true
