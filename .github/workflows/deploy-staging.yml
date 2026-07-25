@@ -25,7 +25,7 @@ concurrency:
 
 env:
   REGISTRY: ghcr.io
-  DEPLOY_DIR: /home/pi/apps/reservation-fe
+  DEPLOY_DIR: /home/bojanb/Projects/Reservations/Code/reservation-be
 
 jobs:
   build-and-push:
