@@ -14,14 +14,14 @@ export class BusinessApiRepository implements BusinessRepository {
   constructor(private readonly client: AxiosInstance) {}
 
   async getMyBusinesses(pageRequest: PageRequest): Promise<PageResponse<Business>> {
-    const response = await this.client.get<PageResponse<Business>>('/api/businesses/me', {
+    const response = await this.client.get<PageResponse<Business>>('/businesses/me', {
       params: { page: pageRequest.page, size: pageRequest.size },
     });
     return response.data;
   }
 
   async getAllForAdmin(pageRequest: PageRequest): Promise<PageResponse<Business>> {
-    const response = await this.client.get<PageResponse<Business>>('/api/businesses/admin', {
+    const response = await this.client.get<PageResponse<Business>>('/businesses/admin', {
       params: { page: pageRequest.page, size: pageRequest.size },
     });
     return response.data;
@@ -31,7 +31,7 @@ export class BusinessApiRepository implements BusinessRepository {
     filter: BusinessSearchFilter,
     pageRequest: PageRequest,
   ): Promise<PageResponse<Business>> {
-    const response = await this.client.get<PageResponse<Business>>('/api/businesses/search', {
+    const response = await this.client.get<PageResponse<Business>>('/businesses/search', {
       params: {
         search: filter.query,
         categoryIds: filter.categoryIds,
@@ -47,7 +47,7 @@ export class BusinessApiRepository implements BusinessRepository {
     pageRequest: PageRequest,
   ): Promise<PageResponse<Business>> {
     const response = await this.client.get<PageResponse<Business>>(
-      `/api/businesses/category/${categoryId}`,
+      `/businesses/category/${categoryId}`,
       {
         params: { page: pageRequest.page, size: pageRequest.size },
       },
@@ -56,37 +56,37 @@ export class BusinessApiRepository implements BusinessRepository {
   }
 
   async getById(id: string): Promise<Business> {
-    const response = await this.client.get<Business>(`/api/businesses/${id}`);
+    const response = await this.client.get<Business>(`/businesses/${id}`);
     return response.data;
   }
 
   async submit(command: SubmitBusinessCommand): Promise<Business> {
-    const response = await this.client.post<Business>('/api/businesses/submit', command);
+    const response = await this.client.post<Business>('/businesses/submit', command);
     return response.data;
   }
 
   async createByAdmin(command: CreateBusinessByAdminCommand): Promise<Business> {
-    const response = await this.client.post<Business>('/api/businesses/admin', command);
+    const response = await this.client.post<Business>('/businesses/admin', command);
     return response.data;
   }
 
   async activate(id: string): Promise<Business> {
-    const response = await this.client.post<Business>(`/api/businesses/${id}/activate`);
+    const response = await this.client.post<Business>(`/businesses/${id}/activate`);
     return response.data;
   }
 
   async reject(id: string): Promise<Business> {
-    const response = await this.client.post<Business>(`/api/businesses/${id}/reject`);
+    const response = await this.client.post<Business>(`/businesses/${id}/reject`);
     return response.data;
   }
 
   async delete(id: string): Promise<Business> {
-    const response = await this.client.delete<Business>(`/api/businesses/${id}`);
+    const response = await this.client.delete<Business>(`/businesses/${id}`);
     return response.data;
   }
 
   async setCategory(id: string, command: SetBusinessCategoryCommand): Promise<Business> {
-    const response = await this.client.put<Business>(`/api/businesses/${id}/category`, command);
+    const response = await this.client.put<Business>(`/businesses/${id}/category`, command);
     return response.data;
   }
 }

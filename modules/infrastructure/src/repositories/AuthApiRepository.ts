@@ -68,7 +68,7 @@ export class AuthApiRepository implements AuthRepository {
   }
 
   async register(registration: UserRegistration): Promise<User> {
-    const response = await this.client.post<User>('/api/users/register', registration);
+    const response = await this.client.post<User>('/users/register', registration);
     return response.data;
   }
 

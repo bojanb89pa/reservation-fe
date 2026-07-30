@@ -14,7 +14,7 @@ export class BusinessLocationApiRepository implements BusinessLocationRepository
     command: CreateBusinessLocationCommand,
   ): Promise<BusinessLocation> {
     const response = await this.client.post<BusinessLocation>(
-      `/api/businesses/${businessId}/locations`,
+      `/businesses/${businessId}/locations`,
       command,
     );
     return response.data;
@@ -22,14 +22,14 @@ export class BusinessLocationApiRepository implements BusinessLocationRepository
 
   async list(businessId: string): Promise<BusinessLocation[]> {
     const response = await this.client.get<BusinessLocation[]>(
-      `/api/businesses/${businessId}/locations`,
+      `/businesses/${businessId}/locations`,
     );
     return response.data;
   }
 
   async getById(businessId: string, locationId: string): Promise<BusinessLocation> {
     const response = await this.client.get<BusinessLocation>(
-      `/api/businesses/${businessId}/locations/${locationId}`,
+      `/businesses/${businessId}/locations/${locationId}`,
     );
     return response.data;
   }
@@ -40,7 +40,7 @@ export class BusinessLocationApiRepository implements BusinessLocationRepository
     command: UpdateBusinessLocationFromPlaceCommand,
   ): Promise<BusinessLocation> {
     const response = await this.client.put<BusinessLocation>(
-      `/api/businesses/${businessId}/locations/${locationId}/place`,
+      `/businesses/${businessId}/locations/${locationId}/place`,
       command,
     );
     return response.data;
@@ -48,7 +48,7 @@ export class BusinessLocationApiRepository implements BusinessLocationRepository
 
   async confirm(businessId: string, locationId: string): Promise<BusinessLocation> {
     const response = await this.client.post<BusinessLocation>(
-      `/api/businesses/${businessId}/locations/${locationId}/confirm`,
+      `/businesses/${businessId}/locations/${locationId}/confirm`,
     );
     return response.data;
   }

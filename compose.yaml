@@ -18,6 +18,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.reserva-fe.rule=Host(`reserva.${BASE_DOMAIN}`)"
+      - "traefik.http.routers.reserva-fe.priority=1"
       - "traefik.http.routers.reserva-fe.entrypoints=websecure"
       - "traefik.http.routers.reserva-fe.tls=true"
       - "traefik.http.services.reserva-fe.loadbalancer.server.port=80"

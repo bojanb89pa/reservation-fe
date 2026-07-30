@@ -14,7 +14,7 @@ export class BusinessServiceApiRepository implements BusinessServiceRepository {
     command: CreateBusinessServiceCommand,
   ): Promise<BusinessService> {
     const response = await this.client.post<BusinessService>(
-      `/api/businesses/${businessId}/services`,
+      `/businesses/${businessId}/services`,
       command,
     );
     return response.data;
@@ -22,14 +22,14 @@ export class BusinessServiceApiRepository implements BusinessServiceRepository {
 
   async list(businessId: string): Promise<BusinessService[]> {
     const response = await this.client.get<BusinessService[]>(
-      `/api/businesses/${businessId}/services`,
+      `/businesses/${businessId}/services`,
     );
     return response.data;
   }
 
   async getById(businessId: string, serviceId: string): Promise<BusinessService> {
     const response = await this.client.get<BusinessService>(
-      `/api/businesses/${businessId}/services/${serviceId}`,
+      `/businesses/${businessId}/services/${serviceId}`,
     );
     return response.data;
   }
@@ -40,7 +40,7 @@ export class BusinessServiceApiRepository implements BusinessServiceRepository {
     command: UpdateBusinessServiceCommand,
   ): Promise<BusinessService> {
     const response = await this.client.put<BusinessService>(
-      `/api/businesses/${businessId}/services/${serviceId}`,
+      `/businesses/${businessId}/services/${serviceId}`,
       command,
     );
     return response.data;
@@ -48,7 +48,7 @@ export class BusinessServiceApiRepository implements BusinessServiceRepository {
 
   async delete(businessId: string, serviceId: string): Promise<BusinessService> {
     const response = await this.client.delete<BusinessService>(
-      `/api/businesses/${businessId}/services/${serviceId}`,
+      `/businesses/${businessId}/services/${serviceId}`,
     );
     return response.data;
   }

@@ -22,7 +22,7 @@ export class DiscoverySearchApiRepository implements DiscoverySearchRepository {
     if (query.city?.trim()) {
       params['city'] = query.city.trim();
     }
-    const response = await this.client.get<PageResponse<SearchResult>>('/api/v1/search', { params });
+    const response = await this.client.get<PageResponse<SearchResult>>('/v1/search', { params });
     return response.data;
   }
 }
