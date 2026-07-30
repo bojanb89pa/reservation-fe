@@ -14,19 +14,19 @@ export class BusinessMembershipApiRepository implements BusinessMembershipReposi
     role: BusinessMemberRole,
   ): Promise<BusinessMembership> {
     const response = await this.client.post<BusinessMembership>(
-      `/api/businesses/${businessId}/${roleSegment(role)}`,
+      `/businesses/${businessId}/${roleSegment(role)}`,
       { userId },
     );
     return response.data;
   }
 
   async remove(businessId: string, userId: string, role: BusinessMemberRole): Promise<void> {
-    await this.client.delete(`/api/businesses/${businessId}/${roleSegment(role)}/${userId}`);
+    await this.client.delete(`/businesses/${businessId}/${roleSegment(role)}/${userId}`);
   }
 
   async list(businessId: string, role: BusinessMemberRole): Promise<BusinessMembership[]> {
     const response = await this.client.get<BusinessMembership[]>(
-      `/api/businesses/${businessId}/${roleSegment(role)}`,
+      `/businesses/${businessId}/${roleSegment(role)}`,
     );
     return response.data;
   }

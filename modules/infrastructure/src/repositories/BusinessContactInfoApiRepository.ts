@@ -11,7 +11,7 @@ export class BusinessContactInfoApiRepository implements BusinessContactInfoRepo
     label?: string,
   ): Promise<BusinessContactInfo> {
     const response = await this.client.post<BusinessContactInfo>(
-      `/api/businesses/${businessId}/contact-info`,
+      `/businesses/${businessId}/contact-info`,
       { type, value, label },
     );
     return response.data;
@@ -19,14 +19,14 @@ export class BusinessContactInfoApiRepository implements BusinessContactInfoRepo
 
   async list(businessId: string): Promise<BusinessContactInfo[]> {
     const response = await this.client.get<BusinessContactInfo[]>(
-      `/api/businesses/${businessId}/contact-info`,
+      `/businesses/${businessId}/contact-info`,
     );
     return response.data;
   }
 
   async remove(businessId: string, contactInfoId: string): Promise<BusinessContactInfo> {
     const response = await this.client.delete<BusinessContactInfo>(
-      `/api/businesses/${businessId}/contact-info/${contactInfoId}`,
+      `/businesses/${businessId}/contact-info/${contactInfoId}`,
     );
     return response.data;
   }
@@ -39,7 +39,7 @@ export class BusinessContactInfoApiRepository implements BusinessContactInfoRepo
     label?: string,
   ): Promise<BusinessContactInfo> {
     const response = await this.client.put<BusinessContactInfo>(
-      `/api/businesses/${businessId}/contact-info/${contactInfoId}`,
+      `/businesses/${businessId}/contact-info/${contactInfoId}`,
       { type, value, label },
     );
     return response.data;

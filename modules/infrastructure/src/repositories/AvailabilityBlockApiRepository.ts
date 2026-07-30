@@ -11,7 +11,7 @@ export class AvailabilityBlockApiRepository implements AvailabilityBlockReposito
     to: string,
   ): Promise<AvailabilityBlock[]> {
     const response = await this.client.get<AvailabilityBlock[]>(
-      `/api/resources/${resourceId}/availability-blocks`,
+      `/resources/${resourceId}/availability-blocks`,
       { params: { serviceId, from, to } },
     );
     return response.data;

@@ -11,30 +11,30 @@ export class BusinessCategoryApiRepository implements BusinessCategoryRepository
   constructor(private readonly client: AxiosInstance) {}
 
   async list(): Promise<BusinessCategory[]> {
-    const response = await this.client.get<BusinessCategory[]>('/api/business-categories');
+    const response = await this.client.get<BusinessCategory[]>('/business-categories');
     return response.data;
   }
 
   async get(id: string): Promise<BusinessCategory> {
-    const response = await this.client.get<BusinessCategory>(`/api/business-categories/${id}`);
+    const response = await this.client.get<BusinessCategory>(`/business-categories/${id}`);
     return response.data;
   }
 
   async create(command: CreateBusinessCategoryCommand): Promise<BusinessCategory> {
-    const response = await this.client.post<BusinessCategory>('/api/business-categories', command);
+    const response = await this.client.post<BusinessCategory>('/business-categories', command);
     return response.data;
   }
 
   async update(id: string, command: UpdateBusinessCategoryCommand): Promise<BusinessCategory> {
     const response = await this.client.put<BusinessCategory>(
-      `/api/business-categories/${id}`,
+      `/business-categories/${id}`,
       command,
     );
     return response.data;
   }
 
   async delete(id: string): Promise<BusinessCategory> {
-    const response = await this.client.delete<BusinessCategory>(`/api/business-categories/${id}`);
+    const response = await this.client.delete<BusinessCategory>(`/business-categories/${id}`);
     return response.data;
   }
 
@@ -43,7 +43,7 @@ export class BusinessCategoryApiRepository implements BusinessCategoryRepository
     command: UpdateBusinessCategoryAppearanceCommand,
   ): Promise<BusinessCategory> {
     const response = await this.client.patch<BusinessCategory>(
-      `/api/business-categories/${id}/appearance`,
+      `/business-categories/${id}/appearance`,
       command,
     );
     return response.data;

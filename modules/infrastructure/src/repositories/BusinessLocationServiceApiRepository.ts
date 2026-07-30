@@ -14,7 +14,7 @@ export class BusinessLocationServiceApiRepository implements BusinessLocationSer
     command: AddServiceToLocationCommand,
   ): Promise<BusinessLocationService> {
     const response = await this.client.post<BusinessLocationService>(
-      `/api/businesses/${businessId}/locations/${locationId}/services`,
+      `/businesses/${businessId}/locations/${locationId}/services`,
       command,
     );
     return response.data;
@@ -22,14 +22,14 @@ export class BusinessLocationServiceApiRepository implements BusinessLocationSer
 
   async list(businessId: string, locationId: string): Promise<BusinessLocationService[]> {
     const response = await this.client.get<BusinessLocationService[]>(
-      `/api/businesses/${businessId}/locations/${locationId}/services`,
+      `/businesses/${businessId}/locations/${locationId}/services`,
     );
     return response.data;
   }
 
   async remove(businessId: string, locationId: string, serviceId: string): Promise<void> {
     await this.client.delete(
-      `/api/businesses/${businessId}/locations/${locationId}/services/${serviceId}`,
+      `/businesses/${businessId}/locations/${locationId}/services/${serviceId}`,
     );
   }
 }

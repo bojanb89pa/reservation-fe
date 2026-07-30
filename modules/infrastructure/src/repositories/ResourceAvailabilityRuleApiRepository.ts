@@ -10,7 +10,7 @@ export class ResourceAvailabilityRuleApiRepository implements ResourceAvailabili
 
   async getAllByResource(resourceId: string): Promise<ResourceAvailabilityRule[]> {
     const response = await this.client.get<ResourceAvailabilityRule[]>(
-      `/api/resources/${resourceId}/availability-rules`,
+      `/resources/${resourceId}/availability-rules`,
     );
     return response.data;
   }
@@ -20,13 +20,13 @@ export class ResourceAvailabilityRuleApiRepository implements ResourceAvailabili
     command: CreateAvailabilityRuleCommand,
   ): Promise<ResourceAvailabilityRule> {
     const response = await this.client.post<ResourceAvailabilityRule>(
-      `/api/resources/${resourceId}/availability-rules`,
+      `/resources/${resourceId}/availability-rules`,
       { id: null, resourceId, ...command },
     );
     return response.data;
   }
 
   async delete(resourceId: string, ruleId: string): Promise<void> {
-    await this.client.delete(`/api/resources/${resourceId}/availability-rules/${ruleId}`);
+    await this.client.delete(`/resources/${resourceId}/availability-rules/${ruleId}`);
   }
 }
