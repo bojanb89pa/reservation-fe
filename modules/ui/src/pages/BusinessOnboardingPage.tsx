@@ -7,6 +7,9 @@ import { useAuthStore } from '../state/authStore';
 import { useAuth } from '../hooks/useAuth';
 import { usePlaceSearch } from '../hooks/usePlaceSearch';
 import { usePlaceDetails } from '../hooks/usePlaceDetails';
+import { useUploadFile } from '../hooks/useFileUpload';
+import { useBusinessImageMessages } from '../hooks/useBusinessImageMessages';
+import { BusinessImagePicker } from '../components/business/BusinessImagePicker';
 import styles from './BusinessOnboardingPage.module.css';
 
 export function BusinessOnboardingPage() {
@@ -16,8 +19,11 @@ export function BusinessOnboardingPage() {
 
   const { data, isLoading } = useMyBusinesses(0, 50);
   const { mutateAsync: createBusiness, isPending } = useCreateBusiness();
+  const { mutateAsync: uploadFile, isPending: isUploading } = useUploadFile();
+  const { uploadErrorMessage } = useBusinessImageMessages();
 
   const [name, setName] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [locationName, setLocationName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -87,8 +93,11 @@ export function BusinessOnboardingPage() {
     if (!placeDetails || placeDetails.latitude == null || placeDetails.longitude == null) return;
     setError(null);
     try {
+      // Two phases: park the image first, then send a plain JSON create that claims it.
+      const imageUploadId = imageFile ? (await uploadFile(imageFile)).uploadId : null;
       await createBusiness({
         name: name.trim(),
+        imageUploadId,
         location: {
           name: locationName.trim() || undefined,
           addressLine1: placeDetails.addressLine1 ?? undefined,
@@ -105,7 +114,11 @@ export function BusinessOnboardingPage() {
       });
       setSubmitted(true);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : t('businessOnboarding.errorSubmit'));
+      // A rejected upload never shows its raw backend message; other failures keep the old text.
+      setError(
+        uploadErrorMessage(err) ??
+          (err instanceof Error ? err.message : t('businessOnboarding.errorSubmit')),
+      );
     }
   };
 
@@ -155,6 +168,14 @@ export function BusinessOnboardingPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+            />
+          </div>
+
+          <div className="form-field">
+            <BusinessImagePicker
+              file={imageFile}
+              onChange={setImageFile}
+              disabled={isPending || isUploading}
             />
           </div>
 
@@ -264,9 +285,11 @@ export function BusinessOnboardingPage() {
           <button
             type="submit"
             className="btn btn-secondary btn-block"
-            disabled={isPending || !canSubmit}
+            disabled={isPending || isUploading || !canSubmit}
           >
-            {isPending ? t('businessOnboarding.submitting') : t('businessOnboarding.submit')}
+            {isPending || isUploading
+              ? t('businessOnboarding.submitting')
+              : t('businessOnboarding.submit')}
           </button>
         </form>
       </div>

@@ -16,6 +16,7 @@ import {
   PlaceApiRepository,
   DiscoverySearchApiRepository,
   BusinessContactInfoApiRepository,
+  FileApiRepository,
 } from '@infrastructure';
 import {
   RegisterUseCaseImpl,
@@ -50,6 +51,9 @@ import {
   UpdateBusinessCategoryAppearanceUseCaseImpl,
   DeleteBusinessCategoryUseCaseImpl,
   SetBusinessCategoryUseCaseImpl,
+  SetBusinessImageUseCaseImpl,
+  RemoveBusinessImageUseCaseImpl,
+  UploadFileUseCaseImpl,
   CreateBusinessServiceUseCaseImpl,
   ListBusinessServicesUseCaseImpl,
   UpdateBusinessServiceUseCaseImpl,
@@ -101,6 +105,8 @@ const businessLocationServiceRepository = new BusinessLocationServiceApiReposito
 const placeRepository = new PlaceApiRepository(resourceAxiosClient);
 const discoverySearchRepository = new DiscoverySearchApiRepository(resourceAxiosClient);
 const businessContactInfoRepository = new BusinessContactInfoApiRepository(resourceAxiosClient);
+// Multipart upload of a pending file — authenticated, the upload is bound to its uploader.
+const fileUploadRepository = new FileApiRepository(resourceAxiosClient);
 
 // ── Use Cases ─────────────────────────────────────────────────────────────────
 export const registerUseCase = new RegisterUseCaseImpl(authApiRepository);
@@ -172,6 +178,10 @@ export const deleteBusinessCategoryUseCase = new DeleteBusinessCategoryUseCaseIm
   businessCategoryRepository,
 );
 export const setBusinessCategoryUseCase = new SetBusinessCategoryUseCaseImpl(businessRepository);
+
+export const uploadFileUseCase = new UploadFileUseCaseImpl(fileUploadRepository);
+export const setBusinessImageUseCase = new SetBusinessImageUseCaseImpl(businessRepository);
+export const removeBusinessImageUseCase = new RemoveBusinessImageUseCaseImpl(businessRepository);
 
 export const createBusinessLocationUseCase = new CreateBusinessLocationUseCaseImpl(
   businessLocationRepository,

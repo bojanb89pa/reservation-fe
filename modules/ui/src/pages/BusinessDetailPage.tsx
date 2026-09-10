@@ -9,7 +9,16 @@ import { useAuthStore } from '../state/authStore';
 import { BookingWidget } from '../components/booking/BookingWidget';
 import type { BookingSelection } from '../components/booking/BookingWidget';
 import type { Resource } from '@domain';
+import { DEFAULT_CATEGORY_COLOR } from '@domain';
+import { BusinessImage } from '../components/business/BusinessImage';
 import styles from './BusinessDetailPage.module.css';
+
+// WARNING: assumed the normalized API error exposes a numeric `status` — verify before merging
+function isNotFoundError(error: unknown): boolean {
+  return (
+    typeof error === 'object' && error !== null && (error as { status?: number }).status === 404
+  );
+}
 
 export function BusinessDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -17,7 +26,12 @@ export function BusinessDetailPage() {
   const { isAuthenticated } = useAuthStore();
   const { t } = useTranslation();
 
-  const { data: business, isLoading: bLoading, isError: bError } = useBusiness(id!);
+  const {
+    data: business,
+    isLoading: bLoading,
+    isError: bError,
+    error: bErrorValue,
+  } = useBusiness(id!);
   const { data: resourcesPage, isLoading: rLoading } = useResources(id!);
   const { data: servicesPage } = useBusinessServices(id!);
 
@@ -51,10 +65,14 @@ export function BusinessDetailPage() {
     );
   }
 
+  // The backend answers a missing business with 404, so an unknown id is its own state.
   if (bError || !business) {
+    const isMissing = !bError || isNotFoundError(bErrorValue);
     return (
       <div className={styles.page}>
-        <div className="error-box">{t('businessDetail.notFound')}</div>
+        <div className="error-box">
+          {isMissing ? t('businessDetail.notFound') : t('businessDetail.loadError')}
+        </div>
       </div>
     );
   }
@@ -62,32 +80,30 @@ export function BusinessDetailPage() {
   const resources = resourcesPage?.content ?? [];
   const services = servicesPage ?? [];
 
-  const gradients = [
-    'radial-gradient(120% 160% at 18% 0%,#7C7CF8 0%,#34346B 55%,#12132B 100%)',
-    'radial-gradient(120% 160% at 80% 10%,#3EE6C4 0%,#1E5E58 60%,#0B1B22 100%)',
-    'radial-gradient(120% 160% at 50% 0%,#67D6FF 0%,#2E4E7A 60%,#10142B 100%)',
-  ];
-
   return (
     <>
       <div className={styles.detailHead}>
-        <div className={styles.images}>
-          {gradients.map((g, i) => (
-            <div
-              key={i}
-              className={i === 0 ? styles.imgMain : styles.img}
-              style={{ background: g }}
-            />
-          ))}
+        <div className="eyebrow-rule">{t('businessDetail.eyebrow')}</div>
+        <div className={styles.hero}>
+          <BusinessImage
+            name={business.name}
+            imageUrl={business.imageUrl}
+            seed={business.id}
+            variant="hero"
+          >
+            {business.category && (
+              <span
+                className={styles.heroCategory}
+                style={{ backgroundColor: business.category.color ?? DEFAULT_CATEGORY_COLOR }}
+              >
+                {business.category.symbol && <span>{business.category.symbol}</span>}
+                {business.category.name}
+              </span>
+            )}
+            <h1 className={styles.detailTitle}>{business.name}</h1>
+          </BusinessImage>
         </div>
         <div className={styles.detailMeta}>
-          <div className="eyebrow-rule">{t('businessDetail.eyebrow')}</div>
-          {business.category && (
-            <span className="tag" style={{ color: business.category.color ?? undefined }}>
-              {business.category.symbol} {business.category.name}
-            </span>
-          )}
-          <h1 className={styles.detailTitle}>{business.name}</h1>
           <div className={styles.tags}>
             {resources.map((r) => (
               <span key={r.id} className="tag">
