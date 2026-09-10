@@ -8,6 +8,7 @@ import type {
   SubmitBusinessCommand,
   CreateBusinessByAdminCommand,
   SetBusinessCategoryCommand,
+  SetBusinessImageCommand,
 } from '@domain';
 
 export class BusinessApiRepository implements BusinessRepository {
@@ -87,6 +88,16 @@ export class BusinessApiRepository implements BusinessRepository {
 
   async setCategory(id: string, command: SetBusinessCategoryCommand): Promise<Business> {
     const response = await this.client.put<Business>(`/businesses/${id}/category`, command);
+    return response.data;
+  }
+
+  async setImage(id: string, command: SetBusinessImageCommand): Promise<Business> {
+    const response = await this.client.put<Business>(`/businesses/${id}/image`, command);
+    return response.data;
+  }
+
+  async removeImage(id: string): Promise<Business> {
+    const response = await this.client.delete<Business>(`/businesses/${id}/image`);
     return response.data;
   }
 }

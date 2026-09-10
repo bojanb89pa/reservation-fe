@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { env } from '../config/environment';
 import { tokenStorage } from './tokenStorage';
-import { normalizeAxiosError, type ApiErrorBody } from './apiError';
+import { ApiError, normalizeAxiosError, type ApiErrorBody } from './apiError';
 
 export const resourceAxiosClient = axios.create({
   baseURL: env.resourceBaseUrl,
@@ -23,7 +23,7 @@ resourceAxiosClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError<ApiErrorBody>) => {
     const normalized = normalizeAxiosError(error);
-    if (normalized.isUnauthorized) {
+    if (normalized instanceof ApiError && normalized.isUnauthorized) {
       const hadToken = !!tokenStorage.getAccessToken();
       tokenStorage.clear();
       if (hadToken) {
