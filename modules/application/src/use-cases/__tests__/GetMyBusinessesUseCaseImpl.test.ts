@@ -25,6 +25,8 @@ const mockRepo: BusinessRepository = {
   reject: vi.fn(),
   delete: vi.fn(),
   setCategory: vi.fn(),
+  setImage: vi.fn(),
+  removeImage: vi.fn(),
 };
 
 describe('GetMyBusinessesUseCaseImpl', () => {
