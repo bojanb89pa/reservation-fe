@@ -23,19 +23,10 @@
   transform: translateY(-1px) scale(0.995);
 }
 
+/* Height comes from the image's fixed aspect ratio, so cards never shift. */
 .imageWrap {
-  height: 180px;
   overflow: hidden;
   position: relative;
-}
-
-.image {
-  height: 100%;
-  transition: transform var(--dur-slow) var(--ease-out-expo);
-}
-
-.card:hover .image {
-  transform: scale(1.04);
 }
 
 /* Glass sheen across the cover on hover */
@@ -68,14 +59,15 @@
   margin-bottom: 10px;
 }
 
+/* Sits over the cover, on top of the scrim rendered by BusinessImage. */
 .title {
   font-family: var(--font-display);
   font-size: 22px;
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.15;
-  color: var(--ink-900);
-  margin: 0 0 12px;
+  color: #fff;
+  margin: 0;
 }
 
 .categoryChip {

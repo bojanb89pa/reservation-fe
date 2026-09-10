@@ -11,6 +11,8 @@ import {
   rejectBusinessUseCase,
   setBusinessCategoryUseCase,
   getBusinessesByCategoryUseCase,
+  setBusinessImageUseCase,
+  removeBusinessImageUseCase,
 } from '../app/container';
 import { useAuthStore } from '../state/authStore';
 
@@ -112,12 +114,37 @@ export function useSetBusinessCategory(businessId: string) {
   });
 }
 
+export function useSetBusinessImage(businessId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (uploadId: string) => setBusinessImageUseCase.execute(businessId, uploadId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: businessKeys.all }),
+  });
+}
+
+export function useRemoveBusinessImage(businessId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => removeBusinessImageUseCase.execute(businessId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: businessKeys.all }),
+  });
+}
+
 export function useCreateBusiness() {
   const queryClient = useQueryClient();
   const { session } = useAuthStore();
 
   return useMutation({
-    mutationFn: ({ name, location }: { name: string; location: CreateBusinessLocationCommand }) => {
+    mutationFn: ({
+      name,
+      location,
+      imageUploadId,
+    }: {
+      name: string;
+      location: CreateBusinessLocationCommand;
+      /** Id of an already parked upload; the request itself stays plain JSON. */
+      imageUploadId?: string | null;
+    }) => {
       if (!session) throw new Error('Not authenticated');
       const payload = JSON.parse(atob(session.accessToken.split('.')[1])) as Record<
         string,
@@ -129,9 +156,10 @@ export function useCreateBusiness() {
           name,
           ownerId: payload['sub'] as string,
           location,
+          imageUploadId,
         });
       }
-      return submitBusinessUseCase.execute({ name, location });
+      return submitBusinessUseCase.execute({ name, location, imageUploadId });
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: businessKeys.all }),
   });
