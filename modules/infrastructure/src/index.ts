@@ -25,3 +25,4 @@ export { BusinessLocationServiceApiRepository } from './repositories/BusinessLoc
 export { PlaceApiRepository } from './repositories/PlaceApiRepository';
 export { DiscoverySearchApiRepository } from './repositories/DiscoverySearchApiRepository';
 export { BusinessContactInfoApiRepository } from './repositories/BusinessContactInfoApiRepository';
+export { FileApiRepository } from './repositories/FileApiRepository';
