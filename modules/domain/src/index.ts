@@ -26,7 +26,16 @@ export type {
   SubmitBusinessCommand,
   CreateBusinessByAdminCommand,
   SetBusinessCategoryCommand,
+  SetBusinessImageCommand,
 } from './entities/Business';
+export type { PendingUpload, UploadType, UploadFileCommand } from './entities/PendingUpload';
+export { BUSINESS_IMAGE_UPLOAD_TYPE } from './entities/PendingUpload';
+export type { BusinessImageCandidate } from './entities/BusinessImage';
+export {
+  ALLOWED_BUSINESS_IMAGE_CONTENT_TYPES,
+  MAX_BUSINESS_IMAGE_SIZE_IN_BYTES,
+  validateBusinessImage,
+} from './entities/BusinessImage';
 export type {
   BusinessMembership,
   BusinessMemberRole,
@@ -79,6 +88,7 @@ export {
   UnprocessableEntityError,
 } from './errors/DomainError';
 export { PlaceErrorCode } from './errors/PlaceError';
+export { FileUploadError, FileUploadErrorCode } from './errors/FileUploadError';
 
 // Repository interfaces
 export type { AuthRepository } from './repositories/AuthRepository';
@@ -97,6 +107,7 @@ export type { PlaceRepository } from './repositories/PlaceRepository';
 export type { DiscoverySearchRepository } from './repositories/DiscoverySearchRepository';
 export type { BusinessLocationResourceRepository } from './repositories/BusinessLocationResourceRepository';
 export type { BusinessLocationServiceRepository } from './repositories/BusinessLocationServiceRepository';
+export type { FileUploadRepository } from './repositories/FileUploadRepository';
 
 // Types
 export type { PageRequest, PageResponse } from './types/Page';
@@ -123,6 +134,9 @@ export type { ActivateBusinessUseCase } from './use-cases/business/ActivateBusin
 export type { RejectBusinessUseCase } from './use-cases/business/RejectBusinessUseCase';
 export type { DeleteBusinessUseCase } from './use-cases/business/DeleteBusinessUseCase';
 export type { SetBusinessCategoryUseCase } from './use-cases/business/SetBusinessCategoryUseCase';
+export type { SetBusinessImageUseCase } from './use-cases/business/SetBusinessImageUseCase';
+export type { RemoveBusinessImageUseCase } from './use-cases/business/RemoveBusinessImageUseCase';
+export type { UploadFileUseCase } from './use-cases/file/UploadFileUseCase';
 export type { CreateBusinessServiceUseCase } from './use-cases/business-service/CreateBusinessServiceUseCase';
 export type { ListBusinessServicesUseCase } from './use-cases/business-service/ListBusinessServicesUseCase';
 export type { GetBusinessServiceUseCase } from './use-cases/business-service/GetBusinessServiceUseCase';

@@ -3,6 +3,7 @@ import type {
   SubmitBusinessCommand,
   CreateBusinessByAdminCommand,
   SetBusinessCategoryCommand,
+  SetBusinessImageCommand,
 } from '../entities/Business';
 import type { PageRequest, PageResponse } from '../types/Page';
 import type { BusinessSearchFilter } from '../types/BusinessSearchFilter';
@@ -19,4 +20,6 @@ export interface BusinessRepository {
   reject(id: string): Promise<Business>;
   delete(id: string): Promise<Business>;
   setCategory(id: string, command: SetBusinessCategoryCommand): Promise<Business>;
+  setImage(id: string, command: SetBusinessImageCommand): Promise<Business>;
+  removeImage(id: string): Promise<Business>;
 }
