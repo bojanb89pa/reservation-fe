@@ -19,6 +19,10 @@ export { RejectBusinessUseCaseImpl } from './use-cases/business/RejectBusinessUs
 export { DeleteBusinessUseCaseImpl } from './use-cases/business/DeleteBusinessUseCaseImpl';
 export { SetBusinessCategoryUseCaseImpl } from './use-cases/business/SetBusinessCategoryUseCaseImpl';
 export { GetBusinessesByCategoryUseCaseImpl } from './use-cases/business/GetBusinessesByCategoryUseCaseImpl';
+export { SetBusinessImageUseCaseImpl } from './use-cases/business/SetBusinessImageUseCaseImpl';
+export { RemoveBusinessImageUseCaseImpl } from './use-cases/business/RemoveBusinessImageUseCaseImpl';
+
+export { UploadFileUseCaseImpl } from './use-cases/file/UploadFileUseCaseImpl';
 
 export { CreateBusinessServiceUseCaseImpl } from './use-cases/business-service/CreateBusinessServiceUseCaseImpl';
 export { ListBusinessServicesUseCaseImpl } from './use-cases/business-service/ListBusinessServicesUseCaseImpl';

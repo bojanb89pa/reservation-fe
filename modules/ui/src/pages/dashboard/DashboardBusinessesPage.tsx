@@ -10,6 +10,9 @@ import {
 import { useIsAdmin } from '../../hooks/useAuth';
 import { usePlaceSearch } from '../../hooks/usePlaceSearch';
 import { usePlaceDetails } from '../../hooks/usePlaceDetails';
+import { useUploadFile } from '../../hooks/useFileUpload';
+import { useBusinessImageMessages } from '../../hooks/useBusinessImageMessages';
+import { BusinessImagePicker } from '../../components/business/BusinessImagePicker';
 import styles from './DashboardBusinessesPage.module.css';
 
 export function DashboardBusinessesPage() {
@@ -18,9 +21,12 @@ export function DashboardBusinessesPage() {
   const adminBusinessesQuery = useAllBusinessesForAdmin(0, 100);
   const { data, isLoading } = isAdmin ? adminBusinessesQuery : myBusinessesQuery;
   const { mutateAsync: createBusiness, isPending } = useCreateBusiness();
+  const { mutateAsync: uploadFile, isPending: isUploading } = useUploadFile();
+  const { uploadErrorMessage } = useBusinessImageMessages();
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const [name, setName] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [locationName, setLocationName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -73,8 +79,11 @@ export function DashboardBusinessesPage() {
     if (!placeDetails || placeDetails.latitude == null || placeDetails.longitude == null) return;
     setError(null);
     try {
+      // Two phases: park the image first, then send a plain JSON create that claims it.
+      const imageUploadId = imageFile ? (await uploadFile(imageFile)).uploadId : null;
       await createBusiness({
         name: name.trim(),
+        imageUploadId,
         location: {
           name: locationName.trim() || undefined,
           addressLine1: placeDetails.addressLine1 ?? undefined,
@@ -90,10 +99,15 @@ export function DashboardBusinessesPage() {
         },
       });
       setName('');
+      setImageFile(null);
       resetLocationForm();
       setShowForm(false);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : t('dashboardBusinesses.errorCreating'));
+      // A rejected upload never shows its raw backend message; other failures keep the old text.
+      setError(
+        uploadErrorMessage(err) ??
+          (err instanceof Error ? err.message : t('dashboardBusinesses.errorCreating')),
+      );
     }
   };
 
@@ -107,7 +121,10 @@ export function DashboardBusinessesPage() {
         <button
           className="btn btn-secondary"
           onClick={() => {
-            if (showForm) resetLocationForm();
+            if (showForm) {
+              resetLocationForm();
+              setImageFile(null);
+            }
             setShowForm((v) => !v);
           }}
         >
@@ -132,6 +149,14 @@ export function DashboardBusinessesPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
+              />
+            </div>
+
+            <div className="form-field">
+              <BusinessImagePicker
+                file={imageFile}
+                onChange={setImageFile}
+                disabled={isPending || isUploading}
               />
             </div>
 
@@ -242,8 +267,12 @@ export function DashboardBusinessesPage() {
               </div>
             </div>
 
-            <button type="submit" className="btn btn-secondary" disabled={isPending || !canSubmit}>
-              {isPending
+            <button
+              type="submit"
+              className="btn btn-secondary"
+              disabled={isPending || isUploading || !canSubmit}
+            >
+              {isPending || isUploading
                 ? t('dashboardBusinesses.creating')
                 : t('dashboardBusinesses.createBusiness')}
             </button>
