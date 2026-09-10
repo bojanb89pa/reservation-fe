@@ -1,0 +1,43 @@
+name: PR check
+
+# Lint + testovi + build na svakom PR-u, bez obzira na to da li ide na epic
+# granu ili na main. Ovo je jedini automatski signal da je epic grana zdrava
+# pre nego što se spoji u main (branch protection nije dostupan na Free planu
+# za privatan repo, pa se merge oslanja na ovaj check i na tvoj pregled).
+#
+# Namerno NE deployuje ništa — deploy-staging.yml se i dalje okida samo na push
+# u main.
+
+on:
+  pull_request:
+    branches: ["**"]
+
+concurrency:
+  group: pr-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: yarn
+
+      - name: Install
+        run: yarn install --frozen-lockfile
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Test
+        run: yarn test --run
+
+      - name: Build
+        run: yarn build
