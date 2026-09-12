@@ -25,6 +25,8 @@ import { DashboardBusinessPage } from '../pages/dashboard/DashboardBusinessPage'
 import { DashboardMyBusinessesPage } from '../pages/dashboard/DashboardMyBusinessesPage';
 import { DashboardCategoriesPage } from '../pages/dashboard/DashboardCategoriesPage';
 import { DashboardReservationsPage } from '../pages/dashboard/DashboardReservationsPage';
+import { DashboardUsersPage } from '../pages/dashboard/DashboardUsersPage';
+import { DashboardUserDetailPage } from '../pages/dashboard/DashboardUserDetailPage';
 
 function PublicLayout() {
   const { pathname } = useLocation();
@@ -74,6 +76,8 @@ export function AppRouter() {
           <Route path="my-businesses" element={<DashboardMyBusinessesPage />} />
           <Route element={<AdminRoute />}>
             <Route path="categories" element={<DashboardCategoriesPage />} />
+            <Route path="users" element={<DashboardUsersPage />} />
+            <Route path="users/:id" element={<DashboardUserDetailPage />} />
           </Route>
           <Route path="reservations" element={<DashboardReservationsPage />} />
         </Route>

@@ -17,14 +17,17 @@ const BASE_NAV_ITEMS: NavItem[] = [
   { to: '/dashboard/reservations', labelKey: 'dashboard.reservations' },
 ];
 
-const ADMIN_NAV_ITEM: NavItem = { to: '/dashboard/categories', labelKey: 'dashboard.categories' };
+const ADMIN_NAV_ITEMS: NavItem[] = [
+  { to: '/dashboard/categories', labelKey: 'dashboard.categories' },
+  { to: '/dashboard/users', labelKey: 'dashboard.users' },
+];
 
 export function DashboardLayout() {
   const { logout } = useAuth();
   const { t, i18n } = useTranslation();
   const isAdmin = useIsAdmin();
   const { data: myBusinesses, isLoading: checkingBusinesses } = useMyBusinesses(0, 50);
-  const navItems = isAdmin ? [...BASE_NAV_ITEMS, ADMIN_NAV_ITEM] : BASE_NAV_ITEMS;
+  const navItems = isAdmin ? [...BASE_NAV_ITEMS, ...ADMIN_NAV_ITEMS] : BASE_NAV_ITEMS;
 
   if (!isAdmin) {
     if (checkingBusinesses) {
