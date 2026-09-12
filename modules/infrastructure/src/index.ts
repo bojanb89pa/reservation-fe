@@ -9,6 +9,7 @@ export { tokenStorage } from './api/tokenStorage';
 export type { ApiErrorBody } from './api/apiError';
 export { normalizeAxiosError } from './api/apiError';
 export { AUTH_SESSION_REFRESHED_EVENT, AUTH_SESSION_EXPIRED_EVENT } from './api/authEvents';
+export { setLoginCookiesBeforeAuthRedirect } from './auth/loginCookies';
 
 // Repository implementations
 export { AuthApiRepository } from './repositories/AuthApiRepository';
