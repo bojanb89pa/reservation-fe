@@ -9,6 +9,7 @@ const user: User = {
   lastName: 'Doe',
   roles: [],
   enabled: true,
+  status: 'ACTIVE',
   profilePictureUrl: null,
 };
 
@@ -19,6 +20,13 @@ beforeEach(() => {
     setProfilePicture: vi.fn(),
     deleteProfilePicture: vi.fn().mockResolvedValue(user),
     getUsersByIds: vi.fn(),
+    searchForAdmin: vi.fn(),
+    getByIdForAdmin: vi.fn(),
+    createByAdmin: vi.fn(),
+    updateByAdmin: vi.fn(),
+    updateStatus: vi.fn(),
+    resetPassword: vi.fn(),
+    deleteByAdmin: vi.fn(),
   };
 });
 
