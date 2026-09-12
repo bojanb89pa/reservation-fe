@@ -1,4 +1,8 @@
-import { authAxiosClient, resourceAxiosClient } from '@infrastructure';
+import {
+  authAxiosClient,
+  authenticatedAuthAxiosClient,
+  resourceAxiosClient,
+} from '@infrastructure';
 import {
   AuthApiRepository,
   BusinessApiRepository,
@@ -106,7 +110,12 @@ const placeRepository = new PlaceApiRepository(resourceAxiosClient);
 const discoverySearchRepository = new DiscoverySearchApiRepository(resourceAxiosClient);
 const businessContactInfoRepository = new BusinessContactInfoApiRepository(resourceAxiosClient);
 // Multipart upload of a pending file — authenticated, the upload is bound to its uploader.
-const fileUploadRepository = new FileApiRepository(resourceAxiosClient);
+// Business-image uploads go through the resource-service host; profile-picture uploads
+// route to the auth-service host, hence the second client.
+const fileUploadRepository = new FileApiRepository(
+  resourceAxiosClient,
+  authenticatedAuthAxiosClient,
+);
 
 // ── Use Cases ─────────────────────────────────────────────────────────────────
 export const registerUseCase = new RegisterUseCaseImpl(authApiRepository);

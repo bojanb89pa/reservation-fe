@@ -3,6 +3,7 @@ export { env } from './config/environment';
 
 // HTTP clients
 export { authAxiosClient } from './api/authAxiosClient';
+export { authenticatedAuthAxiosClient } from './api/authenticatedAuthAxiosClient';
 export { resourceAxiosClient } from './api/resourceAxiosClient';
 export { tokenStorage } from './api/tokenStorage';
 export type { ApiErrorBody } from './api/apiError';
@@ -26,3 +27,4 @@ export { PlaceApiRepository } from './repositories/PlaceApiRepository';
 export { DiscoverySearchApiRepository } from './repositories/DiscoverySearchApiRepository';
 export { BusinessContactInfoApiRepository } from './repositories/BusinessContactInfoApiRepository';
 export { FileApiRepository } from './repositories/FileApiRepository';
+export { UserApiRepository } from './repositories/UserApiRepository';
