@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
-import type { Reservation } from '@domain';
+import type { Reservation, User } from '@domain';
 import { useApproveReservation, useRejectReservation } from '../../hooks/useReservations';
 import { useIsBusinessMember } from '../../hooks/useBusinessMembers';
+import { UserBadge } from '../UserBadge';
 import styles from './ReservationListItem.module.css';
 
 function formatDateTime(iso: string) {
@@ -22,9 +23,11 @@ interface Props {
   reservation: Reservation;
   showUserId?: boolean;
   showActions?: boolean;
+  /** Resolved once for the whole list via a single batch lookup; `undefined` if the id was left out of it. */
+  user?: User;
 }
 
-export function ReservationListItem({ reservation, showUserId, showActions }: Props) {
+export function ReservationListItem({ reservation, showUserId, showActions, user }: Props) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
@@ -79,9 +82,7 @@ export function ReservationListItem({ reservation, showUserId, showActions }: Pr
         {showUserId && reservation.userId && (
           <span className={styles.metaItem}>
             <span className={styles.metaLabel}>{t('reservationList.labelUser')}</span>
-            <span className={`${styles.metaValue} ${styles.mono}`} title={reservation.userId}>
-              {truncate(reservation.userId)}
-            </span>
+            <UserBadge userId={reservation.userId} user={user} />
           </span>
         )}
       </div>

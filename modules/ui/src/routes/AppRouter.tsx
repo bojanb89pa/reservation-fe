@@ -16,6 +16,7 @@ import { SearchResultsPage } from '../pages/SearchResultsPage';
 import { ReservationHeldPage } from '../pages/ReservationHeldPage';
 
 import { MyReservationsPage } from '../pages/MyReservationsPage';
+import { AccountPage } from '../pages/AccountPage';
 import { BusinessOnboardingPage } from '../pages/BusinessOnboardingPage';
 import { DashboardLayout } from '../pages/dashboard/DashboardLayout';
 import { DashboardOverviewPage } from '../pages/dashboard/DashboardOverviewPage';
@@ -53,6 +54,7 @@ function PublicLayout() {
           <Route path="businesses/:id" element={<BusinessDetailPage />} />
           <Route path="reservation/:id/held" element={<ReservationHeldPage />} />
           <Route path="my-reservations" element={<MyReservationsPage />} />
+          <Route path="account" element={<AccountPage />} />
           <Route path="business-onboarding" element={<BusinessOnboardingPage />} />
         </Routes>
       </motion.main>

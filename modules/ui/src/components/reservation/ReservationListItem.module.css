@@ -78,11 +78,6 @@
   color: var(--ink-700, var(--ink-900));
 }
 
-.mono {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-}
-
 .actions {
   display: flex;
   gap: 8px;

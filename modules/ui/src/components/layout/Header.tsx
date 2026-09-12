@@ -107,6 +107,9 @@ export function Header() {
               <Link to="/my-reservations" className={styles.quietLink}>
                 {t('nav.myReservations')}
               </Link>
+              <Link to="/account" className={styles.quietLink}>
+                {t('nav.myAccount')}
+              </Link>
               <button className="btn btn-ghost btn-sm" onClick={logout}>
                 {t('nav.signOut')}
               </button>
@@ -180,6 +183,9 @@ export function Header() {
               <>
                 <Link to="/my-reservations" className={styles.mobileActionLink} onClick={closeMenu}>
                   {t('nav.myReservations')}
+                </Link>
+                <Link to="/account" className={styles.mobileActionLink} onClick={closeMenu}>
+                  {t('nav.myAccount')}
                 </Link>
                 <button
                   className={styles.mobileActionLink}
