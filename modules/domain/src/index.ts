@@ -82,7 +82,16 @@ export type { ResourceSlot, ResourceSlotStatus } from './entities/ResourceSlot';
 export type { AvailabilityBlock } from './entities/AvailabilityBlock';
 export type { ResourceType } from './entities/ResourceType';
 export type { Role } from './entities/Role';
-export type { User, UserRegistration, SetProfilePictureCommand } from './entities/User';
+export type {
+  User,
+  UserStatus,
+  UserRegistration,
+  SetProfilePictureCommand,
+  AdminCreateUserCommand,
+  AdminUpdateUserCommand,
+  UpdateUserStatusCommand,
+  ResetUserPasswordCommand,
+} from './entities/User';
 
 // Errors
 export {
@@ -119,6 +128,7 @@ export type { UserRepository } from './repositories/UserRepository';
 // Types
 export type { PageRequest, PageResponse } from './types/Page';
 export type { BusinessSearchFilter } from './types/BusinessSearchFilter';
+export type { AdminUserSearchFilter } from './types/AdminUserSearchFilter';
 export type { DiscoverySearchQuery } from './types/DiscoverySearchQuery';
 export type { LoginTheme, LoginLanguage } from './types/LoginPreferences';
 export {
@@ -154,6 +164,13 @@ export type { UploadFileUseCase } from './use-cases/file/UploadFileUseCase';
 export type { SetProfilePictureUseCase } from './use-cases/user/SetProfilePictureUseCase';
 export type { DeleteProfilePictureUseCase } from './use-cases/user/DeleteProfilePictureUseCase';
 export type { GetUsersByIdsUseCase } from './use-cases/user/GetUsersByIdsUseCase';
+export type { SearchUsersForAdminUseCase } from './use-cases/user/SearchUsersForAdminUseCase';
+export type { GetUserByIdForAdminUseCase } from './use-cases/user/GetUserByIdForAdminUseCase';
+export type { CreateUserByAdminUseCase } from './use-cases/user/CreateUserByAdminUseCase';
+export type { UpdateUserByAdminUseCase } from './use-cases/user/UpdateUserByAdminUseCase';
+export type { UpdateUserStatusUseCase } from './use-cases/user/UpdateUserStatusUseCase';
+export type { ResetUserPasswordUseCase } from './use-cases/user/ResetUserPasswordUseCase';
+export type { DeleteUserByAdminUseCase } from './use-cases/user/DeleteUserByAdminUseCase';
 export type { CreateBusinessServiceUseCase } from './use-cases/business-service/CreateBusinessServiceUseCase';
 export type { ListBusinessServicesUseCase } from './use-cases/business-service/ListBusinessServicesUseCase';
 export type { GetBusinessServiceUseCase } from './use-cases/business-service/GetBusinessServiceUseCase';
