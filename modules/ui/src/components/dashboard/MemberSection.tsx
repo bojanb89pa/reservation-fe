@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { BusinessMemberRole } from '@domain';
 import {
@@ -6,6 +6,8 @@ import {
   useAddBusinessMember,
   useRemoveBusinessMember,
 } from '../../hooks/useBusinessMembers';
+import { useUsersByIds, mapUsersById } from '../../hooks/useUsersByIds';
+import { UserBadge } from '../UserBadge';
 import styles from './MemberSection.module.css';
 
 interface Props {
@@ -17,6 +19,8 @@ interface Props {
 export function MemberSection({ businessId, role, title }: Props) {
   const { t } = useTranslation();
   const { data: members = [] } = useBusinessMembers(businessId, role);
+  const { data: users } = useUsersByIds(members.map((m) => m.userId));
+  const usersById = useMemo(() => mapUsersById(users ?? []), [users]);
   const {
     mutateAsync: addMember,
     isPending: adding,
@@ -52,7 +56,7 @@ export function MemberSection({ businessId, role, title }: Props) {
         )}
         {members.map((m) => (
           <div key={m.id} className={styles.row}>
-            <span className={styles.userId}>{m.userId}</span>
+            <UserBadge userId={m.userId} user={usersById.get(m.userId)} />
             <button
               className="btn btn-ghost btn-sm"
               onClick={() => removeMember(m.userId)}

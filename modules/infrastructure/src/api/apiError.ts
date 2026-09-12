@@ -30,10 +30,13 @@ export class ApiError extends Error {
   }
 }
 
-/** `POST /api/files` — the multipart upload endpoint. */
+/** `POST /api/files` or `POST /auth/users/files` — the multipart upload endpoints. */
 const FILE_UPLOAD_PATH = /\/files\/?$/;
 /** `PUT|DELETE /api/businesses/{id}/image` — claiming or clearing a business image. */
 const BUSINESS_IMAGE_PATH = /\/businesses\/[^/]+\/image\/?$/;
+// WARNING: assumed DELETE also warrants file-error mapping, mirroring BUSINESS_IMAGE_PATH below — verify before merging
+/** `PUT|DELETE /auth/users/me/profile-picture` — claiming or clearing a profile picture. */
+const PROFILE_PICTURE_PATH = /\/users\/me\/profile-picture\/?$/;
 
 /**
  * Status-to-reason table for file routes only. The backend body carries a raw
@@ -50,7 +53,9 @@ function isFileRelatedRequest(config: InternalAxiosRequestConfig | undefined): b
   const path = (config?.url ?? '').split('?')[0];
   const method = (config?.method ?? '').toUpperCase();
   if (method === 'POST') return FILE_UPLOAD_PATH.test(path);
-  if (method === 'PUT' || method === 'DELETE') return BUSINESS_IMAGE_PATH.test(path);
+  if (method === 'PUT' || method === 'DELETE') {
+    return BUSINESS_IMAGE_PATH.test(path) || PROFILE_PICTURE_PATH.test(path);
+  }
   return false;
 }
 

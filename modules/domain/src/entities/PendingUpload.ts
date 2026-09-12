@@ -10,10 +10,11 @@ export interface PendingUpload {
   expiresAt: string;
 }
 
-/** Purpose declared when parking a file. Only business images are supported so far. */
-export type UploadType = 'business-image';
+/** Purpose declared when parking a file. */
+export type UploadType = 'business-image' | 'profile-picture';
 
 export const BUSINESS_IMAGE_UPLOAD_TYPE: UploadType = 'business-image';
+export const PROFILE_PICTURE_UPLOAD_TYPE: UploadType = 'profile-picture';
 
 // WARNING: `File` is the standard binary payload type carried from the file input — verify before merging
 export interface UploadFileCommand {

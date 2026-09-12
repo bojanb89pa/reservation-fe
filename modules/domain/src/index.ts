@@ -29,13 +29,19 @@ export type {
   SetBusinessImageCommand,
 } from './entities/Business';
 export type { PendingUpload, UploadType, UploadFileCommand } from './entities/PendingUpload';
-export { BUSINESS_IMAGE_UPLOAD_TYPE } from './entities/PendingUpload';
+export { BUSINESS_IMAGE_UPLOAD_TYPE, PROFILE_PICTURE_UPLOAD_TYPE } from './entities/PendingUpload';
 export type { BusinessImageCandidate } from './entities/BusinessImage';
 export {
   ALLOWED_BUSINESS_IMAGE_CONTENT_TYPES,
   MAX_BUSINESS_IMAGE_SIZE_IN_BYTES,
   validateBusinessImage,
 } from './entities/BusinessImage';
+export type { ProfilePictureCandidate } from './entities/ProfilePicture';
+export {
+  ALLOWED_PROFILE_PICTURE_CONTENT_TYPES,
+  MAX_PROFILE_PICTURE_SIZE_IN_BYTES,
+  validateProfilePicture,
+} from './entities/ProfilePicture';
 export type {
   BusinessMembership,
   BusinessMemberRole,
@@ -76,7 +82,7 @@ export type { ResourceSlot, ResourceSlotStatus } from './entities/ResourceSlot';
 export type { AvailabilityBlock } from './entities/AvailabilityBlock';
 export type { ResourceType } from './entities/ResourceType';
 export type { Role } from './entities/Role';
-export type { User, UserRegistration } from './entities/User';
+export type { User, UserRegistration, SetProfilePictureCommand } from './entities/User';
 
 // Errors
 export {
@@ -108,6 +114,7 @@ export type { DiscoverySearchRepository } from './repositories/DiscoverySearchRe
 export type { BusinessLocationResourceRepository } from './repositories/BusinessLocationResourceRepository';
 export type { BusinessLocationServiceRepository } from './repositories/BusinessLocationServiceRepository';
 export type { FileUploadRepository } from './repositories/FileUploadRepository';
+export type { UserRepository } from './repositories/UserRepository';
 
 // Types
 export type { PageRequest, PageResponse } from './types/Page';
@@ -137,6 +144,9 @@ export type { SetBusinessCategoryUseCase } from './use-cases/business/SetBusines
 export type { SetBusinessImageUseCase } from './use-cases/business/SetBusinessImageUseCase';
 export type { RemoveBusinessImageUseCase } from './use-cases/business/RemoveBusinessImageUseCase';
 export type { UploadFileUseCase } from './use-cases/file/UploadFileUseCase';
+export type { SetProfilePictureUseCase } from './use-cases/user/SetProfilePictureUseCase';
+export type { DeleteProfilePictureUseCase } from './use-cases/user/DeleteProfilePictureUseCase';
+export type { GetUsersByIdsUseCase } from './use-cases/user/GetUsersByIdsUseCase';
 export type { CreateBusinessServiceUseCase } from './use-cases/business-service/CreateBusinessServiceUseCase';
 export type { ListBusinessServicesUseCase } from './use-cases/business-service/ListBusinessServicesUseCase';
 export type { GetBusinessServiceUseCase } from './use-cases/business-service/GetBusinessServiceUseCase';
