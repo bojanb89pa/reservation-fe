@@ -11,6 +11,7 @@ const user: User = {
   lastName: 'Petrović',
   roles: [],
   enabled: true,
+  status: 'ACTIVE',
   profilePictureUrl: null,
 };
 
