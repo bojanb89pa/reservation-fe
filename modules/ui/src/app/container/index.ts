@@ -91,6 +91,7 @@ import {
 // All other UI files that need these values must import from here.
 export { env } from '@infrastructure';
 export { tokenStorage } from '@infrastructure';
+export { setLoginCookiesBeforeAuthRedirect } from '@infrastructure';
 
 // ── Repositories ──────────────────────────────────────────────────────────────
 export const authApiRepository = new AuthApiRepository(authAxiosClient);

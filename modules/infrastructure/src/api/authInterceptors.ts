@@ -1,7 +1,9 @@
 import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import type { AuthSession } from '@domain';
+import { toLoginLanguage, toLoginTheme } from '@domain';
 import { env } from '../config/environment';
 import { AuthApiRepository } from '../repositories/AuthApiRepository';
+import { setLoginCookiesBeforeAuthRedirect } from '../auth/loginCookies';
 import { authAxiosClient } from './authAxiosClient';
 import { ApiError, normalizeAxiosError, type ApiErrorBody } from './apiError';
 import { emitSessionExpired, emitSessionRefreshed } from './authEvents';
@@ -61,6 +63,10 @@ async function refreshSession(): Promise<AuthSession> {
 }
 
 function redirectToAuthorize(): void {
+  const theme = toLoginTheme(localStorage.getItem('theme'));
+  const language = toLoginLanguage(localStorage.getItem('lang'));
+  setLoginCookiesBeforeAuthRedirect(theme, language);
+
   const params = new URLSearchParams({
     response_type: 'code',
     client_id: env.oauthClientId,
