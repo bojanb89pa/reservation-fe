@@ -22,7 +22,7 @@ export function ProtectedRoute() {
       });
       window.location.href = `${env.authBaseUrl}/oauth2/authorize?${params.toString()}`;
     }
-  }, [isAuthenticated, isLoggingOut]);
+  }, [isAuthenticated, isLoggingOut, i18n.language]);
 
   if (!isAuthenticated) {
     return null;
