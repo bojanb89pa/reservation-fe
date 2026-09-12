@@ -84,6 +84,13 @@ import {
   SetProfilePictureUseCaseImpl,
   DeleteProfilePictureUseCaseImpl,
   GetUsersByIdsUseCaseImpl,
+  SearchUsersForAdminUseCaseImpl,
+  GetUserByIdForAdminUseCaseImpl,
+  CreateUserByAdminUseCaseImpl,
+  UpdateUserByAdminUseCaseImpl,
+  UpdateUserStatusUseCaseImpl,
+  ResetUserPasswordUseCaseImpl,
+  DeleteUserByAdminUseCaseImpl,
 } from '@application';
 
 // Re-export infrastructure primitives consumed only within this module's hooks/state.
@@ -263,3 +270,11 @@ export const removeContactInfoUseCase = new RemoveContactInfoUseCaseImpl(
 export const setProfilePictureUseCase = new SetProfilePictureUseCaseImpl(userRepository);
 export const deleteProfilePictureUseCase = new DeleteProfilePictureUseCaseImpl(userRepository);
 export const getUsersByIdsUseCase = new GetUsersByIdsUseCaseImpl(userRepository);
+
+export const searchUsersForAdminUseCase = new SearchUsersForAdminUseCaseImpl(userRepository);
+export const getUserByIdForAdminUseCase = new GetUserByIdForAdminUseCaseImpl(userRepository);
+export const createUserByAdminUseCase = new CreateUserByAdminUseCaseImpl(userRepository);
+export const updateUserByAdminUseCase = new UpdateUserByAdminUseCaseImpl(userRepository);
+export const updateUserStatusUseCase = new UpdateUserStatusUseCaseImpl(userRepository);
+export const resetUserPasswordUseCase = new ResetUserPasswordUseCaseImpl(userRepository);
+export const deleteUserByAdminUseCase = new DeleteUserByAdminUseCaseImpl(userRepository);
