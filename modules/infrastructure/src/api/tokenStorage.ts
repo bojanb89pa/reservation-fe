@@ -1,6 +1,8 @@
 const ACCESS_TOKEN_KEY = 'reserva_access_token';
 const REFRESH_TOKEN_KEY = 'reserva_refresh_token';
 const ID_TOKEN_KEY = 'reserva_id_token';
+/** sessionStorage flag: set right before the forced re-login redirect, read once by the UI after the OAuth round-trip. */
+const SESSION_EXPIRED_FLAG_KEY = 'reserva_session_expired';
 
 export const tokenStorage = {
   getAccessToken(): string | null {
@@ -25,5 +27,14 @@ export const tokenStorage = {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(ID_TOKEN_KEY);
+  },
+  markSessionExpired(): void {
+    sessionStorage.setItem(SESSION_EXPIRED_FLAG_KEY, 'true');
+  },
+  /** Reads and clears the flag in one step so the "session expired" message is shown at most once. */
+  consumeSessionExpiredFlag(): boolean {
+    const wasSet = sessionStorage.getItem(SESSION_EXPIRED_FLAG_KEY) === 'true';
+    sessionStorage.removeItem(SESSION_EXPIRED_FLAG_KEY);
+    return wasSet;
   },
 };
