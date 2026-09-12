@@ -120,6 +120,13 @@ export type { UserRepository } from './repositories/UserRepository';
 export type { PageRequest, PageResponse } from './types/Page';
 export type { BusinessSearchFilter } from './types/BusinessSearchFilter';
 export type { DiscoverySearchQuery } from './types/DiscoverySearchQuery';
+export type { LoginTheme, LoginLanguage } from './types/LoginPreferences';
+export {
+  DEFAULT_LOGIN_THEME,
+  DEFAULT_LOGIN_LANGUAGE,
+  toLoginTheme,
+  toLoginLanguage,
+} from './types/LoginPreferences';
 
 // Use case interfaces
 export type { LoginUseCase } from './use-cases/auth/LoginUseCase';
