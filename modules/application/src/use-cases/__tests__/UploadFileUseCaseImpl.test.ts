@@ -2,9 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { UploadFileUseCaseImpl } from '../file/UploadFileUseCaseImpl';
 import {
   BUSINESS_IMAGE_UPLOAD_TYPE,
+  PROFILE_PICTURE_UPLOAD_TYPE,
   FileUploadError,
   FileUploadErrorCode,
   MAX_BUSINESS_IMAGE_SIZE_IN_BYTES,
+  MAX_PROFILE_PICTURE_SIZE_IN_BYTES,
 } from '@domain';
 import type { FileUploadRepository, PendingUpload } from '@domain';
 
@@ -93,5 +95,61 @@ describe('UploadFileUseCaseImpl', () => {
     await expect(
       useCase.execute({ file: fakeFile('image/png', 512), type: BUSINESS_IMAGE_UPLOAD_TYPE }),
     ).rejects.toBe(failure);
+  });
+
+  it('delegates an acceptable profile picture to the repository', async () => {
+    const useCase = new UploadFileUseCaseImpl(mockRepo);
+    const command = { file: fakeFile('image/png', 1024), type: PROFILE_PICTURE_UPLOAD_TYPE };
+
+    const result = await useCase.execute(command);
+
+    expect(mockRepo.upload).toHaveBeenCalledWith(command);
+    expect(result).toEqual(pendingUpload);
+  });
+
+  it('accepts a profile picture exactly at the size limit', async () => {
+    const useCase = new UploadFileUseCaseImpl(mockRepo);
+    const command = {
+      file: fakeFile('image/png', MAX_PROFILE_PICTURE_SIZE_IN_BYTES),
+      type: PROFILE_PICTURE_UPLOAD_TYPE,
+    };
+
+    await useCase.execute(command);
+
+    expect(mockRepo.upload).toHaveBeenCalledWith(command);
+  });
+
+  it('rejects a profile picture over the size limit without calling the repository', async () => {
+    const useCase = new UploadFileUseCaseImpl(mockRepo);
+    const command = {
+      file: fakeFile('image/jpeg', MAX_PROFILE_PICTURE_SIZE_IN_BYTES + 1),
+      type: PROFILE_PICTURE_UPLOAD_TYPE,
+    };
+
+    await expect(useCase.execute(command)).rejects.toMatchObject({
+      reason: FileUploadErrorCode.FILE_TOO_LARGE,
+    });
+    await expect(useCase.execute(command)).rejects.toBeInstanceOf(FileUploadError);
+    expect(mockRepo.upload).not.toHaveBeenCalled();
+  });
+
+  it('rejects an unsupported content type for a profile picture without calling the repository', async () => {
+    const useCase = new UploadFileUseCaseImpl(mockRepo);
+    const command = { file: fakeFile('application/pdf', 2048), type: PROFILE_PICTURE_UPLOAD_TYPE };
+
+    await expect(useCase.execute(command)).rejects.toMatchObject({
+      reason: FileUploadErrorCode.CONTENT_TYPE_UNSUPPORTED,
+    });
+    expect(mockRepo.upload).not.toHaveBeenCalled();
+  });
+
+  it('rejects an empty profile picture without calling the repository', async () => {
+    const useCase = new UploadFileUseCaseImpl(mockRepo);
+    const command = { file: fakeFile('image/webp', 0), type: PROFILE_PICTURE_UPLOAD_TYPE };
+
+    await expect(useCase.execute(command)).rejects.toMatchObject({
+      reason: FileUploadErrorCode.FILE_EMPTY,
+    });
+    expect(mockRepo.upload).not.toHaveBeenCalled();
   });
 });
