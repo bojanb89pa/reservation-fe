@@ -1,5 +1,7 @@
+import { useTranslation } from 'react-i18next';
+import { toLoginTheme, toLoginLanguage } from '@domain';
 import { useAuthStore } from '../state/authStore';
-import { authApiRepository, env, tokenStorage } from '../app/container';
+import { authApiRepository, env, tokenStorage, setLoginCookiesBeforeAuthRedirect } from '../app/container';
 
 export function useIsAdmin(): boolean {
   const session = useAuthStore((s) => s.session);
@@ -14,10 +16,14 @@ export function useIsAdmin(): boolean {
 }
 
 export function useAuth() {
+  const { i18n } = useTranslation();
   const { session, isAuthenticated, setSession, startLogout } = useAuthStore();
 
   const initiateLogin = () => {
     sessionStorage.setItem('auth_return_to', window.location.pathname);
+    const theme = toLoginTheme(document.documentElement.getAttribute('data-theme'));
+    const language = toLoginLanguage(i18n.language);
+    setLoginCookiesBeforeAuthRedirect(theme, language);
     const params = new URLSearchParams({
       response_type: 'code',
       client_id: env.oauthClientId,
