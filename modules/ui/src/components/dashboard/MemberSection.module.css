@@ -47,12 +47,6 @@
   border-top: 0;
 }
 
-.userId {
-  font-size: var(--text-sm);
-  font-family: var(--font-mono);
-  color: var(--ink-700);
-}
-
 .empty {
   padding: 14px 20px;
   color: var(--ink-500);

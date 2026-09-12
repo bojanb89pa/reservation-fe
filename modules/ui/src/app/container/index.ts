@@ -21,6 +21,7 @@ import {
   DiscoverySearchApiRepository,
   BusinessContactInfoApiRepository,
   FileApiRepository,
+  UserApiRepository,
 } from '@infrastructure';
 import {
   RegisterUseCaseImpl,
@@ -80,6 +81,9 @@ import {
   AddContactInfoUseCaseImpl,
   UpdateContactInfoUseCaseImpl,
   RemoveContactInfoUseCaseImpl,
+  SetProfilePictureUseCaseImpl,
+  DeleteProfilePictureUseCaseImpl,
+  GetUsersByIdsUseCaseImpl,
 } from '@application';
 
 // Re-export infrastructure primitives consumed only within this module's hooks/state.
@@ -116,6 +120,8 @@ const fileUploadRepository = new FileApiRepository(
   resourceAxiosClient,
   authenticatedAuthAxiosClient,
 );
+// Profile picture and batch user lookup live on the auth-service host, same as the upload above.
+const userRepository = new UserApiRepository(authenticatedAuthAxiosClient);
 
 // ── Use Cases ─────────────────────────────────────────────────────────────────
 export const registerUseCase = new RegisterUseCaseImpl(authApiRepository);
@@ -252,3 +258,7 @@ export const updateContactInfoUseCase = new UpdateContactInfoUseCaseImpl(
 export const removeContactInfoUseCase = new RemoveContactInfoUseCaseImpl(
   businessContactInfoRepository,
 );
+
+export const setProfilePictureUseCase = new SetProfilePictureUseCaseImpl(userRepository);
+export const deleteProfilePictureUseCase = new DeleteProfilePictureUseCaseImpl(userRepository);
+export const getUsersByIdsUseCase = new GetUsersByIdsUseCaseImpl(userRepository);
