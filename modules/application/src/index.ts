@@ -27,6 +27,13 @@ export { UploadFileUseCaseImpl } from './use-cases/file/UploadFileUseCaseImpl';
 export { SetProfilePictureUseCaseImpl } from './use-cases/user/SetProfilePictureUseCaseImpl';
 export { DeleteProfilePictureUseCaseImpl } from './use-cases/user/DeleteProfilePictureUseCaseImpl';
 export { GetUsersByIdsUseCaseImpl } from './use-cases/user/GetUsersByIdsUseCaseImpl';
+export { SearchUsersForAdminUseCaseImpl } from './use-cases/user/SearchUsersForAdminUseCaseImpl';
+export { GetUserByIdForAdminUseCaseImpl } from './use-cases/user/GetUserByIdForAdminUseCaseImpl';
+export { CreateUserByAdminUseCaseImpl } from './use-cases/user/CreateUserByAdminUseCaseImpl';
+export { UpdateUserByAdminUseCaseImpl } from './use-cases/user/UpdateUserByAdminUseCaseImpl';
+export { UpdateUserStatusUseCaseImpl } from './use-cases/user/UpdateUserStatusUseCaseImpl';
+export { ResetUserPasswordUseCaseImpl } from './use-cases/user/ResetUserPasswordUseCaseImpl';
+export { DeleteUserByAdminUseCaseImpl } from './use-cases/user/DeleteUserByAdminUseCaseImpl';
 
 export { CreateBusinessServiceUseCaseImpl } from './use-cases/business-service/CreateBusinessServiceUseCaseImpl';
 export { ListBusinessServicesUseCaseImpl } from './use-cases/business-service/ListBusinessServicesUseCaseImpl';
