@@ -31,6 +31,7 @@ beforeEach(() => {
     updateStatus: vi.fn(),
     resetPassword: vi.fn().mockResolvedValue(user),
     deleteByAdmin: vi.fn(),
+    searchUsers: vi.fn(),
   };
 });
 
