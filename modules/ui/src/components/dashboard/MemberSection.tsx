@@ -1,22 +1,25 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { BusinessMemberRole } from '@domain';
+import type { BusinessMemberRole, UserSummary } from '@domain';
 import {
   useBusinessMembers,
   useAddBusinessMember,
   useRemoveBusinessMember,
+  useNotifyBusinessMembership,
 } from '../../hooks/useBusinessMembers';
 import { useUsersByIds, mapUsersById } from '../../hooks/useUsersByIds';
 import { UserBadge } from '../UserBadge';
+import { UserAutocompleteInput } from './UserAutocompleteInput';
 import styles from './MemberSection.module.css';
 
 interface Props {
   businessId: string;
+  businessName: string;
   role: BusinessMemberRole;
   title: string;
 }
 
-export function MemberSection({ businessId, role, title }: Props) {
+export function MemberSection({ businessId, businessName, role, title }: Props) {
   const { t } = useTranslation();
   const { data: members = [] } = useBusinessMembers(businessId, role);
   const { data: users } = useUsersByIds(members.map((m) => m.userId));
@@ -30,15 +33,24 @@ export function MemberSection({ businessId, role, title }: Props) {
     businessId,
     role,
   );
+  const { mutateAsync: notifyMembership } = useNotifyBusinessMembership();
 
-  const [userId, setUserId] = useState('');
+  const [selectedUser, setSelectedUser] = useState<UserSummary | null>(null);
+  const [notifiedEmail, setNotifiedEmail] = useState<string | null>(null);
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmed = userId.trim();
-    if (!trimmed) return;
-    await addMember(trimmed);
-    setUserId('');
+    if (!selectedUser) return;
+    const email = selectedUser.email;
+    // WARNING: existing AddMemberCommand still sends this value under `userId` to the
+    // resource-service — passing the email here is intentional, see ticket #51 — verify
+    // before merging once the endpoint's email-only contract is confirmed.
+    await addMember(email);
+    setSelectedUser(null);
+    setNotifiedEmail(email);
+    // Best-effort: the invitation email is transparent to the add flow, so its outcome
+    // never blocks or overrides the confirmation shown to the user.
+    notifyMembership({ email, businessName, role }).catch(() => {});
   };
 
   return (
@@ -69,19 +81,25 @@ export function MemberSection({ businessId, role, title }: Props) {
       </div>
 
       <form onSubmit={handleAdd} className={styles.addForm}>
-        <input
-          className={`form-input ${styles.formInput}`}
-          placeholder={t('memberSection.userIdPlaceholder')}
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
+        <UserAutocompleteInput
+          selectedUser={selectedUser}
+          onSelect={setSelectedUser}
+          onClear={() => setSelectedUser(null)}
+          placeholder={t('memberSection.userSearchPlaceholder')}
+          disabled={adding}
         />
-        <button type="submit" className="btn btn-secondary" disabled={adding}>
+        <button type="submit" className="btn btn-secondary" disabled={adding || !selectedUser}>
           {t(`memberSection.${role}.addButton`)}
         </button>
       </form>
       {addError && (
         <div className={styles.error}>
           {addError instanceof Error ? addError.message : t('memberSection.errorAdd')}
+        </div>
+      )}
+      {notifiedEmail && (
+        <div className={styles.notice}>
+          {t('memberSection.notifySuccess', { email: notifiedEmail })}
         </div>
       )}
     </section>

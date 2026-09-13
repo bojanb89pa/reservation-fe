@@ -21,6 +21,7 @@ export { SetBusinessCategoryUseCaseImpl } from './use-cases/business/SetBusiness
 export { GetBusinessesByCategoryUseCaseImpl } from './use-cases/business/GetBusinessesByCategoryUseCaseImpl';
 export { SetBusinessImageUseCaseImpl } from './use-cases/business/SetBusinessImageUseCaseImpl';
 export { RemoveBusinessImageUseCaseImpl } from './use-cases/business/RemoveBusinessImageUseCaseImpl';
+export { NotifyBusinessMembershipUseCaseImpl } from './use-cases/business/NotifyBusinessMembershipUseCaseImpl';
 
 export { UploadFileUseCaseImpl } from './use-cases/file/UploadFileUseCaseImpl';
 
@@ -34,6 +35,7 @@ export { UpdateUserByAdminUseCaseImpl } from './use-cases/user/UpdateUserByAdmin
 export { UpdateUserStatusUseCaseImpl } from './use-cases/user/UpdateUserStatusUseCaseImpl';
 export { ResetUserPasswordUseCaseImpl } from './use-cases/user/ResetUserPasswordUseCaseImpl';
 export { DeleteUserByAdminUseCaseImpl } from './use-cases/user/DeleteUserByAdminUseCaseImpl';
+export { SearchUsersUseCaseImpl } from './use-cases/user/SearchUsersUseCaseImpl';
 
 export { CreateBusinessServiceUseCaseImpl } from './use-cases/business-service/CreateBusinessServiceUseCaseImpl';
 export { ListBusinessServicesUseCaseImpl } from './use-cases/business-service/ListBusinessServicesUseCaseImpl';

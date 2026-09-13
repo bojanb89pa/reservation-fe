@@ -18,3 +18,9 @@ export interface RemoveMemberCommand {
   userId: string;
   role: BusinessMemberRole;
 }
+
+export interface NotifyBusinessMembershipCommand {
+  email: string;
+  businessName: string;
+  role: BusinessMemberRole;
+}

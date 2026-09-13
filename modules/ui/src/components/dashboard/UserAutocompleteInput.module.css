@@ -1,0 +1,87 @@
+.searchWrapper {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+
+.searchHint {
+  margin-top: 6px;
+  font-size: var(--text-xs);
+  color: var(--ink-500);
+}
+
+.suggestionList {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md, 6px);
+  overflow: hidden;
+}
+
+.suggestionButton {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  border-top: 1px solid var(--border);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.suggestionButton:first-child {
+  border-top: none;
+}
+
+.suggestionButton:hover {
+  background: var(--surface-2);
+}
+
+.suggestionName {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--ink-900);
+}
+
+.suggestionEmail {
+  font-size: var(--text-xs);
+  color: var(--ink-500);
+}
+
+.selectedUser {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md, 6px);
+}
+
+.selectedUserInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.selectedUserName {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--ink-900);
+}
+
+.selectedUserEmail {
+  font-size: var(--text-xs);
+  color: var(--ink-500);
+}

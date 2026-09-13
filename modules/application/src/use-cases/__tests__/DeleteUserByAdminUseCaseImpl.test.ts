@@ -18,6 +18,7 @@ beforeEach(() => {
     updateStatus: vi.fn(),
     resetPassword: vi.fn(),
     deleteByAdmin: vi.fn().mockResolvedValue(undefined),
+    searchUsers: vi.fn(),
   };
 });
 

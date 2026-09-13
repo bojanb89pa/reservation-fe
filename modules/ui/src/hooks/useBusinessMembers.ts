@@ -1,9 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { BusinessMemberRole } from '@domain';
+import type { BusinessMemberRole, NotifyBusinessMembershipCommand } from '@domain';
 import {
   listBusinessMembersUseCase,
   addBusinessMemberUseCase,
   removeBusinessMemberUseCase,
+  notifyBusinessMembershipUseCase,
 } from '../app/container';
 import { useCurrentUserId } from './useCurrentRoles';
 
@@ -26,6 +27,13 @@ export function useAddBusinessMember(businessId: string, role: BusinessMemberRol
     mutationFn: (userId: string) => addBusinessMemberUseCase.execute({ businessId, userId, role }),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: memberKeys.byRole(businessId, role) }),
+  });
+}
+
+export function useNotifyBusinessMembership() {
+  return useMutation({
+    mutationFn: (command: NotifyBusinessMembershipCommand) =>
+      notifyBusinessMembershipUseCase.execute(command),
   });
 }
 

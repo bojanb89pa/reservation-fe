@@ -37,6 +37,7 @@ import {
   AddBusinessMemberUseCaseImpl,
   RemoveBusinessMemberUseCaseImpl,
   ListBusinessMembersUseCaseImpl,
+  NotifyBusinessMembershipUseCaseImpl,
   GetAllResourcesUseCaseImpl,
   CreateResourceUseCaseImpl,
   GetResourceSlotsUseCaseImpl,
@@ -84,6 +85,7 @@ import {
   SetProfilePictureUseCaseImpl,
   DeleteProfilePictureUseCaseImpl,
   GetUsersByIdsUseCaseImpl,
+  SearchUsersUseCaseImpl,
   SearchUsersForAdminUseCaseImpl,
   GetUserByIdForAdminUseCaseImpl,
   CreateUserByAdminUseCaseImpl,
@@ -104,7 +106,12 @@ export { setLoginCookiesBeforeAuthRedirect } from '@infrastructure';
 export const authApiRepository = new AuthApiRepository(authAxiosClient);
 const businessRepository = new BusinessApiRepository(resourceAxiosClient);
 const businessCategoryRepository = new BusinessCategoryApiRepository(resourceAxiosClient);
-const businessMembershipRepository = new BusinessMembershipApiRepository(resourceAxiosClient);
+// Membership add/remove/list live on resource-service; the post-add notification email is
+// sent through auth-service, hence the second client.
+const businessMembershipRepository = new BusinessMembershipApiRepository(
+  resourceAxiosClient,
+  authenticatedAuthAxiosClient,
+);
 const resourceRepository = new ResourceApiRepository(resourceAxiosClient);
 const reservationRepository = new ReservationApiRepository(resourceAxiosClient);
 const availabilityRuleRepository = new ResourceAvailabilityRuleApiRepository(resourceAxiosClient);
@@ -157,6 +164,9 @@ export const addBusinessMemberUseCase = new AddBusinessMemberUseCaseImpl(
   businessMembershipRepository,
 );
 export const removeBusinessMemberUseCase = new RemoveBusinessMemberUseCaseImpl(
+  businessMembershipRepository,
+);
+export const notifyBusinessMembershipUseCase = new NotifyBusinessMembershipUseCaseImpl(
   businessMembershipRepository,
 );
 
@@ -270,6 +280,7 @@ export const removeContactInfoUseCase = new RemoveContactInfoUseCaseImpl(
 export const setProfilePictureUseCase = new SetProfilePictureUseCaseImpl(userRepository);
 export const deleteProfilePictureUseCase = new DeleteProfilePictureUseCaseImpl(userRepository);
 export const getUsersByIdsUseCase = new GetUsersByIdsUseCaseImpl(userRepository);
+export const searchUsersUseCase = new SearchUsersUseCaseImpl(userRepository);
 
 export const searchUsersForAdminUseCase = new SearchUsersForAdminUseCaseImpl(userRepository);
 export const getUserByIdForAdminUseCase = new GetUserByIdForAdminUseCaseImpl(userRepository);

@@ -10,6 +10,8 @@ import type {
   ResetUserPasswordCommand,
   PageRequest,
   PageResponse,
+  UserSummary,
+  SearchUsersQuery,
 } from '@domain';
 
 export class UserApiRepository implements UserRepository {
@@ -77,5 +79,12 @@ export class UserApiRepository implements UserRepository {
 
   async deleteByAdmin(id: string): Promise<void> {
     await this.client.delete(`/users/admin/accounts/${id}`);
+  }
+
+  async searchUsers(query: SearchUsersQuery): Promise<UserSummary[]> {
+    const response = await this.client.get<UserSummary[]>('/users/search', {
+      params: { query: query.query, limit: query.limit },
+    });
+    return response.data;
   }
 }

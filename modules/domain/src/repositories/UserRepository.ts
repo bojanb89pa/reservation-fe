@@ -8,6 +8,8 @@ import type {
 } from '../entities/User';
 import type { PageRequest, PageResponse } from '../types/Page';
 import type { AdminUserSearchFilter } from '../types/AdminUserSearchFilter';
+import type { UserSummary } from '../entities/UserSummary';
+import type { SearchUsersQuery } from '../types/SearchUsersQuery';
 
 export interface UserRepository {
   setProfilePicture(command: SetProfilePictureCommand): Promise<User>;
@@ -26,4 +28,5 @@ export interface UserRepository {
   updateStatus(id: string, command: UpdateUserStatusCommand): Promise<User>;
   resetPassword(id: string, command: ResetUserPasswordCommand): Promise<User>;
   deleteByAdmin(id: string): Promise<void>;
+  searchUsers(query: SearchUsersQuery): Promise<UserSummary[]>;
 }

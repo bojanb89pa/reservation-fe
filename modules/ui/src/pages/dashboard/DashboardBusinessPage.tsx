@@ -167,8 +167,18 @@ export function DashboardBusinessPage() {
       <BusinessCategorySection business={business} />
       <ServiceSection businessId={id!} />
       <LocationSection businessId={id!} />
-      <MemberSection businessId={id!} role="OWNER" title={t('dashboardBusiness.owners')} />
-      <MemberSection businessId={id!} role="EMPLOYEE" title={t('dashboardBusiness.employees')} />
+      <MemberSection
+        businessId={id!}
+        businessName={business.name}
+        role="OWNER"
+        title={t('dashboardBusiness.owners')}
+      />
+      <MemberSection
+        businessId={id!}
+        businessName={business.name}
+        role="EMPLOYEE"
+        title={t('dashboardBusiness.employees')}
+      />
 
       {activeResourceId && (
         <section className={styles.section}>

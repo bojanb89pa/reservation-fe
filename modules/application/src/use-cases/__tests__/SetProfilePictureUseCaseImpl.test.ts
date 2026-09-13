@@ -31,6 +31,7 @@ beforeEach(() => {
     updateStatus: vi.fn(),
     resetPassword: vi.fn(),
     deleteByAdmin: vi.fn(),
+    searchUsers: vi.fn(),
   };
 });
 
