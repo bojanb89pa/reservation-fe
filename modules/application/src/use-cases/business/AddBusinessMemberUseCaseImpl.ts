@@ -9,6 +9,6 @@ export class AddBusinessMemberUseCaseImpl implements AddBusinessMemberUseCase {
   constructor(private readonly businessMembershipRepository: BusinessMembershipRepository) {}
 
   execute(command: AddMemberCommand): Promise<BusinessMembership> {
-    return this.businessMembershipRepository.add(command.businessId, command.userId, command.role);
+    return this.businessMembershipRepository.add(command.businessId, command.email, command.role);
   }
 }
