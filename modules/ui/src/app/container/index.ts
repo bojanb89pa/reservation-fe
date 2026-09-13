@@ -37,6 +37,7 @@ import {
   AddBusinessMemberUseCaseImpl,
   RemoveBusinessMemberUseCaseImpl,
   ListBusinessMembersUseCaseImpl,
+  NotifyBusinessMembershipUseCaseImpl,
   GetAllResourcesUseCaseImpl,
   CreateResourceUseCaseImpl,
   GetResourceSlotsUseCaseImpl,
@@ -84,6 +85,7 @@ import {
   SetProfilePictureUseCaseImpl,
   DeleteProfilePictureUseCaseImpl,
   GetUsersByIdsUseCaseImpl,
+  SearchUsersUseCaseImpl,
   SearchUsersForAdminUseCaseImpl,
   GetUserByIdForAdminUseCaseImpl,
   CreateUserByAdminUseCaseImpl,
@@ -162,6 +164,9 @@ export const addBusinessMemberUseCase = new AddBusinessMemberUseCaseImpl(
   businessMembershipRepository,
 );
 export const removeBusinessMemberUseCase = new RemoveBusinessMemberUseCaseImpl(
+  businessMembershipRepository,
+);
+export const notifyBusinessMembershipUseCase = new NotifyBusinessMembershipUseCaseImpl(
   businessMembershipRepository,
 );
 
@@ -275,6 +280,7 @@ export const removeContactInfoUseCase = new RemoveContactInfoUseCaseImpl(
 export const setProfilePictureUseCase = new SetProfilePictureUseCaseImpl(userRepository);
 export const deleteProfilePictureUseCase = new DeleteProfilePictureUseCaseImpl(userRepository);
 export const getUsersByIdsUseCase = new GetUsersByIdsUseCaseImpl(userRepository);
+export const searchUsersUseCase = new SearchUsersUseCaseImpl(userRepository);
 
 export const searchUsersForAdminUseCase = new SearchUsersForAdminUseCaseImpl(userRepository);
 export const getUserByIdForAdminUseCase = new GetUserByIdForAdminUseCaseImpl(userRepository);

@@ -376,9 +376,12 @@ const en = {
   },
   memberSection: {
     total: '{{count}} total',
-    userIdPlaceholder: 'User ID (UUID)',
+    userSearchPlaceholder: 'Search user by name or email',
+    searching: 'Searching…',
+    changeUser: 'Change',
     remove: 'Remove',
     errorAdd: 'Failed to add member.',
+    notifySuccess: 'Invitation sent to {{email}}',
     OWNER: {
       empty: 'No owners yet.',
       addButton: '+ Add owner',
