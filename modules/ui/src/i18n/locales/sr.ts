@@ -378,9 +378,12 @@ const sr: Translation = {
   },
   memberSection: {
     total: '{{count}} ukupno',
-    userIdPlaceholder: 'ID korisnika (UUID)',
+    userSearchPlaceholder: 'Pretraži korisnika po imenu ili email adresi',
+    searching: 'Pretraga…',
+    changeUser: 'Promeni',
     remove: 'Ukloni',
     errorAdd: 'Greška pri dodavanju člana.',
+    notifySuccess: 'Pozivnica poslata na {{email}}',
     OWNER: {
       empty: 'Nema vlasnika.',
       addButton: '+ Dodaj vlasnika',
