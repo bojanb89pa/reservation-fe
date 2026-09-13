@@ -9,6 +9,7 @@ const user: User = {
   lastName: 'Doe',
   roles: [],
   enabled: true,
+  status: 'ACTIVE',
   profilePictureUrl: '/auth/users/c0ffee00-0000-0000-0000-000000000001/profile-picture',
 };
 
@@ -23,6 +24,13 @@ beforeEach(() => {
     setProfilePicture: vi.fn().mockResolvedValue(user),
     deleteProfilePicture: vi.fn(),
     getUsersByIds: vi.fn(),
+    searchForAdmin: vi.fn(),
+    getByIdForAdmin: vi.fn(),
+    createByAdmin: vi.fn(),
+    updateByAdmin: vi.fn(),
+    updateStatus: vi.fn(),
+    resetPassword: vi.fn(),
+    deleteByAdmin: vi.fn(),
   };
 });
 
