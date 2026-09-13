@@ -23,6 +23,7 @@ beforeEach(() => {
     setProfilePicture: vi.fn().mockResolvedValue(user),
     deleteProfilePicture: vi.fn(),
     getUsersByIds: vi.fn(),
+    searchUsers: vi.fn(),
   };
 });
 

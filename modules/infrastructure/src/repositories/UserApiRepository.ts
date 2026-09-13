@@ -1,5 +1,11 @@
 import type { AxiosInstance } from 'axios';
-import type { User, SetProfilePictureCommand, UserRepository } from '@domain';
+import type {
+  User,
+  SetProfilePictureCommand,
+  UserRepository,
+  UserSummary,
+  SearchUsersQuery,
+} from '@domain';
 
 export class UserApiRepository implements UserRepository {
   constructor(private readonly client: AxiosInstance) {}
@@ -17,6 +23,13 @@ export class UserApiRepository implements UserRepository {
   async getUsersByIds(ids: string[]): Promise<User[]> {
     const response = await this.client.get<User[]>('/users/batch', {
       params: { ids: ids.join(',') },
+    });
+    return response.data;
+  }
+
+  async searchUsers(query: SearchUsersQuery): Promise<UserSummary[]> {
+    const response = await this.client.get<UserSummary[]>('/users/search', {
+      params: { query: query.query, limit: query.limit },
     });
     return response.data;
   }

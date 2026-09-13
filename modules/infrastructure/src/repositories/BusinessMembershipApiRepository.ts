@@ -1,12 +1,20 @@
 import type { AxiosInstance } from 'axios';
-import type { BusinessMembership, BusinessMemberRole, BusinessMembershipRepository } from '@domain';
+import type {
+  BusinessMembership,
+  BusinessMemberRole,
+  BusinessMembershipRepository,
+  NotifyBusinessMembershipCommand,
+} from '@domain';
 
 function roleSegment(role: BusinessMemberRole): string {
   return role === 'OWNER' ? 'owners' : 'employees';
 }
 
 export class BusinessMembershipApiRepository implements BusinessMembershipRepository {
-  constructor(private readonly client: AxiosInstance) {}
+  constructor(
+    private readonly client: AxiosInstance,
+    private readonly authClient: AxiosInstance,
+  ) {}
 
   async add(
     businessId: string,
@@ -29,5 +37,9 @@ export class BusinessMembershipApiRepository implements BusinessMembershipReposi
       `/businesses/${businessId}/${roleSegment(role)}`,
     );
     return response.data;
+  }
+
+  async notifyMembership(command: NotifyBusinessMembershipCommand): Promise<void> {
+    await this.authClient.post('/users/notify-membership', command);
   }
 }
