@@ -13,9 +13,9 @@ describe('NotifyBusinessMembershipUseCaseImpl', () => {
   it('notifies about business membership', async () => {
     const useCase = new NotifyBusinessMembershipUseCaseImpl(mockRepo);
     const command = {
-      businessId: 'b1b2b3b4-0000-0000-0000-000000000001',
-      userId: 'u1u2u3u4-0000-0000-0000-000000000001',
-      role: 'MANAGER' as const,
+      email: 'user@example.com',
+      businessName: 'Acme Corp',
+      role: 'OWNER' as const,
     };
 
     await useCase.execute(command);
@@ -26,9 +26,9 @@ describe('NotifyBusinessMembershipUseCaseImpl', () => {
   it('passes correct command to repository', async () => {
     const useCase = new NotifyBusinessMembershipUseCaseImpl(mockRepo);
     const command = {
-      businessId: 'b1b2b3b4-0000-0000-0000-000000000002',
-      userId: 'u1u2u3u4-0000-0000-0000-000000000002',
-      role: 'MEMBER' as const,
+      email: 'another@example.com',
+      businessName: 'Tech Inc',
+      role: 'EMPLOYEE' as const,
     };
 
     await useCase.execute(command);
