@@ -47,6 +47,7 @@ export type {
   BusinessMemberRole,
   AddMemberCommand,
   RemoveMemberCommand,
+  NotifyBusinessMembershipCommand,
 } from './entities/BusinessMembership';
 export type {
   BusinessLocation,
@@ -92,6 +93,7 @@ export type {
   UpdateUserStatusCommand,
   ResetUserPasswordCommand,
 } from './entities/User';
+export type { UserSummary } from './entities/UserSummary';
 
 // Errors
 export {
@@ -131,6 +133,7 @@ export type { BusinessSearchFilter } from './types/BusinessSearchFilter';
 export type { AdminUserSearchFilter } from './types/AdminUserSearchFilter';
 export type { DiscoverySearchQuery } from './types/DiscoverySearchQuery';
 export type { LoginTheme, LoginLanguage } from './types/LoginPreferences';
+export type { SearchUsersQuery } from './types/SearchUsersQuery';
 export {
   DEFAULT_LOGIN_THEME,
   DEFAULT_LOGIN_LANGUAGE,
@@ -171,6 +174,8 @@ export type { UpdateUserByAdminUseCase } from './use-cases/user/UpdateUserByAdmi
 export type { UpdateUserStatusUseCase } from './use-cases/user/UpdateUserStatusUseCase';
 export type { ResetUserPasswordUseCase } from './use-cases/user/ResetUserPasswordUseCase';
 export type { DeleteUserByAdminUseCase } from './use-cases/user/DeleteUserByAdminUseCase';
+export type { SearchUsersUseCase } from './use-cases/user/SearchUsersUseCase';
+export type { NotifyBusinessMembershipUseCase } from './use-cases/business/NotifyBusinessMembershipUseCase';
 export type { CreateBusinessServiceUseCase } from './use-cases/business-service/CreateBusinessServiceUseCase';
 export type { ListBusinessServicesUseCase } from './use-cases/business-service/ListBusinessServicesUseCase';
 export type { GetBusinessServiceUseCase } from './use-cases/business-service/GetBusinessServiceUseCase';

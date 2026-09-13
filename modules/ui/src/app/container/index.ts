@@ -104,7 +104,12 @@ export { setLoginCookiesBeforeAuthRedirect } from '@infrastructure';
 export const authApiRepository = new AuthApiRepository(authAxiosClient);
 const businessRepository = new BusinessApiRepository(resourceAxiosClient);
 const businessCategoryRepository = new BusinessCategoryApiRepository(resourceAxiosClient);
-const businessMembershipRepository = new BusinessMembershipApiRepository(resourceAxiosClient);
+// Membership add/remove/list live on resource-service; the post-add notification email is
+// sent through auth-service, hence the second client.
+const businessMembershipRepository = new BusinessMembershipApiRepository(
+  resourceAxiosClient,
+  authenticatedAuthAxiosClient,
+);
 const resourceRepository = new ResourceApiRepository(resourceAxiosClient);
 const reservationRepository = new ReservationApiRepository(resourceAxiosClient);
 const availabilityRuleRepository = new ResourceAvailabilityRuleApiRepository(resourceAxiosClient);
