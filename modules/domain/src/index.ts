@@ -47,6 +47,7 @@ export type {
   BusinessMemberRole,
   AddMemberCommand,
   RemoveMemberCommand,
+  NotifyBusinessMembershipCommand,
 } from './entities/BusinessMembership';
 export type {
   BusinessLocation,
@@ -83,6 +84,7 @@ export type { AvailabilityBlock } from './entities/AvailabilityBlock';
 export type { ResourceType } from './entities/ResourceType';
 export type { Role } from './entities/Role';
 export type { User, UserRegistration, SetProfilePictureCommand } from './entities/User';
+export type { UserSummary } from './entities/UserSummary';
 
 // Errors
 export {
@@ -121,6 +123,7 @@ export type { PageRequest, PageResponse } from './types/Page';
 export type { BusinessSearchFilter } from './types/BusinessSearchFilter';
 export type { DiscoverySearchQuery } from './types/DiscoverySearchQuery';
 export type { LoginTheme, LoginLanguage } from './types/LoginPreferences';
+export type { SearchUsersQuery } from './types/SearchUsersQuery';
 export {
   DEFAULT_LOGIN_THEME,
   DEFAULT_LOGIN_LANGUAGE,
@@ -154,6 +157,8 @@ export type { UploadFileUseCase } from './use-cases/file/UploadFileUseCase';
 export type { SetProfilePictureUseCase } from './use-cases/user/SetProfilePictureUseCase';
 export type { DeleteProfilePictureUseCase } from './use-cases/user/DeleteProfilePictureUseCase';
 export type { GetUsersByIdsUseCase } from './use-cases/user/GetUsersByIdsUseCase';
+export type { SearchUsersUseCase } from './use-cases/user/SearchUsersUseCase';
+export type { NotifyBusinessMembershipUseCase } from './use-cases/business/NotifyBusinessMembershipUseCase';
 export type { CreateBusinessServiceUseCase } from './use-cases/business-service/CreateBusinessServiceUseCase';
 export type { ListBusinessServicesUseCase } from './use-cases/business-service/ListBusinessServicesUseCase';
 export type { GetBusinessServiceUseCase } from './use-cases/business-service/GetBusinessServiceUseCase';
