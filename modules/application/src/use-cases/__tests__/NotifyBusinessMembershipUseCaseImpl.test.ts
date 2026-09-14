@@ -1,13 +1,17 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NotifyBusinessMembershipUseCaseImpl } from '../business/NotifyBusinessMembershipUseCaseImpl';
 import type { BusinessMembershipRepository } from '@domain';
 
-const mockRepo: BusinessMembershipRepository = {
-  add: vi.fn(),
-  remove: vi.fn(),
-  list: vi.fn(),
-  notifyMembership: vi.fn().mockResolvedValue(undefined),
-};
+let mockRepo: BusinessMembershipRepository;
+
+beforeEach(() => {
+  mockRepo = {
+    add: vi.fn(),
+    remove: vi.fn(),
+    list: vi.fn(),
+    notifyMembership: vi.fn().mockResolvedValue(undefined),
+  };
+});
 
 describe('NotifyBusinessMembershipUseCaseImpl', () => {
   it('notifies about business membership', async () => {
