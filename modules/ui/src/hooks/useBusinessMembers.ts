@@ -24,7 +24,7 @@ export function useBusinessMembers(businessId: string, role: BusinessMemberRole)
 export function useAddBusinessMember(businessId: string, role: BusinessMemberRole) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (userId: string) => addBusinessMemberUseCase.execute({ businessId, userId, role }),
+    mutationFn: (email: string) => addBusinessMemberUseCase.execute({ businessId, email, role }),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: memberKeys.byRole(businessId, role) }),
   });

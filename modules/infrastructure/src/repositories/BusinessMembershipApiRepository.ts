@@ -18,12 +18,12 @@ export class BusinessMembershipApiRepository implements BusinessMembershipReposi
 
   async add(
     businessId: string,
-    userId: string,
+    email: string,
     role: BusinessMemberRole,
   ): Promise<BusinessMembership> {
     const response = await this.client.post<BusinessMembership>(
       `/businesses/${businessId}/${roleSegment(role)}`,
-      { userId },
+      { email },
     );
     return response.data;
   }

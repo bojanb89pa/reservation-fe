@@ -21,8 +21,12 @@ interface Props {
 
 export function MemberSection({ businessId, businessName, role, title }: Props) {
   const { t } = useTranslation();
-  const { data: members = [] } = useBusinessMembers(businessId, role);
-  const { data: users } = useUsersByIds(members.map((m) => m.userId));
+  const { data: members = [], refetch: refetchMembers } = useBusinessMembers(businessId, role);
+  const memberUserIds = useMemo(
+    () => members.map((m) => m.userId).filter((id): id is string => id !== null),
+    [members],
+  );
+  const { data: users } = useUsersByIds(memberUserIds);
   const usersById = useMemo(() => mapUsersById(users ?? []), [users]);
   const {
     mutateAsync: addMember,
@@ -37,16 +41,25 @@ export function MemberSection({ businessId, businessName, role, title }: Props) 
 
   const [selectedUser, setSelectedUser] = useState<UserSummary | null>(null);
   const [notifiedEmail, setNotifiedEmail] = useState<string | null>(null);
+  const [addNotConfirmed, setAddNotConfirmed] = useState(false);
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedUser) return;
-    const email = selectedUser.email;
-    // WARNING: existing AddMemberCommand still sends this value under `userId` to the
-    // resource-service — passing the email here is intentional, see ticket #51 — verify
-    // before merging once the endpoint's email-only contract is confirmed.
+    const { id: userId, email } = selectedUser;
+    setNotifiedEmail(null);
+    setAddNotConfirmed(false);
     await addMember(email);
+    // A resolved promise doesn't prove the membership was created — an unauthorized
+    // caller gets the same 200 shape (fe-brief #77) — so re-fetch and look for the
+    // member before showing success, per AddBusinessMemberUseCase's doc comment.
+    const { data: freshMembers } = await refetchMembers();
+    const wasAdded = (freshMembers ?? []).some((m) => m.userId === userId || m.email === email);
     setSelectedUser(null);
+    if (!wasAdded) {
+      setAddNotConfirmed(true);
+      return;
+    }
     setNotifiedEmail(email);
     // Best-effort: the invitation email is transparent to the add flow, so its outcome
     // never blocks or overrides the confirmation shown to the user.
@@ -68,11 +81,18 @@ export function MemberSection({ businessId, businessName, role, title }: Props) 
         )}
         {members.map((m) => (
           <div key={m.id} className={styles.row}>
-            <UserBadge userId={m.userId} user={usersById.get(m.userId)} />
+            {m.userId ? (
+              <UserBadge userId={m.userId} user={usersById.get(m.userId)} />
+            ) : (
+              // WARNING: pending membership (no userId yet, resolved once the invited
+              // email registers per fe-brief #77) — shown as plain email until a
+              // dedicated pending-member treatment is designed.
+              <span>{m.email}</span>
+            )}
             <button
               className="btn btn-ghost btn-sm"
-              onClick={() => removeMember(m.userId)}
-              disabled={removing}
+              onClick={() => m.userId && removeMember(m.userId)}
+              disabled={removing || !m.userId}
             >
               {t('memberSection.remove')}
             </button>
@@ -97,6 +117,7 @@ export function MemberSection({ businessId, businessName, role, title }: Props) 
           {addError instanceof Error ? addError.message : t('memberSection.errorAdd')}
         </div>
       )}
+      {addNotConfirmed && <div className={styles.error}>{t('memberSection.addNotConfirmed')}</div>}
       {notifiedEmail && (
         <div className={styles.notice}>
           {t('memberSection.notifySuccess', { email: notifiedEmail })}
