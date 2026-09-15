@@ -1,0 +1,16 @@
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 28px;
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 18px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}

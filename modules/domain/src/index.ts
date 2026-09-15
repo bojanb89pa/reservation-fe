@@ -72,6 +72,7 @@ export type {
   CreateReservationCommand,
 } from './entities/Reservation';
 export type { SearchResult } from './entities/SearchResult';
+export type { NearbyBusiness, NearbyBusinessLocation } from './entities/NearbyBusiness';
 export type { Resource, CreateResourceCommand } from './entities/Resource';
 export type {
   ResourceAvailabilityRule,
@@ -122,6 +123,7 @@ export type { AvailabilityBlockRepository } from './repositories/AvailabilityBlo
 export type { BusinessLocationRepository } from './repositories/BusinessLocationRepository';
 export type { PlaceRepository } from './repositories/PlaceRepository';
 export type { DiscoverySearchRepository } from './repositories/DiscoverySearchRepository';
+export type { NearbyBusinessRepository } from './repositories/NearbyBusinessRepository';
 export type { BusinessLocationResourceRepository } from './repositories/BusinessLocationResourceRepository';
 export type { BusinessLocationServiceRepository } from './repositories/BusinessLocationServiceRepository';
 export type { FileUploadRepository } from './repositories/FileUploadRepository';
@@ -130,6 +132,7 @@ export type { UserRepository } from './repositories/UserRepository';
 // Types
 export type { PageRequest, PageResponse } from './types/Page';
 export type { BusinessSearchFilter } from './types/BusinessSearchFilter';
+export type { NearbyBusinessSearchFilter } from './types/NearbyBusinessSearchFilter';
 export type { AdminUserSearchFilter } from './types/AdminUserSearchFilter';
 export type { DiscoverySearchQuery } from './types/DiscoverySearchQuery';
 export type { LoginTheme, LoginLanguage } from './types/LoginPreferences';
@@ -151,6 +154,7 @@ export type { GetMyBusinessesUseCase } from './use-cases/business/GetMyBusinesse
 export type { GetAllBusinessesForAdminUseCase } from './use-cases/business/GetAllBusinessesForAdminUseCase';
 export type { SearchBusinessesUseCase } from './use-cases/business/SearchBusinessesUseCase';
 export type { GetBusinessesByCategoryUseCase } from './use-cases/business/GetBusinessesByCategoryUseCase';
+export type { SearchNearbyBusinessesUseCase } from './use-cases/business/SearchNearbyBusinessesUseCase';
 export type { GetBusinessUseCase } from './use-cases/business/GetBusinessUseCase';
 export type { AddBusinessMemberUseCase } from './use-cases/business/AddBusinessMemberUseCase';
 export type { RemoveBusinessMemberUseCase } from './use-cases/business/RemoveBusinessMemberUseCase';

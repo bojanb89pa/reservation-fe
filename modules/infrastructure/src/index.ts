@@ -14,6 +14,7 @@ export { setLoginCookiesBeforeAuthRedirect } from './auth/loginCookies';
 // Repository implementations
 export { AuthApiRepository } from './repositories/AuthApiRepository';
 export { BusinessApiRepository } from './repositories/BusinessApiRepository';
+export { NearbyBusinessApiRepository } from './repositories/NearbyBusinessApiRepository';
 export { ReservationApiRepository } from './repositories/ReservationApiRepository';
 export { ResourceApiRepository } from './repositories/ResourceApiRepository';
 export { ResourceAvailabilityRuleApiRepository } from './repositories/ResourceAvailabilityRuleApiRepository';

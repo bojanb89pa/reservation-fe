@@ -75,6 +75,23 @@ const en = {
     nextPage: 'Next →',
     pageOf: 'Page {{page}} of {{total}}',
   },
+  nearbyBusinesses: {
+    eyebrow: 'Near me',
+    titleWithCount: '{{count}} businesses near you',
+    titleNoCount: 'Businesses near you',
+    filterAll: 'All',
+    error: 'Failed to load nearby businesses. Please try again.',
+    noResults: 'No businesses found nearby.',
+    prevPage: '← Previous',
+    nextPage: 'Next →',
+    pageOf: 'Page {{page}} of {{total}}',
+    geoError: {
+      unsupported: 'Your browser does not support location sharing.',
+      permissionDenied: 'Location access was denied. Allow location access to see businesses near you.',
+      positionUnavailable: 'Your location could not be determined. Please try again.',
+      timeout: 'Locating you took too long. Please try again.',
+    },
+  },
   businessDetail: {
     eyebrow: 'Business',
     services: 'Services',
@@ -102,6 +119,7 @@ const en = {
   businessCard: {
     available: 'Available',
     viewResources: 'View resources →',
+    distance: '{{distanceKm}} km away',
   },
   businessImage: {
     alt: 'Photo of {{name}}',
