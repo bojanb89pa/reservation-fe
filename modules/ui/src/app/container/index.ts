@@ -12,6 +12,7 @@ import {
   BusinessLocationApiRepository,
   BusinessLocationResourceApiRepository,
   BusinessLocationServiceApiRepository,
+  NearbyBusinessApiRepository,
   ResourceApiRepository,
   ReservationApiRepository,
   ResourceAvailabilityRuleApiRepository,
@@ -34,6 +35,7 @@ import {
   GetBusinessesByCategoryUseCaseImpl,
   SubmitBusinessUseCaseImpl,
   CreateBusinessByAdminUseCaseImpl,
+  SearchNearbyBusinessesUseCaseImpl,
   AddBusinessMemberUseCaseImpl,
   RemoveBusinessMemberUseCaseImpl,
   ListBusinessMembersUseCaseImpl,
@@ -125,6 +127,7 @@ const businessLocationResourceRepository = new BusinessLocationResourceApiReposi
 const businessLocationServiceRepository = new BusinessLocationServiceApiRepository(
   resourceAxiosClient,
 );
+const nearbyBusinessRepository = new NearbyBusinessApiRepository(resourceAxiosClient);
 const placeRepository = new PlaceApiRepository(resourceAxiosClient);
 const discoverySearchRepository = new DiscoverySearchApiRepository(resourceAxiosClient);
 const businessContactInfoRepository = new BusinessContactInfoApiRepository(resourceAxiosClient);
@@ -155,6 +158,9 @@ export const getBusinessesByCategoryUseCase = new GetBusinessesByCategoryUseCase
 export const submitBusinessUseCase = new SubmitBusinessUseCaseImpl(businessRepository);
 export const createBusinessByAdminUseCase = new CreateBusinessByAdminUseCaseImpl(
   businessRepository,
+);
+export const searchNearbyBusinessesUseCase = new SearchNearbyBusinessesUseCaseImpl(
+  nearbyBusinessRepository,
 );
 
 export const listBusinessMembersUseCase = new ListBusinessMembersUseCaseImpl(

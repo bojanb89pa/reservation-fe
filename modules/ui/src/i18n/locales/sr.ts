@@ -77,6 +77,24 @@ const sr: Translation = {
     nextPage: 'Sledeća →',
     pageOf: 'Strana {{page}} od {{total}}',
   },
+  nearbyBusinesses: {
+    eyebrow: 'U blizini',
+    titleWithCount: '{{count}} biznisa u blizini',
+    titleNoCount: 'Biznisi u blizini',
+    filterAll: 'Svi',
+    error: 'Greška pri učitavanju biznisa u blizini. Pokušaj ponovo.',
+    noResults: 'Nema biznisa u blizini.',
+    prevPage: '← Prethodna',
+    nextPage: 'Sledeća →',
+    pageOf: 'Strana {{page}} od {{total}}',
+    geoError: {
+      unsupported: 'Tvoj pregledač ne podržava deljenje lokacije.',
+      permissionDenied:
+        'Pristup lokaciji je odbijen. Dozvoli pristup lokaciji da bi video biznise u blizini.',
+      positionUnavailable: 'Nije moguće odrediti tvoju lokaciju. Pokušaj ponovo.',
+      timeout: 'Određivanje lokacije je predugo trajalo. Pokušaj ponovo.',
+    },
+  },
   businessDetail: {
     eyebrow: 'Biznis',
     services: 'Usluge',
@@ -104,6 +122,7 @@ const sr: Translation = {
   businessCard: {
     available: 'Dostupno',
     viewResources: 'Vidi resurse →',
+    distance: '{{distanceKm}} km udaljenosti',
   },
   businessImage: {
     alt: 'Slika biznisa {{name}}',
