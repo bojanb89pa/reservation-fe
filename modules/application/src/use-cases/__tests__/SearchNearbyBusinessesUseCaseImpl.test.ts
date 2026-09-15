@@ -1,15 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SearchNearbyBusinessesUseCaseImpl } from '../business/SearchNearbyBusinessesUseCaseImpl';
-import type { NearbyBusinessRepository, NearbyBusiness, PageResponse, NearbyBusinessSearchFilter } from '@domain';
+import type { NearbyBusinessRepository, NearbyBusiness, PageResponse, NearbyBusinessSearchFilter, BusinessCategory } from '@domain';
+
+const category: BusinessCategory = {
+  id: 'category-001',
+  name: 'Cafes',
+  parentId: null,
+  symbol: null,
+  color: null,
+};
 
 const nearbyBusiness: NearbyBusiness = {
   id: '550e8400-e29b-41d4-a716-446655440000',
   name: 'Coffee Shop',
   categoryId: 'category-001',
-  category: {
-    id: 'category-001',
-    name: 'Cafes',
-  } as any,
+  category,
   imageUrl: '/api/businesses/550e8400-e29b-41d4-a716-446655440000/image',
   location: {
     id: 'location-001',
