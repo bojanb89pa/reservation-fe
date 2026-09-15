@@ -11,6 +11,7 @@ import { RegisterPage } from '../pages/RegisterPage';
 import { OAuthCallbackPage } from '../pages/OAuthCallbackPage';
 import { BusinessListPage } from '../pages/BusinessListPage';
 import { BusinessByCategoryPage } from '../pages/BusinessByCategoryPage';
+import { NearbyBusinessesPage } from '../pages/NearbyBusinessesPage';
 import { BusinessDetailPage } from '../pages/BusinessDetailPage';
 import { SearchResultsPage } from '../pages/SearchResultsPage';
 import { ReservationHeldPage } from '../pages/ReservationHeldPage';
@@ -52,6 +53,7 @@ function PublicLayout() {
           <Route path="callback" element={<OAuthCallbackPage />} />
           <Route path="search" element={<SearchResultsPage />} />
           <Route path="businesses" element={<BusinessListPage />} />
+          <Route path="businesses/near-me" element={<NearbyBusinessesPage />} />
           <Route path="businesses/category/:categoryId" element={<BusinessByCategoryPage />} />
           <Route path="businesses/:id" element={<BusinessDetailPage />} />
           <Route path="reservation/:id/held" element={<ReservationHeldPage />} />

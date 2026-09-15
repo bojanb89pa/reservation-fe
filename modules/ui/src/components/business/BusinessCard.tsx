@@ -1,15 +1,25 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import type { Business } from '@domain';
+import type { BusinessCategory } from '@domain';
 import { DEFAULT_CATEGORY_COLOR } from '@domain';
 import { BusinessImage } from './BusinessImage';
 import styles from './BusinessCard.module.css';
 
-interface Props {
-  business: Business;
+/** Subset shared by Business and NearbyBusiness — the only fields this card renders. */
+interface BusinessCardBusiness {
+  id: string | null;
+  name: string;
+  category: BusinessCategory | null;
+  imageUrl: string | null;
 }
 
-export function BusinessCard({ business }: Props) {
+interface Props {
+  business: BusinessCardBusiness;
+  /** Distance from the search origin, in kilometers. Shown only for nearby-search results. */
+  distanceKm?: number;
+}
+
+export function BusinessCard({ business, distanceKm }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -30,6 +40,11 @@ export function BusinessCard({ business }: Props) {
             <span className="dot" />
             {t('businessCard.available')}
           </span>
+          {distanceKm !== undefined && (
+            <span className={styles.distance}>
+              {t('businessCard.distance', { distanceKm: distanceKm.toFixed(1) })}
+            </span>
+          )}
         </div>
         {business.category && (
           <span
