@@ -11,7 +11,11 @@ cross-contamination.
 the user to run manually:
 > Run the command `{command}` and let me know if there is any issue.
 
-`yarn lint` and `yarn test` may be run to verify your own changes.
+`yarn lint` and `yarn test --run <path>` may be run to verify your own changes
+(without `--run` vitest stays in watch mode and never exits). If `node_modules`
+is missing, run `yarn install --frozen-lockfile` first. The full
+lint/test/type-check is run by the agent orchestration on the home server before
+pushing, and by `pr-check.yml` on the PR.
 
 ## Commands
 
@@ -19,7 +23,7 @@ the user to run manually:
 yarn dev            # Vite dev server
 yarn build          # tsc -b && vite build
 yarn lint           # eslint, zero warnings allowed
-yarn test           # vitest
+yarn test           # vitest (watch mode; add --run for a single pass)
 yarn test:coverage  # vitest with coverage
 yarn format         # prettier
 ```
