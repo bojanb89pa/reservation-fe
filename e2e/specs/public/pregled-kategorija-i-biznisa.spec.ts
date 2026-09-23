@@ -12,7 +12,6 @@ import {
   ApiClient,
   adminCredentials,
   createActivatedUser,
-  fetchAccessToken,
   uniqueName,
 } from '../../fixtures/api';
 
@@ -61,16 +60,22 @@ function novisadLocation() {
   };
 }
 
-/** `sub` claim iz access tokena — isti user id koji FE koristi kao `ownerId` (useBusinesses.ts). */
-function userIdFromAccessToken(accessToken: string): string {
-  const payloadSegment = accessToken.split('.')[1];
-  if (!payloadSegment) {
-    throw new Error('access token nije JWT (nedostaje payload segment)');
+// WARNING: `useBusinesses.ts` (produkcioni kod) izvlači ownerId iz JWT `sub` claim-a, ali
+// `POST /businesses/admin` vraća generičku Spring Boot 400 grešku (bez "message" polja, videti
+// `logs/fe-brief-admin-user-management-20260912-215601.md` za oblik grešaka koje BE inače vraća
+// sa porukom) kad se taj `sub` pošalje kao `ownerId` — potpis tipičan za grešku deserijalizacije
+// tela zahteva (npr. `sub` nije validan UUID), ne za poslovnu validaciju. Test zato ownerId uzima
+// preko autoritativnog izvora (`GET /auth/users/admin/accounts?search=`), ne dekodiranjem tokena.
+// Verifikovati pre merge-a da li je `useBusinesses.ts` pogođen istim problemom.
+async function fetchOwnerId(adminApi: ApiClient, email: string): Promise<string> {
+  const response = await adminApi.auth.get('users/admin/accounts', { params: { search: email } });
+  await expectOk(response, `GET /auth/users/admin/accounts?search=${email}`);
+  const page = (await response.json()) as PageResponseDto<{ id: string; email: string }>;
+  const match = page.content.find((u) => u.email === email);
+  if (!match) {
+    throw new Error(`korisnik ${email} nije pronađen u admin pretrazi (/auth/users/admin/accounts)`);
   }
-  const payload = JSON.parse(Buffer.from(payloadSegment, 'base64').toString('utf-8')) as {
-    sub: string;
-  };
-  return payload.sub;
+  return match.id;
 }
 
 async function fetchTopLevelCategories(anonymousApi: ApiClient): Promise<BusinessCategoryDto[]> {
@@ -140,9 +145,9 @@ test.describe('E2E-001 pregled kategorija i biznisa', () => {
     const [categoryA, categoryB] = topLevel as [BusinessCategoryDto, BusinessCategoryDto];
 
     const owner = await createActivatedUser();
-    const ownerId = userIdFromAccessToken(await fetchAccessToken(owner));
     const adminApi = await ApiClient.as(adminCredentials());
     try {
+      const ownerId = await fetchOwnerId(adminApi, owner.email);
       const businessInA = await createActiveBusiness(adminApi, ownerId, categoryA.id);
       const businessInB = await createActiveBusiness(adminApi, ownerId, categoryB.id);
 
@@ -166,9 +171,9 @@ test.describe('E2E-001 pregled kategorija i biznisa', () => {
 
   test('detalj biznisa prikazuje naziv i usluge sa trajanjem', async ({ page }) => {
     const owner = await createActivatedUser();
-    const ownerId = userIdFromAccessToken(await fetchAccessToken(owner));
     const adminApi = await ApiClient.as(adminCredentials());
     try {
+      const ownerId = await fetchOwnerId(adminApi, owner.email);
       const business = await createActiveBusiness(adminApi, ownerId);
       const serviceName = uniqueName('Usluga');
       const serviceCreated = await adminApi.post(`/businesses/${business.id}/services`, {
