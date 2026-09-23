@@ -108,6 +108,7 @@ export function HomePage() {
               <div className={styles.searchField}>
                 <span className={styles.searchLabel}>{t('home.searchWhat')}</span>
                 <input
+                  aria-label={t('home.searchWhat')}
                   placeholder={t('home.searchWhatPlaceholder')}
                   value={what}
                   onChange={(e) => setWhat(e.target.value)}
