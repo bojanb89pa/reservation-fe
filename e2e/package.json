@@ -6,7 +6,8 @@
     "test": "playwright test",
     "test:smoke": "playwright test --grep @smoke",
     "typecheck": "tsc --noEmit",
-    "test:list": "playwright test --list"
+    "test:list": "playwright test --list",
+    "seed:demo": "tsc -p scripts/tsconfig.build.json && cp scripts/dist-package.json scripts/.dist/package.json && node scripts/.dist/scripts/seed-demo.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",

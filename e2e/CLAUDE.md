@@ -58,3 +58,41 @@ await api.dispose();
 
 Request/response shapes come from the BE OpenAPI docs
 (`/api/v3/api-docs`, `/auth/v3/api-docs`) and the FE domain types.
+
+## Demo seed (staging)
+
+`e2e/scripts/seed-demo.ts` fills a stack with demo content (24 businesses,
+6 owners, ~10 users under `@demo.reserva.test`, a few future reservations per
+business) through the same API endpoints tests use — no direct DB writes.
+Content lives in `e2e/data/demo/*.json` (deterministic, committed). Idempotent
+by natural key (account email, business name); it tops reservations up to a
+per-business cap instead of duplicating them, and never deletes anything.
+
+Run with `yarn --cwd e2e seed:demo`. Required env vars, on top of the usual
+`E2E_AUTH_URL` / `E2E_API_URL` / `E2E_BASE_URL`:
+
+```bash
+SEED_ADMIN_EMAIL=seed-admin@demo.reserva.test   # bootstrap admin, never a personal account
+SEED_ADMIN_PASSWORD=...
+DEMO_PASSWORD=...                                # password for every demo owner/user account
+```
+
+`SEED_EXPECT_NOOP=1 yarn --cwd e2e seed:demo` exits with an error if the run
+would create anything — used in CI right after a normal run, as an
+idempotency check (never a full stack reset).
+
+Against **staging**, run it manually — never from CI or an agent:
+
+```bash
+E2E_AUTH_URL=https://reserva.bojanlab.com/auth \
+E2E_API_URL=https://reserva.bojanlab.com/api \
+E2E_BASE_URL=https://reserva.bojanlab.com \
+SEED_ADMIN_EMAIL=seed-admin@demo.reserva.test \
+SEED_ADMIN_PASSWORD=... \
+DEMO_PASSWORD=... \
+yarn --cwd e2e seed:demo
+```
+
+The script compiles itself with `tsc` first (`scripts/tsconfig.build.json`)
+because it reuses `fixtures/api.ts`, which needs a real TS-to-JS transform,
+not just type-stripping.

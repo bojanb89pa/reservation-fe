@@ -1,0 +1,22 @@
+{
+  "owners": [
+    { "email": "owner-bg-1@demo.reserva.test", "firstName": "Marko", "lastName": "Jovanović", "city": "Beograd" },
+    { "email": "owner-bg-2@demo.reserva.test", "firstName": "Jelena", "lastName": "Simić", "city": "Beograd" },
+    { "email": "owner-ns-1@demo.reserva.test", "firstName": "Nikola", "lastName": "Popović", "city": "Novi Sad" },
+    { "email": "owner-ns-2@demo.reserva.test", "firstName": "Ana", "lastName": "Kovačević", "city": "Novi Sad" },
+    { "email": "owner-ni-1@demo.reserva.test", "firstName": "Stefan", "lastName": "Ilić", "city": "Niš" },
+    { "email": "owner-ni-2@demo.reserva.test", "firstName": "Milica", "lastName": "Stanković", "city": "Niš" }
+  ],
+  "users": [
+    { "email": "user-1@demo.reserva.test", "firstName": "Aleksandar", "lastName": "Petrović" },
+    { "email": "user-2@demo.reserva.test", "firstName": "Teodora", "lastName": "Nikolić" },
+    { "email": "user-3@demo.reserva.test", "firstName": "Luka", "lastName": "Đorđević" },
+    { "email": "user-4@demo.reserva.test", "firstName": "Mina", "lastName": "Živković" },
+    { "email": "user-5@demo.reserva.test", "firstName": "Filip", "lastName": "Ristić" },
+    { "email": "user-6@demo.reserva.test", "firstName": "Sara", "lastName": "Milošević" },
+    { "email": "user-7@demo.reserva.test", "firstName": "Vuk", "lastName": "Pavlović" },
+    { "email": "user-8@demo.reserva.test", "firstName": "Katarina", "lastName": "Đukić" },
+    { "email": "user-9@demo.reserva.test", "firstName": "Đorđe", "lastName": "Marković" },
+    { "email": "user-10@demo.reserva.test", "firstName": "Ivana", "lastName": "Lazić" }
+  ]
+}
