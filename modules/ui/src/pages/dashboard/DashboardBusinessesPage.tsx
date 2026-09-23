@@ -51,7 +51,10 @@ export function DashboardBusinessesPage() {
   }, [placeDetails]);
 
   const canSubmit =
-    !!placeDetails && placeDetails.latitude != null && placeDetails.longitude != null;
+    !!locationName.trim() &&
+    !!placeDetails &&
+    placeDetails.latitude != null &&
+    placeDetails.longitude != null;
 
   const handleSelectSuggestion = (placeId: string) => {
     setSelectedPlaceId(placeId);
@@ -76,6 +79,8 @@ export function DashboardBusinessesPage() {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
+    const trimmedLocationName = locationName.trim();
+    if (!trimmedLocationName) return;
     if (!placeDetails || placeDetails.latitude == null || placeDetails.longitude == null) return;
     setError(null);
     try {
@@ -85,7 +90,7 @@ export function DashboardBusinessesPage() {
         name: name.trim(),
         imageUploadId,
         location: {
-          name: locationName.trim() || undefined,
+          name: trimmedLocationName,
           addressLine1: placeDetails.addressLine1 ?? undefined,
           city: placeDetails.city ?? undefined,
           postalCode: placeDetails.postalCode ?? undefined,
@@ -244,7 +249,13 @@ export function DashboardBusinessesPage() {
                     placeholder={t('dashboardBusinesses.locationNamePlaceholder')}
                     value={locationName}
                     onChange={(e) => setLocationName(e.target.value)}
+                    required
                   />
+                  {!locationName.trim() && (
+                    <div className={styles.fieldError}>
+                      {t('dashboardBusinesses.locationNameRequired')}
+                    </div>
+                  )}
                 </div>
                 <div className="form-field">
                   <label className="form-label">{t('dashboardBusinesses.locationPhone')}</label>

@@ -50,6 +50,7 @@ export function LocationSection({ businessId }: Props) {
   }, [placeDetails]);
 
   const canSubmit =
+    !!locationName.trim() &&
     !!placeDetails &&
     placeDetails.latitude != null &&
     placeDetails.longitude != null;
@@ -75,10 +76,12 @@ export function LocationSection({ businessId }: Props) {
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
+    const trimmedName = locationName.trim();
+    if (!trimmedName) return;
     if (!placeDetails || placeDetails.latitude == null || placeDetails.longitude == null) return;
 
     await createLocation({
-      name: locationName.trim() || undefined,
+      name: trimmedName,
       addressLine1: placeDetails.addressLine1 ?? undefined,
       addressLine2: addressLine2.trim() || undefined,
       city: placeDetails.city ?? undefined,
@@ -231,7 +234,11 @@ export function LocationSection({ businessId }: Props) {
                   placeholder={t('locationSection.namePlaceholder')}
                   value={locationName}
                   onChange={(e) => setLocationName(e.target.value)}
+                  required
                 />
+                {!locationName.trim() && (
+                  <div className={styles.error}>{t('locationSection.nameRequired')}</div>
+                )}
               </div>
               <div className="form-field">
                 <label className="form-label">{t('locationSection.addressLine2Label')}</label>
