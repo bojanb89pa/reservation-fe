@@ -228,12 +228,15 @@ export async function listResources(client: ApiClient, businessId: string): Prom
   return page.content;
 }
 
+/** `POST /businesses/{id}/resources` — telo nosi i `id`/`businessId`, ne samo komandu (modules/infrastructure/src/repositories/ResourceApiRepository.ts:29). */
 export async function createResource(
   ownerApi: ApiClient,
   businessId: string,
   data: { name: string; type: string },
 ): Promise<ResourceDto> {
-  const response = await ownerApi.post(`/businesses/${businessId}/resources`, { data });
+  const response = await ownerApi.post(`/businesses/${businessId}/resources`, {
+    data: { id: null, businessId, ...data },
+  });
   await assertOk(response, `POST /businesses/${businessId}/resources (${data.name})`);
   return (await response.json()) as ResourceDto;
 }
@@ -267,12 +270,15 @@ export async function listAvailabilityRules(client: ApiClient, resourceId: strin
   return (await response.json()) as AvailabilityRuleDto[];
 }
 
+/** `POST /resources/{id}/availability-rules` — telo nosi i `id`/`resourceId`, ne samo komandu (modules/infrastructure/src/repositories/ResourceAvailabilityRuleApiRepository.ts:20). */
 export async function createAvailabilityRule(
   ownerApi: ApiClient,
   resourceId: string,
   data: { dayOfWeek: string; startTime: string; endTime: string },
 ): Promise<void> {
-  const response = await ownerApi.post(`/resources/${resourceId}/availability-rules`, { data });
+  const response = await ownerApi.post(`/resources/${resourceId}/availability-rules`, {
+    data: { id: null, resourceId, ...data },
+  });
   await assertOk(response, `POST /resources/${resourceId}/availability-rules (${data.dayOfWeek})`);
 }
 
@@ -294,12 +300,15 @@ export async function listMyReservations(userApi: ApiClient): Promise<Reservatio
   return (await response.json()) as ReservationDto[];
 }
 
+/** `POST /resources/{id}/reservations` — telo nosi i `id`/`userId`/`resourceId`, ne samo komandu (modules/infrastructure/src/repositories/ReservationApiRepository.ts:13). */
 export async function createReservation(
   userApi: ApiClient,
   resourceId: string,
   data: { serviceId: string; startTime: string; endTime: string },
 ): Promise<ReservationDto> {
-  const response = await userApi.post(`/resources/${resourceId}/reservations`, { data });
+  const response = await userApi.post(`/resources/${resourceId}/reservations`, {
+    data: { id: null, userId: null, resourceId, ...data },
+  });
   await assertOk(response, `POST /resources/${resourceId}/reservations`);
   return (await response.json()) as ReservationDto;
 }
