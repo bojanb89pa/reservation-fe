@@ -47,6 +47,7 @@ async function fetchOwnerId(adminApi: ApiClient, email: string): Promise<string>
 
 function novisadLocation(addressLine1: string) {
   return {
+    name: addressLine1,
     addressLine1,
     city: 'Novi Sad',
     postalCode: '21000',
@@ -58,6 +59,7 @@ function novisadLocation(addressLine1: string) {
 
 function belgradeLocation(addressLine1: string) {
   return {
+    name: addressLine1,
     addressLine1,
     city: 'Beograd',
     postalCode: '11000',
