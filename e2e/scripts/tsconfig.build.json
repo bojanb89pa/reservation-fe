@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "noEmit": false,
+    "outDir": ".dist",
+    "rootDir": "..",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "lib": ["ES2022"]
+  },
+  "include": ["*.ts", "../env.ts", "../fixtures/**/*.ts", "../data/demo/**/*.json"]
+}
