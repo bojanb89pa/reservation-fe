@@ -97,6 +97,9 @@ const en = {
     services: 'Services',
     resources: 'Resources',
     noResources: 'No resources available yet.',
+    locations: {
+      title: 'Locations',
+    },
     pickTime: 'Pick a time slot',
     pickDate: 'Pick a date',
     pickDateRange: 'Pick a date range',
