@@ -31,7 +31,9 @@
       "Bash(grep *)",
       "Bash(ls *)",
       "Bash(cat *)",
-      "Bash(mkdir *)"
+      "Bash(mkdir *)",
+      "Write(e2e/**)",
+      "Edit(e2e/**)"
     ]
   }
 }

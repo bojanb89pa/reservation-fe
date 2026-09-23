@@ -1,0 +1,100 @@
+# Efemerni stack za E2E na GitHub runneru (.github/workflows/e2e.yml).
+# NIKAD na Pi-ju: Chromium + ceo stack bi se tukao sa ostalim kontejnerima.
+#
+# Bez volume-a i bez .env fajla — sve vrednosti su ovde, nijedna nije tajna
+# (baze i nalozi postoje samo dok traje job). FE se ne pokreće ovde nego
+# `yarn preview` u job-u, sa VITE_* na localhost.
+#
+# auth-service se svuda zove `auth-service:8081`: resource-service ga tako vidi
+# kroz docker DNS, a browser na runneru kroz `127.0.0.1 auth-service` u
+# /etc/hosts. Isto ime mora zato što je to `issuer` u tokenu.
+
+name: reserva-e2e
+
+x-e2e-common: &e2e-common
+  AUTH_ISSUER_URI: http://auth-service:8081/auth
+  AUTH_OAUTH2_AUTHORIZE_URL: http://auth-service:8081/auth/oauth2/authorize
+  AUTH_OAUTH2_TOKEN_URL: http://auth-service:8081/auth/oauth2/token
+  CORS_ALLOWED_ORIGINS: http://localhost:5173
+  STORAGE_BASE_PATH: /tmp/reserva-storage
+
+services:
+  auth-postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: reservation_auth
+      POSTGRES_USER: e2e
+      POSTGRES_PASSWORD: e2e
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U e2e -d reservation_auth"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  resource-postgres:
+    image: imresamu/postgis:18-3.6
+    environment:
+      POSTGRES_DB: reservation_resource
+      POSTGRES_USER: e2e
+      POSTGRES_PASSWORD: e2e
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U e2e -d reservation_resource"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025"
+
+  auth-service:
+    image: ghcr.io/bojanb89pa/reservation-auth-service:${BE_IMAGE_TAG:-latest}
+    depends_on:
+      auth-postgres:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    ports:
+      - "8081:8081"
+    environment:
+      <<: *e2e-common
+      AUTH_PORT: "8081"
+      AUTH_DB_HOST: auth-postgres
+      AUTH_DB_PORT: "5432"
+      AUTH_DB_NAME: reservation_auth
+      AUTH_DB_USERNAME: e2e
+      AUTH_DB_PASSWORD: e2e
+      AUTH_ACTIVATION_BASE_URL: http://auth-service:8081/auth/users/activate
+      AUTH_REGISTER_BASE_URL: http://localhost:5173/register
+      FRONTEND_BASE_URL: http://localhost:5173
+      MAIL_HOST: mailpit
+      MAIL_PORT: "1025"
+      OAUTH2_CLIENT_ID: reservation
+      OAUTH2_CLIENT_SECRET: e2e-secret
+      OAUTH2_REDIRECT_URIS: http://localhost:5173/callback
+      OAUTH2_POST_LOGOUT_REDIRECT_URIS: http://localhost:5173
+      GOOGLE_CLIENT_ID: e2e-unused
+      GOOGLE_CLIENT_SECRET: e2e-unused
+      # Prvi admin iz bootstrap-a (reservation-agents #17). Na staging-u se ne
+      # koristi — tamo admin već postoji.
+      ADMIN_BOOTSTRAP_EMAIL: ${E2E_ADMIN_EMAIL:-seed-admin@demo.reserva.test}
+      ADMIN_BOOTSTRAP_PASSWORD: ${E2E_ADMIN_PASSWORD:-E2e-Admin-Passw0rd!}
+
+  resource-service:
+    image: ghcr.io/bojanb89pa/reservation-resource-service:${BE_IMAGE_TAG:-latest}
+    depends_on:
+      resource-postgres:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    environment:
+      <<: *e2e-common
+      RESOURCE_DB_HOST: resource-postgres
+      RESOURCE_DB_PORT: "5432"
+      RESOURCE_DB_NAME: reservation_resource
+      RESOURCE_DB_USERNAME: e2e
+      RESOURCE_DB_PASSWORD: e2e
+      GOOGLE_PLACES_API_KEY: e2e-unused

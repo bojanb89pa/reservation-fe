@@ -41,3 +41,13 @@ jobs:
 
       - name: Build
         run: yarn build
+
+      # Samo tipovi i spisak testova — pravo izvrsavanje je u e2e.yml.
+      - name: E2E typecheck
+        working-directory: e2e
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+        run: |
+          yarn install --frozen-lockfile
+          yarn typecheck
+          yarn test:list > /dev/null
