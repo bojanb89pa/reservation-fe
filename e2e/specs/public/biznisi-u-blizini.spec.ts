@@ -4,11 +4,13 @@
 // lokacija lažira Playwright `geolocation`/`permissions` context opcijama
 // (`test.use`), bez pravog browser prompta. Biznise pravi svaki test sam
 // preko admin API-ja (`POST /businesses/admin` odmah aktivira biznis), sa
-// realnim koordinatama u Novom Sadu i Nišu. Oba biznisa dobijaju istu
-// kategoriju i test filtrira listu po njoj, da izbegne šum od drugih
-// paralelnih testova koji takođe prave biznise u Novom Sadu (BE nema limit
-// radijusa — bez filtera bi ih paginacija od 12 po strane mogla progurati
-// van prve strane).
+// realnim koordinatama u Novom Sadu i Nišu. Svaki test pravi i SVOJU
+// kategoriju (`POST /business-categories`, jedinstven kod/naziv) i filtrira
+// listu po njoj — deljene seed kategorije su ograničen, globalno vidljiv
+// resurs (svega par top-level kategorija) koji paralelni testovi iz drugih
+// spec fajlova takođe koriste, pa je biranje po indeksu iz seed liste
+// (`topLevel[i]`) i dalje sudar čim se poklopi sa tuđim izborom — sopstvena
+// kategorija to potpuno eliminiše.
 
 import type { APIResponse, Page } from '@playwright/test';
 import { expect, test } from '../../fixtures/auth';
@@ -85,13 +87,18 @@ async function fetchOwnerId(adminApi: ApiClient, email: string): Promise<string>
   return match.id;
 }
 
-async function fetchTopLevelCategories(anonymousApi: ApiClient): Promise<BusinessCategoryDto[]> {
-  const response = await anonymousApi.get('/business-categories', {
-    headers: { 'Accept-Language': 'en' },
+/** Sopstvena top-level kategorija (jedinstven kod/naziv), da test ne deli seed kategorije sa drugima. */
+async function createUniqueCategory(
+  adminApi: ApiClient,
+  prefix: string,
+): Promise<BusinessCategoryDto> {
+  const name = uniqueName(prefix);
+  const code = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const created = await adminApi.post('/business-categories', {
+    data: { code, translations: { en: name, sr: name } },
   });
-  await expectOk(response, 'GET /business-categories');
-  const categories = (await response.json()) as BusinessCategoryDto[];
-  return categories.filter((c) => c.parentId === null);
+  await expectOk(created, 'POST /business-categories');
+  return (await created.json()) as BusinessCategoryDto;
 }
 
 /** Aktivan biznis (admin kreacija je odmah aktivna) sa zadatom lokacijom i kategorijom. */
@@ -125,23 +132,11 @@ test.describe('E2E-003 biznisi u blizini', () => {
   test.describe('lokacija: centar Novog Sada', () => {
     test.use({ geolocation: NOVI_SAD, permissions: ['geolocation'] });
 
-    test('novosadski biznis koji je test napravio je ispred niškog', async ({
-      page,
-      anonymousApi,
-    }) => {
-      const topLevel = await fetchTopLevelCategories(anonymousApi);
-      expect(
-        topLevel.length,
-        'seed treba da sadrži bar dve top-level kategorije — testovi u ovom fajlu rade paralelno i svaki uzima svoju, da izbegnu trku oko iste kategorije',
-      ).toBeGreaterThanOrEqual(2);
-      // Različita kategorija od suseda ("centar Niša") ispod — ta dva testa rade paralelno
-      // (playwright.config.ts: fullyParallel), pa deljena kategorija dovodi do trke pri
-      // kategorizaciji biznisa i biznis nasumično nestane iz filtrirane liste.
-      const category = topLevel[topLevel.length - 1] as BusinessCategoryDto;
-
+    test('novosadski biznis koji je test napravio je ispred niškog', async ({ page }) => {
       const owner = await createActivatedUser();
       const adminApi = await ApiClient.as(adminCredentials());
       try {
+        const category = await createUniqueCategory(adminApi, 'E2E Kategorija NS');
         const ownerId = await fetchOwnerId(adminApi, owner.email);
         const nsBusiness = await createActiveBusiness(
           adminApi,
@@ -184,21 +179,11 @@ test.describe('E2E-003 biznisi u blizini', () => {
   test.describe('lokacija: centar Niša', () => {
     test.use({ geolocation: NIS, permissions: ['geolocation'] });
 
-    test('niški biznis koji je test napravio je ispred novosadskog', async ({
-      page,
-      anonymousApi,
-    }) => {
-      const topLevel = await fetchTopLevelCategories(anonymousApi);
-      expect(
-        topLevel.length,
-        'seed treba da sadrži bar dve top-level kategorije — testovi u ovom fajlu rade paralelno i svaki uzima svoju, da izbegnu trku oko iste kategorije',
-      ).toBeGreaterThanOrEqual(2);
-      // Različita kategorija od suseda ("centar Novog Sada") iznad — videti komentar tamo.
-      const category = topLevel[topLevel.length - 2] as BusinessCategoryDto;
-
+    test('niški biznis koji je test napravio je ispred novosadskog', async ({ page }) => {
       const owner = await createActivatedUser();
       const adminApi = await ApiClient.as(adminCredentials());
       try {
+        const category = await createUniqueCategory(adminApi, 'E2E Kategorija Niš');
         const ownerId = await fetchOwnerId(adminApi, owner.email);
         const nsBusiness = await createActiveBusiness(
           adminApi,
