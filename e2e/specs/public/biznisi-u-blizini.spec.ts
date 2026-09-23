@@ -130,9 +130,13 @@ test.describe('E2E-003 biznisi u blizini', () => {
       anonymousApi,
     }) => {
       const topLevel = await fetchTopLevelCategories(anonymousApi);
-      expect(topLevel.length, 'seed treba da sadrži bar jednu top-level kategoriju').toBeGreaterThan(
-        0,
-      );
+      expect(
+        topLevel.length,
+        'seed treba da sadrži bar dve top-level kategorije — testovi u ovom fajlu rade paralelno i svaki uzima svoju, da izbegnu trku oko iste kategorije',
+      ).toBeGreaterThanOrEqual(2);
+      // Različita kategorija od suseda ("centar Niša") ispod — ta dva testa rade paralelno
+      // (playwright.config.ts: fullyParallel), pa deljena kategorija dovodi do trke pri
+      // kategorizaciji biznisa i biznis nasumično nestane iz filtrirane liste.
       const category = topLevel[topLevel.length - 1] as BusinessCategoryDto;
 
       const owner = await createActivatedUser();
@@ -185,10 +189,12 @@ test.describe('E2E-003 biznisi u blizini', () => {
       anonymousApi,
     }) => {
       const topLevel = await fetchTopLevelCategories(anonymousApi);
-      expect(topLevel.length, 'seed treba da sadrži bar jednu top-level kategoriju').toBeGreaterThan(
-        0,
-      );
-      const category = topLevel[topLevel.length - 1] as BusinessCategoryDto;
+      expect(
+        topLevel.length,
+        'seed treba da sadrži bar dve top-level kategorije — testovi u ovom fajlu rade paralelno i svaki uzima svoju, da izbegnu trku oko iste kategorije',
+      ).toBeGreaterThanOrEqual(2);
+      // Različita kategorija od suseda ("centar Novog Sada") iznad — videti komentar tamo.
+      const category = topLevel[topLevel.length - 2] as BusinessCategoryDto;
 
       const owner = await createActivatedUser();
       const adminApi = await ApiClient.as(adminCredentials());
