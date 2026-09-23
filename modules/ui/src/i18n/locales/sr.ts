@@ -100,6 +100,9 @@ const sr: Translation = {
     services: 'Usluge',
     resources: 'Resursi',
     noResources: 'Nema dostupnih resursa.',
+    locations: {
+      title: 'Lokacije',
+    },
     pickTime: 'Odaberi termin',
     pickDate: 'Odaberi datum',
     pickDateRange: 'Odaberi period',
