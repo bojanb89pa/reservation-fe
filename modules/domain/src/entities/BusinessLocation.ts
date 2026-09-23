@@ -24,7 +24,7 @@ export interface UpdateBusinessLocationFromPlaceCommand {
 }
 
 export interface CreateBusinessLocationCommand {
-  name?: string;
+  name: string;
   addressLine1?: string;
   addressLine2?: string;
   city?: string;
