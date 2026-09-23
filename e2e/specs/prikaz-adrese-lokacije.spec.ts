@@ -102,11 +102,12 @@ test.describe('epic:20 prikaz adrese lokacije na javnom detalju biznisa', () => 
       const locations = (await listed.json()) as Array<{ addressLine1: string | null }>;
       expect(locations.some((l) => l.addressLine1 === streetName)).toBe(true);
 
-      // Dokumentovano u fe-brief-u: nepostojeći businessId i dalje vraća 200 [], nema 404.
+      // fe-brief je tvrdio 200 [] za nepostojeći businessId, ali
+      // GetBusinessLocationsByBusinessUseCaseImpl namerno baca NotFoundException
+      // (postoji i BE unit test za to) — ruta vraća 404, kao i ostale rute biznisa.
       const unknownId = crypto.randomUUID();
       const unknown = await anonymousApi.get(`/businesses/${unknownId}/locations`);
-      await expectStatus(unknown, 200, `GET /businesses/${unknownId}/locations (nepostojeći biznis)`);
-      expect(await unknown.json()).toEqual([]);
+      await expectStatus(unknown, 404, `GET /businesses/${unknownId}/locations (nepostojeći biznis)`);
 
       const createAttempt = await anonymousApi.post(`/businesses/${business.id}/locations`, {
         data: novisadLocation(uniqueName('Ulica')),
