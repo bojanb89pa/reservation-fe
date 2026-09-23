@@ -115,6 +115,24 @@ jobs:
           check mailpit http://localhost:8025/api/v1/info
           check fe http://localhost:5173/
 
+      # Demo seed (kad postoji `seed:demo` skripta): dva uzastopna pokretanja
+      # nad praznim stackom; drugo sa SEED_EXPECT_NOOP=1, kad seed mora da
+      # padne ako išta napravi — to je provera idempotentnosti. Testovi ne zavise od seed-a (svaki pravi
+      # svoje podatke), ali ga ovde puštamo da se ne pokvari neprimećeno.
+      - name: Seed demo (2x)
+        working-directory: e2e
+        env:
+          SEED_ADMIN_EMAIL: seed-admin@demo.reserva.test
+          SEED_ADMIN_PASSWORD: ${{ env.E2E_ADMIN_PASSWORD }}
+          DEMO_PASSWORD: E2e-Demo-Passw0rd!
+        run: |
+          if ! jq -e '.scripts["seed:demo"]' package.json > /dev/null; then
+            echo "nema seed:demo skripte, preskačem"
+            exit 0
+          fi
+          yarn seed:demo
+          SEED_EXPECT_NOOP=1 yarn seed:demo
+
       - name: Run E2E
         working-directory: e2e
         run: yarn test
