@@ -1,6 +1,9 @@
 # syntax=docker/dockerfile:1
 
-FROM node:22-alpine AS build
+# Build stage runs on the runner's native arch ($BUILDPLATFORM): the output is
+# static files, so there's no need to run Node under QEMU (it hangs there).
+# Only the runtime stage is the target arch, and it has no RUN steps.
+FROM --platform=$BUILDPLATFORM node:22-alpine AS build
 WORKDIR /app
 
 COPY package.json yarn.lock ./
