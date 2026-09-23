@@ -28,6 +28,10 @@ yarn test:coverage  # vitest with coverage
 yarn format         # prettier
 ```
 
+E2E tests live in `e2e/` (own `package.json`, Playwright). They run only in
+GitHub Actions (`e2e.yml`); locally just `yarn --cwd e2e typecheck` and
+`yarn --cwd e2e test:list`. Rules: `e2e/CLAUDE.md`.
+
 ## Tech Stack
 
 | | |

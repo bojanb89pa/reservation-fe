@@ -1,0 +1,146 @@
+name: E2E
+
+# Playwright nad svežim stackom (compose.e2e.yml), uvek na GitHub runneru,
+# nikad na Pi-ju. Pokreće se retko, jer private repo na free planu ima 2000
+# min mesečno:
+#   - PR ka main (zbirni PR epica),
+#   - PR koji dira e2e/** ili ovaj stack (e2e sloj agenata, na epic granu),
+#   - ručno.
+# Noćni @smoke nad staging-om je kasniji korak (treba demo nalog na staging-u
+# i, možda, Cloudflare pravilo za headless Chromium).
+
+# GitHub ne dozvoljava dva `pull_request` bloka (branches ILI paths), pa
+# `changes` job odlučuje: PR ka main uvek, ostali PR-ovi samo kad diraju E2E.
+on:
+  pull_request: {}
+  workflow_dispatch: {}
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    if: github.event_name == 'pull_request' && github.base_ref != 'main'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      e2e: ${{ steps.filter.outputs.e2e }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            e2e:
+              - 'e2e/**'
+              - 'compose.e2e.yml'
+              - '.github/workflows/e2e.yml'
+
+  e2e:
+    needs: changes
+    if: >-
+      always() && (
+        github.event_name != 'pull_request' ||
+        github.base_ref == 'main' ||
+        needs.changes.outputs.e2e == 'true'
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: read
+    env:
+      CI: "true"
+      E2E_ADMIN_PASSWORD: E2e-Admin-Passw0rd!
+      VITE_AUTH_BASE_URL: http://auth-service:8081/auth
+      VITE_RESOURCE_BASE_URL: http://localhost:8080/api
+      VITE_OAUTH_CLIENT_ID: reservation
+      VITE_OAUTH_CLIENT_SECRET: e2e-secret
+      VITE_OAUTH_REDIRECT_URI: http://localhost:5173/callback
+    steps:
+      - uses: actions/checkout@v4
+
+      # Browser i resource-service moraju da vide auth-service pod istim
+      # imenom (issuer u tokenu) — vidi komentar u compose.e2e.yml.
+      - name: auth-service u /etc/hosts
+        run: echo "127.0.0.1 auth-service" | sudo tee -a /etc/hosts
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Start stack
+        run: docker compose -f compose.e2e.yml up -d
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: yarn
+          cache-dependency-path: |
+            yarn.lock
+            e2e/yarn.lock
+
+      - name: Build FE
+        run: |
+          yarn install --frozen-lockfile
+          yarn build
+
+      - name: Install E2E
+        working-directory: e2e
+        run: |
+          yarn install --frozen-lockfile
+          yarn typecheck
+          yarn playwright install --with-deps chromium
+
+      - name: Serve FE
+        run: |
+          nohup yarn preview --port 5173 --strictPort > /tmp/vite-preview.log 2>&1 &
+
+      - name: Wait for stack
+        run: |
+          check() {
+            for _ in $(seq 1 60); do
+              curl -fsS -o /dev/null --max-time 5 "$2" && { echo "$1: ok"; return 0; }
+              sleep 3
+            done
+            echo "::error::$1 nije ustao ($2)"
+            return 1
+          }
+          check auth-service http://auth-service:8081/auth/.well-known/openid-configuration
+          check resource-service http://localhost:8080/api/business-categories
+          check mailpit http://localhost:8025/api/v1/info
+          check fe http://localhost:5173/
+
+      - name: Run E2E
+        working-directory: e2e
+        run: yarn test
+
+      - name: Stack logs
+        if: failure()
+        run: |
+          docker compose -f compose.e2e.yml logs --no-color --tail 200 auth-service resource-service > /tmp/stack.log || true
+          tail -n 120 /tmp/stack.log
+          cat /tmp/vite-preview.log || true
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            e2e/playwright-report/
+            e2e/test-results/
+            /tmp/stack.log
+          retention-days: 7
+
+      - name: Notify
+        if: failure()
+        env:
+          NTFY_TOPIC_URL: ${{ secrets.NTFY_TOPIC_URL }}
+        run: |
+          [ -z "$NTFY_TOPIC_URL" ] && exit 0
+          curl -fsS -d "reservation-fe E2E: failure (${{ github.head_ref || github.ref_name }})" "$NTFY_TOPIC_URL" || true

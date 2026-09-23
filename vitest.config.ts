@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({
@@ -17,5 +17,7 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
+    // Playwright specovi imaju svoj runner (e2e/), vitest ih ne sme pokupiti.
+    exclude: [...configDefaults.exclude, 'e2e/**'],
   },
 });
