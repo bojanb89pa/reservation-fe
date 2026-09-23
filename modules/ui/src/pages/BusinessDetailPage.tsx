@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useBusiness } from '../hooks/useBusinesses';
 import { useResources } from '../hooks/useResources';
 import { useBusinessServices } from '../hooks/useBusinessServices';
+import { useBusinessLocations } from '../hooks/useBusinessLocations';
 import { useCreateReservation } from '../hooks/useReservations';
 import { useAuthStore } from '../state/authStore';
 import { BookingWidget } from '../components/booking/BookingWidget';
@@ -11,6 +12,7 @@ import type { BookingSelection } from '../components/booking/BookingWidget';
 import type { Resource } from '@domain';
 import { DEFAULT_CATEGORY_COLOR } from '@domain';
 import { BusinessImage } from '../components/business/BusinessImage';
+import { BusinessLocationsList } from '../components/business/BusinessLocationsList';
 import styles from './BusinessDetailPage.module.css';
 
 // WARNING: assumed the normalized API error exposes a numeric `status` — verify before merging
@@ -34,6 +36,7 @@ export function BusinessDetailPage() {
   } = useBusiness(id!);
   const { data: resourcesPage, isLoading: rLoading } = useResources(id!);
   const { data: servicesPage } = useBusinessServices(id!);
+  const { data: locations } = useBusinessLocations(id!);
 
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
 
@@ -111,6 +114,7 @@ export function BusinessDetailPage() {
               </span>
             ))}
           </div>
+          <BusinessLocationsList locations={locations} />
         </div>
       </div>
 
