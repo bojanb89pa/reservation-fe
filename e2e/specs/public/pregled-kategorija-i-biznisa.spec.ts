@@ -48,9 +48,14 @@ async function expectOk(response: APIResponse, label: string): Promise<void> {
   expect(response.ok(), `${label}: HTTP ${response.status()} ${await response.text()}`).toBe(true);
 }
 
-/** Lokacija sa svim obaveznim poljima iz `CreateBusinessLocationCommand` (lat/lng). */
+/**
+ * Lokacija sa svim obaveznim poljima iz BE `CreateBusinessLocationRequest` (name, latitude,
+ * longitude). `name` je non-null Kotlin polje: bez njega Jackson pada pri deserijalizaciji i BE
+ * vraća generički 400 bez poruke.
+ */
 function novisadLocation() {
   return {
+    name: 'E2E lokacija',
     addressLine1: 'Bulevar oslobođenja 1',
     city: 'Novi Sad',
     postalCode: '21000',
@@ -60,13 +65,7 @@ function novisadLocation() {
   };
 }
 
-// WARNING: `useBusinesses.ts` (produkcioni kod) izvlači ownerId iz JWT `sub` claim-a, ali
-// `POST /businesses/admin` vraća generičku Spring Boot 400 grešku (bez "message" polja, videti
-// `logs/fe-brief-admin-user-management-20260912-215601.md` za oblik grešaka koje BE inače vraća
-// sa porukom) kad se taj `sub` pošalje kao `ownerId` — potpis tipičan za grešku deserijalizacije
-// tela zahteva (npr. `sub` nije validan UUID), ne za poslovnu validaciju. Test zato ownerId uzima
-// preko autoritativnog izvora (`GET /auth/users/admin/accounts?search=`), ne dekodiranjem tokena.
-// Verifikovati pre merge-a da li je `useBusinesses.ts` pogođen istim problemom.
+// `createActivatedUser()` ne vraća id korisnika, pa se ownerId čita preko admin pretrage naloga.
 async function fetchOwnerId(adminApi: ApiClient, email: string): Promise<string> {
   const response = await adminApi.auth.get('users/admin/accounts', { params: { search: email } });
   await expectOk(response, `GET /auth/users/admin/accounts?search=${email}`);
