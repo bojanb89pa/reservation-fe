@@ -6,6 +6,7 @@
 // videti logs/fe-brief-admin-endpoint-preauthorize-fix-20260922-1200.md), da
 // testovi ne zavise od demo-seed biznisa koji ne postoji garantovano.
 
+import type { APIResponse } from '@playwright/test';
 import { expect, test } from '../../fixtures/auth';
 import {
   ApiClient,
@@ -43,6 +44,11 @@ function escapeRegex(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/** `expect(res.ok())` sa statusom i telom u poruci — bez ovoga CI log ne kaže zašto poziv nije uspeo. */
+async function expectOk(response: APIResponse, label: string): Promise<void> {
+  expect(response.ok(), `${label}: HTTP ${response.status()} ${await response.text()}`).toBe(true);
+}
+
 /** Lokacija sa svim obaveznim poljima iz `CreateBusinessLocationCommand` (lat/lng). */
 function novisadLocation() {
   return {
@@ -71,7 +77,7 @@ async function fetchTopLevelCategories(anonymousApi: ApiClient): Promise<Busines
   const response = await anonymousApi.get('/business-categories', {
     headers: ACCEPT_LANGUAGE_EN,
   });
-  expect(response.ok()).toBe(true);
+  await expectOk(response, 'GET /business-categories');
   const categories = (await response.json()) as BusinessCategoryDto[];
   return categories.filter((c) => c.parentId === null);
 }
@@ -89,14 +95,14 @@ async function createActiveBusiness(
       location: novisadLocation(),
     },
   });
-  expect(created.ok()).toBe(true);
+  await expectOk(created, 'POST /businesses/admin');
   const business = (await created.json()) as BusinessDto;
 
   if (categoryId) {
     const categorized = await adminApi.put(`/businesses/${business.id}/category`, {
       data: { categoryId },
     });
-    expect(categorized.ok()).toBe(true);
+    await expectOk(categorized, `PUT /businesses/${business.id}/category`);
   }
 
   return business;
@@ -174,7 +180,7 @@ test.describe('E2E-001 pregled kategorija i biznisa', () => {
           durationStep: 15,
         },
       });
-      expect(serviceCreated.ok()).toBe(true);
+      await expectOk(serviceCreated, `POST /businesses/${business.id}/services`);
       const service = (await serviceCreated.json()) as BusinessServiceDto;
 
       await page.goto(`/businesses/${business.id}`);
