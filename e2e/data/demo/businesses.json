@@ -1,0 +1,521 @@
+[
+  {
+    "name": "Kod Ane Frizerski Salon",
+    "ownerEmail": "owner-bg-1@demo.reserva.test",
+    "categoryKeywords": ["hair", "barber", "salon"],
+    "locations": [
+      { "name": "Kod Ane - Centar", "addressLine1": "Knez Mihailova 22", "city": "Beograd", "postalCode": "11000", "countryCode": "RS", "latitude": 44.8165, "longitude": 20.4589 }
+    ],
+    "services": [
+      { "name": "Šišanje", "minDuration": 30, "maxDuration": 30, "durationUnit": "MINUTES", "durationStep": 15 },
+      { "name": "Farbanje kose", "minDuration": 60, "maxDuration": 90, "durationUnit": "MINUTES", "durationStep": 15 }
+    ],
+    "resources": [
+      { "name": "Ana Anić", "type": "EMPLOYEE", "locationIndex": 0 },
+      { "name": "Marija Ilić", "type": "EMPLOYEE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "09:00:00", "endTime": "17:00:00" },
+      { "resourceIndex": 1, "days": ["TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "09:00:00", "endTime": "17:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-1@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 1, "time": "10:00" },
+      { "userEmail": "user-2@demo.reserva.test", "resourceIndex": 1, "serviceIndex": 0, "offsetDays": 2, "time": "14:30" },
+      { "userEmail": "user-3@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 1, "offsetDays": 4, "time": "11:00" }
+    ]
+  },
+  {
+    "name": "Beogradski Berberin",
+    "ownerEmail": "owner-bg-2@demo.reserva.test",
+    "categoryKeywords": ["barber", "hair", "salon"],
+    "locations": [
+      { "name": "Beogradski Berberin - Dorćol", "addressLine1": "Cara Dušana 5", "city": "Beograd", "postalCode": "11000", "countryCode": "RS", "latitude": 44.8225, "longitude": 20.4517 }
+    ],
+    "services": [
+      { "name": "Muško šišanje", "minDuration": 30, "maxDuration": 30, "durationUnit": "MINUTES", "durationStep": 15 }
+    ],
+    "resources": [
+      { "name": "Petar Nikolić", "type": "EMPLOYEE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "08:00:00", "endTime": "16:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-4@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 1, "time": "09:00" },
+      { "userEmail": "user-5@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 3, "time": "15:00" }
+    ]
+  },
+  {
+    "name": "Glow Beauty Studio",
+    "ownerEmail": "owner-bg-1@demo.reserva.test",
+    "categoryKeywords": ["beauty", "nail", "cosmet"],
+    "locations": [
+      { "name": "Glow Beauty Studio", "addressLine1": "Njegoševa 14", "city": "Beograd", "postalCode": "11000", "countryCode": "RS", "latitude": 44.8067, "longitude": 20.4674 }
+    ],
+    "services": [
+      { "name": "Manikir", "minDuration": 45, "maxDuration": 45, "durationUnit": "MINUTES", "durationStep": 15 }
+    ],
+    "resources": [
+      { "name": "Milica Radovanović", "type": "EMPLOYEE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "10:00:00", "endTime": "18:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-6@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 2, "time": "11:00" }
+    ]
+  },
+  {
+    "name": "Vitalis Spa & Masaža",
+    "ownerEmail": "owner-bg-2@demo.reserva.test",
+    "categoryKeywords": ["spa", "massage", "wellness"],
+    "locations": [
+      { "name": "Vitalis Spa", "addressLine1": "Vojvode Stepe 210", "city": "Beograd", "postalCode": "11000", "countryCode": "RS", "latitude": 44.7825, "longitude": 20.4751 }
+    ],
+    "services": [
+      { "name": "Klasična masaža", "minDuration": 60, "maxDuration": 60, "durationUnit": "MINUTES", "durationStep": 30 }
+    ],
+    "resources": [
+      { "name": "Jovana Đorđević", "type": "EMPLOYEE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "09:00:00", "endTime": "20:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-7@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 1, "time": "17:00" },
+      { "userEmail": "user-1@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 5, "time": "12:00" }
+    ]
+  },
+  {
+    "name": "Osmeh Stomatološka Ordinacija",
+    "ownerEmail": "owner-bg-1@demo.reserva.test",
+    "categoryKeywords": ["dental", "dentist"],
+    "locations": [
+      { "name": "Osmeh Ordinacija", "addressLine1": "Gospodar Jevremova 33", "city": "Beograd", "postalCode": "11000", "countryCode": "RS", "latitude": 44.8226, "longitude": 20.4622 }
+    ],
+    "services": [
+      { "name": "Stomatološki pregled", "minDuration": 30, "maxDuration": 30, "durationUnit": "MINUTES", "durationStep": 15 }
+    ],
+    "resources": [
+      { "name": "Dr Nemanja Vukašinović", "type": "EMPLOYEE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"], "startTime": "08:00:00", "endTime": "16:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-2@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 2, "time": "09:30" },
+      { "userEmail": "user-8@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 3, "time": "13:00" }
+    ]
+  },
+  {
+    "name": "FitZona Teretana",
+    "ownerEmail": "owner-bg-2@demo.reserva.test",
+    "categoryKeywords": ["fitness", "gym"],
+    "locations": [
+      { "name": "FitZona Vračar", "addressLine1": "Bulevar kralja Aleksandra 73", "city": "Beograd", "postalCode": "11000", "countryCode": "RS", "latitude": 44.8034, "longitude": 20.4756 },
+      { "name": "FitZona Novi Beograd", "addressLine1": "Bulevar Zorana Đinđića 46", "city": "Beograd", "postalCode": "11070", "countryCode": "RS", "latitude": 44.8115, "longitude": 20.4171 }
+    ],
+    "services": [
+      { "name": "Grupni trening", "minDuration": 60, "maxDuration": 60, "durationUnit": "MINUTES", "durationStep": 30 },
+      { "name": "Individualni trening", "minDuration": 45, "maxDuration": 60, "durationUnit": "MINUTES", "durationStep": 15 }
+    ],
+    "resources": [
+      { "name": "Sala A", "type": "ROOM", "locationIndex": 0 },
+      { "name": "Sala B", "type": "ROOM", "locationIndex": 1 },
+      { "name": "Marko Trener", "type": "EMPLOYEE", "locationIndex": 0 },
+      { "name": "Uroš Trener", "type": "EMPLOYEE", "locationIndex": 1 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "07:00:00", "endTime": "21:00:00" },
+      { "resourceIndex": 1, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "07:00:00", "endTime": "21:00:00" },
+      { "resourceIndex": 2, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "07:00:00", "endTime": "21:00:00" },
+      { "resourceIndex": 3, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "07:00:00", "endTime": "21:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-3@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 1, "time": "18:00" },
+      { "userEmail": "user-9@demo.reserva.test", "resourceIndex": 2, "serviceIndex": 1, "offsetDays": 2, "time": "19:00" },
+      { "userEmail": "user-10@demo.reserva.test", "resourceIndex": 1, "serviceIndex": 0, "offsetDays": 3, "time": "08:00" },
+      { "userEmail": "user-4@demo.reserva.test", "resourceIndex": 3, "serviceIndex": 1, "offsetDays": 4, "time": "17:00" }
+    ]
+  },
+  {
+    "name": "Auto Servis Nemanja",
+    "ownerEmail": "owner-bg-1@demo.reserva.test",
+    "categoryKeywords": ["auto", "car", "mechanic", "vehicle"],
+    "locations": [
+      { "name": "Auto Servis Nemanja", "addressLine1": "Ustanička 128", "city": "Beograd", "postalCode": "11000", "countryCode": "RS", "latitude": 44.7889, "longitude": 20.4823 }
+    ],
+    "services": [
+      { "name": "Servis vozila", "minDuration": 60, "maxDuration": 120, "durationUnit": "MINUTES", "durationStep": 30 }
+    ],
+    "resources": [
+      { "name": "Nemanja Tomić", "type": "EMPLOYEE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"], "startTime": "08:00:00", "endTime": "16:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-5@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 2, "time": "10:00" }
+    ]
+  },
+  {
+    "name": "Kuhinja Mama",
+    "ownerEmail": "owner-bg-2@demo.reserva.test",
+    "categoryKeywords": ["restaurant", "food", "dining"],
+    "locations": [
+      { "name": "Kuhinja Mama", "addressLine1": "Svetogorska 15", "city": "Beograd", "postalCode": "11000", "countryCode": "RS", "latitude": 44.8145, "longitude": 20.4652 }
+    ],
+    "services": [
+      { "name": "Rezervacija stola", "minDuration": 60, "maxDuration": 120, "durationUnit": "MINUTES", "durationStep": 30 }
+    ],
+    "resources": [
+      { "name": "Sto 1", "type": "TABLE", "locationIndex": 0 },
+      { "name": "Sto 2", "type": "TABLE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"], "startTime": "12:00:00", "endTime": "23:00:00" },
+      { "resourceIndex": 1, "days": ["TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"], "startTime": "12:00:00", "endTime": "23:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-6@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 1, "time": "20:00" },
+      { "userEmail": "user-7@demo.reserva.test", "resourceIndex": 1, "serviceIndex": 0, "offsetDays": 2, "time": "19:30" }
+    ]
+  },
+  {
+    "name": "PoslovniPartner Knjigovodstvo",
+    "ownerEmail": "owner-bg-1@demo.reserva.test",
+    "categoryKeywords": ["account", "consult", "business", "finance"],
+    "locations": [
+      { "name": "PoslovniPartner", "addressLine1": "Kralja Milana 41", "city": "Beograd", "postalCode": "11000", "countryCode": "RS", "latitude": 44.8069, "longitude": 20.4576 }
+    ],
+    "services": [
+      { "name": "Knjigovodstvene konsultacije", "minDuration": 30, "maxDuration": 60, "durationUnit": "MINUTES", "durationStep": 15 }
+    ],
+    "resources": [
+      { "name": "Snežana Petrović", "type": "EMPLOYEE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"], "startTime": "09:00:00", "endTime": "17:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-8@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 3, "time": "11:00" }
+    ]
+  },
+  {
+    "name": "Foto Studio Prizma",
+    "ownerEmail": "owner-bg-2@demo.reserva.test",
+    "categoryKeywords": ["photo"],
+    "locations": [
+      { "name": "Foto Studio Prizma", "addressLine1": "Terazije 27", "city": "Beograd", "postalCode": "11000", "countryCode": "RS", "latitude": 44.8142, "longitude": 20.4600 }
+    ],
+    "services": [
+      { "name": "Foto sesija", "minDuration": 60, "maxDuration": 120, "durationUnit": "MINUTES", "durationStep": 30 }
+    ],
+    "resources": [
+      { "name": "Studio 1", "type": "ROOM", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "10:00:00", "endTime": "18:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-9@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 4, "time": "14:00" }
+    ]
+  },
+  {
+    "name": "Novosadski Frizer",
+    "ownerEmail": "owner-ns-1@demo.reserva.test",
+    "categoryKeywords": ["hair", "barber", "salon"],
+    "locations": [
+      { "name": "Novosadski Frizer", "addressLine1": "Zmaj Jovina 3", "city": "Novi Sad", "postalCode": "21000", "countryCode": "RS", "latitude": 45.2553, "longitude": 19.8449 }
+    ],
+    "services": [
+      { "name": "Šišanje", "minDuration": 30, "maxDuration": 30, "durationUnit": "MINUTES", "durationStep": 15 }
+    ],
+    "resources": [
+      { "name": "Ivana Marković", "type": "EMPLOYEE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "09:00:00", "endTime": "17:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-10@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 1, "time": "10:30" }
+    ]
+  },
+  {
+    "name": "Berbernica Kod Steve",
+    "ownerEmail": "owner-ns-2@demo.reserva.test",
+    "categoryKeywords": ["barber", "hair", "salon"],
+    "locations": [
+      { "name": "Berbernica Kod Steve", "addressLine1": "Dunavska 12", "city": "Novi Sad", "postalCode": "21000", "countryCode": "RS", "latitude": 45.2571, "longitude": 19.8419 }
+    ],
+    "services": [
+      { "name": "Muško šišanje", "minDuration": 30, "maxDuration": 30, "durationUnit": "MINUTES", "durationStep": 15 }
+    ],
+    "resources": [
+      { "name": "Stevan Pavlović", "type": "EMPLOYEE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "08:00:00", "endTime": "16:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-1@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 2, "time": "09:00" }
+    ]
+  },
+  {
+    "name": "Wellness Oaza",
+    "ownerEmail": "owner-ns-1@demo.reserva.test",
+    "categoryKeywords": ["spa", "massage", "wellness"],
+    "locations": [
+      { "name": "Wellness Oaza", "addressLine1": "Laze Telečkog 5", "city": "Novi Sad", "postalCode": "21000", "countryCode": "RS", "latitude": 45.2489, "longitude": 19.8391 }
+    ],
+    "services": [
+      { "name": "Klasična masaža", "minDuration": 60, "maxDuration": 60, "durationUnit": "MINUTES", "durationStep": 30 }
+    ],
+    "resources": [
+      { "name": "Tijana Radić", "type": "EMPLOYEE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "09:00:00", "endTime": "20:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-2@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 3, "time": "16:00" }
+    ]
+  },
+  {
+    "name": "Nasmejani Zubi",
+    "ownerEmail": "owner-ns-2@demo.reserva.test",
+    "categoryKeywords": ["dental", "dentist"],
+    "locations": [
+      { "name": "Nasmejani Zubi", "addressLine1": "Futoška 1", "city": "Novi Sad", "postalCode": "21000", "countryCode": "RS", "latitude": 45.2544, "longitude": 19.8300 }
+    ],
+    "services": [
+      { "name": "Stomatološki pregled", "minDuration": 30, "maxDuration": 30, "durationUnit": "MINUTES", "durationStep": 15 }
+    ],
+    "resources": [
+      { "name": "Dr Bojana Stanišić", "type": "EMPLOYEE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"], "startTime": "08:00:00", "endTime": "16:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-3@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 1, "time": "09:30" }
+    ]
+  },
+  {
+    "name": "PowerGym Novi Sad",
+    "ownerEmail": "owner-ns-1@demo.reserva.test",
+    "categoryKeywords": ["fitness", "gym"],
+    "locations": [
+      { "name": "PowerGym Centar", "addressLine1": "Bulevar oslobođenja 100", "city": "Novi Sad", "postalCode": "21000", "countryCode": "RS", "latitude": 45.2601, "longitude": 19.8259 },
+      { "name": "PowerGym Liman", "addressLine1": "Bulevar cara Lazara 65", "city": "Novi Sad", "postalCode": "21000", "countryCode": "RS", "latitude": 45.2456, "longitude": 19.8482 }
+    ],
+    "services": [
+      { "name": "Grupni trening", "minDuration": 60, "maxDuration": 60, "durationUnit": "MINUTES", "durationStep": 30 },
+      { "name": "Individualni trening", "minDuration": 45, "maxDuration": 60, "durationUnit": "MINUTES", "durationStep": 15 }
+    ],
+    "resources": [
+      { "name": "Sala 1", "type": "ROOM", "locationIndex": 0 },
+      { "name": "Sala 2", "type": "ROOM", "locationIndex": 1 },
+      { "name": "Dušan Trener", "type": "EMPLOYEE", "locationIndex": 0 },
+      { "name": "Ognjen Trener", "type": "EMPLOYEE", "locationIndex": 1 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "07:00:00", "endTime": "21:00:00" },
+      { "resourceIndex": 1, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "07:00:00", "endTime": "21:00:00" },
+      { "resourceIndex": 2, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "07:00:00", "endTime": "21:00:00" },
+      { "resourceIndex": 3, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "07:00:00", "endTime": "21:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-4@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 1, "time": "18:30" },
+      { "userEmail": "user-5@demo.reserva.test", "resourceIndex": 2, "serviceIndex": 1, "offsetDays": 2, "time": "19:00" },
+      { "userEmail": "user-6@demo.reserva.test", "resourceIndex": 1, "serviceIndex": 0, "offsetDays": 3, "time": "08:00" }
+    ]
+  },
+  {
+    "name": "Četiri Šape Veterina",
+    "ownerEmail": "owner-ns-2@demo.reserva.test",
+    "categoryKeywords": ["vet", "pet", "animal"],
+    "locations": [
+      { "name": "Četiri Šape Veterina", "addressLine1": "Narodnog fronta 45", "city": "Novi Sad", "postalCode": "21000", "countryCode": "RS", "latitude": 45.2497, "longitude": 19.8433 }
+    ],
+    "services": [
+      { "name": "Pregled ljubimca", "minDuration": 30, "maxDuration": 30, "durationUnit": "MINUTES", "durationStep": 15 }
+    ],
+    "resources": [
+      { "name": "Dr Marko Jelić", "type": "EMPLOYEE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "09:00:00", "endTime": "17:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-7@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 2, "time": "12:00" }
+    ]
+  },
+  {
+    "name": "Kafe Slatki Ćošak",
+    "ownerEmail": "owner-ns-1@demo.reserva.test",
+    "categoryKeywords": ["cafe", "coffee"],
+    "locations": [
+      { "name": "Kafe Slatki Ćošak", "addressLine1": "Temerinska 20", "city": "Novi Sad", "postalCode": "21000", "countryCode": "RS", "latitude": 45.2603, "longitude": 19.8467 }
+    ],
+    "services": [
+      { "name": "Rezervacija stola", "minDuration": 30, "maxDuration": 60, "durationUnit": "MINUTES", "durationStep": 15 }
+    ],
+    "resources": [
+      { "name": "Sto 1", "type": "TABLE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"], "startTime": "08:00:00", "endTime": "22:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-8@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 1, "time": "17:00" }
+    ]
+  },
+  {
+    "name": "Pravni Tim Advokati",
+    "ownerEmail": "owner-ns-2@demo.reserva.test",
+    "categoryKeywords": ["legal", "law", "attorney"],
+    "locations": [
+      { "name": "Pravni Tim Advokati", "addressLine1": "Zmaj Jovina 20", "city": "Novi Sad", "postalCode": "21000", "countryCode": "RS", "latitude": 45.2558, "longitude": 19.8452 }
+    ],
+    "services": [
+      { "name": "Pravna konsultacija", "minDuration": 30, "maxDuration": 60, "durationUnit": "MINUTES", "durationStep": 15 }
+    ],
+    "resources": [
+      { "name": "Advokat Jovan Perić", "type": "EMPLOYEE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"], "startTime": "09:00:00", "endTime": "17:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-9@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 4, "time": "10:00" }
+    ]
+  },
+  {
+    "name": "Niški Frizerski Salon",
+    "ownerEmail": "owner-ni-1@demo.reserva.test",
+    "categoryKeywords": ["hair", "barber", "salon"],
+    "locations": [
+      { "name": "Niški Frizerski Salon", "addressLine1": "Obrenovićeva 10", "city": "Niš", "postalCode": "18000", "countryCode": "RS", "latitude": 43.3202, "longitude": 21.8958 }
+    ],
+    "services": [
+      { "name": "Šišanje", "minDuration": 30, "maxDuration": 30, "durationUnit": "MINUTES", "durationStep": 15 }
+    ],
+    "resources": [
+      { "name": "Marija Stojanović", "type": "EMPLOYEE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "09:00:00", "endTime": "17:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-10@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 2, "time": "11:00" }
+    ]
+  },
+  {
+    "name": "Berbernica Južni Vetar",
+    "ownerEmail": "owner-ni-2@demo.reserva.test",
+    "categoryKeywords": ["barber", "hair", "salon"],
+    "locations": [
+      { "name": "Berbernica Južni Vetar", "addressLine1": "Vožda Karađorđa 22", "city": "Niš", "postalCode": "18000", "countryCode": "RS", "latitude": 43.3182, "longitude": 21.8912 }
+    ],
+    "services": [
+      { "name": "Muško šišanje", "minDuration": 30, "maxDuration": 30, "durationUnit": "MINUTES", "durationStep": 15 }
+    ],
+    "resources": [
+      { "name": "Aleksandar Mitić", "type": "EMPLOYEE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "08:00:00", "endTime": "16:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-1@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 3, "time": "09:00" }
+    ]
+  },
+  {
+    "name": "Harmonija Masaža",
+    "ownerEmail": "owner-ni-1@demo.reserva.test",
+    "categoryKeywords": ["spa", "massage", "wellness"],
+    "locations": [
+      { "name": "Harmonija Masaža", "addressLine1": "Kopitareva 8", "city": "Niš", "postalCode": "18000", "countryCode": "RS", "latitude": 43.3221, "longitude": 21.8975 }
+    ],
+    "services": [
+      { "name": "Klasična masaža", "minDuration": 60, "maxDuration": 60, "durationUnit": "MINUTES", "durationStep": 30 }
+    ],
+    "resources": [
+      { "name": "Sanja Đokić", "type": "EMPLOYEE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], "startTime": "09:00:00", "endTime": "20:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-2@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 1, "time": "15:00" }
+    ]
+  },
+  {
+    "name": "Nišlijski Roštilj",
+    "ownerEmail": "owner-ni-2@demo.reserva.test",
+    "categoryKeywords": ["restaurant", "food", "dining"],
+    "locations": [
+      { "name": "Nišlijski Roštilj Centar", "addressLine1": "Nikole Pašića 12", "city": "Niš", "postalCode": "18000", "countryCode": "RS", "latitude": 43.3211, "longitude": 21.8952 },
+      { "name": "Nišlijski Roštilj Jug", "addressLine1": "Bulevar Nemanjića 88", "city": "Niš", "postalCode": "18000", "countryCode": "RS", "latitude": 43.3097, "longitude": 21.8836 }
+    ],
+    "services": [
+      { "name": "Rezervacija stola", "minDuration": 60, "maxDuration": 120, "durationUnit": "MINUTES", "durationStep": 30 }
+    ],
+    "resources": [
+      { "name": "Sto 1", "type": "TABLE", "locationIndex": 0 },
+      { "name": "Sto 2", "type": "TABLE", "locationIndex": 0 },
+      { "name": "Sto 3", "type": "TABLE", "locationIndex": 1 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"], "startTime": "12:00:00", "endTime": "23:00:00" },
+      { "resourceIndex": 1, "days": ["TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"], "startTime": "12:00:00", "endTime": "23:00:00" },
+      { "resourceIndex": 2, "days": ["TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"], "startTime": "12:00:00", "endTime": "23:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-3@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 1, "time": "20:00" },
+      { "userEmail": "user-4@demo.reserva.test", "resourceIndex": 1, "serviceIndex": 0, "offsetDays": 2, "time": "19:00" },
+      { "userEmail": "user-5@demo.reserva.test", "resourceIndex": 2, "serviceIndex": 0, "offsetDays": 3, "time": "21:00" }
+    ]
+  },
+  {
+    "name": "Auto Moto Servis Vuk",
+    "ownerEmail": "owner-ni-1@demo.reserva.test",
+    "categoryKeywords": ["auto", "car", "mechanic", "vehicle"],
+    "locations": [
+      { "name": "Auto Moto Servis Vuk", "addressLine1": "Cara Dušana 40", "city": "Niš", "postalCode": "18000", "countryCode": "RS", "latitude": 43.3245, "longitude": 21.9012 }
+    ],
+    "services": [
+      { "name": "Servis vozila", "minDuration": 60, "maxDuration": 120, "durationUnit": "MINUTES", "durationStep": 30 }
+    ],
+    "resources": [
+      { "name": "Vuk Anđelković", "type": "EMPLOYEE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"], "startTime": "08:00:00", "endTime": "16:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-6@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 2, "time": "10:00" }
+    ]
+  },
+  {
+    "name": "Škola Stranih Jezika Lingua",
+    "ownerEmail": "owner-ni-2@demo.reserva.test",
+    "categoryKeywords": ["education", "tutor", "school", "language", "learn"],
+    "locations": [
+      { "name": "Škola Stranih Jezika Lingua", "addressLine1": "Vožda Karađorđa 55", "city": "Niš", "postalCode": "18000", "countryCode": "RS", "latitude": 43.3168, "longitude": 21.8899 }
+    ],
+    "services": [
+      { "name": "Čas jezika", "minDuration": 45, "maxDuration": 45, "durationUnit": "MINUTES", "durationStep": 15 }
+    ],
+    "resources": [
+      { "name": "Profesorka Tamara Filipović", "type": "EMPLOYEE", "locationIndex": 0 }
+    ],
+    "availability": [
+      { "resourceIndex": 0, "days": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"], "startTime": "14:00:00", "endTime": "20:00:00" }
+    ],
+    "reservations": [
+      { "userEmail": "user-7@demo.reserva.test", "resourceIndex": 0, "serviceIndex": 0, "offsetDays": 3, "time": "16:00" }
+    ]
+  }
+]
