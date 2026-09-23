@@ -87,6 +87,22 @@ jobs:
           cd "$DEPLOY_DIR"
           docker compose up -d
 
+      # Samo wget unutar kontejnera, bez browsera. reserva_fe nema port na
+      # hostu (ide preko mreze `web`), pa se proverava iznutra. 127.0.0.1, ne
+      # localhost: busybox bira ::1, a nginx slusa samo IPv4.
+      - name: Health check
+        run: |
+          for _ in $(seq 1 18); do
+            if docker exec reserva_fe wget -qO- http://127.0.0.1/ 2>/dev/null | grep -qi '<!doctype html'; then
+              echo "reserva-fe: ok"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::reserva-fe ne vraca index.html ni posle 90s"
+          docker logs --tail 50 reserva_fe || true
+          exit 1
+
       - name: Notify
         if: always()
         env:

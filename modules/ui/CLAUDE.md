@@ -80,3 +80,5 @@ src/
 - UI never accesses repositories directly
 - Routing guards use the `useAuthStore` — never call auth API directly
 - All domain types used in components come from `@domain`
+- Every interactive element has an accessible role and name (visible text, `<label>`, or `aria-label`); E2E tests select by `getByRole` / `getByLabel`
+- `data-testid="<area>-<element>"` only when role and name are not unique (repeated cards, time slots); never as a replacement for a missing label
