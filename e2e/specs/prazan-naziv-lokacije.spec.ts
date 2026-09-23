@@ -70,12 +70,48 @@ async function createActiveBusiness(adminApi: ApiClient, ownerId: string): Promi
 }
 
 test.describe('epic:21 prazan naziv lokacije pri pravljenju biznisa/lokacije', () => {
-  test('dashboard → novi biznis: dugme za čuvanje je onemogućeno i vidljiva je poruka dok je naziv lokacije prazan', async ({
+  test('onboarding → novi biznis: dugme za slanje je onemogućeno i vidljiva je poruka dok je naziv lokacije prazan', async ({
     page,
     user,
     loginAs,
   }) => {
+    // Nov korisnik nema aktivan biznis, pa ga DashboardLayout ionako šalje na
+    // /business-onboarding — to je njegova forma za pravljenje biznisa.
     await loginAs(user);
+    await page.goto('/business-onboarding');
+
+    await page.getByRole('textbox', { name: 'Maison Kohl' }).fill(uniqueName('E2E Biznis'));
+
+    const locationNameInput = page.getByRole('textbox', { name: 'Main branch' });
+    await expect(locationNameInput).toHaveValue('');
+    await expect(page.getByText('Branch name is required.')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Submit for review' })).toBeDisabled();
+
+    await locationNameInput.fill(uniqueName('Lokacija'));
+    await expect(page.getByText('Branch name is required.')).not.toBeVisible();
+    // Adresa/mesto još nije izabrano (ne diramo Google Places u E2E-u — vidi
+    // GOOGLE_PLACES_API_KEY=e2e-unused u compose.e2e.yml), pa dugme ostaje
+    // onemogućeno i posle unosa naziva — to je odvojen uslov, nepromenjen ovim
+    // tiketom.
+    await expect(page.getByRole('button', { name: 'Submit for review' })).toBeDisabled();
+  });
+
+  test('dashboard → novi biznis: dugme za čuvanje je onemogućeno i vidljiva je poruka dok je naziv lokacije prazan', async ({
+    page,
+    loginAs,
+  }) => {
+    // Dashboard je dostupan samo vlasniku sa bar jednim aktivnim biznisom
+    // (DashboardLayout inače preusmerava na /business-onboarding).
+    const owner = await createActivatedUser();
+    const adminApi = await ApiClient.as(adminCredentials());
+    try {
+      const ownerId = await fetchOwnerId(adminApi, owner.email);
+      await createActiveBusiness(adminApi, ownerId);
+    } finally {
+      await adminApi.dispose();
+    }
+
+    await loginAs(owner);
     await page.goto('/dashboard/businesses');
 
     await page.getByRole('button', { name: '+ New business' }).click();
@@ -88,10 +124,6 @@ test.describe('epic:21 prazan naziv lokacije pri pravljenju biznisa/lokacije', (
 
     await locationNameInput.fill(uniqueName('Lokacija'));
     await expect(page.getByText('Branch name is required.')).not.toBeVisible();
-    // Adresa/mesto još nije izabrano (ne dirамo Google Places u E2E-u — vidi
-    // GOOGLE_PLACES_API_KEY=e2e-unused u compose.e2e.yml), pa dugme ostaje
-    // onemogućeno i posle unosa naziva — to je odvojen uslov, nepromenjen ovim
-    // tiketom.
     await expect(page.getByRole('button', { name: 'Create business' })).toBeDisabled();
   });
 
