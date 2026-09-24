@@ -5,12 +5,8 @@ import { ApiClient, createActivatedUser, type Credentials } from './api';
 /** Ključ pod kojim FE (`tokenStorage.ts`) čuva access token. */
 export const ACCESS_TOKEN_KEY = 'reserva_access_token';
 
-/**
- * Prijava kroz pravi OAuth tok u browseru: authorize → login forma
- * auth-service-a → /callback na FE-u → FE razmeni code za token. Isti URL
- * gradi FE u `redirectToAuthorize()`.
- */
-export async function loginInBrowser(page: Page, credentials: Credentials): Promise<void> {
+/** Isti URL gradi FE u `redirectToAuthorize()`. */
+function buildAuthorizeUrl(): URL {
   const authorizeUrl = new URL(`${env.authUrl}/oauth2/authorize`);
   authorizeUrl.search = new URLSearchParams({
     response_type: 'code',
@@ -18,13 +14,28 @@ export async function loginInBrowser(page: Page, credentials: Credentials): Prom
     redirect_uri: env.oauthRedirectUri,
     scope: 'openid profile read write',
   }).toString();
+  return authorizeUrl;
+}
 
-  await page.goto(authorizeUrl.toString());
-  // Login strana je Thymeleaf šablon auth-service-a, ne FE; id-jevi su tamo
-  // stabilni, a tekst labela zavisi od jezika iz kolačića.
+/**
+ * Popunjava i šalje login formu auth-service-a (Thymeleaf šablon, ne FE;
+ * id-jevi su tamo stabilni, a tekst labela zavisi od jezika iz kolačića). Ne
+ * čeka uspešnu prijavu — pozivalac odlučuje šta sledeće očekuje (uspeh ili
+ * grešku na formi).
+ */
+export async function submitLoginForm(page: Page, credentials: Credentials): Promise<void> {
   await page.locator('#username').fill(credentials.email);
   await page.locator('#password').fill(credentials.password);
   await page.locator('form.auth-form button[type="submit"]').click();
+}
+
+/**
+ * Prijava kroz pravi OAuth tok u browseru: authorize → login forma
+ * auth-service-a → /callback na FE-u → FE razmeni code za token.
+ */
+export async function loginInBrowser(page: Page, credentials: Credentials): Promise<void> {
+  await page.goto(buildAuthorizeUrl().toString());
+  await submitLoginForm(page, credentials);
 
   await page.waitForURL((url) => url.origin === new URL(env.baseUrl).origin && !url.pathname.startsWith('/callback'));
   await expect
