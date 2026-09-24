@@ -11,6 +11,14 @@
 // spec fajlova takođe koriste, pa je biranje po indeksu iz seed liste
 // (`topLevel[i]`) i dalje sudar čim se poklopi sa tuđim izborom — sopstvena
 // kategorija to potpuno eliminiše.
+//
+// `GET /businesses/nearby` (BE) vraća samo lokacije sa `ownerConfirmed = true`
+// (`BusinessLocationRepository.findNearestConfirmedLocations`), a
+// `POST /businesses/admin` pravi lokaciju sa podrazumevanim `ownerConfirmed = false`
+// — bez eksplicitne potvrde (`POST /businesses/{id}/locations/{locationId}/confirm`)
+// biznis se NIKAD ne pojavljuje na `/businesses/near-me`, bez obzira na
+// udaljenost ili kategoriju. To je pravi uzrok pada ovog fajla na CI (oba
+// prethodna pokušaja su pogrešno pretpostavila trku oko deljene kategorije).
 
 import type { APIResponse, Page } from '@playwright/test';
 import { expect, test } from '../../fixtures/auth';
@@ -39,6 +47,10 @@ interface BusinessLocationRequest {
   countryCode: string;
   latitude: number;
   longitude: number;
+}
+
+interface BusinessLocationDto {
+  id: string;
 }
 
 const NOVI_SAD = { latitude: 45.2671, longitude: 19.8335 };
@@ -101,7 +113,11 @@ async function createUniqueCategory(
   return (await created.json()) as BusinessCategoryDto;
 }
 
-/** Aktivan biznis (admin kreacija je odmah aktivna) sa zadatom lokacijom i kategorijom. */
+/**
+ * Aktivan biznis (admin kreacija je odmah aktivna) sa zadatom lokacijom i kategorijom,
+ * čija je lokacija eksplicitno potvrđena — `/businesses/nearby` vraća samo lokacije sa
+ * `ownerConfirmed = true`, a `POST /businesses/admin` ih pravi kao nepotvrđene.
+ */
 async function createActiveBusiness(
   adminApi: ApiClient,
   ownerId: string,
@@ -119,6 +135,21 @@ async function createActiveBusiness(
     data: { categoryId },
   });
   await expectOk(categorized, `PUT /businesses/${business.id}/category`);
+
+  const locations = await adminApi.get(`/businesses/${business.id}/locations`);
+  await expectOk(locations, `GET /businesses/${business.id}/locations`);
+  const [businessLocation] = (await locations.json()) as BusinessLocationDto[];
+  if (!businessLocation) {
+    throw new Error(`biznis ${business.id} nema nijednu lokaciju (GET /businesses/${business.id}/locations)`);
+  }
+
+  const confirmed = await adminApi.post(
+    `/businesses/${business.id}/locations/${businessLocation.id}/confirm`,
+  );
+  await expectOk(
+    confirmed,
+    `POST /businesses/${business.id}/locations/${businessLocation.id}/confirm`,
+  );
 
   return business;
 }
