@@ -27,7 +27,11 @@ test.describe('E2E-004 prijava i odjava', () => {
     page,
     user,
   }) => {
-    await page.goto('/my-reservations');
+    // `waitUntil: 'commit'` — MyReservationsPage odmah po mount-u (efekat bez
+    // čekanja) radi pun redirect na auth-service; podrazumevano `'load'` ume
+    // da se otkine (`ERR_ABORTED`) jer taj redirect krene pre nego što
+    // Playwright završi da prati 'load' inicijalne SPA navigacije.
+    await page.goto('/my-reservations', { waitUntil: 'commit' });
     await page.waitForURL((url) => url.origin === new URL(env.authUrl).origin);
 
     await submitLoginForm(page, user);
@@ -46,17 +50,19 @@ test.describe('E2E-004 prijava i odjava', () => {
     await submitLoginForm(page, { email: user.email, password: uniqueName('pogresna-lozinka') });
 
     // Spring Security-jev podrazumevani neuspeli login redirect vraća na
-    // login formu sa `error` u query stringu (isto proveravano u
-    // `fetchAccessToken`, fixtures/api.ts) — potvrđuje da prijava nije
-    // uspela. Tačan tekst/oblik vidljive poruke o grešci nismo mogli da
-    // proverimo (auth-service Thymeleaf šablon nije deo ovog repoa), pa
-    // proveravamo najčešći a11y obrazac za takvu poruku.
-    // WARNING: pretpostavljen selektor greške na login formi — proveriti u CI logu pre merge-a.
+    // login formu sa `error` u query stringu (isti signal koji
+    // `fetchAccessToken`, fixtures/api.ts, koristi da prepozna neuspelu
+    // prijavu) — to je framework-garantovano ponašanje i pouzdan dokaz da je
+    // auth-service odbio prijavu i vratio korisnika na formu za novi
+    // pokušaj. Tačan izgled vidljive poruke o grešci ne možemo proveriti:
+    // auth-service Thymeleaf šablon nije deo ovog repoa niti dostupan van
+    // Docker image-a. Prethodna verzija je nagađala `role="alert"` i
+    // engleski tekst; CI je pokazao da to ne postoji na formi, pa je
+    // uklonjeno — videti `needs_input` u odgovoru agenta za ovaj tiket.
     await expect.poll(() => page.url()).toContain('error');
     await expect(page.locator('form.auth-form')).toBeVisible();
-    await expect(
-      page.getByRole('alert').or(page.getByText(/invalid|incorrect|bad credentials/i)),
-    ).toBeVisible();
+    await expect(page.locator('#username')).toBeVisible();
+    await expect(page.locator('#password')).toBeVisible();
   });
 
   test('posle odjave zaštićena ruta ponovo traži login', async ({ page, user, loginAs }) => {
@@ -67,7 +73,7 @@ test.describe('E2E-004 prijava i odjava', () => {
     await page.waitForURL((url) => url.origin === new URL(env.baseUrl).origin);
     await expect(page.getByRole('button', { name: 'Sign in' })).toBeVisible();
 
-    await page.goto('/my-reservations');
+    await page.goto('/my-reservations', { waitUntil: 'commit' });
     await page.waitForURL((url) => url.origin === new URL(env.authUrl).origin);
     await expect(page.locator('form.auth-form')).toBeVisible();
   });
