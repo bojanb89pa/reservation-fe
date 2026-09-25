@@ -25,6 +25,7 @@ import { DashboardBusinessesPage } from '../pages/dashboard/DashboardBusinessesP
 import { DashboardBusinessPage } from '../pages/dashboard/DashboardBusinessPage';
 import { DashboardMyBusinessesPage } from '../pages/dashboard/DashboardMyBusinessesPage';
 import { DashboardCategoriesPage } from '../pages/dashboard/DashboardCategoriesPage';
+import { DashboardClientApplicationsPage } from '../pages/dashboard/DashboardClientApplicationsPage';
 import { DashboardReservationsPage } from '../pages/dashboard/DashboardReservationsPage';
 import { DashboardUsersPage } from '../pages/dashboard/DashboardUsersPage';
 import { DashboardUserDetailPage } from '../pages/dashboard/DashboardUserDetailPage';
@@ -78,6 +79,7 @@ export function AppRouter() {
           <Route path="my-businesses" element={<DashboardMyBusinessesPage />} />
           <Route element={<AdminRoute />}>
             <Route path="categories" element={<DashboardCategoriesPage />} />
+            <Route path="client-applications" element={<DashboardClientApplicationsPage />} />
             <Route path="users" element={<DashboardUsersPage />} />
             <Route path="users/:id" element={<DashboardUserDetailPage />} />
           </Route>
