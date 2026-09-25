@@ -32,7 +32,12 @@ test.describe('E2E-004 prijava i odjava', () => {
     // da se otkine (`ERR_ABORTED`) jer taj redirect krene pre nego što
     // Playwright završi da prati 'load' inicijalne SPA navigacije.
     await page.goto('/my-reservations', { waitUntil: 'commit' });
-    await page.waitForURL((url) => url.origin === new URL(env.authUrl).origin);
+    // `waitUntil: 'commit'` i ovde — auth-service ume da uradi dodatni
+    // redirect pre nego što stigne do login forme, pa podrazumevano `'load'`
+    // zna da se otkine (`ERR_ABORTED`) usred tog lanca redirect-a.
+    await page.waitForURL((url) => url.origin === new URL(env.authUrl).origin, {
+      waitUntil: 'commit',
+    });
 
     await submitLoginForm(page, user);
 
@@ -74,7 +79,9 @@ test.describe('E2E-004 prijava i odjava', () => {
     await expect(page.getByRole('button', { name: 'Sign in' })).toBeVisible();
 
     await page.goto('/my-reservations', { waitUntil: 'commit' });
-    await page.waitForURL((url) => url.origin === new URL(env.authUrl).origin);
+    await page.waitForURL((url) => url.origin === new URL(env.authUrl).origin, {
+      waitUntil: 'commit',
+    });
     await expect(page.locator('form.auth-form')).toBeVisible();
   });
 });
