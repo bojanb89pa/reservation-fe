@@ -88,3 +88,5 @@ export { ListContactInfoUseCaseImpl } from './use-cases/business-contact-info/Li
 export { AddContactInfoUseCaseImpl } from './use-cases/business-contact-info/AddContactInfoUseCaseImpl';
 export { UpdateContactInfoUseCaseImpl } from './use-cases/business-contact-info/UpdateContactInfoUseCaseImpl';
 export { RemoveContactInfoUseCaseImpl } from './use-cases/business-contact-info/RemoveContactInfoUseCaseImpl';
+
+export { RegisterClientApplicationUseCaseImpl } from './use-cases/client-application/RegisterClientApplicationUseCaseImpl';
