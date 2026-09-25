@@ -31,14 +31,17 @@ test.describe('E2E-004 prijava i odjava', () => {
     // čekanja) radi pun redirect na auth-service; podrazumevano `'load'` ume
     // da se otkine (`ERR_ABORTED`) jer taj redirect krene pre nego što
     // Playwright završi da prati 'load' inicijalne SPA navigacije.
+    //
+    // Namerno NEMA `page.waitForURL(authUrl origin)` ovde: taj redirect je
+    // `window.location.href` iz React efekta koji krene dok Playwright još
+    // prati commit prethodne navigacije, pa `waitForURL` ume da uhvati baš
+    // taj trenutak i baci `ERR_ABORTED` / "frame was detached" na usputnom
+    // redirect lancu auth-service-a pre login forme (probano i sa
+    // `waitUntil: 'commit'` — i dalje je flaky u CI). `submitLoginForm`
+    // (preko `locator.fill`) sam čeka da `#username`/`#password` postanu
+    // dostupni, kroz koliko god redirect-a treba, pa je to pouzdaniji dokaz
+    // da smo stigli na login formu.
     await page.goto('/my-reservations', { waitUntil: 'commit' });
-    // `waitUntil: 'commit'` i ovde — auth-service ume da uradi dodatni
-    // redirect pre nego što stigne do login forme, pa podrazumevano `'load'`
-    // zna da se otkine (`ERR_ABORTED`) usred tog lanca redirect-a.
-    await page.waitForURL((url) => url.origin === new URL(env.authUrl).origin, {
-      waitUntil: 'commit',
-    });
-
     await submitLoginForm(page, user);
 
     await page.waitForURL(
@@ -78,10 +81,10 @@ test.describe('E2E-004 prijava i odjava', () => {
     await page.waitForURL((url) => url.origin === new URL(env.baseUrl).origin);
     await expect(page.getByRole('button', { name: 'Sign in' })).toBeVisible();
 
+    // Isto obrazloženje kao u prethodnom testu — bez `waitForURL` za
+    // cross-origin redirect na auth-service; `toBeVisible()` sam čeka kroz
+    // redirect lanac.
     await page.goto('/my-reservations', { waitUntil: 'commit' });
-    await page.waitForURL((url) => url.origin === new URL(env.authUrl).origin, {
-      waitUntil: 'commit',
-    });
     await expect(page.locator('form.auth-form')).toBeVisible();
   });
 });
