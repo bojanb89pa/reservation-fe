@@ -85,6 +85,15 @@ export async function fetchAccessToken(credentials: Credentials): Promise<string
   }
 }
 
+/** Otvara aktivacioni link iz Mailpit-a i baca ako aktivacija nije uspela. */
+async function openActivationLink(http: APIRequestContext, email: string): Promise<void> {
+  const activation = await http.get(await activationLink(email), { maxRedirects: 0 });
+  const location = activation.headers()['location'] ?? '';
+  if (activation.status() >= 400 || location.includes('error=')) {
+    throw new Error(`aktivacija ${email} nije uspela (${activation.status()} ${location})`);
+  }
+}
+
 /**
  * Registruje nalog kroz javni API i aktivira ga linkom iz Mailpit-a, kao pravi
  * korisnik. Radi samo nad stackom sa Mailpit-om (CI), ne nad staging-om.
@@ -109,15 +118,24 @@ export async function createActivatedUser(
     if (!response.ok()) {
       throw new Error(`registracija ${credentials.email}: HTTP ${response.status()} ${await response.text()}`);
     }
-    const activation = await http.get(await activationLink(credentials.email), { maxRedirects: 0 });
-    const location = activation.headers()['location'] ?? '';
-    if (activation.status() >= 400 || location.includes('error=')) {
-      throw new Error(`aktivacija ${credentials.email} nije uspela (${activation.status()} ${location})`);
-    }
+    await openActivationLink(http, credentials.email);
   } finally {
     await http.dispose();
   }
   return credentials;
+}
+
+/**
+ * Aktivira nalog registrovan van ove datoteke (npr. kroz `/register` formu u
+ * browseru) — čeka aktivacioni mejl u Mailpit-u i otvara link iz njega.
+ */
+export async function activateRegisteredUser(email: string): Promise<void> {
+  const http = await request.newContext();
+  try {
+    await openActivationLink(http, email);
+  } finally {
+    await http.dispose();
+  }
 }
 
 /** Admin iz bootstrap-a (`ADMIN_BOOTSTRAP_*`), nikad lični admin. */
