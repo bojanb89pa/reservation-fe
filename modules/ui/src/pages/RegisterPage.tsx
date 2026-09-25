@@ -66,7 +66,7 @@ export function RegisterPage() {
         <h1 className={styles.title}>{t('auth.joinReserva')}</h1>
 
         {error && (
-          <div className="error-box" style={{ marginBottom: 16 }}>
+          <div className="error-box" data-testid="register-error" style={{ marginBottom: 16 }}>
             {error}
           </div>
         )}
@@ -78,6 +78,7 @@ export function RegisterPage() {
               <input
                 name="firstName"
                 required
+                aria-label={t('auth.firstName')}
                 className="form-input"
                 value={form.firstName}
                 onChange={handleChange}
@@ -88,6 +89,7 @@ export function RegisterPage() {
               <input
                 name="lastName"
                 required
+                aria-label={t('auth.lastName')}
                 className="form-input"
                 value={form.lastName}
                 onChange={handleChange}
@@ -100,6 +102,7 @@ export function RegisterPage() {
               name="email"
               type="email"
               required
+              aria-label={t('auth.email')}
               className="form-input"
               value={form.email}
               onChange={handleChange}
@@ -112,6 +115,7 @@ export function RegisterPage() {
               type="password"
               required
               minLength={6}
+              aria-label={t('auth.password')}
               className="form-input"
               value={form.password}
               onChange={handleChange}
