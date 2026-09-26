@@ -7,15 +7,6 @@
 // Ciljni dan je nekoliko dana unapred (ne "danas", da izbegnemo granicu
 // prošlo/buduće vreme u toku dana) i pravilo dostupnosti pokriva tačno taj
 // dan u nedelji (08:00–20:00), pa je 08:00 uvek prvi slobodan termin.
-//
-// NALAZI (testovi ispod ih tačno proveravaju, pa mogu pasti na CI):
-// - `ReservationHeldPage` (modules/ui/src/pages/ReservationHeldPage.tsx) ne
-//   prikazuje naziv usluge — samo biznis, resurs, vreme i kod potvrde. AK-006-2
-//   traži "detalje (biznis, usluga, vreme)".
-// - `BusinessDetailPage.handleConfirm` (modules/ui/src/pages/BusinessDetailPage.tsx,
-//   oko linije 47-51) za neulogovanog korisnika radi `navigate('/')` umesto
-//   `initiateLogin()` (obrazac iz `MyReservationsPage.tsx`) — korisnik ostaje
-//   na početnoj, ne ide na login formu auth-service-a.
 
 import type { APIResponse, Page } from '@playwright/test';
 import { expect, test, loginInBrowser } from '../../fixtures/auth';
@@ -310,7 +301,6 @@ test.describe('E2E-006 rezervacija termina', () => {
       // exact: true — bez toga regex pogađa i samostalan naziv biznisa (subtitle)
       // i kombinovani "biznis — resurs" red u dl-u, pa je lokator nejednoznačan.
       await expect(page.getByText(ctx.business.name, { exact: true })).toBeVisible();
-      // NALAZ: ReservationHeldPage ne prikazuje naziv usluge (samo biznis/resurs/vreme).
       await expect(page.getByText(new RegExp(escapeRegex(ctx.service.name)))).toBeVisible();
       await expect(page.getByText(/08:00/)).toBeVisible();
       await expect(page.getByText(/08:30/)).toBeVisible();
@@ -387,8 +377,6 @@ test.describe('E2E-006 rezervacija termina', () => {
       await page.getByRole('button', { name: '08:00', exact: true }).click();
       await page.getByRole('button', { name: 'Confirm reservation' }).click();
 
-      // NALAZ: BusinessDetailPage.handleConfirm radi navigate('/') umesto initiateLogin()
-      // za neulogovanog korisnika — ovde se očekuje login forma auth-service-a.
       await expect(page.locator('#username')).toBeVisible();
     } finally {
       await adminApi.dispose();
