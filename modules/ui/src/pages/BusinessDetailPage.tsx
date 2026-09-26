@@ -6,7 +6,7 @@ import { useResources } from '../hooks/useResources';
 import { useBusinessServices } from '../hooks/useBusinessServices';
 import { useBusinessLocations } from '../hooks/useBusinessLocations';
 import { useCreateReservation } from '../hooks/useReservations';
-import { useAuthStore } from '../state/authStore';
+import { useAuth } from '../hooks/useAuth';
 import { BookingWidget } from '../components/booking/BookingWidget';
 import type { BookingSelection } from '../components/booking/BookingWidget';
 import type { Resource } from '@domain';
@@ -25,7 +25,7 @@ function isNotFoundError(error: unknown): boolean {
 export function BusinessDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, initiateLogin } = useAuth();
   const { t } = useTranslation();
 
   const {
@@ -46,7 +46,7 @@ export function BusinessDetailPage() {
 
   const handleConfirm = async (selection: BookingSelection) => {
     if (!isAuthenticated) {
-      navigate('/');
+      initiateLogin();
       return;
     }
     const reservation = await createReservation({
@@ -56,7 +56,7 @@ export function BusinessDetailPage() {
       endTime: selection.endTime,
     });
     navigate(`/reservation/${reservation.id}/held`, {
-      state: { reservation, business, resource: selection.resource },
+      state: { reservation, business, resource: selection.resource, service: selection.service },
     });
   };
 

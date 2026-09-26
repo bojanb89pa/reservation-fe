@@ -3,12 +3,14 @@ import { useTranslation, Trans } from 'react-i18next';
 import type { Reservation } from '@domain';
 import type { Business } from '@domain';
 import type { Resource } from '@domain';
+import type { BusinessService } from '@domain';
 import styles from './ReservationHeldPage.module.css';
 
 interface HeldState {
   reservation: Reservation;
   business?: Business;
   resource?: Resource;
+  service?: BusinessService;
 }
 
 function formatDateTime(iso: string) {
@@ -37,9 +39,10 @@ export function ReservationHeldPage() {
     );
   }
 
-  const { reservation, business, resource } = state;
+  const { reservation, business, resource, service } = state;
   const businessName = business?.name ?? reservation.business?.name ?? '—';
   const resourceName = resource?.name ?? reservation.resource?.name ?? '—';
+  const serviceName = service?.name ?? reservation.service?.name ?? '—';
   const confCode = `conf-${(reservation.id ?? 'XXXXXX').slice(0, 6).toUpperCase()}`;
 
   return (
@@ -61,6 +64,10 @@ export function ReservationHeldPage() {
             <dd>
               {businessName} — {resourceName}
             </dd>
+          </div>
+          <div className={styles.row}>
+            <dt>{t('reservationHeld.service')}</dt>
+            <dd>{serviceName}</dd>
           </div>
           <div className={styles.row}>
             <dt>{t('reservationHeld.start')}</dt>

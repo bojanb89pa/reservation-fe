@@ -181,6 +181,7 @@ const en = {
     subtitle:
       "Your slot is held while <bold>{{business}}</bold> confirms. We'll let you know the moment they say yes — usually within 14 minutes.",
     where: 'Where',
+    service: 'Service',
     start: 'Start',
     end: 'End',
     confirmation: 'Confirmation',
