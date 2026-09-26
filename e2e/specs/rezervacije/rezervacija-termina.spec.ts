@@ -150,6 +150,47 @@ async function createAllDayAvailability(
   await expectOk(created, `POST /resources/${resourceId}/availability-rules`);
 }
 
+/** Granice meseca (yyyy-mm-dd) koje sadrže dati dan, isto kao `monthFrom`/`monthTo` u BookingWidget-u. */
+function monthRangeOf(dateStr: string): { from: string; to: string } {
+  const [year, month] = dateStr.split('-').map(Number) as [number, number];
+  const from = `${year}-${String(month).padStart(2, '0')}-01`;
+  const lastDay = new Date(year, month, 0).getDate();
+  const to = `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+  return { from, to };
+}
+
+/**
+ * Čeka da `GET /resources/:id/slots` (isti poziv koji radi `BookingWidget`) stvarno
+ * vrati slobodan termin za ciljni dan. Pravilo dostupnosti se upisuje preko admin API-ja
+ * i ume da stigne do read modela sa malim zakašnjenjem — bez ovoga test kalendarsko dugme
+ * čeka da postane klikabilno direktno u browseru i na CI-ju zna da udari u 60s timeout
+ * dugmeta umesto u jasnu grešku ovde.
+ */
+async function waitForSlotAvailable(
+  adminApi: ApiClient,
+  resourceId: string,
+  serviceId: string,
+  dateStr: string,
+): Promise<void> {
+  const { from, to } = monthRangeOf(dateStr);
+  await expect
+    .poll(
+      async () => {
+        const response = await adminApi.get(`/resources/${resourceId}/slots`, {
+          params: { serviceId, from, to },
+        });
+        if (!response.ok()) return false;
+        const slots = (await response.json()) as { startTime: string; status: string }[];
+        return slots.some((s) => s.startTime.startsWith(dateStr) && s.status !== 'CONFIRMED');
+      },
+      {
+        timeout: 20_000,
+        message: `GET /resources/${resourceId}/slots nije vratio slobodan termin za ${dateStr}`,
+      },
+    )
+    .toBe(true);
+}
+
 interface TargetDate {
   dateStr: string;
   /** Tekst dugmeta dana u kalendaru (BookingWidget prikazuje samo broj dana). */
@@ -191,6 +232,7 @@ async function createBookableBusiness(
   const service = await createFixedService(adminApi, business.id, uniqueName('E2E Usluga'));
   const resource = await createResource(adminApi, business.id, uniqueName('E2E Resurs'));
   await createAllDayAvailability(adminApi, resource.id, target.dayOfWeek);
+  await waitForSlotAvailable(adminApi, resource.id, service.id, target.dateStr);
   return { business, service, resource, target };
 }
 
