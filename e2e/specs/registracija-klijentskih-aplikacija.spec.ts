@@ -142,7 +142,7 @@ test.describe('epic:27 admin registruje klijentsku aplikaciju kroz dashboard', (
       await page.getByLabel('Application name').fill(appName);
       await expect(page.getByRole('radio', { name: 'Single location' })).toBeChecked();
 
-      await page.getByLabel('Business').selectOption({ label: business.name });
+      await page.getByLabel('Business', { exact: true }).selectOption({ label: business.name });
       const locationSelect = page.getByLabel('Location');
       await expect(locationSelect.locator('option')).toHaveCount(2); // placeholder + naša lokacija
       await locationSelect.selectOption({ index: 1 });
@@ -174,7 +174,7 @@ test.describe('epic:27 admin registruje klijentsku aplikaciju kroz dashboard', (
       await page.getByLabel('Application name').fill(appName);
       await page.getByRole('radio', { name: 'Multiple locations' }).check();
 
-      await page.getByLabel('Business').selectOption({ label: business.name });
+      await page.getByLabel('Business', { exact: true }).selectOption({ label: business.name });
       await expect(page.getByRole('checkbox')).toHaveCount(2);
       await page.getByRole('checkbox', { name: secondLocation.name }).check();
       // Ostavljamo samo jednu čekiranu — forma ne zahteva sve, samo bar jednu.
@@ -203,7 +203,7 @@ test.describe('epic:27 admin registruje klijentsku aplikaciju kroz dashboard', (
       await page.getByLabel('Application name').fill(appName);
       await page.getByRole('radio', { name: 'Business category' }).check();
 
-      await page.getByLabel('Category').selectOption({ label: category.name });
+      await page.getByLabel('Category', { exact: true }).selectOption({ label: category.name });
       await page.getByRole('button', { name: 'Register application' }).click();
 
       const result = page.getByRole('status');
