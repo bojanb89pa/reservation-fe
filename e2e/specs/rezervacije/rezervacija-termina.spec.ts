@@ -236,15 +236,28 @@ async function createBookableBusiness(
   return { business, service, resource, target };
 }
 
-/** Izbor usluge, resursa i ciljnog dana na javnom detalju biznisa — do prikaza slobodnih termina. */
+/**
+ * Izbor usluge, resursa i ciljnog dana na javnom detalju biznisa — do prikaza slobodnih termina.
+ *
+ * `waitForSlotAvailable()` već čeka da ADMIN-ov poziv `GET /resources/:id/slots` vidi slobodan
+ * termin, ali `BookingWidget` radi svoj sopstveni poziv istog endpoint-a kad se strana učita —
+ * preko react-query-ja koji, ako taj jedan pokušaj naleti na trenutni zastoj/grešku na
+ * opterećenom CI stacku, dugme dana ostavlja trajno onemogućeno (nema `refetchInterval`, pa se
+ * poziv sam od sebe ne ponavlja). Zato ovde ponovo učitavamo stranu i ponavljamo ceo izbor dok
+ * dugme dana stvarno ne postane klikabilno, umesto da se osloni na jedan pokušaj.
+ */
 async function openDayWithSlots(page: Page, ctx: BookableBusiness): Promise<void> {
-  await page.goto(`/businesses/${ctx.business.id}`);
-  await page.getByRole('tab', { name: new RegExp(escapeRegex(ctx.service.name)) }).click();
-  await page.getByRole('tab', { name: new RegExp(escapeRegex(ctx.resource.name)) }).click();
-  if (ctx.target.needsNextMonth) {
-    await page.getByRole('button', { name: 'Next month' }).click();
-  }
-  await page.getByRole('button', { name: ctx.target.dayLabel, exact: true }).click();
+  const dayButton = page.getByRole('button', { name: ctx.target.dayLabel, exact: true });
+  await expect(async () => {
+    await page.goto(`/businesses/${ctx.business.id}`);
+    await page.getByRole('tab', { name: new RegExp(escapeRegex(ctx.service.name)) }).click();
+    await page.getByRole('tab', { name: new RegExp(escapeRegex(ctx.resource.name)) }).click();
+    if (ctx.target.needsNextMonth) {
+      await page.getByRole('button', { name: 'Next month' }).click();
+    }
+    await expect(dayButton).toBeEnabled({ timeout: 5_000 });
+  }).toPass({ timeout: 60_000, intervals: [1_000] });
+  await dayButton.click();
 }
 
 /** Ceo tok rezervacije: bira prvi termin (08:00) i potvrđuje, do hold strane. */
@@ -256,6 +269,11 @@ async function reserveFirstSlot(page: Page, ctx: BookableBusiness): Promise<void
 }
 
 test.describe('E2E-006 rezervacija termina', () => {
+  // Podrazumevanih 60s (playwright.config.ts) ume da ne bude dovoljno: priprema podataka
+  // (registracija, aktivacija, admin API pozivi, `waitForSlotAvailable` do 20s) plus
+  // `openDayWithSlots`-ovo ponavljanje učitavanja strane (do 60s) po testu.
+  test.describe.configure({ timeout: 120_000 });
+
   test('slobodni termini se prikazuju za izabranu uslugu i dan', async ({ page }) => {
     const owner = await createActivatedUser();
     const adminApi = await ApiClient.as(adminCredentials());
