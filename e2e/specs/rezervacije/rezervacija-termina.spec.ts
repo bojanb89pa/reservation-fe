@@ -284,7 +284,10 @@ test.describe('E2E-006 rezervacija termina', () => {
       await openDayWithSlots(page, ctx);
 
       await expect(page.getByRole('button', { name: '08:00', exact: true })).toBeVisible();
-      await expect(page.getByRole('button', { name: '08:15', exact: true })).toBeVisible();
+      // Termini se pakuju nazad-u-nazad po punoj dužini usluge (30min), ne po
+      // durationStep — taj utiče samo na opseg trajanja (min↔max), koji ovde
+      // ne postoji (fiksna usluga). Sledeći slobodan termin je zato 08:30, ne 08:15.
+      await expect(page.getByRole('button', { name: '08:30', exact: true })).toBeVisible();
     } finally {
       await adminApi.dispose();
     }
@@ -304,7 +307,9 @@ test.describe('E2E-006 rezervacija termina', () => {
       await loginAs(customer);
       await reserveFirstSlot(page, ctx);
 
-      await expect(page.getByText(new RegExp(escapeRegex(ctx.business.name)))).toBeVisible();
+      // exact: true — bez toga regex pogađa i samostalan naziv biznisa (subtitle)
+      // i kombinovani "biznis — resurs" red u dl-u, pa je lokator nejednoznačan.
+      await expect(page.getByText(ctx.business.name, { exact: true })).toBeVisible();
       // NALAZ: ReservationHeldPage ne prikazuje naziv usluge (samo biznis/resurs/vreme).
       await expect(page.getByText(new RegExp(escapeRegex(ctx.service.name)))).toBeVisible();
       await expect(page.getByText(/08:00/)).toBeVisible();
