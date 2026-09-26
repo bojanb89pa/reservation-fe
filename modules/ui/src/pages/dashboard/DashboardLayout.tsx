@@ -19,6 +19,7 @@ const BASE_NAV_ITEMS: NavItem[] = [
 
 const ADMIN_NAV_ITEMS: NavItem[] = [
   { to: '/dashboard/categories', labelKey: 'dashboard.categories' },
+  { to: '/dashboard/client-applications', labelKey: 'dashboard.clientApplications' },
   { to: '/dashboard/users', labelKey: 'dashboard.users' },
 ];
 

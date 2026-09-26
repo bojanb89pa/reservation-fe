@@ -23,6 +23,7 @@ import {
   BusinessContactInfoApiRepository,
   FileApiRepository,
   UserApiRepository,
+  ClientApplicationApiRepository,
 } from '@infrastructure';
 import {
   RegisterUseCaseImpl,
@@ -95,6 +96,7 @@ import {
   UpdateUserStatusUseCaseImpl,
   ResetUserPasswordUseCaseImpl,
   DeleteUserByAdminUseCaseImpl,
+  RegisterClientApplicationUseCaseImpl,
 } from '@application';
 
 // Re-export infrastructure primitives consumed only within this module's hooks/state.
@@ -140,6 +142,7 @@ const fileUploadRepository = new FileApiRepository(
 );
 // Profile picture and batch user lookup live on the auth-service host, same as the upload above.
 const userRepository = new UserApiRepository(authenticatedAuthAxiosClient);
+const clientApplicationRepository = new ClientApplicationApiRepository(resourceAxiosClient);
 
 // ── Use Cases ─────────────────────────────────────────────────────────────────
 export const registerUseCase = new RegisterUseCaseImpl(authApiRepository);
@@ -295,3 +298,7 @@ export const updateUserByAdminUseCase = new UpdateUserByAdminUseCaseImpl(userRep
 export const updateUserStatusUseCase = new UpdateUserStatusUseCaseImpl(userRepository);
 export const resetUserPasswordUseCase = new ResetUserPasswordUseCaseImpl(userRepository);
 export const deleteUserByAdminUseCase = new DeleteUserByAdminUseCaseImpl(userRepository);
+
+export const registerClientApplicationUseCase = new RegisterClientApplicationUseCaseImpl(
+  clientApplicationRepository,
+);

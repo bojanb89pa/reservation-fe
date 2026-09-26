@@ -95,6 +95,11 @@ export type {
   ResetUserPasswordCommand,
 } from './entities/User';
 export type { UserSummary } from './entities/UserSummary';
+export type {
+  ClientApplication,
+  ClientApplicationScope,
+  CreateClientApplicationCommand,
+} from './entities/ClientApplication';
 
 // Errors
 export {
@@ -128,6 +133,7 @@ export type { BusinessLocationResourceRepository } from './repositories/Business
 export type { BusinessLocationServiceRepository } from './repositories/BusinessLocationServiceRepository';
 export type { FileUploadRepository } from './repositories/FileUploadRepository';
 export type { UserRepository } from './repositories/UserRepository';
+export type { ClientApplicationRepository } from './repositories/ClientApplicationRepository';
 
 // Types
 export type { PageRequest, PageResponse } from './types/Page';
@@ -219,6 +225,7 @@ export type { GetLocalizedBusinessCategoryUseCase } from './use-cases/localized-
 export type { CreateLocalizedBusinessCategoryUseCase } from './use-cases/localized-business-category/CreateLocalizedBusinessCategoryUseCase';
 export type { UpdateLocalizedBusinessCategoryUseCase } from './use-cases/localized-business-category/UpdateLocalizedBusinessCategoryUseCase';
 export type { UpsertLocalizedBusinessCategoryTranslationUseCase } from './use-cases/localized-business-category/UpsertLocalizedBusinessCategoryTranslationUseCase';
+export type { RegisterClientApplicationUseCase } from './use-cases/client-application/RegisterClientApplicationUseCase';
 
 // Business contact info
 export type {

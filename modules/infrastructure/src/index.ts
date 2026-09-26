@@ -31,3 +31,4 @@ export { DiscoverySearchApiRepository } from './repositories/DiscoverySearchApiR
 export { BusinessContactInfoApiRepository } from './repositories/BusinessContactInfoApiRepository';
 export { FileApiRepository } from './repositories/FileApiRepository';
 export { UserApiRepository } from './repositories/UserApiRepository';
+export { ClientApplicationApiRepository } from './repositories/ClientApplicationApiRepository';
