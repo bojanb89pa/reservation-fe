@@ -143,7 +143,7 @@ test.describe('epic:27 admin registruje klijentsku aplikaciju kroz dashboard', (
       await expect(page.getByRole('radio', { name: 'Single location' })).toBeChecked();
 
       await page.getByLabel('Business', { exact: true }).selectOption({ label: business.name });
-      const locationSelect = page.getByLabel('Location');
+      const locationSelect = page.getByLabel('Location', { exact: true });
       await expect(locationSelect.locator('option')).toHaveCount(2); // placeholder + naša lokacija
       await locationSelect.selectOption({ index: 1 });
 
