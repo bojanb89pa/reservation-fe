@@ -184,6 +184,7 @@ const sr: Translation = {
     subtitle:
       'Tvoj termin je rezervisan dok <bold>{{business}}</bold> ne potvrdi. Javićemo ti čim odgovore — obično u roku od 14 minuta.',
     where: 'Gde',
+    service: 'Usluga',
     start: 'Početak',
     end: 'Kraj',
     confirmation: 'Potvrda',
