@@ -531,8 +531,11 @@ const en = {
     reservationId: 'Reservation ID',
     approve: 'Approve',
     reject: 'Reject',
+    cancel: 'Cancel reservation',
     approving: 'Approving…',
     rejecting: 'Rejecting…',
+    cancelling: 'Cancelling…',
+    cancelConfirm: 'Are you sure you want to cancel this reservation?',
     actionError: 'Action failed. Please try again.',
   },
   reservationStatus: {

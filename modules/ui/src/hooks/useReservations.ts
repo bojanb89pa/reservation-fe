@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { CreateReservationCommand } from '@domain';
 import {
   createReservationUseCase,
@@ -6,6 +6,7 @@ import {
   getReservationUseCase,
   approveReservationUseCase,
   rejectReservationUseCase,
+  cancelReservationUseCase,
 } from '../app/container';
 
 export function useGetAllReservations() {
@@ -41,5 +42,17 @@ export function useRejectReservation() {
   return useMutation({
     mutationFn: ({ resourceId, id }: { resourceId: string; id: string }) =>
       rejectReservationUseCase.execute(resourceId, id),
+  });
+}
+
+export function useCancelReservation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ resourceId, id }: { resourceId: string; id: string }) =>
+      cancelReservationUseCase.execute(resourceId, id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['reservations'] });
+    },
   });
 }

@@ -42,4 +42,11 @@ export class ReservationApiRepository implements ReservationRepository {
     );
     return response.data;
   }
+
+  async cancel(resourceId: string, id: string): Promise<Reservation> {
+    const response = await this.client.post<Reservation>(
+      `/resources/${resourceId}/reservations/${id}/cancel`,
+    );
+    return response.data;
+  }
 }

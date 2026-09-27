@@ -6,4 +6,5 @@ export interface ReservationRepository {
   create(resourceId: string, command: CreateReservationCommand): Promise<Reservation>;
   approve(resourceId: string, id: string): Promise<Reservation>;
   reject(resourceId: string, id: string): Promise<Reservation>;
+  cancel(resourceId: string, id: string): Promise<Reservation>;
 }

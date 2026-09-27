@@ -534,8 +534,11 @@ const sr: Translation = {
     reservationId: 'ID rezervacije',
     approve: 'Odobri',
     reject: 'Odbij',
+    cancel: 'Otkaži rezervaciju',
     approving: 'Odobravanje…',
     rejecting: 'Odbijanje…',
+    cancelling: 'Otkazivanje…',
+    cancelConfirm: 'Da li si siguran/na da želiš da otkažeš ovu rezervaciju?',
     actionError: 'Akcija nije uspela. Pokušaj ponovo.',
   },
   reservationStatus: {
