@@ -59,6 +59,7 @@ export { GetAllReservationsUseCaseImpl } from './use-cases/reservation/GetAllRes
 export { GetReservationUseCaseImpl } from './use-cases/reservation/GetReservationUseCaseImpl';
 export { ApproveReservationUseCaseImpl } from './use-cases/reservation/ApproveReservationUseCaseImpl';
 export { RejectReservationUseCaseImpl } from './use-cases/reservation/RejectReservationUseCaseImpl';
+export { CancelReservationUseCaseImpl } from './use-cases/reservation/CancelReservationUseCaseImpl';
 
 export { CreateResourceUseCaseImpl } from './use-cases/resource/CreateResourceUseCaseImpl';
 export { GetAllResourcesUseCaseImpl } from './use-cases/resource/GetAllResourcesUseCaseImpl';
