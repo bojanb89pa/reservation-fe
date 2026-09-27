@@ -4,6 +4,7 @@ import {
   FileUploadErrorCode,
   NotFoundError,
   ConflictError,
+  UnprocessableEntityError,
   ValidationError,
   UnauthorizedError,
 } from '@domain';
@@ -46,6 +47,8 @@ const BUSINESS_IMAGE_PATH = /\/businesses\/[^/]+\/image\/?$/;
 const PROFILE_PICTURE_PATH = /\/users\/me\/profile-picture\/?$/;
 /** `GET|POST|PUT|PATCH|DELETE /auth/users/admin/accounts(/{id}...)` — admin user management routes. */
 const ADMIN_USER_ACCOUNTS_PATH = /\/users\/admin\/accounts(\/.*)?$/;
+/** `POST /resources/{resourceId}/reservations/{id}/cancel` — user-initiated reservation cancel. */
+const RESERVATION_CANCEL_PATH = /\/reservations\/[^/]+\/cancel\/?$/;
 
 // WARNING: 401 on admin-user routes stays a generic ApiError (not UnauthorizedError) because authInterceptors.ts's refresh-retry only fires for `instanceof ApiError` — verify before merging
 type AdminUserDomainError = NotFoundError | ConflictError | ValidationError | UnauthorizedError;
@@ -57,6 +60,16 @@ const ADMIN_USER_REASON_BY_STATUS: Readonly<
   403: () => new UnauthorizedError(),
   404: () => new NotFoundError('User'),
   409: (message) => new ConflictError(message),
+};
+
+type ReservationCancelDomainError = NotFoundError | ConflictError | UnprocessableEntityError;
+
+const RESERVATION_CANCEL_REASON_BY_STATUS: Readonly<
+  Partial<Record<number, (message: string) => ReservationCancelDomainError>>
+> = {
+  404: () => new NotFoundError('Reservation'),
+  409: (message) => new ConflictError(message),
+  422: (message) => new UnprocessableEntityError(message),
 };
 
 /**
@@ -85,10 +98,16 @@ function isAdminUserAccountsRequest(config: InternalAxiosRequestConfig | undefin
   return ADMIN_USER_ACCOUNTS_PATH.test(path);
 }
 
-// WARNING: non-file, non-admin-user routes keep returning ApiError with a status, as before — verify before merging
+function isReservationCancelRequest(config: InternalAxiosRequestConfig | undefined): boolean {
+  const path = (config?.url ?? '').split('?')[0];
+  const method = (config?.method ?? '').toUpperCase();
+  return method === 'POST' && RESERVATION_CANCEL_PATH.test(path);
+}
+
+// WARNING: non-file, non-admin-user, non-reservation-cancel routes keep returning ApiError with a status, as before — verify before merging
 export function normalizeAxiosError(
   error: AxiosError<ApiErrorBody>,
-): ApiError | FileUploadError | AdminUserDomainError {
+): ApiError | FileUploadError | AdminUserDomainError | ReservationCancelDomainError {
   const status = error.response?.status ?? 0;
   const body = error.response?.data;
   const message = body?.message ?? body?.error ?? error.message ?? 'An unexpected error occurred';
@@ -100,6 +119,11 @@ export function normalizeAxiosError(
 
   if (isAdminUserAccountsRequest(error.config)) {
     const toDomainError = ADMIN_USER_REASON_BY_STATUS[status];
+    if (toDomainError) return toDomainError(message);
+  }
+
+  if (isReservationCancelRequest(error.config)) {
+    const toDomainError = RESERVATION_CANCEL_REASON_BY_STATUS[status];
     if (toDomainError) return toDomainError(message);
   }
 
