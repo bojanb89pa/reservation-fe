@@ -1,8 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import type { Reservation, User } from '@domain';
-import { useApproveReservation, useRejectReservation } from '../../hooks/useReservations';
+import {
+  useApproveReservation,
+  useRejectReservation,
+  useCancelReservation,
+} from '../../hooks/useReservations';
 import { useIsBusinessMember } from '../../hooks/useBusinessMembers';
+import { useCurrentUserId } from '../../hooks/useCurrentRoles';
 import { UserBadge } from '../UserBadge';
 import styles from './ReservationListItem.module.css';
 
@@ -33,11 +38,14 @@ export function ReservationListItem({ reservation, showUserId, showActions, user
 
   const { mutate: approve, isPending: approving, error: approveError } = useApproveReservation();
   const { mutate: reject, isPending: rejecting, error: rejectError } = useRejectReservation();
+  const { mutate: cancel, isPending: cancelling, error: cancelError } = useCancelReservation();
 
   const canManage = useIsBusinessMember(reservation.business?.id);
+  const currentUserId = useCurrentUserId();
+  const isOwnReservation = !!reservation.userId && reservation.userId === currentUserId;
   const isPending = reservation.status === 'PENDING_APPROVAL';
-  const busy = approving || rejecting;
-  const error = approveError ?? rejectError;
+  const busy = approving || rejecting || cancelling;
+  const error = approveError ?? rejectError ?? cancelError;
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['reservations'] });
 
@@ -46,6 +54,12 @@ export function ReservationListItem({ reservation, showUserId, showActions, user
 
   const handleReject = () =>
     reject({ resourceId: reservation.resourceId, id: reservation.id! }, { onSuccess: invalidate });
+
+  // WARNING: no dedicated confirm-dialog component exists yet, so native window.confirm is used — verify before merging
+  const handleCancel = () => {
+    if (!window.confirm(t('reservationCard.cancelConfirm'))) return;
+    cancel({ resourceId: reservation.resourceId, id: reservation.id! }, { onSuccess: invalidate });
+  };
 
   return (
     <div className={styles.item}>
@@ -94,6 +108,14 @@ export function ReservationListItem({ reservation, showUserId, showActions, user
           </button>
           <button className="btn btn-ghost" onClick={handleReject} disabled={busy}>
             {rejecting ? t('reservationCard.rejecting') : t('reservationCard.reject')}
+          </button>
+        </div>
+      )}
+
+      {isOwnReservation && (
+        <div className={styles.actions}>
+          <button className="btn btn-ghost" onClick={handleCancel} disabled={busy}>
+            {cancelling ? t('reservationCard.cancelling') : t('reservationCard.cancel')}
           </button>
         </div>
       )}
