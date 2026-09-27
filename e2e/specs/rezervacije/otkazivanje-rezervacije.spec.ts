@@ -272,6 +272,18 @@ function cancelPath(ctx: BookableResource, reservationId: string): string {
   return `/resources/${ctx.resourceId}/reservations/${reservationId}/cancel`;
 }
 
+/**
+ * `ownerId` na `POST /businesses/admin` samo popunjava informativno polje na `Business` —
+ * approve/reject autorizacija resource-service-a proverava pravi `BusinessMembership` red
+ * (fe-brief #77), koji se pravi isključivo preko ovog poziva. Bez njega `ownerApi` dobija
+ * "employee-authorization" konflikt na approve/reject (vidi fe-brief-cancel-reservation, red
+ * o 409 — taj konflikt je odvojen od provere `Reservation.userId` koju radi cancel).
+ */
+async function addBusinessOwner(adminApi: ApiClient, businessId: string, email: string): Promise<void> {
+  const added = await adminApi.post(`/businesses/${businessId}/owners`, { data: { email } });
+  await expectOk(added, `POST /businesses/${businessId}/owners`);
+}
+
 test.describe('E2E-146 otkazivanje rezervacije od strane korisnika', () => {
   test.describe.configure({ timeout: 90_000 });
 
@@ -311,6 +323,7 @@ test.describe('E2E-146 otkazivanje rezervacije od strane korisnika', () => {
     try {
       const ownerId = await fetchOwnerId(adminApi, owner.email);
       const ctx = await createBookableResource(adminApi, ownerId);
+      await addBusinessOwner(adminApi, ctx.business.id, owner.email);
       const reservation = await createReservation(customerApi, ctx);
 
       const approved = await ownerApi.post(
@@ -380,6 +393,7 @@ test.describe('E2E-146 otkazivanje rezervacije od strane korisnika', () => {
     try {
       const ownerId = await fetchOwnerId(adminApi, owner.email);
       const ctx = await createBookableResource(adminApi, ownerId);
+      await addBusinessOwner(adminApi, ctx.business.id, owner.email);
       const reservation = await createReservation(customerApi, ctx);
 
       const rejected = await ownerApi.post(
