@@ -24,6 +24,10 @@ function truncate(id: string) {
   return `${id.slice(0, 8)}…`;
 }
 
+// Podrazumevana cancellation policy (isti default za sve biznise, kontrolni tiket #30) —
+// nema još Business polja/endpointa za ovo, pa se ovde ponavlja BE default dok se ne doda.
+const CANCELLABLE_STATUSES: ReadonlySet<Reservation['status']> = new Set(['PENDING_APPROVAL', 'CONFIRMED']);
+
 interface Props {
   reservation: Reservation;
   showUserId?: boolean;
@@ -44,6 +48,7 @@ export function ReservationListItem({ reservation, showUserId, showActions, user
   const currentUserId = useCurrentUserId();
   const isOwnReservation = !!reservation.userId && reservation.userId === currentUserId;
   const isPending = reservation.status === 'PENDING_APPROVAL';
+  const isCancellable = CANCELLABLE_STATUSES.has(reservation.status);
   const busy = approving || rejecting || cancelling;
   const error = approveError ?? rejectError ?? cancelError;
 
@@ -112,7 +117,7 @@ export function ReservationListItem({ reservation, showUserId, showActions, user
         </div>
       )}
 
-      {isOwnReservation && (
+      {isOwnReservation && isCancellable && (
         <div className={styles.actions}>
           <button className="btn btn-ghost" onClick={handleCancel} disabled={busy}>
             {cancelling ? t('reservationCard.cancelling') : t('reservationCard.cancel')}
