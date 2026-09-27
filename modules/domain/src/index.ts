@@ -204,6 +204,7 @@ export type { GetAllReservationsUseCase } from './use-cases/reservation/GetAllRe
 export type { GetReservationUseCase } from './use-cases/reservation/GetReservationUseCase';
 export type { ApproveReservationUseCase } from './use-cases/reservation/ApproveReservationUseCase';
 export type { RejectReservationUseCase } from './use-cases/reservation/RejectReservationUseCase';
+export type { CancelReservationUseCase } from './use-cases/reservation/CancelReservationUseCase';
 export type { CreateResourceUseCase } from './use-cases/resource/CreateResourceUseCase';
 export type { GetAllResourcesUseCase } from './use-cases/resource/GetAllResourcesUseCase';
 export type { GetResourceSlotsUseCase } from './use-cases/resource/GetResourceSlotsUseCase';
