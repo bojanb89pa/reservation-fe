@@ -273,15 +273,27 @@ function cancelPath(ctx: BookableResource, reservationId: string): string {
 }
 
 /**
- * `ownerId` na `POST /businesses/admin` samo popunjava informativno polje na `Business` —
- * approve/reject autorizacija resource-service-a proverava pravi `BusinessMembership` red
- * (fe-brief #77), koji se pravi isključivo preko ovog poziva. Bez njega `ownerApi` dobija
- * "employee-authorization" konflikt na approve/reject (vidi fe-brief-cancel-reservation, red
- * o 409 — taj konflikt je odvojen od provere `Reservation.userId` koju radi cancel).
+ * `ownerId` na `POST /businesses/admin` samo popunjava informativno polje na `Business` — NE
+ * pravi `BusinessMembership` red. `ApproveReservationUseCaseImpl`/`RejectReservationUseCaseImpl`
+ * (resource-service) proveravaju isključivo `existsMembership(businessId, userId,
+ * BusinessMemberRole.EMPLOYEE)` — striktan match po roli, bez hijerarhije OWNER⊇EMPLOYEE
+ * (potvrđeno i u `ApproveReservationUseCaseTest`). `POST /businesses/{id}/owners` upisuje
+ * isključivo rolu `OWNER` (`AddBusinessOwnerUseCaseImpl`), pa vlasnik-bez-employee-članstva
+ * dobija 409 `employee_not_authorized` na approve/reject bez obzira koliko se čeka — to nije
+ * read-model kašnjenje, nego pogrešna rola. Zato se ovde koristi `POST /businesses/{id}/employees`.
+ *
+ * `AddBusinessEmployeeUseCaseImpl` upisuje red preko `addPendingMembership` — `userId = null`,
+ * uparen samo preko `email`. `existsMembership` u approve/reject filtrira po pravom `userId`, pa
+ * taj red ne važi dok se ne "razreši". Razrešavanje (`resolvePendingMemberships`, upiše pravi
+ * `userId` preko email match-a) je sinhrono i dešava se samo unutar `GET /businesses/me`
+ * (`BusinessController.getMyBusinesses`, vidi WARNING komentar tamo — namerno "lenjo" rešenje iz
+ * tiketa #63). Zato zaposleni MORA sam pozvati `GET /businesses/me` pre approve/reject —
+ * `waitForBusinessEmployee` ispod samo potvrđuje da je `adminApi` upis (pending, po email-u)
+ * uopšte stigao pre toga.
  */
-async function addBusinessOwner(adminApi: ApiClient, businessId: string, email: string): Promise<void> {
-  const added = await adminApi.post(`/businesses/${businessId}/owners`, { data: { email } });
-  await expectOk(added, `POST /businesses/${businessId}/owners`);
+async function addBusinessEmployee(adminApi: ApiClient, businessId: string, email: string): Promise<void> {
+  const added = await adminApi.post(`/businesses/${businessId}/employees`, { data: { email } });
+  await expectOk(added, `POST /businesses/${businessId}/employees`);
 }
 
 interface BusinessMembershipDto {
@@ -292,15 +304,7 @@ interface BusinessMembershipDto {
   role: 'OWNER' | 'EMPLOYEE';
 }
 
-/**
- * `POST /businesses/{id}/owners` je uvek 200 bez obzira da li je upis zaista izvršen
- * (fe-brief-business-controller-addowner-addemployee-authz) — `adminApi` je uvek ovlašćen pa
- * upis jeste stvaran, ali čitanje preko `GET /businesses/{id}/owners` ide kroz odvojen read
- * model koji ume da kasni (isti obrazac kao pravilo dostupnosti → slots, videti
- * `waitForSlotAvailable`). Bez čekanja, `ownerApi` ume da dobije "employee-authorization"
- * konflikt na approve/reject odmah nakon `addBusinessOwner`.
- */
-async function waitForBusinessOwner(
+async function waitForBusinessEmployee(
   adminApi: ApiClient,
   businessId: string,
   email: string,
@@ -308,17 +312,23 @@ async function waitForBusinessOwner(
   await expect
     .poll(
       async () => {
-        const response = await adminApi.get(`/businesses/${businessId}/owners`);
+        const response = await adminApi.get(`/businesses/${businessId}/employees`);
         if (!response.ok()) return false;
-        const owners = (await response.json()) as BusinessMembershipDto[];
-        return owners.some((o) => o.email === email);
+        const employees = (await response.json()) as BusinessMembershipDto[];
+        return employees.some((e) => e.email === email);
       },
       {
         timeout: 20_000,
-        message: `GET /businesses/${businessId}/owners nije video ${email} kao vlasnika na vreme`,
+        message: `GET /businesses/${businessId}/employees nije video ${email} kao zaposlenog na vreme`,
       },
     )
     .toBe(true);
+}
+
+/** Razrešava pending `BusinessMembership` (po email-u) u pravi `userId` za pozvaoca — vidi napomenu na `addBusinessEmployee`. */
+async function resolveOwnPendingMemberships(employeeApi: ApiClient): Promise<void> {
+  const response = await employeeApi.get('/businesses/me');
+  await expectOk(response, 'GET /businesses/me (razrešavanje pending članstva)');
 }
 
 test.describe('E2E-146 otkazivanje rezervacije od strane korisnika', () => {
@@ -360,8 +370,9 @@ test.describe('E2E-146 otkazivanje rezervacije od strane korisnika', () => {
     try {
       const ownerId = await fetchOwnerId(adminApi, owner.email);
       const ctx = await createBookableResource(adminApi, ownerId);
-      await addBusinessOwner(adminApi, ctx.business.id, owner.email);
-      await waitForBusinessOwner(adminApi, ctx.business.id, owner.email);
+      await addBusinessEmployee(adminApi, ctx.business.id, owner.email);
+      await waitForBusinessEmployee(adminApi, ctx.business.id, owner.email);
+      await resolveOwnPendingMemberships(ownerApi);
       const reservation = await createReservation(customerApi, ctx);
 
       const approved = await ownerApi.post(
@@ -431,8 +442,9 @@ test.describe('E2E-146 otkazivanje rezervacije od strane korisnika', () => {
     try {
       const ownerId = await fetchOwnerId(adminApi, owner.email);
       const ctx = await createBookableResource(adminApi, ownerId);
-      await addBusinessOwner(adminApi, ctx.business.id, owner.email);
-      await waitForBusinessOwner(adminApi, ctx.business.id, owner.email);
+      await addBusinessEmployee(adminApi, ctx.business.id, owner.email);
+      await waitForBusinessEmployee(adminApi, ctx.business.id, owner.email);
+      await resolveOwnPendingMemberships(ownerApi);
       const reservation = await createReservation(customerApi, ctx);
 
       const rejected = await ownerApi.post(
@@ -480,13 +492,10 @@ test.describe('E2E-146 otkazivanje rezervacije od strane korisnika', () => {
     }
   });
 
-  // Nalaz: `ReservationListItem.tsx` prikazuje dugme „Cancel reservation” za svaku
-  // sopstvenu rezervaciju bez obzira na status (samo `isOwnReservation`, bez provere
-  // da li je status dozvoljen politikom otkazivanja). Kontrolni tiket #30 traži da
-  // dugme bude vidljivo SAMO kad je status rezervacije dozvoljen za otkazivanje —
-  // podrazumevana politika dozvoljava samo PENDING_APPROVAL i CONFIRMED, pa za
-  // CANCELLED (i REJECTED) dugme ne bi trebalo da postoji. Ovaj test proverava
-  // tačno to očekivano ponašanje i trenutno pada.
+  // Kontrolni tiket #30 traži da dugme bude vidljivo SAMO kad je status rezervacije
+  // dozvoljen za otkazivanje — podrazumevana politika dozvoljava samo PENDING_APPROVAL i
+  // CONFIRMED, pa za CANCELLED (i REJECTED) dugme ne bi trebalo da postoji
+  // (`ReservationListItem.tsx` proverava `CANCELLABLE_STATUSES` pored `isOwnReservation`).
   test('dugme za otkazivanje se ne prikazuje za rezervaciju koja više nije u statusu koji politika dozvoljava', async ({
     page,
     loginAs,
