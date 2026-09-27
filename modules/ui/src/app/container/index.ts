@@ -50,6 +50,7 @@ import {
   GetReservationUseCaseImpl,
   ApproveReservationUseCaseImpl,
   RejectReservationUseCaseImpl,
+  CancelReservationUseCaseImpl,
   GetAvailabilityRulesUseCaseImpl,
   CreateAvailabilityRuleUseCaseImpl,
   DeleteAvailabilityRuleUseCaseImpl,
@@ -191,6 +192,7 @@ export const getAllReservationsUseCase = new GetAllReservationsUseCaseImpl(reser
 export const getReservationUseCase = new GetReservationUseCaseImpl(reservationRepository);
 export const approveReservationUseCase = new ApproveReservationUseCaseImpl(reservationRepository);
 export const rejectReservationUseCase = new RejectReservationUseCaseImpl(reservationRepository);
+export const cancelReservationUseCase = new CancelReservationUseCaseImpl(reservationRepository);
 
 export const getAvailabilityRulesUseCase = new GetAvailabilityRulesUseCaseImpl(
   availabilityRuleRepository,
