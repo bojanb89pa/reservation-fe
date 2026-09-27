@@ -284,6 +284,43 @@ async function addBusinessOwner(adminApi: ApiClient, businessId: string, email: 
   await expectOk(added, `POST /businesses/${businessId}/owners`);
 }
 
+interface BusinessMembershipDto {
+  id: string;
+  businessId: string;
+  userId: string | null;
+  email: string | null;
+  role: 'OWNER' | 'EMPLOYEE';
+}
+
+/**
+ * `POST /businesses/{id}/owners` je uvek 200 bez obzira da li je upis zaista izvršen
+ * (fe-brief-business-controller-addowner-addemployee-authz) — `adminApi` je uvek ovlašćen pa
+ * upis jeste stvaran, ali čitanje preko `GET /businesses/{id}/owners` ide kroz odvojen read
+ * model koji ume da kasni (isti obrazac kao pravilo dostupnosti → slots, videti
+ * `waitForSlotAvailable`). Bez čekanja, `ownerApi` ume da dobije "employee-authorization"
+ * konflikt na approve/reject odmah nakon `addBusinessOwner`.
+ */
+async function waitForBusinessOwner(
+  adminApi: ApiClient,
+  businessId: string,
+  email: string,
+): Promise<void> {
+  await expect
+    .poll(
+      async () => {
+        const response = await adminApi.get(`/businesses/${businessId}/owners`);
+        if (!response.ok()) return false;
+        const owners = (await response.json()) as BusinessMembershipDto[];
+        return owners.some((o) => o.email === email);
+      },
+      {
+        timeout: 20_000,
+        message: `GET /businesses/${businessId}/owners nije video ${email} kao vlasnika na vreme`,
+      },
+    )
+    .toBe(true);
+}
+
 test.describe('E2E-146 otkazivanje rezervacije od strane korisnika', () => {
   test.describe.configure({ timeout: 90_000 });
 
@@ -324,6 +361,7 @@ test.describe('E2E-146 otkazivanje rezervacije od strane korisnika', () => {
       const ownerId = await fetchOwnerId(adminApi, owner.email);
       const ctx = await createBookableResource(adminApi, ownerId);
       await addBusinessOwner(adminApi, ctx.business.id, owner.email);
+      await waitForBusinessOwner(adminApi, ctx.business.id, owner.email);
       const reservation = await createReservation(customerApi, ctx);
 
       const approved = await ownerApi.post(
@@ -394,6 +432,7 @@ test.describe('E2E-146 otkazivanje rezervacije od strane korisnika', () => {
       const ownerId = await fetchOwnerId(adminApi, owner.email);
       const ctx = await createBookableResource(adminApi, ownerId);
       await addBusinessOwner(adminApi, ctx.business.id, owner.email);
+      await waitForBusinessOwner(adminApi, ctx.business.id, owner.email);
       const reservation = await createReservation(customerApi, ctx);
 
       const rejected = await ownerApi.post(
