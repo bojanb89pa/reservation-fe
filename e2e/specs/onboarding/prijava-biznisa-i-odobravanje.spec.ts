@@ -95,15 +95,16 @@ test.describe('E2E-010 prijava novog biznisa i odobravanje', () => {
     const ownerApi = await ApiClient.as(owner);
     try {
       const business = await submitBusiness(ownerApi, uniqueName('E2E Onboarding Pretraga'));
-      // Pun naziv (ne samo sufiks): sufiks iz `uniqueName` je vremenska oznaka sa zajedničkim
-      // prefiksom sa biznisima koje paralelni testovi prave, pa bi upit mogao da vrati tuđe biznise.
+      // Pretraga poklapa pojedinačne reči, pa bi pun naziv vratio tuđe aktivne biznise sa istim
+      // prefiksom ("E2E Onboarding"). Jedinstven sufiks iz `uniqueName` pripada samo ovom biznisu.
+      const nameFragment = business.name.split(' ').pop() as string;
       const searchResponse = page.waitForResponse((response) =>
         response.url().includes('/v1/search'),
       );
-      await searchFromHome(page, business.name);
+      await searchFromHome(page, nameFragment);
       await searchResponse;
 
-      await expect(page.getByText(`No results found for "${business.name}".`)).toBeVisible();
+      await expect(page.getByText(`No results found for "${nameFragment}".`)).toBeVisible();
       await expect(
         page.getByRole('link', { name: new RegExp(escapeRegex(business.name)) }),
       ).toHaveCount(0);
