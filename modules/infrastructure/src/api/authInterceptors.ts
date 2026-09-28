@@ -26,6 +26,12 @@ const EXPIRY_LEEWAY_MS = 10_000;
 // requests on different hosts coalesce into a single call to the auth server.
 let refreshPromise: Promise<AuthSession> | null = null;
 
+// Every request awaiting the same rejected refreshPromise reaches handleSessionExpired
+// independently; without this guard each one re-triggers its own full-page OAuth redirect,
+// which is what produced the several-callbacks-in-a-row symptom in ticket #156. A fresh page
+// load (which the redirect itself causes) re-executes this module and resets the flag.
+let sessionExpiredHandled = false;
+
 function decodeJwtExpiryMs(token: string): number | null {
   const payload = token.split('.')[1];
   if (!payload) return null;
@@ -80,6 +86,8 @@ function redirectToAuthorize(): void {
 // listen for AUTH_SESSION_EXPIRED_EVENT / tokenStorage.consumeSessionExpiredFlag() to show an
 // in-app "session expired" message before/around this redirect — verify before merging
 function handleSessionExpired(): void {
+  if (sessionExpiredHandled) return;
+  sessionExpiredHandled = true;
   tokenStorage.clear();
   tokenStorage.markSessionExpired();
   emitSessionExpired();
