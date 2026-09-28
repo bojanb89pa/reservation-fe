@@ -14,9 +14,16 @@ interface Props {
 export function ReservationList({ reservations, showUserId, showActions }: Props) {
   const { t } = useTranslation();
 
+  // `showActions` je dashboard-only (vidi DashboardReservationsPage.tsx) — svako ko tamo ima
+  // pristup je admin ili vlasnik/zaposleni čijeg biznisa su rezervacije, pa se batch fetch radi
+  // za sve redove; ReservationListItem ipak precizno odlučuje po redu (canManage) da li da
+  // prikaže ime, ne oslanja se samo na ovaj fetch.
   const userIds = useMemo(
-    () => (showUserId ? reservations.map((r) => r.userId).filter((id): id is string => !!id) : []),
-    [reservations, showUserId],
+    () =>
+      showUserId || showActions
+        ? reservations.map((r) => r.userId).filter((id): id is string => !!id)
+        : [],
+    [reservations, showUserId, showActions],
   );
   const { data: users } = useUsersByIds(userIds);
   const usersById = useMemo(() => mapUsersById(users ?? []), [users]);

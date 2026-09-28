@@ -67,7 +67,7 @@ export function ReservationListItem({ reservation, showUserId, showActions, user
   };
 
   return (
-    <div className={styles.item}>
+    <div className={styles.item} data-testid="reservation-list-item">
       <div className={styles.header}>
         <span className={`${styles.badge} ${styles[reservation.status]}`}>
           {t(`reservationStatus.${reservation.status}`)}
@@ -98,7 +98,7 @@ export function ReservationListItem({ reservation, showUserId, showActions, user
             <span className={styles.metaValue}>{reservation.business.name}</span>
           </span>
         )}
-        {showUserId && reservation.userId && (
+        {(showUserId || canManage) && reservation.userId && (
           <span className={styles.metaItem}>
             <span className={styles.metaLabel}>{t('reservationList.labelUser')}</span>
             <UserBadge userId={reservation.userId} user={user} />
