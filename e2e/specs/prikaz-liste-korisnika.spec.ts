@@ -57,6 +57,11 @@ test.describe('epic:31 prikaz liste korisnika (super admin)', () => {
       await page.getByPlaceholder('Search by name or email…').fill(marker);
 
       const allRows = page.getByRole('row', { name: new RegExp(`${marker}-\\d{2}`) });
+      // Podrazumevana veličina strane je 10; stanje se gubi pri povratku sa detalja.
+      const showAll = async () => {
+        await page.getByLabel('Per page').selectOption('25');
+      };
+      await showAll();
       await expect(allRows).toHaveCount(USER_COUNT);
 
       const firstRow = page.getByRole('row', { name: rowName(0) });
@@ -75,6 +80,7 @@ test.describe('epic:31 prikaz liste korisnika (super admin)', () => {
         page.getByRole('heading', { level: 1, name: `${rowName(USER_COUNT - 1)} ${marker}` }),
       ).toBeVisible();
       await page.goBack();
+      await showAll();
       await expect(allRows).toHaveCount(USER_COUNT);
 
       // Skroluj nazad na vrh — prvi red mora ostati isti red kao na početku,
@@ -86,6 +92,7 @@ test.describe('epic:31 prikaz liste korisnika (super admin)', () => {
         page.getByRole('heading', { level: 1, name: `${rowName(0)} ${marker}` }),
       ).toBeVisible();
       await page.goBack();
+      await showAll();
 
       // Nijedan red nije nestao posle skrolovanja u oba pravca.
       await expect(allRows).toHaveCount(USER_COUNT);
