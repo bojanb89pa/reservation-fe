@@ -611,6 +611,7 @@ const en = {
     prevPage: '← Previous',
     nextPage: 'Next →',
     pageOf: 'Page {{page}} of {{total}}',
+    perPage: 'Per page',
   },
   dashboardUserDetail: {
     backToUsers: '← Users',
