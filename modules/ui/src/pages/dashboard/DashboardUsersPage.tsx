@@ -43,12 +43,18 @@ export function DashboardUsersPage() {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState<number>(PAGE_SIZE_OPTIONS[0]);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevSearchRef = useRef<string>('');
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
+      // Only reset page if the search term actually changed.
+      const searchTrimmed = searchInput.trim();
+      if (searchTrimmed !== prevSearchRef.current) {
+        setPage(0);
+        prevSearchRef.current = searchTrimmed;
+      }
       setSearch(searchInput);
-      setPage(0);
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev);
         if (searchInput.trim()) next.set('search', searchInput.trim());
@@ -59,7 +65,8 @@ export function DashboardUsersPage() {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [searchInput, setSearchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchInput]);
 
   const handleStatusChange = (value: UserStatus | '') => {
     setStatus(value);
