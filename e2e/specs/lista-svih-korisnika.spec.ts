@@ -51,6 +51,9 @@ test.describe('epic:36 lista svih korisnika (super admin)', () => {
       await page.getByRole('link', { name: 'Users', exact: true }).click();
       await page.waitForURL(/\/dashboard\/users$/);
       await page.getByPlaceholder('Search by name or email…').fill(marker);
+      // Pretraga je debounce-ovana: dok se filter ne primeni (URL dobija `search`),
+      // lista je nefiltrirana, a primena filtera vraća na prvu stranu.
+      await expect(page).toHaveURL(new RegExp(`[?&]search=${marker}(&|$)`));
 
       const rows = page.getByRole('row', { name: new RegExp(`${marker}-\\d{2}`) });
       const prev = page.getByRole('button', { name: /Previous/ });
@@ -99,8 +102,9 @@ test.describe('epic:36 lista svih korisnika (super admin)', () => {
       await page.getByRole('link', { name: 'Users', exact: true }).click();
       await page.waitForURL(/\/dashboard\/users$/);
       await page.getByPlaceholder('Search by name or email…').fill(marker);
+      await expect(page).toHaveURL(new RegExp(`[?&]search=${marker}(&|$)`));
 
-      const row = page.getByRole('row', { name: rowName(0) });
+      const row =page.getByRole('row', { name: rowName(0) });
       await expect(row).toHaveCount(1);
 
       const userBadge = row.getByText('User', { exact: true });
