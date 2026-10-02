@@ -93,6 +93,7 @@ export function ServiceForm({ initial, onSave, onCancel, isPending, error }: Pro
         <input
           className="form-input"
           placeholder={t('serviceSection.namePlaceholder')}
+          aria-label={t('serviceSection.nameLabel')}
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
@@ -133,6 +134,7 @@ export function ServiceForm({ initial, onSave, onCancel, isPending, error }: Pro
               className={`form-input ${styles.durationInput}`}
               type="number"
               min="1"
+              aria-label={t('serviceSection.durationLabel')}
               value={fixedValue}
               onChange={(e) => setFixedValue(clampInt(e.target.value, 1))}
               required
