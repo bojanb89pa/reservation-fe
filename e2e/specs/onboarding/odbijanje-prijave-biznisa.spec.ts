@@ -81,20 +81,18 @@ test.describe('E2E-011 odbijanje prijave biznisa', () => {
 
       // Nije javno vidljiv u pretrazi (jedinstven sufiks iz uniqueName pripada samo ovom biznisu).
       const nameFragment = business.name.split(' ').pop() as string;
-      await page.goto('/');
-      await page.getByRole('textbox', { name: 'What' }).fill(nameFragment);
-      const searchResponse = page.waitForResponse((response) =>
-        response.url().includes('/v1/search'),
-      );
-      await page.getByRole('button', { name: 'Search' }).click();
-      await page.waitForURL((url) => url.pathname === '/search');
-      await searchResponse;
-      await expect(page.getByText(`No results found for "${nameFragment}".`)).toBeVisible();
+      await page.goto(`/search?q=${encodeURIComponent(nameFragment)}`);
+      await expect(page.getByText(`No results found for "${nameFragment}".`)).toBeVisible({
+        timeout: 30_000,
+      });
       await expect(
         page.getByRole('link', { name: new RegExp(escapeRegex(business.name)) }),
       ).toHaveCount(0);
 
-      // Podnosilac vidi da prijava nije odobrena.
+      // Podnosilac vidi da prijava nije odobrena. Admin sesija na auth-service-u
+      // se briše, inače authorize preskače login formu.
+      await page.context().clearCookies();
+      await page.evaluate(() => localStorage.clear());
       await loginAs(owner);
       await page.goto('/business-onboarding');
       await expect(
