@@ -15,7 +15,7 @@ export function DeleteServiceDialog({ service, onConfirm, onCancel, isPending, e
 
   return (
     <div className={styles.overlay}>
-      <div className={styles.dialog}>
+      <div className={styles.dialog} data-testid="delete-service-dialog">
         <h3 className={styles.title}>{t('deleteServiceDialog.title')}</h3>
         <p className={styles.body}>
           <Trans
