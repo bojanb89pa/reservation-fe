@@ -1,7 +1,8 @@
 .list {
   display: inline-flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 6px;
+  align-items: center;
 }
 
 .badge {

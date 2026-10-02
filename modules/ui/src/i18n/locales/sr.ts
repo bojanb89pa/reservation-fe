@@ -614,6 +614,7 @@ const sr: Translation = {
     prevPage: '← Prethodna',
     nextPage: 'Sledeća →',
     pageOf: 'Strana {{page}} od {{total}}',
+    perPage: 'Po strani',
   },
   dashboardUserDetail: {
     backToUsers: '← Korisnici',

@@ -19,7 +19,8 @@ import { ResetPasswordDialog } from '../../components/admin-user/ResetPasswordDi
 import { DeleteUserDialog } from '../../components/admin-user/DeleteUserDialog';
 import styles from './DashboardUsersPage.module.css';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE_OPTIONS = [10, 25, 50] as const;
+const SKELETON_ROWS = 10;
 const STATUS_OPTIONS: UserStatus[] = ['ACTIVE', 'INACTIVE', 'BLOCKED'];
 
 type Mode =
@@ -40,13 +41,20 @@ export function DashboardUsersPage() {
     (searchParams.get('status') as UserStatus | null) ?? '',
   );
   const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState<number>(PAGE_SIZE_OPTIONS[0]);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevSearchRef = useRef<string>('');
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
+      // Only reset page if the search term actually changed.
+      const searchTrimmed = searchInput.trim();
+      if (searchTrimmed !== prevSearchRef.current) {
+        setPage(0);
+        prevSearchRef.current = searchTrimmed;
+      }
       setSearch(searchInput);
-      setPage(0);
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev);
         if (searchInput.trim()) next.set('search', searchInput.trim());
@@ -57,7 +65,8 @@ export function DashboardUsersPage() {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [searchInput, setSearchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchInput]);
 
   const handleStatusChange = (value: UserStatus | '') => {
     setStatus(value);
@@ -70,8 +79,13 @@ export function DashboardUsersPage() {
     });
   };
 
+  const handlePageSizeChange = (value: number) => {
+    setPageSize(value);
+    setPage(0);
+  };
+
   const filter = { search: search.trim() || undefined, status: status || undefined };
-  const { data, isLoading } = useAdminUsersSearch(filter, { page, size: PAGE_SIZE });
+  const { data, isLoading } = useAdminUsersSearch(filter, { page, size: pageSize });
 
   const { mutateAsync: createUser, isPending: creating } = useCreateAdminUser();
   const { mutateAsync: updateUser, isPending: updating } = useUpdateAdminUser();
@@ -236,8 +250,12 @@ export function DashboardUsersPage() {
         </div>
 
         {isLoading && (
-          <div className="page-loading">
-            <div className="spinner" />
+          <div className={styles.tableWrap} aria-busy="true" data-testid="users-skeleton">
+            <div className={styles.skeleton}>
+              {Array.from({ length: SKELETON_ROWS }, (_, i) => (
+                <div key={i} className={styles.skeletonRow} />
+              ))}
+            </div>
           </div>
         )}
 
@@ -250,7 +268,7 @@ export function DashboardUsersPage() {
                   <th>{t('dashboardUsers.colEmail')}</th>
                   <th>{t('dashboardUsers.colRoles')}</th>
                   <th>{t('dashboardUsers.colStatus')}</th>
-                  <th>{t('dashboardUsers.colActions')}</th>
+                  <th className={styles.actionsCell}>{t('dashboardUsers.colActions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -263,12 +281,16 @@ export function DashboardUsersPage() {
                     </td>
                     <td>{user.email}</td>
                     <td>
-                      <RoleBadgeList roles={user.roles} />
+                      <div className={styles.badges}>
+                        <RoleBadgeList roles={user.roles} />
+                      </div>
                     </td>
                     <td>
-                      <UserStatusBadge status={user.status} />
+                      <div className={styles.badges}>
+                        <UserStatusBadge status={user.status} />
+                      </div>
                     </td>
-                    <td>
+                    <td className={styles.actionsCell}>
                       <div className={styles.rowActions}>
                         <button
                           type="button"
@@ -318,8 +340,22 @@ export function DashboardUsersPage() {
           </div>
         )}
 
-        {data && data.totalPages > 1 && (
+        {data && (
           <div className={styles.pagination}>
+            <label className={styles.pageSize}>
+              <span>{t('dashboardUsers.perPage')}</span>
+              <select
+                className="form-input"
+                value={pageSize}
+                onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+              >
+                {PAGE_SIZE_OPTIONS.map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+            </label>
             <button
               className="btn btn-ghost btn-sm"
               disabled={page === 0}
@@ -328,7 +364,7 @@ export function DashboardUsersPage() {
               {t('dashboardUsers.prevPage')}
             </button>
             <span className="mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-500)' }}>
-              {t('dashboardUsers.pageOf', { page: page + 1, total: data.totalPages })}
+              {t('dashboardUsers.pageOf', { page: page + 1, total: Math.max(data.totalPages, 1) })}
             </span>
             <button
               className="btn btn-ghost btn-sm"
