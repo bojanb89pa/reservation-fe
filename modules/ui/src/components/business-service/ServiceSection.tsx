@@ -123,7 +123,7 @@ export function ServiceSection({ businessId }: Props) {
           <div className={styles.empty}>{t('serviceSection.noServices')}</div>
         )}
         {services.map((s) => (
-          <div key={s.id} className={styles.row}>
+          <div key={s.id} className={styles.row} data-testid="service-row">
             <span className={styles.name}>{s.name}</span>
             <span className={styles.duration}>{formatDuration(s)}</span>
             <div className={styles.rowActions}>
