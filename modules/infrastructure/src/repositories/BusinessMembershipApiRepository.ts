@@ -40,6 +40,10 @@ export class BusinessMembershipApiRepository implements BusinessMembershipReposi
   }
 
   async notifyMembership(command: NotifyBusinessMembershipCommand): Promise<void> {
-    await this.authClient.post('/users/notify-membership', command);
+    // WARNING: 403 (BUSINESS_OWNER_REQUIRED) and 404 (BUSINESS_MEMBERSHIP_NOT_FOUND) stay ApiError with status — @domain has no matching error types — verify before merging
+    await this.authClient.post('/users/notify-membership', {
+      businessId: command.businessId,
+      email: command.email,
+    });
   }
 }
