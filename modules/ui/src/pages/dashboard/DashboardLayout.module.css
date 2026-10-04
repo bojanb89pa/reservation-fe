@@ -170,11 +170,43 @@
   background: var(--bg);
 }
 
+/* Mobile top navigation (sidebar is hidden on narrow screens) */
+.mobileNav {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .app {
     grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
   }
   .side {
     display: none;
+  }
+  .mobileNav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 12px 16px;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .mobileNavItem {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    font-size: var(--text-sm);
+    color: var(--ink-700);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .mobileNavItemActive {
+    background: var(--secondary);
+    border-color: var(--secondary);
+    color: #fff;
   }
 }
