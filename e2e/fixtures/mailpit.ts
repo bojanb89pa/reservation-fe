@@ -43,6 +43,39 @@ export async function waitForEmail(to: string, timeoutMs = 20_000): Promise<Mail
   return mailpitGet<MailpitMessage>(`/api/v1/message/${found!.ID}`);
 }
 
+/**
+ * Čeka mejl poslat na `to` čiji subject ili telo sadrži `text` (npr. naziv
+ * biznisa) — za razliku od `waitForEmail` ne vraća aktivacioni mejl koji je
+ * stigao ranije na istu adresu.
+ */
+export async function waitForEmailContaining(
+  to: string,
+  text: string,
+  timeoutMs = 20_000,
+): Promise<MailpitMessage> {
+  let found: MailpitMessage | undefined;
+  await expect
+    .poll(
+      async () => {
+        const query = encodeURIComponent(`to:"${to}"`);
+        const result = await mailpitGet<{ messages: MailpitSummary[] }>(
+          `/api/v1/search?query=${query}&limit=50`,
+        );
+        for (const summary of result.messages) {
+          const message = await mailpitGet<MailpitMessage>(`/api/v1/message/${summary.ID}`);
+          if ((message.Subject + message.HTML + message.Text).includes(text)) {
+            found = message;
+            return true;
+          }
+        }
+        return false;
+      },
+      { message: `mejl za ${to} sa tekstom "${text}" nije stigao u Mailpit`, timeout: timeoutMs },
+    )
+    .toBe(true);
+  return found!;
+}
+
 /** Aktivacioni link iz mejla (`.../users/activate?token=...`). */
 export async function activationLink(to: string): Promise<string> {
   const message = await waitForEmail(to);
