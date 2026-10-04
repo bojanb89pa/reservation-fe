@@ -81,6 +81,7 @@ export class UserApiRepository implements UserRepository {
     await this.client.delete(`/users/admin/accounts/${id}`);
   }
 
+  // WARNING: 403 (BUSINESS_MEMBERSHIP_REQUIRED) stays ApiError with status — @domain has no matching error type — verify before merging
   async searchUsers(query: SearchUsersQuery): Promise<UserSummary[]> {
     const response = await this.client.get<UserSummary[]>('/users/search', {
       params: { query: query.query, limit: query.limit },
