@@ -214,6 +214,7 @@ const sr: Translation = {
   dashboard: {
     brand: 'Poslovna kontrolna tabla',
     navSection: 'Upravljanje',
+    mobileNavLabel: 'Navigacija kontrolne table',
     overview: 'Pregled',
     myBusinesses: 'Moji biznisi',
     categories: 'Kategorije',

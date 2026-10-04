@@ -211,6 +211,7 @@ const en = {
   dashboard: {
     brand: 'Business dashboard',
     navSection: 'Manage',
+    mobileNavLabel: 'Dashboard navigation',
     overview: 'Overview',
     myBusinesses: 'My businesses',
     categories: 'Categories',

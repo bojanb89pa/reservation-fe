@@ -96,6 +96,21 @@ export function DashboardLayout() {
         </div>
       </aside>
 
+      <nav className={styles.mobileNav} aria-label={t('dashboard.mobileNavLabel')}>
+        {navItems.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            end={item.end}
+            className={({ isActive }) =>
+              [styles.mobileNavItem, isActive ? styles.mobileNavItemActive : ''].join(' ')
+            }
+          >
+            {t(item.labelKey)}
+          </NavLink>
+        ))}
+      </nav>
+
       <main className={styles.main}>
         <Outlet />
       </main>
