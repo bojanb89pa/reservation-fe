@@ -169,13 +169,11 @@ export function DashboardBusinessPage() {
       <LocationSection businessId={id!} />
       <MemberSection
         businessId={id!}
-        businessName={business.name}
         role="OWNER"
         title={t('dashboardBusiness.owners')}
       />
       <MemberSection
         businessId={id!}
-        businessName={business.name}
         role="EMPLOYEE"
         title={t('dashboardBusiness.employees')}
       />

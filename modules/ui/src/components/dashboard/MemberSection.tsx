@@ -14,12 +14,11 @@ import styles from './MemberSection.module.css';
 
 interface Props {
   businessId: string;
-  businessName: string;
   role: BusinessMemberRole;
   title: string;
 }
 
-export function MemberSection({ businessId, businessName, role, title }: Props) {
+export function MemberSection({ businessId, role, title }: Props) {
   const { t } = useTranslation();
   const { data: members = [], refetch: refetchMembers } = useBusinessMembers(businessId, role);
   const memberUserIds = useMemo(
@@ -63,7 +62,7 @@ export function MemberSection({ businessId, businessName, role, title }: Props) 
     setNotifiedEmail(email);
     // Best-effort: the invitation email is transparent to the add flow, so its outcome
     // never blocks or overrides the confirmation shown to the user.
-    notifyMembership({ email, businessName, role }).catch(() => {});
+    notifyMembership({ businessId, email }).catch(() => {});
   };
 
   return (

@@ -18,8 +18,7 @@ describe('NotifyBusinessMembershipUseCaseImpl', () => {
     const useCase = new NotifyBusinessMembershipUseCaseImpl(mockRepo);
     const command = {
       email: 'user@example.com',
-      businessName: 'Acme Corp',
-      role: 'OWNER' as const,
+      businessId: 'b-1',
     };
 
     await useCase.execute(command);
@@ -31,8 +30,7 @@ describe('NotifyBusinessMembershipUseCaseImpl', () => {
     const useCase = new NotifyBusinessMembershipUseCaseImpl(mockRepo);
     const command = {
       email: 'another@example.com',
-      businessName: 'Tech Inc',
-      role: 'EMPLOYEE' as const,
+      businessId: 'b-2',
     };
 
     await useCase.execute(command);
