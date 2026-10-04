@@ -40,12 +40,17 @@ export function MemberSection({ businessId, role, title }: Props) {
 
   const [selectedUser, setSelectedUser] = useState<UserSummary | null>(null);
   const [notifiedEmail, setNotifiedEmail] = useState<string | null>(null);
+  // The owner may type an email for an account the search cannot find; the autocomplete
+  // only helps. `inputKey` remounts the input to clear it after a successful add.
+  const [typedEmail, setTypedEmail] = useState('');
+  const [inputKey, setInputKey] = useState(0);
   const [addNotConfirmed, setAddNotConfirmed] = useState(false);
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedUser) return;
-    const { id: userId, email } = selectedUser;
+    const email = selectedUser?.email ?? typedEmail.trim();
+    if (!email) return;
+    const userId = selectedUser?.id;
     setNotifiedEmail(null);
     setAddNotConfirmed(false);
     await addMember(email);
@@ -53,8 +58,12 @@ export function MemberSection({ businessId, role, title }: Props) {
     // caller gets the same 200 shape (fe-brief #77) — so re-fetch and look for the
     // member before showing success, per AddBusinessMemberUseCase's doc comment.
     const { data: freshMembers } = await refetchMembers();
-    const wasAdded = (freshMembers ?? []).some((m) => m.userId === userId || m.email === email);
+    const wasAdded = (freshMembers ?? []).some(
+      (m) => (userId !== undefined && m.userId === userId) || m.email === email,
+    );
     setSelectedUser(null);
+    setTypedEmail('');
+    setInputKey((k) => k + 1);
     if (!wasAdded) {
       setAddNotConfirmed(true);
       return;
@@ -101,13 +110,15 @@ export function MemberSection({ businessId, role, title }: Props) {
 
       <form onSubmit={handleAdd} className={styles.addForm}>
         <UserAutocompleteInput
+          key={inputKey}
+          onQueryChange={setTypedEmail}
           selectedUser={selectedUser}
           onSelect={setSelectedUser}
           onClear={() => setSelectedUser(null)}
           placeholder={t('memberSection.userSearchPlaceholder')}
           disabled={adding}
         />
-        <button type="submit" className="btn btn-secondary" disabled={adding || !selectedUser}>
+        <button type="submit" className="btn btn-secondary" disabled={adding || (!selectedUser && !typedEmail.trim())}>
           {t(`memberSection.${role}.addButton`)}
         </button>
       </form>
