@@ -5,6 +5,18 @@ import { searchUsersUseCase } from '../app/container';
 // WARNING: assumed suggestion limit — verify against UX expectations before merging
 const SUGGESTION_LIMIT = 8;
 
+// A 403 (BUSINESS_MEMBERSHIP_REQUIRED) means the caller may not search; it is treated as
+// an empty result, silently. The error is matched structurally because ui cannot import
+// the infrastructure ApiError class.
+function isForbidden(error: unknown): boolean {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'status' in error &&
+    (error as { status: unknown }).status === 403
+  );
+}
+
 export function useUserSearch(query: string) {
   const [debouncedQuery, setDebouncedQuery] = useState(query);
 
@@ -19,7 +31,14 @@ export function useUserSearch(query: string) {
 
   return useQuery({
     queryKey: ['users', 'search', debouncedQuery],
-    queryFn: () => searchUsersUseCase.execute({ query: debouncedQuery, limit: SUGGESTION_LIMIT }),
+    queryFn: async () => {
+      try {
+        return await searchUsersUseCase.execute({ query: debouncedQuery, limit: SUGGESTION_LIMIT });
+      } catch (error) {
+        if (isForbidden(error)) return [];
+        throw error;
+      }
+    },
     enabled: debouncedQuery.length >= 2,
     staleTime: 30_000,
   });
