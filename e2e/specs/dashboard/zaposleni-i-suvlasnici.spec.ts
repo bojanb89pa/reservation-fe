@@ -114,8 +114,10 @@ test.describe('E2E-014 zaposleni i suvlasnici', () => {
       await page.goto(`/dashboard/businesses/${businessId}`);
 
       const section = memberSection(page, title);
-      await section.getByPlaceholder('Search user by name or email').fill(member.email);
-      await section.getByRole('button', { name: member.email }).click();
+      // Pretraga po jedinstvenom imenu (pretraga naloga ne vraća pouzdano pogodak po celom email-u);
+      // predlog se bira po punom imenu.
+      await section.getByPlaceholder('Search user by name or email').fill(firstName);
+      await section.getByRole('button', { name: fullName }).click();
       await section.getByRole('button', { name: addButton }).click();
 
       await expect(section.getByText(`Invitation sent to ${member.email}`)).toBeVisible();
