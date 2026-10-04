@@ -110,6 +110,29 @@ test.describe('E2E-014 zaposleni i suvlasnici', () => {
       const fullName = `${firstName} Testic`;
       const member = await createActivatedUser({ firstName, lastName: 'Testic' });
 
+      // Pretraga naloga (auth-service) mora da vrati novog člana pre nego što ga UI traži;
+      // keširan prazan odgovor u UI-ju bi inače trajao 30s.
+      const ownerApi = await ApiClient.as(owner);
+      try {
+        await expect
+          .poll(
+            async () => {
+              const res = await ownerApi.auth.get('users/search', {
+                params: { query: firstName, limit: 8 },
+              });
+              if (!res.ok()) {
+                return `HTTP ${res.status()} ${await res.text()}`;
+              }
+              const found = (await res.json()) as { email: string }[];
+              return found.map((u) => u.email);
+            },
+            { message: `GET /auth/users/search?query=${firstName}` },
+          )
+          .toContain(member.email);
+      } finally {
+        await ownerApi.dispose();
+      }
+
       await loginAs(owner);
       await page.goto(`/dashboard/businesses/${businessId}`);
 
