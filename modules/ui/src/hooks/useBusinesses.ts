@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { BusinessSearchFilter, CreateBusinessLocationCommand } from '@domain';
 import {
@@ -16,22 +17,29 @@ import {
 } from '../app/container';
 import { useAuthStore } from '../state/authStore';
 
-export function useHasBusinessMembership(): boolean {
+// Protected checks must not race with the OAuth code exchange on /callback.
+function useProtectedChecksEnabled(): boolean {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const { pathname } = useLocation();
+  return isAuthenticated && pathname !== '/callback';
+}
+
+export function useHasBusinessMembership(): boolean {
+  const enabled = useProtectedChecksEnabled();
   const { data } = useQuery({
     queryKey: ['businesses', 'my', 'membership-check'] as const,
     queryFn: () => getMyBusinessesUseCase.execute({ page: 0, size: 1 }),
-    enabled: isAuthenticated,
+    enabled,
   });
   return (data?.totalElements ?? 0) > 0;
 }
 
 export function useHasActiveBusiness(): boolean {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const enabled = useProtectedChecksEnabled();
   const { data } = useQuery({
     queryKey: ['businesses', 'my', 'active-check'] as const,
     queryFn: () => getMyBusinessesUseCase.execute({ page: 0, size: 50 }),
-    enabled: isAuthenticated,
+    enabled,
   });
   return (data?.content ?? []).some((b) => b.status === 'ACTIVE');
 }

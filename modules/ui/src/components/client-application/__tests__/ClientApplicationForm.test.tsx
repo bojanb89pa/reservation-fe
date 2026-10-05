@@ -10,6 +10,8 @@ const listBusinessLocationsUseCase = { execute: vi.fn() };
 const listBusinessCategoriesUseCase = { execute: vi.fn() };
 
 vi.mock('../../../app/container', () => ({
+  AUTH_SESSION_EXPIRED_EVENT: 'auth:session-expired',
+  tokenStorage: { getAccessToken: () => null },
   getAllBusinessesForAdminUseCase: {
     execute: (...args: unknown[]) => getAllBusinessesForAdminUseCase.execute(...args),
   },

@@ -106,6 +106,7 @@ import {
 export { env } from '@infrastructure';
 export { tokenStorage } from '@infrastructure';
 export { setLoginCookiesBeforeAuthRedirect } from '@infrastructure';
+export { AUTH_SESSION_EXPIRED_EVENT } from '@infrastructure';
 
 // ── Repositories ──────────────────────────────────────────────────────────────
 export const authApiRepository = new AuthApiRepository(authAxiosClient);
