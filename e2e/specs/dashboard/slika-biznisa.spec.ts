@@ -10,6 +10,7 @@
 // se greška prikazuje u sekciji bez ijednog poziva ka BE. `setInputFiles`
 // zaobilazi `accept` atribut inputa, kao što bi to uradio korisnik sa "All files".
 
+import { deflateSync } from 'node:zlib';
 import type { APIResponse, Page } from '@playwright/test';
 import { expect, test } from '../../fixtures/auth';
 import { ApiClient, adminCredentials, createActivatedUser, uniqueName } from '../../fixtures/api';
@@ -23,11 +24,44 @@ interface PageResponseDto<T> {
   content: T[];
 }
 
-// 1×1 PNG.
-const PNG_1X1 = Buffer.from(
-  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
-  'base64',
-);
+function crc32(buf: Buffer): number {
+  let crc = 0xffffffff;
+  for (const byte of buf) {
+    crc ^= byte;
+    for (let i = 0; i < 8; i++) {
+      crc = crc & 1 ? (crc >>> 1) ^ 0xedb88320 : crc >>> 1;
+    }
+  }
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function pngChunk(type: string, data: Buffer): Buffer {
+  const length = Buffer.alloc(4);
+  length.writeUInt32BE(data.length);
+  const body = Buffer.concat([Buffer.from(type, 'ascii'), data]);
+  const crc = Buffer.alloc(4);
+  crc.writeUInt32BE(crc32(body));
+  return Buffer.concat([length, body, crc]);
+}
+
+/** Validan PNG (ispravni CRC-ovi) veličine 8×8, jednobojan, da ga browser sigurno dekodira. */
+function createPng(size = 8): Buffer {
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(size, 0);
+  ihdr.writeUInt32BE(size, 4);
+  ihdr[8] = 8; // bit depth
+  ihdr[9] = 2; // RGB
+  const row = Buffer.concat([Buffer.from([0]), Buffer.alloc(size * 3, 0x80)]);
+  const raw = Buffer.concat(Array.from({ length: size }, () => row));
+  return Buffer.concat([
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+    pngChunk('IHDR', ihdr),
+    pngChunk('IDAT', deflateSync(raw)),
+    pngChunk('IEND', Buffer.alloc(0)),
+  ]);
+}
+
+const PNG_1X1 = createPng();
 
 const MAX_IMAGE_BYTES = 5_242_880;
 
