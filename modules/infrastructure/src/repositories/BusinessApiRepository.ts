@@ -10,6 +10,11 @@ import type {
   SetBusinessCategoryCommand,
   SetBusinessImageCommand,
 } from '@domain';
+import { withResolvedImageUrl } from '../api/resolveApiUrl';
+
+function resolvePage(page: PageResponse<Business>): PageResponse<Business> {
+  return { ...page, content: page.content.map(withResolvedImageUrl) };
+}
 
 export class BusinessApiRepository implements BusinessRepository {
   constructor(private readonly client: AxiosInstance) {}
@@ -18,14 +23,14 @@ export class BusinessApiRepository implements BusinessRepository {
     const response = await this.client.get<PageResponse<Business>>('/businesses/me', {
       params: { page: pageRequest.page, size: pageRequest.size },
     });
-    return response.data;
+    return resolvePage(response.data);
   }
 
   async getAllForAdmin(pageRequest: PageRequest): Promise<PageResponse<Business>> {
     const response = await this.client.get<PageResponse<Business>>('/businesses/admin', {
       params: { page: pageRequest.page, size: pageRequest.size },
     });
-    return response.data;
+    return resolvePage(response.data);
   }
 
   async search(
@@ -40,7 +45,7 @@ export class BusinessApiRepository implements BusinessRepository {
         size: pageRequest.size,
       },
     });
-    return response.data;
+    return resolvePage(response.data);
   }
 
   async getByCategory(
@@ -53,51 +58,51 @@ export class BusinessApiRepository implements BusinessRepository {
         params: { page: pageRequest.page, size: pageRequest.size },
       },
     );
-    return response.data;
+    return resolvePage(response.data);
   }
 
   async getById(id: string): Promise<Business> {
     const response = await this.client.get<Business>(`/businesses/${id}`);
-    return response.data;
+    return withResolvedImageUrl(response.data);
   }
 
   async submit(command: SubmitBusinessCommand): Promise<Business> {
     const response = await this.client.post<Business>('/businesses/submit', command);
-    return response.data;
+    return withResolvedImageUrl(response.data);
   }
 
   async createByAdmin(command: CreateBusinessByAdminCommand): Promise<Business> {
     const response = await this.client.post<Business>('/businesses/admin', command);
-    return response.data;
+    return withResolvedImageUrl(response.data);
   }
 
   async activate(id: string): Promise<Business> {
     const response = await this.client.post<Business>(`/businesses/${id}/activate`);
-    return response.data;
+    return withResolvedImageUrl(response.data);
   }
 
   async reject(id: string): Promise<Business> {
     const response = await this.client.post<Business>(`/businesses/${id}/reject`);
-    return response.data;
+    return withResolvedImageUrl(response.data);
   }
 
   async delete(id: string): Promise<Business> {
     const response = await this.client.delete<Business>(`/businesses/${id}`);
-    return response.data;
+    return withResolvedImageUrl(response.data);
   }
 
   async setCategory(id: string, command: SetBusinessCategoryCommand): Promise<Business> {
     const response = await this.client.put<Business>(`/businesses/${id}/category`, command);
-    return response.data;
+    return withResolvedImageUrl(response.data);
   }
 
   async setImage(id: string, command: SetBusinessImageCommand): Promise<Business> {
     const response = await this.client.put<Business>(`/businesses/${id}/image`, command);
-    return response.data;
+    return withResolvedImageUrl(response.data);
   }
 
   async removeImage(id: string): Promise<Business> {
     const response = await this.client.delete<Business>(`/businesses/${id}/image`);
-    return response.data;
+    return withResolvedImageUrl(response.data);
   }
 }
