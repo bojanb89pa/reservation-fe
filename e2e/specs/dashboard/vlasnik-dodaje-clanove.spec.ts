@@ -266,6 +266,9 @@ test.describe('E2E-014 vlasnik dodaje zaposlene i suvlasnike', () => {
     } finally {
       await employeeApi.dispose();
     }
+    // Sesija vlasnika na auth-service-u se briše, inače authorize preskače login formu.
+    await page.context().clearCookies();
+    await page.evaluate(() => localStorage.clear());
     await loginAs(employee);
     await page.goto('/dashboard/my-businesses');
     await expect(
