@@ -1,6 +1,6 @@
 export interface UserSummary {
   id: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  firstName: string | null;
+  lastName: string | null;
 }

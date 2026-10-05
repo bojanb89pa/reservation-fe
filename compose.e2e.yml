@@ -80,6 +80,10 @@ services:
       # koristi — tamo admin već postoji.
       ADMIN_BOOTSTRAP_EMAIL: ${E2E_ADMIN_EMAIL:-seed-admin@demo.reserva.test}
       ADMIN_BOOTSTRAP_PASSWORD: ${E2E_ADMIN_PASSWORD:-E2e-Admin-Passw0rd!}
+      # Interni pozivi ka resource-service-u (članstva u biznisima); secret mora
+      # da se poklopi sa onim u resource-service-u.
+      RESOURCE_SERVICE_BASE_URL: http://resource-service:8080/api
+      RESOURCE_SERVICE_INTERNAL_SECRET: e2e-internal-secret
 
   resource-service:
     image: ghcr.io/bojanb89pa/reservation-resource-service:${BE_IMAGE_TAG:-latest}
@@ -98,3 +102,4 @@ services:
       RESOURCE_DB_USERNAME: e2e
       RESOURCE_DB_PASSWORD: e2e
       GOOGLE_PLACES_API_KEY: e2e-unused
+      RESOURCE_SERVICE_INTERNAL_SECRET: e2e-internal-secret

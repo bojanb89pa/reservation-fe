@@ -62,4 +62,86 @@ describe('UserAutocompleteInput', () => {
     expect(screen.getByText('Ana Petrović')).toBeInTheDocument();
     expect(screen.queryByPlaceholderText('Search')).not.toBeInTheDocument();
   });
+
+  it('shows only the present name part when the other one is null', () => {
+    renderWithClient(
+      <UserAutocompleteInput
+        selectedUser={{ ...user, lastName: null }}
+        onSelect={vi.fn()}
+        onClear={vi.fn()}
+        placeholder="Search"
+      />,
+    );
+
+    expect(screen.getByText('Ana')).toBeInTheDocument();
+  });
+
+  it('falls back to the email when both names are null', () => {
+    renderWithClient(
+      <UserAutocompleteInput
+        selectedUser={{ ...user, firstName: null, lastName: null }}
+        onSelect={vi.fn()}
+        onClear={vi.fn()}
+        placeholder="Search"
+      />,
+    );
+
+    expect(screen.getByText('ana@example.com')).toBeInTheDocument();
+  });
+
+  it('falls back to the email for suggestions without names', async () => {
+    searchUsersUseCase.execute.mockResolvedValue([{ ...user, firstName: null, lastName: null }]);
+
+    renderWithClient(
+      <UserAutocompleteInput
+        selectedUser={null}
+        onSelect={vi.fn()}
+        onClear={vi.fn()}
+        placeholder="Search"
+      />,
+    );
+
+    fireEvent.change(screen.getByPlaceholderText('Search'), { target: { value: 'ana' } });
+
+    await waitFor(() => expect(screen.getByText('ana@example.com')).toBeInTheDocument(), {
+      timeout: 1000,
+    });
+    expect(screen.queryByText('null')).not.toBeInTheDocument();
+  });
+
+  it('treats a 403 on search as an empty result without surfacing an error', async () => {
+    searchUsersUseCase.execute.mockRejectedValue(Object.assign(new Error('Forbidden'), { status: 403 }));
+
+    renderWithClient(
+      <UserAutocompleteInput
+        selectedUser={null}
+        onSelect={vi.fn()}
+        onClear={vi.fn()}
+        placeholder="Search"
+      />,
+    );
+
+    fireEvent.change(screen.getByPlaceholderText('Search'), { target: { value: 'ana' } });
+
+    await waitFor(() => expect(searchUsersUseCase.execute).toHaveBeenCalled(), { timeout: 1000 });
+    expect(screen.queryByRole('list')).not.toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('reports typed text so an email can be entered manually', () => {
+    const onQueryChange = vi.fn();
+    renderWithClient(
+      <UserAutocompleteInput
+        selectedUser={null}
+        onSelect={vi.fn()}
+        onClear={vi.fn()}
+        onQueryChange={onQueryChange}
+        placeholder="Search"
+      />,
+    );
+
+    fireEvent.change(screen.getByPlaceholderText('Search'), { target: { value: 'new@x.com' } });
+
+    expect(onQueryChange).toHaveBeenCalledWith('new@x.com');
+  });
 });

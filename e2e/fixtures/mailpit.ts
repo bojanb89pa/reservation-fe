@@ -6,7 +6,7 @@ interface MailpitSummary {
   Subject: string;
 }
 
-interface MailpitMessage {
+export interface MailpitMessage {
   ID: string;
   Subject: string;
   HTML: string;
@@ -41,6 +41,38 @@ export async function waitForEmail(to: string, timeoutMs = 20_000): Promise<Mail
     )
     .toBe(true);
   return mailpitGet<MailpitMessage>(`/api/v1/message/${found!.ID}`);
+}
+
+/**
+ * Čeka mejl poslat na `to` čiji sadržaj zadovoljava `predicate` (npr. da bi se
+ * preskočio aktivacioni mejl koji je isti nalog već dobio).
+ */
+export async function waitForEmailMatching(
+  to: string,
+  predicate: (message: MailpitMessage) => boolean,
+  timeoutMs = 20_000,
+): Promise<MailpitMessage> {
+  let found: MailpitMessage | undefined;
+  await expect
+    .poll(
+      async () => {
+        const query = encodeURIComponent(`to:"${to}"`);
+        const result = await mailpitGet<{ messages: MailpitSummary[] }>(
+          `/api/v1/search?query=${query}&limit=20`,
+        );
+        for (const summary of result.messages) {
+          const message = await mailpitGet<MailpitMessage>(`/api/v1/message/${summary.ID}`);
+          if (predicate(message)) {
+            found = message;
+            return true;
+          }
+        }
+        return false;
+      },
+      { message: `traženi mejl za ${to} nije stigao u Mailpit`, timeout: timeoutMs },
+    )
+    .toBe(true);
+  return found!;
 }
 
 /** Aktivacioni link iz mejla (`.../users/activate?token=...`). */

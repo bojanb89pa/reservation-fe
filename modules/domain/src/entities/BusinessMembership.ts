@@ -29,8 +29,11 @@ export interface RemoveMemberCommand {
   role: BusinessMemberRole;
 }
 
+/**
+ * BE reads business name and role itself from resource-service, so only the business id
+ * and the added member's email are sent — mirrors BE `NotifyBusinessMembershipRequest` (fe-brief #144).
+ */
 export interface NotifyBusinessMembershipCommand {
+  businessId: string;
   email: string;
-  businessName: string;
-  role: BusinessMemberRole;
 }
