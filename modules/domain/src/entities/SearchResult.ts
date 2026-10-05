@@ -4,4 +4,5 @@ export interface SearchResult {
   categoryId: string | null;
   city: string | null;
   similarityScore: number;
+  imageUrl: string | null;
 }
