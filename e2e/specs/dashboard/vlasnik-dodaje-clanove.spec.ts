@@ -243,8 +243,7 @@ test.describe('E2E-014 vlasnik dodaje zaposlene i suvlasnike', () => {
     loginAs,
   }) => {
     const { owner, business } = await createOwnedBusiness();
-    const lastName = uniqueName('Zaposleni').replace(' ', '');
-    const employee = await createActivatedUser({ email: uniqueEmail('ui-zaposleni'), lastName });
+    const employee = await createActivatedUser({ email: uniqueEmail('ui-zaposleni') });
 
     await loginAs(owner);
     await page.goto(`/dashboard/businesses/${business.id}`);
@@ -254,7 +253,8 @@ test.describe('E2E-014 vlasnik dodaje zaposlene i suvlasnike', () => {
     await section.getByRole('button', { name: '+ Add employee' }).click();
 
     await expect(section.getByText(`Invitation sent to ${employee.email}`)).toBeVisible();
-    await expect(section.getByText(lastName)).toBeVisible();
+    // Član je na čekanju dok se sam ne prijavi, pa se u listi vidi po emailu, ne po imenu.
+    await expect(section.getByText(employee.email, { exact: true })).toBeVisible();
     await expect(section.getByText('Failed to add member.')).toHaveCount(0);
 
     const mail = await waitForEmailMatching(employee.email, (m) => mailText(m).includes(business.name));
