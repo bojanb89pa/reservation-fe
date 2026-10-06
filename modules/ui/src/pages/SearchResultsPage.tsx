@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDiscoverySearch } from '../hooks/useDiscoverySearch';
+import { BusinessImage } from '../components/business/BusinessImage';
 import styles from './SearchResultsPage.module.css';
 
 export function SearchResultsPage() {
@@ -112,6 +113,14 @@ export function SearchResultsPage() {
             {data.content.map((r) => (
               <li key={r.businessId} className={styles.resultItem}>
                 <Link to={`/businesses/${r.businessId}`} className={styles.resultLink}>
+                  <div className={styles.resultThumb}>
+                    <BusinessImage
+                      name={r.businessName}
+                      imageUrl={r.imageUrl}
+                      seed={r.businessId}
+                      variant="card"
+                    />
+                  </div>
                   <span className={styles.resultName}>{r.businessName}</span>
                   {r.city && <span className={styles.resultCity}>{r.city}</span>}
                 </Link>

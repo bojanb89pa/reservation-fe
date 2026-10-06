@@ -6,6 +6,7 @@ import type {
   PageRequest,
   PageResponse,
 } from '@domain';
+import { withResolvedImageUrl } from '../api/resolveApiUrl';
 
 export class NearbyBusinessApiRepository implements NearbyBusinessRepository {
   constructor(private readonly client: AxiosInstance) {}
@@ -23,6 +24,6 @@ export class NearbyBusinessApiRepository implements NearbyBusinessRepository {
         size: pageRequest.size,
       },
     });
-    return response.data;
+    return { ...response.data, content: response.data.content.map(withResolvedImageUrl) };
   }
 }

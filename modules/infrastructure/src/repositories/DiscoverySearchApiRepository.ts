@@ -6,6 +6,7 @@ import type {
   PageRequest,
   PageResponse,
 } from '@domain';
+import { withResolvedImageUrl } from '../api/resolveApiUrl';
 
 export class DiscoverySearchApiRepository implements DiscoverySearchRepository {
   constructor(private readonly client: AxiosInstance) {}
@@ -23,6 +24,6 @@ export class DiscoverySearchApiRepository implements DiscoverySearchRepository {
       params['city'] = query.city.trim();
     }
     const response = await this.client.get<PageResponse<SearchResult>>('/v1/search', { params });
-    return response.data;
+    return { ...response.data, content: response.data.content.map(withResolvedImageUrl) };
   }
 }
