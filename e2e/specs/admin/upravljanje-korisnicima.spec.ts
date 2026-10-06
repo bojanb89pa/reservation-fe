@@ -4,7 +4,7 @@
 // menja status (deaktivacija/aktivacija) i pokreće reset lozinke.
 // Svaki test pravi sopstvenog korisnika; admin je bootstrap `adminCredentials()`.
 
-import type { Page } from '@playwright/test';
+import type { Page, Response } from '@playwright/test';
 import { expect, submitLoginForm, test } from '../../fixtures/auth';
 import {
   adminCredentials,
@@ -31,6 +31,9 @@ async function openUserDetail(
   await row.getByRole('link', { name: firstName }).click();
   await expect(page.getByRole('heading', { level: 1, name: new RegExp(firstName) })).toBeVisible();
 }
+
+const isStatusPatch = (response: Response) =>
+  response.request().method() === 'PATCH' && /\/accounts\/[^/]+\/status$/.test(response.url());
 
 const canLogin = (credentials: Credentials) =>
   fetchAccessToken(credentials).then(
@@ -62,7 +65,10 @@ test.describe('E2E-016 admin upravljanje korisnicima', () => {
 
     await openUserDetail(page, loginAs, target.email, firstName);
 
+    const deactivated = page.waitForResponse(isStatusPatch);
     await page.getByRole('button', { name: 'Deactivate' }).click();
+    const deactivateResponse = await deactivated;
+    expect(deactivateResponse.status(), await deactivateResponse.text()).toBe(200);
     await expect(page.getByText('Inactive', { exact: true })).toBeVisible();
 
     const blockedContext = await browser.newContext();
@@ -79,7 +85,10 @@ test.describe('E2E-016 admin upravljanje korisnicima', () => {
     }
     expect(await canLogin(target)).toBe(false);
 
+    const activated = page.waitForResponse(isStatusPatch);
     await page.getByRole('button', { name: 'Activate' }).click();
+    const activateResponse = await activated;
+    expect(activateResponse.status(), await activateResponse.text()).toBe(200);
     await expect(page.getByText('Active', { exact: true })).toBeVisible();
 
     await expect.poll(() => canLogin(target)).toBe(true);
