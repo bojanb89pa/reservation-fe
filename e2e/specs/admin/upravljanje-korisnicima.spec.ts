@@ -35,7 +35,22 @@ async function openUserDetail(
 const isStatusPatch = (response: Response) =>
   response.request().method() === 'PATCH' && /\/accounts\/[^/]+\/status$/.test(response.url());
 
-const canLogin = (credentials: Credentials) =>
+/**
+ * Klikće dugme statusa i vraća odgovor PATCH-a. Ako browser odbaci zahtev
+ * (npr. CORS preflight), test pada odmah sa razlogom umesto na isteku vremena.
+ */
+async function clickStatusButton(page: Page, name: string): Promise<Response> {
+  const outcome = Promise.race([
+    page.waitForResponse(isStatusPatch),
+    page.waitForEvent('requestfailed', (r) => r.method() === 'PATCH').then((r) => {
+      throw new Error(`PATCH ${r.url()} nije uspeo: ${r.failure()?.errorText}`);
+    }),
+  ]);
+  await page.getByRole('button', { name }).click();
+  return outcome;
+}
+
+const canLogin =(credentials: Credentials) =>
   fetchAccessToken(credentials).then(
     () => true,
     () => false,
@@ -65,9 +80,7 @@ test.describe('E2E-016 admin upravljanje korisnicima', () => {
 
     await openUserDetail(page, loginAs, target.email, firstName);
 
-    const deactivated = page.waitForResponse(isStatusPatch);
-    await page.getByRole('button', { name: 'Deactivate' }).click();
-    const deactivateResponse = await deactivated;
+    const deactivateResponse = await clickStatusButton(page, 'Deactivate');
     expect(deactivateResponse.status(), await deactivateResponse.text()).toBe(200);
     await expect(page.getByText('Inactive', { exact: true })).toBeVisible();
 
@@ -85,9 +98,7 @@ test.describe('E2E-016 admin upravljanje korisnicima', () => {
     }
     expect(await canLogin(target)).toBe(false);
 
-    const activated = page.waitForResponse(isStatusPatch);
-    await page.getByRole('button', { name: 'Activate' }).click();
-    const activateResponse = await activated;
+    const activateResponse = await clickStatusButton(page, 'Activate');
     expect(activateResponse.status(), await activateResponse.text()).toBe(200);
     await expect(page.getByText('Active', { exact: true })).toBeVisible();
 
