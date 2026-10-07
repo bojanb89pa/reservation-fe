@@ -59,7 +59,11 @@ test.describe('E2E-017 admin kategorije', () => {
         (r) => r.request().method() === 'PUT' && r.url().endsWith(`/business-categories/${categoryId}`),
       );
       await page.getByRole('button', { name: 'Save changes' }).click();
-      await expectOk(await updateResponse, 'PUT /business-categories/{id}');
+      const update = await updateResponse;
+      await expectOk(
+        update,
+        `PUT /business-categories/{id} body=${update.request().postData() ?? ''}`,
+      );
       await expect(page.getByRole('button', { name: 'Save changes' })).toHaveCount(0);
 
       // Izgled: simbol i boja.
