@@ -41,6 +41,7 @@ export function ResetPasswordDialog({ onConfirm, onCancel, isPending, error }: P
             <label className="form-label">{t('resetPasswordDialog.newPasswordLabel')}</label>
             <input
               type="password"
+              aria-label={t('resetPasswordDialog.newPasswordLabel')}
               className="form-input"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
@@ -57,6 +58,7 @@ export function ResetPasswordDialog({ onConfirm, onCancel, isPending, error }: P
             <label className="form-label">{t('resetPasswordDialog.confirmPasswordLabel')}</label>
             <input
               type="password"
+              aria-label={t('resetPasswordDialog.confirmPasswordLabel')}
               className="form-input"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
