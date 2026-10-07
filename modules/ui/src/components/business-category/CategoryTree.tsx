@@ -58,7 +58,7 @@ function CategoryRow({
   const color = node.color ?? DEFAULT_CATEGORY_COLOR;
   return (
     <>
-      <div className={styles.row} style={{ paddingLeft: `${20 + depth * 24}px` }}>
+      <div data-testid="category-row" className={styles.row} style={{ paddingLeft: `${20 + depth * 24}px` }}>
         <div className={styles.nameWrapper}>
           {depth > 0 && <span className={styles.indent} />}
           <span className={styles.categoryIcon} style={{ background: `${color}1A`, color }}>

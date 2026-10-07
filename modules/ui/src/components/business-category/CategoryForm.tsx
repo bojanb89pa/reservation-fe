@@ -79,6 +79,7 @@ export function CategoryForm({ categories, initial, onSave, onCancel, isPending,
             <input
               className="form-input"
               placeholder={t('categoryForm.translationPlaceholder')}
+              aria-label={t(`categoryForm.locale_${locale}`)}
               value={translations[locale] ?? ''}
               onChange={(e) => setTranslation(locale, e.target.value)}
               autoFocus={isEdit && locale === i18n.language}
