@@ -304,6 +304,8 @@ const en = {
     errorSave: 'Failed to save category',
     errorDelete: 'Failed to delete category',
     errorAppearance: 'Failed to save appearance',
+    errorCodeTaken: 'This category code is already taken',
+    errorSelfParent: 'A category cannot be its own parent',
   },
   dashboardClientApplications: {
     title: 'Client applications',
@@ -336,7 +338,6 @@ const en = {
   categoryForm: {
     codeLabel: 'Code',
     codePlaceholder: 'e.g. hair_salon',
-    codeOptional: '(optional)',
     translationsLabel: 'Translations',
     translationPlaceholder: 'Translated name',
     locale_en: 'English',
