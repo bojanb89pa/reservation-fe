@@ -13,8 +13,9 @@ export interface CreateBusinessCategoryCommand {
 }
 
 export interface UpdateBusinessCategoryCommand {
-  code?: string;
-  parentId?: string;
+  /** Optional; omit or send null to keep the existing code. Never send an empty/blank string (BE returns 400). */
+  code?: string | null;
+  parentId?: string | null;
   translations: Record<string, string>;
 }
 
