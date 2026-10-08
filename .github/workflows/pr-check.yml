@@ -1,9 +1,14 @@
 name: PR check
 
-# Lint + testovi + build na svakom PR-u, bez obzira na to da li ide na epic
-# granu ili na main. Ovo je jedini automatski signal da je epic grana zdrava
-# pre nego što se spoji u main (branch protection nije dostupan na Free planu
-# za privatan repo, pa se merge oslanja na ovaj check i na tvoj pregled).
+# Lint + testovi + build na svakom PR-u. PR ka main proverava sve: to je
+# jedini automatski signal da je epic grana zdrava pre nego što se spoji u main
+# (branch protection nije dostupan na Free planu za privatan repo, pa se merge
+# oslanja na ovaj check i na tvoj pregled).
+#
+# PR sloja ka epic grani proverava samo module koje dira i ono od čega oni
+# zavise (scripts/ci/scoped-check.sh). Kad modules/domain promeni postojeći
+# tip, ostali moduli ne prolaze tsc dok ih child tiketi ne prilagode, a ti
+# tiketi se otvaraju tek posle merge-a domain PR-a.
 #
 # Namerno NE deployuje ništa — deploy-staging.yml se i dalje okida samo na push
 # u main.
@@ -30,24 +35,11 @@ jobs:
           node-version: "22"
           cache: yarn
 
-      - name: Install
-        run: yarn install --frozen-lockfile
+      # Checkout PR-a je merge commit (base + PR), pa diff prema vrhu base
+      # grane daje tačno izmene iz PR-a. Istorija nije potrebna, samo stablo.
+      - name: Fetch base
+        run: git fetch --no-tags --depth=1 origin "+refs/heads/${GITHUB_BASE_REF}:refs/remotes/origin/${GITHUB_BASE_REF}"
 
-      - name: Lint
-        run: yarn lint
-
-      - name: Test
-        run: yarn test --run
-
-      - name: Build
-        run: yarn build
-
-      # Samo tipovi i spisak testova — pravo izvrsavanje je u e2e.yml.
-      - name: E2E typecheck
-        working-directory: e2e
-        env:
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
-        run: |
-          yarn install --frozen-lockfile
-          yarn typecheck
-          yarn test:list > /dev/null
+      # Lint, testovi, build i e2e typecheck — koliko od toga, zavisi od diff-a.
+      - name: Check
+        run: scripts/ci/scoped-check.sh "origin/${GITHUB_BASE_REF}"
