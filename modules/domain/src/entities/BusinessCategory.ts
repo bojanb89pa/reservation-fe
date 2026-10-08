@@ -15,7 +15,7 @@ export interface CreateBusinessCategoryCommand {
 export interface UpdateBusinessCategoryCommand {
   code?: string;
   parentId?: string;
-  translations: Record<string, string>;
+  names: Record<string, string>;
 }
 
 export interface UpdateBusinessCategoryAppearanceCommand {
