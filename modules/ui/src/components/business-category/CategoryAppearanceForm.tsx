@@ -41,6 +41,7 @@ export function CategoryAppearanceForm({ category, onSave, onCancel, isPending, 
             className="form-input"
             placeholder={t('categoryAppearanceForm.symbolPlaceholder')}
             value={symbol}
+            aria-label={t('categoryAppearanceForm.symbolLabel')}
             onChange={(e) => setSymbol(e.target.value)}
             maxLength={5}
             autoFocus

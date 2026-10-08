@@ -15,7 +15,7 @@ export function DeleteCategoryDialog({ category, onConfirm, onCancel, isPending,
 
   return (
     <div className={styles.overlay}>
-      <div className={styles.dialog}>
+      <div className={styles.dialog} data-testid="category-delete-dialog">
         <h3 className={styles.title}>{t('deleteCategoryDialog.title')}</h3>
         <p className={styles.body}>
           <Trans
