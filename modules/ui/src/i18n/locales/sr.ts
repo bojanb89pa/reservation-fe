@@ -307,6 +307,8 @@ const sr: Translation = {
     errorSave: 'Greška pri čuvanju kategorije',
     errorDelete: 'Greška pri brisanju kategorije',
     errorAppearance: 'Greška pri čuvanju izgleda',
+    errorCodeTaken: 'Kod kategorije je već zauzet',
+    errorSelfParent: 'Kategorija ne može biti sama sebi nadređena',
   },
   dashboardClientApplications: {
     title: 'Klijentske aplikacije',
@@ -339,7 +341,6 @@ const sr: Translation = {
   categoryForm: {
     codeLabel: 'Kod',
     codePlaceholder: 'npr. frizerski_salon',
-    codeOptional: '(opciono)',
     translationsLabel: 'Prevodi',
     translationPlaceholder: 'Prevedeni naziv',
     locale_en: 'Engleski',

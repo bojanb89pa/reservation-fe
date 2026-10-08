@@ -40,6 +40,14 @@ export function DashboardCategoriesPage() {
     setDeleteError(null);
   };
 
+  const saveErrorMessage = (err: unknown): string => {
+    // WARNING: assumed category PUT/POST errors surface as ApiError with a status (normalizeAxiosError does not map category routes) — verify before merging
+    const status = (err as { status?: number } | null)?.status;
+    if (status === 409) return t('dashboardCategories.errorCodeTaken');
+    if (status === 422) return t('dashboardCategories.errorSelfParent');
+    return err instanceof Error ? err.message : t('dashboardCategories.errorSave');
+  };
+
   const handleSave = async (
     code: string | undefined,
     translations: Record<string, string>,
@@ -50,14 +58,15 @@ export function DashboardCategoriesPage() {
       if (mode.type === 'create') {
         await create({ code: code!, parentId: parentId ?? undefined, translations });
       } else if (mode.type === 'edit') {
+        // code is not sent on edit: it is fixed at creation
         await update({
           id: mode.category.id,
-          command: { code: code || undefined, parentId: parentId ?? undefined, translations },
+          command: { parentId, translations },
         });
       }
       reset();
     } catch (err: unknown) {
-      setFormError(err instanceof Error ? err.message : t('dashboardCategories.errorSave'));
+      setFormError(saveErrorMessage(err));
     }
   };
 
