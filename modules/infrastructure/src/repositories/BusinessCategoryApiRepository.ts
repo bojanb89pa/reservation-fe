@@ -26,10 +26,11 @@ export class BusinessCategoryApiRepository implements BusinessCategoryRepository
   }
 
   async update(id: string, command: UpdateBusinessCategoryCommand): Promise<BusinessCategory> {
-    const response = await this.client.put<BusinessCategory>(
-      `/business-categories/${id}`,
-      command,
-    );
+    // Translate only: the BE rejects a blank code with 400, so omit it (BE keeps the existing code).
+    const { code, ...rest } = command;
+    const body: UpdateBusinessCategoryCommand =
+      typeof code === 'string' && code.trim() !== '' ? { ...rest, code } : rest;
+    const response = await this.client.put<BusinessCategory>(`/business-categories/${id}`, body);
     return response.data;
   }
 
