@@ -50,7 +50,9 @@ typecheck() {
   if [ -n "$other" ]; then
     echo "tsc: $(echo "$other" | wc -l) gresaka van proveravanih modula ($*) se ne racuna —"
     echo "prilagodjavaju ih child tiketi, a zbirni PR ka main proverava sve:"
-    echo "$other" | sed 's/^/  /' | head -40
+    # `|| true`: head zatvara pipe ranije, a pod pipefail bi taj SIGPIPE
+    # oborio proveru bas kad zavisnih gresaka ima mnogo.
+    { echo "$other" | sed 's/^/  /' | head -40; } || true
     echo
   fi
   if [ -n "$global" ] || [ -n "$own" ]; then
