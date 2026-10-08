@@ -25,3 +25,4 @@ export interface UpdateBusinessCategoryAppearanceCommand {
 
 export const DEFAULT_CATEGORY_SYMBOL = '🏢';
 export const DEFAULT_CATEGORY_COLOR = '#6B7280';
+export const broken: number = "x";
