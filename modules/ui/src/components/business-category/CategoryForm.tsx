@@ -56,20 +56,20 @@ export function CategoryForm({ categories, initial, onSave, onCancel, isPending,
     <form onSubmit={handleSubmit} className={styles.form}>
       {error && <div className="error-box">{error}</div>}
 
-      <div className="form-field">
-        <label className="form-label">
-          {t('categoryForm.codeLabel')}
-          {isEdit && <span className={styles.optional}> {t('categoryForm.codeOptional')}</span>}
-        </label>
-        <input
-          className="form-input"
-          placeholder={t('categoryForm.codePlaceholder')}
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          required={!isEdit}
-          autoFocus={!isEdit}
-        />
-      </div>
+      {/* code is set only on create; it cannot be changed afterwards */}
+      {!isEdit && (
+        <div className="form-field">
+          <label className="form-label">{t('categoryForm.codeLabel')}</label>
+          <input
+            className="form-input"
+            placeholder={t('categoryForm.codePlaceholder')}
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            required
+            autoFocus
+          />
+        </div>
+      )}
 
       <fieldset className={styles.translationsFieldset}>
         <legend className={styles.translationsLegend}>{t('categoryForm.translationsLabel')}</legend>
@@ -79,6 +79,7 @@ export function CategoryForm({ categories, initial, onSave, onCancel, isPending,
             <input
               className="form-input"
               placeholder={t('categoryForm.translationPlaceholder')}
+              aria-label={t(`categoryForm.locale_${locale}`)}
               value={translations[locale] ?? ''}
               onChange={(e) => setTranslation(locale, e.target.value)}
               autoFocus={isEdit && locale === i18n.language}

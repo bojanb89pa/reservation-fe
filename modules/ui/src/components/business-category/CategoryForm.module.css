@@ -10,12 +10,6 @@
   justify-content: flex-end;
 }
 
-.optional {
-  font-weight: 400;
-  color: var(--ink-500);
-  font-size: 0.85em;
-}
-
 .translationsFieldset {
   border: 1px solid var(--border);
   border-radius: var(--r-md, 8px);
