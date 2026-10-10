@@ -88,9 +88,12 @@ test.describe('E2E-018 nalog korisnika', () => {
     // `profilePictureUrl` je relativan (`/auth/users/<id>/profile-picture`) i u produkciji ga
     // gateway šalje auth-servisu. `yarn preview` u CI-ju nema proxy, pa isti put radimo ovde.
     const authOrigin = new URL(env.authUrl).origin;
-    await page.route('**/auth/users/*/profile-picture*', (route) => {
+    // `route.fetch` + `fulfill` vraća odgovor kao da je same-origin, pa CORS/CORP zaglavlja
+    // auth-servisa ne mogu da spreče dekodiranje slike.
+    await page.route('**/auth/users/*/profile-picture*', async (route) => {
       const { pathname, search } = new URL(route.request().url());
-      return route.continue({ url: `${authOrigin}${pathname}${search}` });
+      const response = await route.fetch({ url: `${authOrigin}${pathname}${search}` });
+      await route.fulfill({ response });
     });
     await openAccount(page);
 
