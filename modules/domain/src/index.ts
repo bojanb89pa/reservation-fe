@@ -89,6 +89,7 @@ export type {
   UserStatus,
   UserRegistration,
   SetProfilePictureCommand,
+  UpdateOwnProfileCommand,
   AdminCreateUserCommand,
   AdminUpdateUserCommand,
   UpdateUserStatusCommand,
@@ -176,6 +177,7 @@ export type { RemoveBusinessImageUseCase } from './use-cases/business/RemoveBusi
 export type { UploadFileUseCase } from './use-cases/file/UploadFileUseCase';
 export type { SetProfilePictureUseCase } from './use-cases/user/SetProfilePictureUseCase';
 export type { DeleteProfilePictureUseCase } from './use-cases/user/DeleteProfilePictureUseCase';
+export type { UpdateOwnProfileUseCase } from './use-cases/user/UpdateOwnProfileUseCase';
 export type { GetUsersByIdsUseCase } from './use-cases/user/GetUsersByIdsUseCase';
 export type { SearchUsersForAdminUseCase } from './use-cases/user/SearchUsersForAdminUseCase';
 export type { GetUserByIdForAdminUseCase } from './use-cases/user/GetUserByIdForAdminUseCase';

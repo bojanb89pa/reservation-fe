@@ -31,6 +31,12 @@ export interface SetProfilePictureCommand {
   uploadId: string;
 }
 
+/** Self-service name change (PATCH /auth/users/me). Both fields are required and must not be blank. */
+export interface UpdateOwnProfileCommand {
+  firstName: string;
+  lastName: string;
+}
+
 export interface AdminCreateUserCommand {
   email: string;
   password: string;
