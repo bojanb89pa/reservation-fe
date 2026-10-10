@@ -13,6 +13,7 @@ import { deflateSync } from 'node:zlib';
 import type { Page } from '@playwright/test';
 import { expect, test } from '../../fixtures/auth';
 import { createActivatedUser } from '../../fixtures/api';
+import { env } from '../../env';
 
 function crc32(buf: Buffer): number {
   let crc = 0xffffffff;
@@ -83,6 +84,14 @@ test.describe('E2E-018 nalog korisnika', () => {
     const user = await createActivatedUser({ firstName: 'Slika', lastName: 'Korisnik' });
     const alt = 'Photo of Slika Korisnik';
     await loginAs(user);
+
+    // `profilePictureUrl` je relativan (`/auth/users/<id>/profile-picture`) i u produkciji ga
+    // gateway šalje auth-servisu. `yarn preview` u CI-ju nema proxy, pa isti put radimo ovde.
+    const authOrigin = new URL(env.authUrl).origin;
+    await page.route('**/auth/users/*/profile-picture*', (route) => {
+      const { pathname, search } = new URL(route.request().url());
+      return route.continue({ url: `${authOrigin}${pathname}${search}` });
+    });
     await openAccount(page);
 
     await expect(page.getByText('No picture yet')).toBeVisible();
