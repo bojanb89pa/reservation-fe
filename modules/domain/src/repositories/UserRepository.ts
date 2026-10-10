@@ -1,6 +1,7 @@
 import type {
   User,
   SetProfilePictureCommand,
+  UpdateOwnProfileCommand,
   AdminCreateUserCommand,
   AdminUpdateUserCommand,
   UpdateUserStatusCommand,
@@ -14,6 +15,7 @@ import type { SearchUsersQuery } from '../types/SearchUsersQuery';
 export interface UserRepository {
   setProfilePicture(command: SetProfilePictureCommand): Promise<User>;
   deleteProfilePicture(): Promise<User>;
+  updateOwnProfile(command: UpdateOwnProfileCommand): Promise<User>;
   getUsersByIds(ids: string[]): Promise<User[]>;
   // WARNING: reusing the shared non-nullable PageResponse<T> — the fe-brief's generic TS
   // snippet marks page/totalElements/totalPages nullable, but its own JSON example returns
