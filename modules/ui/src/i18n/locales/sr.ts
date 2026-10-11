@@ -154,6 +154,19 @@ const sr: Translation = {
   userBadge: {
     unknown: 'Nepoznat korisnik',
   },
+  profileName: {
+    sectionTitle: 'Vaše ime',
+    firstName: 'Ime',
+    lastName: 'Prezime',
+    save: 'Sačuvaj ime',
+    saving: 'Čuvanje…',
+    saved: 'Vaše ime je izmenjeno.',
+    errorValidation: 'Proverite ime i prezime i pokušajte ponovo.',
+    errorUnauthorized: 'Sesija je istekla. Prijavite se ponovo.',
+    errorNotFound: 'Vaš nalog nije pronađen.',
+    errorRejected: 'Ovo ime nije prihvaćeno. Pokušajte sa drugim.',
+    errorGeneric: 'Ime nije moguće sačuvati. Pokušajte ponovo.',
+  },
   profilePicture: {
     pickerLabel: 'Profilna slika',
     previewAlt: 'Pregled izabrane slike',

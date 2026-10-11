@@ -37,6 +37,7 @@ export { UpdateUserStatusUseCaseImpl } from './use-cases/user/UpdateUserStatusUs
 export { ResetUserPasswordUseCaseImpl } from './use-cases/user/ResetUserPasswordUseCaseImpl';
 export { DeleteUserByAdminUseCaseImpl } from './use-cases/user/DeleteUserByAdminUseCaseImpl';
 export { SearchUsersUseCaseImpl } from './use-cases/user/SearchUsersUseCaseImpl';
+export { UpdateOwnProfileUseCaseImpl } from './use-cases/user/UpdateOwnProfileUseCaseImpl';
 
 export { CreateBusinessServiceUseCaseImpl } from './use-cases/business-service/CreateBusinessServiceUseCaseImpl';
 export { ListBusinessServicesUseCaseImpl } from './use-cases/business-service/ListBusinessServicesUseCaseImpl';
