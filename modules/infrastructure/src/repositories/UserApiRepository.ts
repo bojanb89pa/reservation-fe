@@ -2,6 +2,7 @@ import type { AxiosInstance } from 'axios';
 import type {
   User,
   SetProfilePictureCommand,
+  UpdateOwnProfileCommand,
   UserRepository,
   AdminUserSearchFilter,
   AdminCreateUserCommand,
@@ -16,6 +17,15 @@ import type {
 
 export class UserApiRepository implements UserRepository {
   constructor(private readonly client: AxiosInstance) {}
+
+  async updateOwnProfile(command: UpdateOwnProfileCommand): Promise<User> {
+    // base URL of the auth client already ends with /auth, so this is PATCH /auth/users/me
+    const response = await this.client.patch<User>('/users/me', {
+      firstName: command.firstName,
+      lastName: command.lastName,
+    });
+    return response.data;
+  }
 
   async setProfilePicture(command: SetProfilePictureCommand): Promise<User> {
     const response = await this.client.put<User>('/users/me/profile-picture', command);
