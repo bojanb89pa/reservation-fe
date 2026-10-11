@@ -17,6 +17,7 @@ let mockRepo: UserRepository;
 
 beforeEach(() => {
   mockRepo = {
+    updateOwnProfile: vi.fn(),
     setProfilePicture: vi.fn(),
     deleteProfilePicture: vi.fn(),
     getUsersByIds: vi.fn(),
