@@ -34,7 +34,7 @@ export function AccountPage() {
 
       {!isLoading && !isError && user && (
         <>
-          <ProfileNameSection key={`${user.firstName}|${user.lastName}`} user={user} />
+          <ProfileNameSection user={user} />
           <ProfilePictureSection user={user} />
         </>
       )}
