@@ -8,6 +8,7 @@ const mockUsers: UserSummary[] = [
 ];
 
 const mockRepo: UserRepository = {
+  updateOwnProfile: vi.fn(),
   setProfilePicture: vi.fn(),
   deleteProfilePicture: vi.fn(),
   getUsersByIds: vi.fn(),
