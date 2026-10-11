@@ -86,6 +86,7 @@ import {
   AddContactInfoUseCaseImpl,
   UpdateContactInfoUseCaseImpl,
   RemoveContactInfoUseCaseImpl,
+  UpdateOwnProfileUseCaseImpl,
   SetProfilePictureUseCaseImpl,
   DeleteProfilePictureUseCaseImpl,
   GetUsersByIdsUseCaseImpl,
@@ -289,6 +290,7 @@ export const removeContactInfoUseCase = new RemoveContactInfoUseCaseImpl(
   businessContactInfoRepository,
 );
 
+export const updateOwnProfileUseCase = new UpdateOwnProfileUseCaseImpl(userRepository);
 export const setProfilePictureUseCase = new SetProfilePictureUseCaseImpl(userRepository);
 export const deleteProfilePictureUseCase = new DeleteProfilePictureUseCaseImpl(userRepository);
 export const getUsersByIdsUseCase = new GetUsersByIdsUseCaseImpl(userRepository);

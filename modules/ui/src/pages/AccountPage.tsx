@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import { useCurrentUser } from '../hooks/useProfilePicture';
+import { ProfileNameSection } from '../components/account/ProfileNameSection';
 import { ProfilePictureSection } from '../components/account/ProfilePictureSection';
 import styles from './AccountPage.module.css';
 
@@ -31,7 +32,12 @@ export function AccountPage() {
 
       {isError && <div className="error-box">{t('account.error')}</div>}
 
-      {!isLoading && !isError && user && <ProfilePictureSection user={user} />}
+      {!isLoading && !isError && user && (
+        <>
+          <ProfileNameSection key={`${user.firstName}|${user.lastName}`} user={user} />
+          <ProfilePictureSection user={user} />
+        </>
+      )}
     </div>
   );
 }

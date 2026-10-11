@@ -151,6 +151,19 @@ const en = {
   userBadge: {
     unknown: 'Unknown user',
   },
+  profileName: {
+    sectionTitle: 'Your name',
+    firstName: 'First name',
+    lastName: 'Last name',
+    save: 'Save name',
+    saving: 'Saving…',
+    saved: 'Your name has been updated.',
+    errorValidation: 'Please check the first and last name and try again.',
+    errorUnauthorized: 'Your session has expired. Please sign in again.',
+    errorNotFound: 'Your account could not be found.',
+    errorRejected: 'This name could not be accepted. Please try a different one.',
+    errorGeneric: 'The name could not be saved. Please try again.',
+  },
   profilePicture: {
     pickerLabel: 'Profile picture',
     previewAlt: 'Preview of the selected picture',
