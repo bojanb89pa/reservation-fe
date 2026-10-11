@@ -94,13 +94,14 @@ test.describe('E2E-019 jezik sr/en', () => {
     // Najpre srpski, da prebacivanje na en zaista nešto menja.
     await switchLanguage(page, 'SR');
     await expect(page.getByRole('link', { name: 'Pretraži', exact: true })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Za biznise', exact: true })).toBeVisible();
+    const nav = page.getByRole('navigation');
+    await expect(nav.getByRole('link', { name: 'Za biznise', exact: true })).toBeVisible();
     await expectCategoriesVisible(page, categoriesSr);
     await expectNoRawKeys(page);
 
     await switchLanguage(page, 'EN');
     await expect(page.getByRole('link', { name: 'Browse', exact: true })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'For businesses', exact: true })).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'For businesses', exact: true })).toBeVisible();
     await expectCategoriesVisible(page, categoriesEn);
     await expectNoRawKeys(page);
   });
