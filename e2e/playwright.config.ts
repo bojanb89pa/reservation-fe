@@ -19,5 +19,17 @@ export default defineConfig({
     video: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    {
+      name: 'chromium',
+      testIgnore: '**/responsive/**',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      // Specovi u `specs/responsive/` rade samo ovde, u viewport-u 390×844.
+      name: 'mobile',
+      testMatch: '**/responsive/**/*.spec.ts',
+      use: { ...devices['Desktop Chrome'], viewport: { width: 390, height: 844 }, hasTouch: true },
+    },
+  ],
 });
