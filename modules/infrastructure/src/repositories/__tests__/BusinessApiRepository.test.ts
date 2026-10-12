@@ -33,3 +33,31 @@ describe('BusinessApiRepository image URLs', () => {
     expect(result.content.map((b) => b.imageUrl)).toEqual([expected, null]);
   });
 });
+
+describe('BusinessApiRepository.updateOverlappingPendingSetting', () => {
+  it('PATCHes the setting and returns the business with the flag', async () => {
+    const client = {
+      patch: vi.fn().mockResolvedValue({
+        data: { id: 'abc', imageUrl: null, allowOverlappingPendingReservations: false },
+      }),
+    };
+    const repo = new BusinessApiRepository(client as unknown as AxiosInstance);
+    const result = await repo.updateOverlappingPendingSetting('abc', {
+      allowOverlappingPendingReservations: false,
+    });
+    expect(client.patch).toHaveBeenCalledWith('/businesses/abc/overlapping-pending-reservations', {
+      allowOverlappingPendingReservations: false,
+    });
+    expect(result.allowOverlappingPendingReservations).toBe(false);
+  });
+
+  it('passes allowOverlappingPendingReservations through getById', async () => {
+    const client = {
+      get: vi.fn().mockResolvedValue({
+        data: { id: 'abc', imageUrl: null, allowOverlappingPendingReservations: true },
+      }),
+    };
+    const repo = new BusinessApiRepository(client as unknown as AxiosInstance);
+    expect((await repo.getById('abc')).allowOverlappingPendingReservations).toBe(true);
+  });
+});
