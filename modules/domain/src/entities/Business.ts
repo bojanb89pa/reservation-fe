@@ -12,6 +12,12 @@ export interface Business {
   category: BusinessCategory | null;
   /** Relative path such as "/api/businesses/<id>/image", or null when there is no image. */
   imageUrl: string | null;
+  /** When false, a new PENDING reservation cannot overlap another PENDING one. Defaults to true on the BE. */
+  allowOverlappingPendingReservations: boolean;
+}
+
+export interface UpdateOverlappingPendingSettingCommand {
+  allowOverlappingPendingReservations: boolean;
 }
 
 export interface SubmitBusinessCommand {
