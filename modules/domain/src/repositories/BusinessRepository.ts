@@ -4,6 +4,7 @@ import type {
   CreateBusinessByAdminCommand,
   SetBusinessCategoryCommand,
   SetBusinessImageCommand,
+  UpdateOverlappingPendingSettingCommand,
 } from '../entities/Business';
 import type { PageRequest, PageResponse } from '../types/Page';
 import type { BusinessSearchFilter } from '../types/BusinessSearchFilter';
@@ -22,4 +23,8 @@ export interface BusinessRepository {
   setCategory(id: string, command: SetBusinessCategoryCommand): Promise<Business>;
   setImage(id: string, command: SetBusinessImageCommand): Promise<Business>;
   removeImage(id: string): Promise<Business>;
+  updateOverlappingPendingSetting(
+    id: string,
+    command: UpdateOverlappingPendingSettingCommand,
+  ): Promise<Business>;
 }
