@@ -7,12 +7,15 @@ import {
   UnprocessableEntityError,
   ValidationError,
   UnauthorizedError,
+  ReservationSlotTakenError,
+  ReservationErrorCode,
 } from '@domain';
 
 export interface ApiErrorBody {
   message?: string;
   error?: string;
   status?: number;
+  code?: string;
 }
 
 export class ApiError extends Error {
@@ -49,6 +52,15 @@ const PROFILE_PICTURE_PATH = /\/users\/me\/profile-picture\/?$/;
 const ADMIN_USER_ACCOUNTS_PATH = /\/users\/admin\/accounts(\/.*)?$/;
 /** `POST /resources/{resourceId}/reservations/{id}/cancel` — user-initiated reservation cancel. */
 const RESERVATION_CANCEL_PATH = /\/reservations\/[^/]+\/cancel\/?$/;
+
+/** `POST /resources/{resourceId}/reservations` — creating a reservation. */
+const RESERVATION_CREATE_PATH = /\/resources\/[^/]+\/reservations\/?$/;
+/** `POST /resources/{resourceId}/reservations/{id}/approve` — approving a PENDING reservation. */
+const RESERVATION_APPROVE_PATH = /\/reservations\/[^/]+\/approve\/?$/;
+/** `POST /client-applications/reservations` — reservation created through a client application. */
+const CLIENT_APPLICATION_RESERVATION_PATH = /\/client-applications\/reservations\/?$/;
+/** `PATCH /businesses/{id}/overlapping-pending-reservations` — owner-only setting. */
+const OVERLAPPING_PENDING_PATH = /\/businesses\/[^/]+\/overlapping-pending-reservations\/?$/;
 
 // WARNING: 401 on admin-user routes stays a generic ApiError (not UnauthorizedError) because authInterceptors.ts's refresh-retry only fires for `instanceof ApiError` — verify before merging
 type AdminUserDomainError = NotFoundError | ConflictError | ValidationError | UnauthorizedError;
@@ -104,10 +116,32 @@ function isReservationCancelRequest(config: InternalAxiosRequestConfig | undefin
   return method === 'POST' && RESERVATION_CANCEL_PATH.test(path);
 }
 
-// WARNING: non-file, non-admin-user, non-reservation-cancel routes keep returning ApiError with a status, as before — verify before merging
+function isSlotTakenReservationRequest(config: InternalAxiosRequestConfig | undefined): boolean {
+  const path = (config?.url ?? '').split('?')[0];
+  const method = (config?.method ?? '').toUpperCase();
+  if (method !== 'POST') return false;
+  return (
+    RESERVATION_CREATE_PATH.test(path) ||
+    RESERVATION_APPROVE_PATH.test(path) ||
+    CLIENT_APPLICATION_RESERVATION_PATH.test(path)
+  );
+}
+
+function isOverlappingPendingRequest(config: InternalAxiosRequestConfig | undefined): boolean {
+  const path = (config?.url ?? '').split('?')[0];
+  const method = (config?.method ?? '').toUpperCase();
+  return method === 'PATCH' && OVERLAPPING_PENDING_PATH.test(path);
+}
+
+// WARNING: non-file, non-admin-user, non-reservation routes keep returning ApiError with a status, as before — verify before merging
 export function normalizeAxiosError(
   error: AxiosError<ApiErrorBody>,
-): ApiError | FileUploadError | AdminUserDomainError | ReservationCancelDomainError {
+):
+  | ApiError
+  | FileUploadError
+  | AdminUserDomainError
+  | ReservationCancelDomainError
+  | ReservationSlotTakenError {
   const status = error.response?.status ?? 0;
   const body = error.response?.data;
   const message = body?.message ?? body?.error ?? error.message ?? 'An unexpected error occurred';
@@ -125,6 +159,19 @@ export function normalizeAxiosError(
   if (isReservationCancelRequest(error.config)) {
     const toDomainError = RESERVATION_CANCEL_REASON_BY_STATUS[status];
     if (toDomainError) return toDomainError(message);
+  }
+
+  if (
+    status === 409 &&
+    body?.code === ReservationErrorCode.RESERVATION_SLOT_TAKEN &&
+    isSlotTakenReservationRequest(error.config)
+  ) {
+    return new ReservationSlotTakenError(message);
+  }
+
+  // WARNING: 409 on the owner-only setting route mapped to ConflictError (message only, `code` dropped) — verify before merging
+  if (status === 409 && isOverlappingPendingRequest(error.config)) {
+    return new ConflictError(message);
   }
 
   return new ApiError(message, status, body);
