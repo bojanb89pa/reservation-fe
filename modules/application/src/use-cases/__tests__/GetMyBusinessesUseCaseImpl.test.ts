@@ -27,6 +27,7 @@ const mockRepo: BusinessRepository = {
   setCategory: vi.fn(),
   setImage: vi.fn(),
   removeImage: vi.fn(),
+  updateOverlappingPendingSetting: vi.fn(),
 };
 
 describe('GetMyBusinessesUseCaseImpl', () => {

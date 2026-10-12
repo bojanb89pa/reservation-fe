@@ -22,6 +22,7 @@ export { GetBusinessesByCategoryUseCaseImpl } from './use-cases/business/GetBusi
 export { SearchNearbyBusinessesUseCaseImpl } from './use-cases/business/SearchNearbyBusinessesUseCaseImpl';
 export { SetBusinessImageUseCaseImpl } from './use-cases/business/SetBusinessImageUseCaseImpl';
 export { RemoveBusinessImageUseCaseImpl } from './use-cases/business/RemoveBusinessImageUseCaseImpl';
+export { UpdateOverlappingPendingSettingUseCaseImpl } from './use-cases/business/UpdateOverlappingPendingSettingUseCaseImpl';
 export { NotifyBusinessMembershipUseCaseImpl } from './use-cases/business/NotifyBusinessMembershipUseCaseImpl';
 
 export { UploadFileUseCaseImpl } from './use-cases/file/UploadFileUseCaseImpl';
