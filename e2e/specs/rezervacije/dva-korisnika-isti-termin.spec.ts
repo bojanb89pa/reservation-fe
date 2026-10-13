@@ -1,10 +1,11 @@
 // E2E-021 · Dva korisnika, isti termin (epic: podešavanje preklapanja PENDING rezervacija)
 //
 // Biznis, uslugu, resurs i pravilo dostupnosti svaki test pravi sam (isti obrazac kao u
-// E2E-006, rezervacija-termina.spec.ts). Vlasnik biznisa je dodat i kao OWNER i kao EMPLOYEE:
-// podešavanje menja samo vlasnik, a approve/reject traži EMPLOYEE rolu (vidi napomenu na
-// `addBusinessEmployee` u otkazivanje-rezervacije.spec.ts). Pending članstva se razrešavaju
-// pozivom `GET /businesses/me` kao taj korisnik.
+// E2E-006, rezervacija-termina.spec.ts). Podešavanje menja vlasnik (postavljen pri
+// kreiranju biznisa), a approve/reject radi poseban zaposleni (EMPLOYEE rola, vidi napomenu na
+// `addBusinessEmployee` u otkazivanje-rezervacije.spec.ts). Pending članstvo zaposlenog se
+// razrešava pozivom `GET /businesses/me` kao taj korisnik. Isti korisnik se ne dodaje kao
+// OWNER i EMPLOYEE jer `GET /businesses/me` tada vraća 500.
 
 import type { APIResponse, Page } from '@playwright/test';
 import { expect, test, loginInBrowser } from '../../fixtures/auth';
@@ -228,13 +229,11 @@ async function pickFirstSlot(page: Page, ctx: BookableBusiness): Promise<void> {
   await expect(slot).toHaveAttribute('aria-pressed', 'true');
 }
 
-async function addMemberships(
+async function addEmployee(
   adminApi: ApiClient,
   businessId: string,
   email: string,
 ): Promise<void> {
-  const owner = await adminApi.post(`/businesses/${businessId}/owners`, { data: { email } });
-  await expectOk(owner, `POST /businesses/${businessId}/owners`);
   const employee = await adminApi.post(`/businesses/${businessId}/employees`, { data: { email } });
   await expectOk(employee, `POST /businesses/${businessId}/employees`);
   await expect
@@ -275,8 +274,6 @@ test.describe('E2E-021 dva korisnika, isti termin', () => {
     try {
       const ownerId = await fetchOwnerId(adminApi, owner.email);
       const ctx = await createBookableBusiness(adminApi, ownerId);
-      await addMemberships(adminApi, ctx.business.id, owner.email);
-      await expectOk(await ownerApi.get('/businesses/me'), 'GET /businesses/me');
 
       const patched = await ownerApi.patch(
         `/businesses/${ctx.business.id}/overlapping-pending-reservations`,
@@ -345,12 +342,13 @@ test.describe('E2E-021 dva korisnika, isti termin', () => {
     const customerA = await createActivatedUser();
     const customerB = await createActivatedUser();
     const adminApi = await ApiClient.as(adminCredentials());
-    const ownerApi = await ApiClient.as(owner);
+    const employee = await createActivatedUser();
+    const employeeApi = await ApiClient.as(employee);
     try {
       const ownerId = await fetchOwnerId(adminApi, owner.email);
       const ctx = await createBookableBusiness(adminApi, ownerId);
-      await addMemberships(adminApi, ctx.business.id, owner.email);
-      await expectOk(await ownerApi.get('/businesses/me'), 'GET /businesses/me');
+      await addEmployee(adminApi, ctx.business.id, employee.email);
+      await expectOk(await employeeApi.get('/businesses/me'), 'GET /businesses/me');
 
       await loginAs(customerA);
       const context2 = await browser.newContext();
@@ -377,12 +375,12 @@ test.describe('E2E-021 dva korisnika, isti termin', () => {
         expect(resA?.status).toBe('PENDING_APPROVAL');
         expect(resB?.status).toBe('PENDING_APPROVAL');
 
-        const approveA = await ownerApi.post(
+        const approveA = await employeeApi.post(
           `/resources/${ctx.resource.id}/reservations/${resA!.id}/approve`,
         );
         await expectOk(approveA, 'POST .../approve (prva)');
 
-        const approveB = await ownerApi.post(
+        const approveB = await employeeApi.post(
           `/resources/${ctx.resource.id}/reservations/${resB!.id}/approve`,
         );
         expect(approveB.status(), await approveB.text()).toBe(409);
@@ -398,7 +396,7 @@ test.describe('E2E-021 dva korisnika, isti termin', () => {
         await apiB.dispose();
       }
     } finally {
-      await ownerApi.dispose();
+      await employeeApi.dispose();
       await adminApi.dispose();
     }
   });
