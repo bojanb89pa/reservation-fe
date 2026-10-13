@@ -124,6 +124,17 @@ const en = {
     viewResources: 'View resources →',
     distance: '{{distanceKm}} km away',
   },
+  overlappingPending: {
+    sectionTitle: 'Pending reservations',
+    label: 'Allow overlapping pending reservations',
+    warning:
+      'This change applies only to new requests. Existing pending reservations are kept as they are.',
+    errorOwnerRequired: 'Only the business owner can change this setting.',
+    errorGeneric: 'The setting could not be saved. Please try again.',
+  },
+  slotTaken: {
+    hint: 'Please pick a different time slot.',
+  },
   businessImage: {
     alt: 'Photo of {{name}}',
     pickerLabel: 'Business image (optional)',

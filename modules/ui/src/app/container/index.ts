@@ -63,6 +63,7 @@ import {
   SetBusinessCategoryUseCaseImpl,
   SetBusinessImageUseCaseImpl,
   RemoveBusinessImageUseCaseImpl,
+  UpdateOverlappingPendingSettingUseCaseImpl,
   UploadFileUseCaseImpl,
   CreateBusinessServiceUseCaseImpl,
   ListBusinessServicesUseCaseImpl,
@@ -228,6 +229,8 @@ export const setBusinessCategoryUseCase = new SetBusinessCategoryUseCaseImpl(bus
 export const uploadFileUseCase = new UploadFileUseCaseImpl(fileUploadRepository);
 export const setBusinessImageUseCase = new SetBusinessImageUseCaseImpl(businessRepository);
 export const removeBusinessImageUseCase = new RemoveBusinessImageUseCaseImpl(businessRepository);
+export const updateOverlappingPendingSettingUseCase =
+  new UpdateOverlappingPendingSettingUseCaseImpl(businessRepository);
 
 export const createBusinessLocationUseCase = new CreateBusinessLocationUseCaseImpl(
   businessLocationRepository,
