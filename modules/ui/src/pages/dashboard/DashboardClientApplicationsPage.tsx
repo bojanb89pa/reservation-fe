@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
+import { ReservationSlotTakenError } from '@domain';
 import type { ClientApplication, CreateClientApplicationCommand } from '@domain';
 import { useCreateClientApplication } from '../../hooks/useClientApplications';
 import { ClientApplicationForm } from '../../components/client-application/ClientApplicationForm';
@@ -7,6 +9,7 @@ import styles from './DashboardClientApplicationsPage.module.css';
 
 export function DashboardClientApplicationsPage() {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const { mutateAsync: createClientApplication, isPending } = useCreateClientApplication();
 
   const [result, setResult] = useState<ClientApplication | null>(null);
@@ -21,6 +24,11 @@ export function DashboardClientApplicationsPage() {
       setResetKey((k) => k + 1);
     } catch (err: unknown) {
       setResult(null);
+      if (err instanceof ReservationSlotTakenError) {
+        queryClient.invalidateQueries({ queryKey: ['resource-slots'] });
+        setError(`${err.message} ${t('slotTaken.hint')}`);
+        return;
+      }
       setError(err instanceof Error ? err.message : t('dashboardClientApplications.errorCreate'));
     }
   };

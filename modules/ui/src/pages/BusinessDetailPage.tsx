@@ -7,10 +7,11 @@ import { useBusinessServices } from '../hooks/useBusinessServices';
 import { useBusinessLocations } from '../hooks/useBusinessLocations';
 import { useCreateReservation } from '../hooks/useReservations';
 import { useAuth } from '../hooks/useAuth';
+import { useInvalidateResourceSlots } from '../hooks/useResourceSlots';
 import { BookingWidget } from '../components/booking/BookingWidget';
 import type { BookingSelection } from '../components/booking/BookingWidget';
 import type { Resource } from '@domain';
-import { DEFAULT_CATEGORY_COLOR } from '@domain';
+import { DEFAULT_CATEGORY_COLOR, ReservationSlotTakenError } from '@domain';
 import { BusinessImage } from '../components/business/BusinessImage';
 import { BusinessLocationsList } from '../components/business/BusinessLocationsList';
 import styles from './BusinessDetailPage.module.css';
@@ -39,6 +40,8 @@ export function BusinessDetailPage() {
   const { data: locations } = useBusinessLocations(id!);
 
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
+  const [slotTakenMessage, setSlotTakenMessage] = useState<string | null>(null);
+  const invalidateSlots = useInvalidateResourceSlots();
 
   const { mutateAsync: createReservation, isPending } = useCreateReservation(
     selectedResource?.id ?? '',
@@ -49,12 +52,23 @@ export function BusinessDetailPage() {
       initiateLogin();
       return;
     }
-    const reservation = await createReservation({
-      resourceId: selection.resource.id!,
-      serviceId: selection.service.id,
-      startTime: selection.startTime,
-      endTime: selection.endTime,
-    });
+    setSlotTakenMessage(null);
+    let reservation;
+    try {
+      reservation = await createReservation({
+        resourceId: selection.resource.id!,
+        serviceId: selection.service.id,
+        startTime: selection.startTime,
+        endTime: selection.endTime,
+      });
+    } catch (err: unknown) {
+      if (err instanceof ReservationSlotTakenError) {
+        setSlotTakenMessage(err.message);
+        await invalidateSlots(selection.resource.id!);
+        return;
+      }
+      throw err;
+    }
     navigate(`/reservation/${reservation.id}/held`, {
       state: { reservation, business, resource: selection.resource, service: selection.service },
     });
@@ -119,6 +133,11 @@ export function BusinessDetailPage() {
       </div>
 
       <div className={styles.bookingWrap}>
+        {slotTakenMessage && (
+          <div className="error-box" role="alert">
+            {slotTakenMessage} {t('slotTaken.hint')}
+          </div>
+        )}
         <BookingWidget
           services={services}
           resources={resources}

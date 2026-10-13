@@ -14,6 +14,7 @@ import { MemberSection } from '../../components/dashboard/MemberSection';
 import { LocationSection } from '../../components/dashboard/LocationSection';
 import { BusinessCategorySection } from '../../components/dashboard/BusinessCategorySection';
 import { BusinessImageSection } from '../../components/dashboard/BusinessImageSection';
+import { OverlappingPendingSection } from '../../components/dashboard/OverlappingPendingSection';
 import { ServiceSection } from '../../components/business-service/ServiceSection';
 import type { ResourceType, DayOfWeek } from '@domain';
 import { DAYS_ORDERED, DAY_LABELS } from '@domain';
@@ -164,6 +165,7 @@ export function DashboardBusinessPage() {
       </section>
 
       <BusinessImageSection business={business} />
+      <OverlappingPendingSection business={business} />
       <BusinessCategorySection business={business} />
       <ServiceSection businessId={id!} />
       <LocationSection businessId={id!} />
