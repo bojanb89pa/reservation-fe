@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { AvailabilityBlock, BusinessService, Resource } from '@domain';
 import { useResourceSlots } from '../../hooks/useResourceSlots';
+import { ErrorState } from '../ErrorState';
 import { useAvailabilityBlocks } from '../../hooks/useAvailabilityBlocks';
 import styles from './BookingWidget.module.css';
 
@@ -171,7 +172,13 @@ export function BookingWidget({
   const monthFrom = toDateStr(new Date(viewYear, viewMonth, 1));
   const monthTo = toDateStr(new Date(viewYear, viewMonth + 1, 0));
 
-  const { data: slots = [], isLoading: slotsLoading } = useResourceSlots(
+  const {
+    data: slots = [],
+    isLoading: slotsLoading,
+    isError: slotsError,
+    refetch: refetchSlots,
+    isRefetching: refetchingSlots,
+  } = useResourceSlots(
     selectedResource?.id ?? '',
     selectedService?.id ?? '',
     monthFrom,
@@ -520,6 +527,12 @@ export function BookingWidget({
                   <div key={i} className={`skeleton ${styles.slotSkeleton}`} />
                 ))}
               </div>
+            ) : slotsError ? (
+              <ErrorState
+                message={t('businessDetail.slotsLoadError')}
+                onRetry={refetchSlots}
+                isRetrying={refetchingSlots}
+              />
             ) : daySlots.length === 0 ? (
               <p className={styles.noSlots}>No available slots for this date.</p>
             ) : (

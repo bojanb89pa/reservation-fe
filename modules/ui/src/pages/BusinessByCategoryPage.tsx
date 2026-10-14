@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useBusinessesByCategory } from '../hooks/useBusinesses';
 import { useBusinessCategories } from '../hooks/useBusinessCategories';
+import { ErrorState } from '../components/ErrorState';
 import { BusinessCard } from '../components/business/BusinessCard';
 import styles from './BusinessByCategoryPage.module.css';
 
@@ -14,7 +15,11 @@ export function BusinessByCategoryPage() {
   const { data: categories = [] } = useBusinessCategories();
   const category = categories.find((c) => c.id === categoryId);
 
-  const { data, isLoading, isError } = useBusinessesByCategory(categoryId, page, 12);
+  const { data, isLoading, isError, refetch, isRefetching } = useBusinessesByCategory(
+    categoryId,
+    page,
+    12,
+  );
 
   return (
     <div className={styles.page}>
@@ -31,7 +36,13 @@ export function BusinessByCategoryPage() {
         </div>
       )}
 
-      {isError && <div className="error-box">{t('businessByCategory.error')}</div>}
+      {isError && (
+        <ErrorState
+          message={t('businessByCategory.error')}
+          onRetry={refetch}
+          isRetrying={isRefetching}
+        />
+      )}
 
       {data && (
         <>

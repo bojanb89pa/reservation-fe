@@ -1,6 +1,10 @@
 import type { Translation } from './en';
 
 const sr: Translation = {
+  common: {
+    retry: 'Pokušaj ponovo',
+    retrying: 'Pokušavam ponovo…',
+  },
   nav: {
     browse: 'Pretraži',
     howItWorks: 'Kako funkcioniše',
@@ -110,6 +114,8 @@ const sr: Translation = {
     endDate: 'Datum završetka',
     notFound: 'Biznis nije pronađen.',
     loadError: 'Nije moguće učitati biznis. Pokušaj ponovo.',
+    slotsLoadError: 'Nije moguće učitati termine. Pokušajte ponovo.',
+    reservationError: 'Rezervacija nije poslata. Pokušajte ponovo.',
   },
   booking: {
     title: 'Detalji rezervacije',
@@ -301,6 +307,7 @@ const sr: Translation = {
   },
   dashboardBusiness: {
     backToBusinesses: '← Biznisi',
+    loadError: 'Nije moguće učitati biznis. Pokušajte ponovo.',
     resources: 'Resursi',
     total: '{{count}} ukupno',
     hideRules: 'Sakrij pravila',
@@ -645,6 +652,7 @@ const sr: Translation = {
   dashboardUserDetail: {
     backToUsers: '← Korisnici',
     notFound: 'Korisnik nije pronađen.',
+    loadError: 'Nije moguće učitati korisnika. Pokušajte ponovo.',
     email: 'Email',
     roles: 'Uloge',
     status: 'Status',
