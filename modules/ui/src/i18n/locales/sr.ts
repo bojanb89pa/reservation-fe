@@ -127,6 +127,17 @@ const sr: Translation = {
     viewResources: 'Vidi resurse →',
     distance: '{{distanceKm}} km udaljenosti',
   },
+  overlappingPending: {
+    sectionTitle: 'Rezervacije na čekanju',
+    label: 'Dozvoli preklapanje rezervacija na čekanju',
+    warning:
+      'Izmena važi samo za nove zahteve. Postojeće rezervacije na čekanju ostaju nepromenjene.',
+    errorOwnerRequired: 'Ovo podešavanje može da menja samo vlasnik biznisa.',
+    errorGeneric: 'Podešavanje nije sačuvano. Pokušaj ponovo.',
+  },
+  slotTaken: {
+    hint: 'Izaberi drugi termin.',
+  },
   businessImage: {
     alt: 'Slika biznisa {{name}}',
     pickerLabel: 'Slika biznisa (opciono)',

@@ -27,6 +27,7 @@ export type {
   CreateBusinessByAdminCommand,
   SetBusinessCategoryCommand,
   SetBusinessImageCommand,
+  UpdateOverlappingPendingSettingCommand,
 } from './entities/Business';
 export type { PendingUpload, UploadType, UploadFileCommand } from './entities/PendingUpload';
 export { BUSINESS_IMAGE_UPLOAD_TYPE, PROFILE_PICTURE_UPLOAD_TYPE } from './entities/PendingUpload';
@@ -113,6 +114,11 @@ export {
 } from './errors/DomainError';
 export { PlaceErrorCode } from './errors/PlaceError';
 export { FileUploadError, FileUploadErrorCode } from './errors/FileUploadError';
+export {
+  ReservationSlotTakenError,
+  ReservationErrorCode,
+  BusinessErrorCode,
+} from './errors/ReservationError';
 
 // Repository interfaces
 export type { AuthRepository } from './repositories/AuthRepository';
@@ -174,6 +180,7 @@ export type { DeleteBusinessUseCase } from './use-cases/business/DeleteBusinessU
 export type { SetBusinessCategoryUseCase } from './use-cases/business/SetBusinessCategoryUseCase';
 export type { SetBusinessImageUseCase } from './use-cases/business/SetBusinessImageUseCase';
 export type { RemoveBusinessImageUseCase } from './use-cases/business/RemoveBusinessImageUseCase';
+export type { UpdateOverlappingPendingSettingUseCase } from './use-cases/business/UpdateOverlappingPendingSettingUseCase';
 export type { UploadFileUseCase } from './use-cases/file/UploadFileUseCase';
 export type { SetProfilePictureUseCase } from './use-cases/user/SetProfilePictureUseCase';
 export type { DeleteProfilePictureUseCase } from './use-cases/user/DeleteProfilePictureUseCase';

@@ -9,6 +9,7 @@ import type {
   CreateBusinessByAdminCommand,
   SetBusinessCategoryCommand,
   SetBusinessImageCommand,
+  UpdateOverlappingPendingSettingCommand,
 } from '@domain';
 import { withResolvedImageUrl } from '../api/resolveApiUrl';
 
@@ -103,6 +104,17 @@ export class BusinessApiRepository implements BusinessRepository {
 
   async removeImage(id: string): Promise<Business> {
     const response = await this.client.delete<Business>(`/businesses/${id}/image`);
+    return withResolvedImageUrl(response.data);
+  }
+
+  async updateOverlappingPendingSetting(
+    id: string,
+    command: UpdateOverlappingPendingSettingCommand,
+  ): Promise<Business> {
+    const response = await this.client.patch<Business>(
+      `/businesses/${id}/overlapping-pending-reservations`,
+      { allowOverlappingPendingReservations: command.allowOverlappingPendingReservations },
+    );
     return withResolvedImageUrl(response.data);
   }
 }

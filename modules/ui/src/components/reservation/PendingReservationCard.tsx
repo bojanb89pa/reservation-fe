@@ -1,7 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
+import { ReservationSlotTakenError } from '@domain';
 import type { Reservation } from '@domain';
 import { useApproveReservation, useRejectReservation } from '../../hooks/useReservations';
+import { useInvalidateResourceSlots } from '../../hooks/useResourceSlots';
 import { useIsBusinessMember } from '../../hooks/useBusinessMembers';
 import styles from './PendingReservationCard.module.css';
 
@@ -22,6 +24,7 @@ interface Props {
 export function PendingReservationCard({ reservation }: Props) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const invalidateSlots = useInvalidateResourceSlots();
 
   const { mutate: approve, isPending: approving, error: approveError } = useApproveReservation();
   const { mutate: reject, isPending: rejecting, error: rejectError } = useRejectReservation();
@@ -35,7 +38,15 @@ export function PendingReservationCard({ reservation }: Props) {
     queryClient.invalidateQueries({ queryKey: ['reservations', reservation.id] });
 
   const handleApprove = () =>
-    approve({ resourceId: reservation.resourceId, id: reservation.id! }, { onSuccess: invalidate });
+    approve(
+      { resourceId: reservation.resourceId, id: reservation.id! },
+      {
+        onSuccess: invalidate,
+        onError: (err) => {
+          if (err instanceof ReservationSlotTakenError) invalidateSlots(reservation.resourceId);
+        },
+      },
+    );
 
   const handleReject = () =>
     reject({ resourceId: reservation.resourceId, id: reservation.id! }, { onSuccess: invalidate });
@@ -97,6 +108,7 @@ export function PendingReservationCard({ reservation }: Props) {
       {error && (
         <div className={styles.error}>
           {error instanceof Error ? error.message : t('reservationCard.actionError')}
+          {error instanceof ReservationSlotTakenError && ` ${t('slotTaken.hint')}`}
         </div>
       )}
     </div>

@@ -31,6 +31,7 @@ const business: Business = {
   categoryId: null,
   category: null,
   imageUrl: null,
+  allowOverlappingPendingReservations: true,
 };
 
 const location: BusinessLocation = {
