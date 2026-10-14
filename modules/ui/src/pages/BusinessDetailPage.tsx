@@ -12,6 +12,7 @@ import { BookingWidget } from '../components/booking/BookingWidget';
 import type { BookingSelection } from '../components/booking/BookingWidget';
 import type { Resource } from '@domain';
 import { DEFAULT_CATEGORY_COLOR, ReservationSlotTakenError } from '@domain';
+import { ErrorState } from '../components/ErrorState';
 import { BusinessImage } from '../components/business/BusinessImage';
 import { BusinessLocationsList } from '../components/business/BusinessLocationsList';
 import styles from './BusinessDetailPage.module.css';
@@ -34,6 +35,8 @@ export function BusinessDetailPage() {
     isLoading: bLoading,
     isError: bError,
     error: bErrorValue,
+    refetch: refetchBusiness,
+    isRefetching: refetchingBusiness,
   } = useBusiness(id!);
   const { data: resourcesPage, isLoading: rLoading } = useResources(id!);
   const { data: servicesPage } = useBusinessServices(id!);
@@ -41,6 +44,7 @@ export function BusinessDetailPage() {
 
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [slotTakenMessage, setSlotTakenMessage] = useState<string | null>(null);
+  const [reservationError, setReservationError] = useState(false);
   const invalidateSlots = useInvalidateResourceSlots();
 
   const { mutateAsync: createReservation, isPending } = useCreateReservation(
@@ -53,6 +57,7 @@ export function BusinessDetailPage() {
       return;
     }
     setSlotTakenMessage(null);
+    setReservationError(false);
     let reservation;
     try {
       reservation = await createReservation({
@@ -67,7 +72,8 @@ export function BusinessDetailPage() {
         await invalidateSlots(selection.resource.id!);
         return;
       }
-      throw err;
+      setReservationError(true);
+      return;
     }
     navigate(`/reservation/${reservation.id}/held`, {
       state: { reservation, business, resource: selection.resource, service: selection.service },
@@ -87,9 +93,15 @@ export function BusinessDetailPage() {
     const isMissing = !bError || isNotFoundError(bErrorValue);
     return (
       <div className={styles.page}>
-        <div className="error-box">
-          {isMissing ? t('businessDetail.notFound') : t('businessDetail.loadError')}
-        </div>
+        {isMissing ? (
+          <div className="error-box">{t('businessDetail.notFound')}</div>
+        ) : (
+          <ErrorState
+            message={t('businessDetail.loadError')}
+            onRetry={refetchBusiness}
+            isRetrying={refetchingBusiness}
+          />
+        )}
       </div>
     );
   }
@@ -136,6 +148,11 @@ export function BusinessDetailPage() {
         {slotTakenMessage && (
           <div className="error-box" role="alert">
             {slotTakenMessage} {t('slotTaken.hint')}
+          </div>
+        )}
+        {reservationError && (
+          <div className="error-box" role="alert">
+            {t('businessDetail.reservationError')}
           </div>
         )}
         <BookingWidget

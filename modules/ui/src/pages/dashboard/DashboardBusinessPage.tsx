@@ -9,6 +9,7 @@ import {
   useCreateAvailabilityRule,
   useDeleteAvailabilityRule,
 } from '../../hooks/useAvailabilityRules';
+import { ErrorState } from '../../components/ErrorState';
 import { AvailabilityRuleRow } from '../../components/dashboard/AvailabilityRuleRow';
 import { MemberSection } from '../../components/dashboard/MemberSection';
 import { LocationSection } from '../../components/dashboard/LocationSection';
@@ -33,7 +34,13 @@ export function DashboardBusinessPage() {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
   const isAdmin = useIsAdmin();
-  const { data: business, isLoading: bLoading } = useBusiness(id!);
+  const {
+    data: business,
+    isLoading: bLoading,
+    isError: bError,
+    refetch: refetchBusiness,
+    isRefetching: refetchingBusiness,
+  } = useBusiness(id!);
   const { mutateAsync: activateBusiness, isPending: activating } = useActivateBusiness(id!);
   const { mutateAsync: rejectBusiness, isPending: rejecting } = useRejectBusiness(id!);
   const { data: resourcesPage } = useResources(id!);
@@ -74,6 +81,14 @@ export function DashboardBusinessPage() {
       <div className="page-loading">
         <div className="spinner" />
       </div>
+    );
+  if (bError)
+    return (
+      <ErrorState
+        message={t('dashboardBusiness.loadError')}
+        onRetry={refetchBusiness}
+        isRetrying={refetchingBusiness}
+      />
     );
   if (!business) return <div className="error-box">{t('dashboardBusiness.notFound')}</div>;
 

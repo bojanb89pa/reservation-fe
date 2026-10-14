@@ -2,13 +2,20 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import { useGetAllReservations } from '../hooks/useReservations';
+import { ErrorState } from '../components/ErrorState';
 import { ReservationList } from '../components/reservation/ReservationList';
 import styles from './MyReservationsPage.module.css';
 
 export function MyReservationsPage() {
   const { isAuthenticated, initiateLogin } = useAuth();
   const { t } = useTranslation();
-  const { data: reservations = [], isLoading, isError } = useGetAllReservations();
+  const {
+    data: reservations = [],
+    isLoading,
+    isError,
+    refetch,
+    isRefetching,
+  } = useGetAllReservations();
 
   useEffect(() => {
     if (!isAuthenticated) initiateLogin();
@@ -29,7 +36,13 @@ export function MyReservationsPage() {
         </div>
       )}
 
-      {isError && <div className="error-box">{t('myReservations.error')}</div>}
+      {isError && (
+        <ErrorState
+          message={t('myReservations.error')}
+          onRetry={refetch}
+          isRetrying={isRefetching}
+        />
+      )}
 
       {!isLoading && !isError && <ReservationList reservations={reservations} />}
     </div>

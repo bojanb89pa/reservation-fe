@@ -10,6 +10,7 @@ import {
   useDeleteAdminUser,
 } from '../../hooks/useAdminUsers';
 import { useAdminUserMessages } from '../../hooks/useAdminUserMessages';
+import { ErrorState } from '../../components/ErrorState';
 import { UserStatusBadge } from '../../components/admin-user/UserStatusBadge';
 import { RoleBadgeList } from '../../components/admin-user/RoleBadgeList';
 import { UserForm } from '../../components/admin-user/UserForm';
@@ -26,7 +27,13 @@ export function DashboardUserDetailPage() {
   const navigate = useNavigate();
   const { errorMessage } = useAdminUserMessages();
 
-  const { data: user, isLoading } = useAdminUserById(id);
+  const {
+    data: user,
+    isLoading,
+    isError: loadFailed,
+    refetch,
+    isRefetching,
+  } = useAdminUserById(id);
   const { mutateAsync: updateUser, isPending: updating } = useUpdateAdminUser();
   const { mutateAsync: updateStatus, isPending: updatingStatus } = useUpdateAdminUserStatus();
   const { mutateAsync: resetPassword, isPending: resettingPassword } =
@@ -102,6 +109,16 @@ export function DashboardUserDetailPage() {
       <div className="page-loading">
         <div className="spinner" />
       </div>
+    );
+  }
+
+  if (loadFailed) {
+    return (
+      <ErrorState
+        message={t('dashboardUserDetail.loadError')}
+        onRetry={refetch}
+        isRetrying={isRefetching}
+      />
     );
   }
 
