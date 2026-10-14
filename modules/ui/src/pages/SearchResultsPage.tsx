@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDiscoverySearch } from '../hooks/useDiscoverySearch';
+import { ErrorState } from '../components/ErrorState';
 import { BusinessImage } from '../components/business/BusinessImage';
 import styles from './SearchResultsPage.module.css';
 
@@ -51,7 +52,7 @@ export function SearchResultsPage() {
     };
   }, [whereInput, setSearchParams]);
 
-  const { data, isLoading, isError } = useDiscoverySearch(
+  const { data, isLoading, isError, refetch, isRefetching } = useDiscoverySearch(
     { q: debouncedWhat, city: debouncedWhere || undefined },
     page,
     20,
@@ -101,7 +102,9 @@ export function SearchResultsPage() {
         </div>
       )}
 
-      {!isEmpty && isError && <div className="error-box">{t('search.error')}</div>}
+      {!isEmpty && isError && (
+        <ErrorState message={t('search.error')} onRetry={refetch} isRetrying={isRefetching} />
+      )}
 
       {data && data.content.length === 0 && (
         <p className={styles.noResults}>{t('search.noResults', { q: debouncedWhat })}</p>

@@ -1,4 +1,8 @@
 const en = {
+  common: {
+    retry: 'Try again',
+    retrying: 'Trying again…',
+  },
   nav: {
     browse: 'Browse',
     howItWorks: 'How it works',
@@ -107,6 +111,8 @@ const en = {
     endDate: 'End date',
     notFound: 'Business not found.',
     loadError: 'This business could not be loaded. Please try again.',
+    slotsLoadError: 'Time slots could not be loaded. Please try again.',
+    reservationError: 'Your reservation could not be sent. Please try again.',
   },
   booking: {
     title: 'Booking details',
@@ -298,6 +304,7 @@ const en = {
   },
   dashboardBusiness: {
     backToBusinesses: '← Businesses',
+    loadError: 'The business could not be loaded. Please try again.',
     resources: 'Resources',
     total: '{{count}} total',
     hideRules: 'Hide rules',
@@ -642,6 +649,7 @@ const en = {
   dashboardUserDetail: {
     backToUsers: '← Users',
     notFound: 'User not found.',
+    loadError: 'The user could not be loaded. Please try again.',
     email: 'Email',
     roles: 'Roles',
     status: 'Status',

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { useNearbyBusinesses } from '../hooks/useNearbyBusinesses';
 import { useBusinessCategories } from '../hooks/useBusinessCategories';
+import { ErrorState } from '../components/ErrorState';
 import { NearbyBusinessesList } from '../components/business/NearbyBusinessesList';
 import styles from './NearbyBusinessesPage.module.css';
 
@@ -14,7 +15,7 @@ export function NearbyBusinessesPage() {
   const { latitude, longitude, error: geoError } = useGeolocation();
   const { data: categories = [] } = useBusinessCategories();
 
-  const { data, isLoading, isError } = useNearbyBusinesses(
+  const { data, isLoading, isError, refetch, isRefetching } = useNearbyBusinesses(
     latitude,
     longitude,
     categoryId || undefined,
@@ -72,7 +73,13 @@ export function NearbyBusinessesPage() {
             </div>
           )}
 
-          {isError && <div className="error-box">{t('nearbyBusinesses.error')}</div>}
+          {isError && (
+            <ErrorState
+              message={t('nearbyBusinesses.error')}
+              onRetry={refetch}
+              isRetrying={isRefetching}
+            />
+          )}
 
           {data && <NearbyBusinessesList data={data} page={page} onPageChange={setPage} />}
         </>

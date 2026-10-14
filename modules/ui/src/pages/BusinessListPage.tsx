@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSearchBusinesses } from '../hooks/useBusinesses';
 import { useBusinessCategories } from '../hooks/useBusinessCategories';
+import { ErrorState } from '../components/ErrorState';
 import { BusinessCard } from '../components/business/BusinessCard';
 import styles from './BusinessListPage.module.css';
 
@@ -32,7 +33,7 @@ export function BusinessListPage() {
     setPage(0);
   }, [activeCategoryId]);
 
-  const { data, isLoading, isError } = useSearchBusinesses(
+  const { data, isLoading, isError, refetch, isRefetching } = useSearchBusinesses(
     {
       query: debouncedSearch,
       categoryIds: activeCategoryId ? [activeCategoryId] : undefined,
@@ -93,7 +94,13 @@ export function BusinessListPage() {
         </div>
       )}
 
-      {isError && <div className="error-box">{t('businessList.error')}</div>}
+      {isError && (
+        <ErrorState
+          message={t('businessList.error')}
+          onRetry={refetch}
+          isRetrying={isRefetching}
+        />
+      )}
 
       {data && (
         <>

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import { useCurrentUser } from '../hooks/useProfilePicture';
+import { ErrorState } from '../components/ErrorState';
 import { ProfileNameSection } from '../components/account/ProfileNameSection';
 import { ProfilePictureSection } from '../components/account/ProfilePictureSection';
 import styles from './AccountPage.module.css';
@@ -9,7 +10,7 @@ import styles from './AccountPage.module.css';
 export function AccountPage() {
   const { isAuthenticated, initiateLogin } = useAuth();
   const { t } = useTranslation();
-  const { user, isLoading, isError } = useCurrentUser();
+  const { user, isLoading, isError, refetch, isRefetching } = useCurrentUser();
 
   useEffect(() => {
     if (!isAuthenticated) initiateLogin();
@@ -30,7 +31,9 @@ export function AccountPage() {
         </div>
       )}
 
-      {isError && <div className="error-box">{t('account.error')}</div>}
+      {isError && (
+        <ErrorState message={t('account.error')} onRetry={refetch} isRetrying={isRefetching} />
+      )}
 
       {!isLoading && !isError && user && (
         <>
