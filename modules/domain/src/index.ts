@@ -237,6 +237,12 @@ export type { UpdateLocalizedBusinessCategoryUseCase } from './use-cases/localiz
 export type { UpsertLocalizedBusinessCategoryTranslationUseCase } from './use-cases/localized-business-category/UpsertLocalizedBusinessCategoryTranslationUseCase';
 export type { RegisterClientApplicationUseCase } from './use-cases/client-application/RegisterClientApplicationUseCase';
 
+// Search suggestions
+export type { SearchSuggestion, SearchSuggestionType } from './entities/SearchSuggestion';
+export type { SearchSuggestionsQuery } from './types/SearchSuggestionsQuery';
+export type { SearchSuggestionRepository } from './repositories/SearchSuggestionRepository';
+export type { GetSearchSuggestionsUseCase } from './use-cases/search-suggestion/GetSearchSuggestionsUseCase';
+
 // Business contact info
 export type {
   BusinessContactInfo,
