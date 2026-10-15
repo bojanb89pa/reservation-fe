@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { ReservationSlotTakenError } from '@domain';
+import { ReservationSlotTakenError } from '@fe/domain';
 import type { BookingSelection } from '../../components/booking/BookingWidget';
 import { BusinessDetailPage } from '../BusinessDetailPage';
 import '../../i18n';

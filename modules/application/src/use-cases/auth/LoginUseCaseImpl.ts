@@ -1,4 +1,4 @@
-import type { AuthRepository, LoginUseCase, AuthCredentials, AuthSession } from '@domain';
+import type { AuthRepository, LoginUseCase, AuthCredentials, AuthSession } from '@fe/domain';
 
 export class LoginUseCaseImpl implements LoginUseCase {
   constructor(private readonly authRepository: AuthRepository) {}

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { Reservation } from '@domain';
+import type { Reservation } from '@fe/domain';
 import { useUsersByIds, mapUsersById } from '../../hooks/useUsersByIds';
 import { ReservationListItem } from './ReservationListItem';
 import styles from './ReservationList.module.css';

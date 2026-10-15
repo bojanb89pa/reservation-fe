@@ -1,4 +1,4 @@
-import type { ReservationRepository, GetReservationUseCase, Reservation } from '@domain';
+import type { ReservationRepository, GetReservationUseCase, Reservation } from '@fe/domain';
 
 export class GetReservationUseCaseImpl implements GetReservationUseCase {
   constructor(private readonly reservationRepository: ReservationRepository) {}

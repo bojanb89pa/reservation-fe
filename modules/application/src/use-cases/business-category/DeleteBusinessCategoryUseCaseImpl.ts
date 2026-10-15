@@ -2,7 +2,7 @@ import type {
   BusinessCategoryRepository,
   DeleteBusinessCategoryUseCase,
   BusinessCategory,
-} from '@domain';
+} from '@fe/domain';
 
 export class DeleteBusinessCategoryUseCaseImpl implements DeleteBusinessCategoryUseCase {
   constructor(private readonly businessCategoryRepository: BusinessCategoryRepository) {}

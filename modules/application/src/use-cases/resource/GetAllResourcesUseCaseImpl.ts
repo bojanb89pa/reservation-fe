@@ -4,7 +4,7 @@ import type {
   Resource,
   PageRequest,
   PageResponse,
-} from '@domain';
+} from '@fe/domain';
 
 export class GetAllResourcesUseCaseImpl implements GetAllResourcesUseCase {
   constructor(private readonly resourceRepository: ResourceRepository) {}

@@ -3,7 +3,7 @@ import type {
   RemoveContactInfoUseCase,
   BusinessContactInfo,
   RemoveContactInfoCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class RemoveContactInfoUseCaseImpl implements RemoveContactInfoUseCase {
   constructor(private readonly businessContactInfoRepository: BusinessContactInfoRepository) {}

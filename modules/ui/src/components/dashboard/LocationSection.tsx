@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { BusinessLocation } from '@domain';
-import type { PlaceAutocompleteSuggestion } from '@domain';
+import type { BusinessLocation } from '@fe/domain';
+import type { PlaceAutocompleteSuggestion } from '@fe/domain';
 import { useBusinessLocations, useCreateBusinessLocation } from '../../hooks/useBusinessLocations';
 import { usePlaceSearch } from '../../hooks/usePlaceSearch';
 import { usePlaceDetails } from '../../hooks/usePlaceDetails';

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { User } from '@domain';
-import { PROFILE_PICTURE_UPLOAD_TYPE } from '@domain';
+import type { User } from '@fe/domain';
+import { PROFILE_PICTURE_UPLOAD_TYPE } from '@fe/domain';
 import { Avatar } from '../Avatar';
 import { ProfilePicturePicker } from './ProfilePicturePicker';
 import { useUploadFile } from '../../hooks/useFileUpload';

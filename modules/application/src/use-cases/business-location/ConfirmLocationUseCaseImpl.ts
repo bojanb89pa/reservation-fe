@@ -1,4 +1,4 @@
-import type { BusinessLocation, BusinessLocationRepository, ConfirmLocationUseCase } from '@domain';
+import type { BusinessLocation, BusinessLocationRepository, ConfirmLocationUseCase } from '@fe/domain';
 
 export class ConfirmLocationUseCaseImpl implements ConfirmLocationUseCase {
   constructor(private readonly businessLocationRepository: BusinessLocationRepository) {}

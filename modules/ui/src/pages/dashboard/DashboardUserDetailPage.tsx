@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import type { UserStatus, Role } from '@domain';
+import type { UserStatus, Role } from '@fe/domain';
 import {
   useAdminUserById,
   useUpdateAdminUser,

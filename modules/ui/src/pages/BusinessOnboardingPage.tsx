@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import type { PlaceAutocompleteSuggestion } from '@domain';
+import type { PlaceAutocompleteSuggestion } from '@fe/domain';
 import { useMyBusinesses, useCreateBusiness } from '../hooks/useBusinesses';
 import { useAuthStore } from '../state/authStore';
 import { useAuth } from '../hooks/useAuth';

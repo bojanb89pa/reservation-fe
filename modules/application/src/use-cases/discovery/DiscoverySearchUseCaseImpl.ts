@@ -5,7 +5,7 @@ import type {
   SearchResult,
   PageRequest,
   PageResponse,
-} from '@domain';
+} from '@fe/domain';
 
 export class DiscoverySearchUseCaseImpl implements DiscoverySearchUseCase {
   constructor(private readonly repo: DiscoverySearchRepository) {}

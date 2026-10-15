@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AddBusinessMemberUseCaseImpl } from '../business/AddBusinessMemberUseCaseImpl';
-import type { BusinessMembershipRepository } from '@domain';
+import type { BusinessMembershipRepository } from '@fe/domain';
 
 const mockBusinessMembership = {
   id: '12345678-0000-0000-0000-000000000001',

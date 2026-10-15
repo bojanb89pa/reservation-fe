@@ -26,18 +26,18 @@ This module contains the entire presentation layer — React components, hooks, 
 
 ## May depend on
 
-- `@application` — use case implementations (via the composition root)
-- `@domain` — domain types for TypeScript typing in hooks and components
+- `@fe/application` — use case implementations (via the composition root)
+- `@fe/domain` — domain types for TypeScript typing in hooks and components
 
 ## Composition root exception
 
-`src/app/container/index.ts` is the **composition root** of the entire application. It is the only file in this module permitted to import from `@infrastructure`. This is architecturally intentional — the composition root wires infrastructure adapters to application use cases and re-exports the configured instances.
+`src/app/container/index.ts` is the **composition root** of the entire application. It is the only file in this module permitted to import from `@fe/infrastructure`. This is architecturally intentional — the composition root wires infrastructure adapters to application use cases and re-exports the configured instances.
 
-**All other UI files must NOT import from `@infrastructure` directly.** If a hook or store needs an infrastructure primitive (e.g., `env`, `tokenStorage`), it must import from `../app/container` (or `../../app/container`), not from `@infrastructure`.
+**All other UI files must NOT import from `@fe/infrastructure` directly.** If a hook or store needs an infrastructure primitive (e.g., `env`, `tokenStorage`), it must import from `../app/container` (or `../../app/container`), not from `@fe/infrastructure`.
 
 ## Forbidden (for all files except `app/container/index.ts`)
 
-- Direct imports from `@infrastructure`
+- Direct imports from `@fe/infrastructure`
 - Direct API calls (`axios`, `fetch`) outside the composition root
 - Business logic inside components (validation, domain decisions)
 - Direct repository access from components or hooks
@@ -48,7 +48,7 @@ This module's tsconfig references `domain`, `application`, and `infrastructure`.
 
 ## Public API
 
-`src/index.ts` exports `App` — the root React component consumed by `src/main.tsx`.
+`src/index.ts` exports `App` — the root React component consumed by `apps/web/src/main.tsx`.
 
 ## File structure
 
@@ -57,7 +57,7 @@ src/
   app/
     App.tsx               — root component
     container/
-      index.ts            — composition root (ONLY file allowed to import @infrastructure)
+      index.ts            — composition root (ONLY file allowed to import @fe/infrastructure)
     providers/
       QueryProvider.tsx   — React Query setup
   components/             — reusable UI components
@@ -69,7 +69,7 @@ src/
   pages/                  — route-level page components
     dashboard/
   routes/                 — React Router setup and guards
-  state/                  — Zustand stores (import tokenStorage from container, not @infrastructure)
+  state/                  — Zustand stores (import tokenStorage from container, not @fe/infrastructure)
   index.ts                — public API: exports App
 ```
 
@@ -79,6 +79,6 @@ src/
 - Hooks wrap use case calls via `@tanstack/react-query`; they do not contain business logic
 - UI never accesses repositories directly
 - Routing guards use the `useAuthStore` — never call auth API directly
-- All domain types used in components come from `@domain`
+- All domain types used in components come from `@fe/domain`
 - Every interactive element has an accessible role and name (visible text, `<label>`, or `aria-label`); E2E tests select by `getByRole` / `getByLabel`
 - `data-testid="<area>-<element>"` only when role and name are not unique (repeated cards, time slots); never as a replacement for a missing label

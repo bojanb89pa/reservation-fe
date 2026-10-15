@@ -3,7 +3,7 @@ import type {
   AddServiceToLocationUseCase,
   BusinessLocationService,
   AddServiceToLocationCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class AddServiceToLocationUseCaseImpl implements AddServiceToLocationUseCase {
   constructor(

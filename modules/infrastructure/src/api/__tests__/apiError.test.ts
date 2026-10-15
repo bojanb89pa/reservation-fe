@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { AxiosError } from 'axios';
-import { ConflictError, ReservationSlotTakenError } from '@domain';
+import { ConflictError, ReservationSlotTakenError } from '@fe/domain';
 import { ApiError, normalizeAxiosError, type ApiErrorBody } from '../apiError';
 
 function make(

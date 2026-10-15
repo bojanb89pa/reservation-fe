@@ -5,14 +5,8 @@
     "emitDeclarationOnly": true,
     "declarationDir": "./dist",
     "rootDir": "./src",
-    "baseUrl": ".",
     "jsx": "react-jsx",
-    "types": ["vite/client"],
-    "paths": {
-      "@domain": ["../domain/src/index.ts"],
-      "@application": ["../application/src/index.ts"],
-      "@infrastructure": ["../infrastructure/src/index.ts"]
-    }
+    "types": ["vite/client"]
   },
   "exclude": ["**/__tests__/**", "**/*.test.ts", "**/*.test.tsx"],
   "include": ["src"],

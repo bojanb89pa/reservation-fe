@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CreateUserByAdminUseCaseImpl } from '../user/CreateUserByAdminUseCaseImpl';
-import type { UserRepository, User, AdminCreateUserCommand } from '@domain';
+import type { UserRepository, User, AdminCreateUserCommand } from '@fe/domain';
 
 const command: AdminCreateUserCommand = {
   email: 'jane@example.com',

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeAll } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ALLOWED_BUSINESS_IMAGE_CONTENT_TYPES } from '@domain';
+import { ALLOWED_BUSINESS_IMAGE_CONTENT_TYPES } from '@fe/domain';
 import { BusinessImagePicker } from '../BusinessImagePicker';
 import '../../../i18n';
 

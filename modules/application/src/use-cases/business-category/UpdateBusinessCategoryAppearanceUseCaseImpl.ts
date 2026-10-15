@@ -3,7 +3,7 @@ import type {
   UpdateBusinessCategoryAppearanceUseCase,
   BusinessCategory,
   UpdateBusinessCategoryAppearanceCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class UpdateBusinessCategoryAppearanceUseCaseImpl implements UpdateBusinessCategoryAppearanceUseCase {
   constructor(private readonly businessCategoryRepository: BusinessCategoryRepository) {}

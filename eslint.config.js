@@ -5,7 +5,7 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist', 'modules/*/dist', '.claude/', 'e2e/'] },
+  { ignores: ['dist', 'apps/*/dist', 'modules/*/dist', '.claude/', 'e2e/'] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ['**/*.{ts,tsx}'],
@@ -23,4 +23,47 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     },
   },
+  // Granice slojeva (CLAUDE.md, „Layer rules"). Testovi smeju da uvoze vitest
+  // i testing-library, ali ne i druge slojeve.
+  ...layerRules('modules/domain', ['@fe/*', 'react', 'react-*', 'react/*', 'axios', 'zustand', 'i18next']),
+  ...layerRules('modules/application', [
+    '@fe/infrastructure',
+    '@fe/ui',
+    '@fe/web',
+    'react',
+    'react-*',
+    'react/*',
+    'axios',
+    'zustand',
+    'i18next',
+  ]),
+  ...layerRules('modules/infrastructure', ['@fe/application', '@fe/ui', '@fe/web', 'react', 'react-*', 'react/*']),
+  ...layerRules('modules/ui', ['@fe/infrastructure', '@fe/web', 'axios'], ['modules/ui/src/app/container/**']),
 );
+
+/**
+ * `no-restricted-imports` za jedan paket: `forbidden` su paketi koje ne sme da
+ * uvozi; `except` su fajlovi u tom paketu na koje zabrana ne važi (composition
+ * root).
+ */
+function layerRules(dir, forbidden, except = []) {
+  return [
+    {
+      files: [`${dir}/src/**/*.{ts,tsx}`],
+      ignores: except,
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          {
+            patterns: [
+              {
+                group: forbidden,
+                message: `${dir} ne sme da uvozi ovaj paket (granice slojeva, CLAUDE.md).`,
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ];
+}

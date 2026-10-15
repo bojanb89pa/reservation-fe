@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import type { BusinessCategory } from '@domain';
-import { DEFAULT_CATEGORY_SYMBOL, DEFAULT_CATEGORY_COLOR } from '@domain';
+import type { BusinessCategory } from '@fe/domain';
+import { DEFAULT_CATEGORY_SYMBOL, DEFAULT_CATEGORY_COLOR } from '@fe/domain';
 import styles from './CategoryTree.module.css';
 
 interface CategoryNode extends BusinessCategory {

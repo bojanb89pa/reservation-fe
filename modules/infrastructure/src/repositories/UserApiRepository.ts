@@ -13,7 +13,7 @@ import type {
   PageResponse,
   UserSummary,
   SearchUsersQuery,
-} from '@domain';
+} from '@fe/domain';
 
 export class UserApiRepository implements UserRepository {
   constructor(private readonly client: AxiosInstance) {}

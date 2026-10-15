@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
-import { ReservationSlotTakenError } from '@domain';
-import type { ClientApplication, CreateClientApplicationCommand } from '@domain';
+import { ReservationSlotTakenError } from '@fe/domain';
+import type { ClientApplication, CreateClientApplicationCommand } from '@fe/domain';
 import { useCreateClientApplication } from '../../hooks/useClientApplications';
 import { ClientApplicationForm } from '../../components/client-application/ClientApplicationForm';
 import styles from './DashboardClientApplicationsPage.module.css';

@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { BusinessSearchFilter, CreateBusinessLocationCommand } from '@domain';
+import type { BusinessSearchFilter, CreateBusinessLocationCommand } from '@fe/domain';
 import {
   getMyBusinessesUseCase,
   getAllBusinessesForAdminUseCase,

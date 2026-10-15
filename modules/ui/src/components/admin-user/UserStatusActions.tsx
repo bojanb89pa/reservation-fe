@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import type { UserStatus } from '@domain';
+import type { UserStatus } from '@fe/domain';
 import styles from './UserStatusActions.module.css';
 
 interface Props {

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import type { User, UserStatus } from '@domain';
+import type { User, UserStatus } from '@fe/domain';
 import {
   useAdminUsersSearch,
   useCreateAdminUser,

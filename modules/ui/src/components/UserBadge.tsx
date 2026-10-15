@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import type { User } from '@domain';
+import type { User } from '@fe/domain';
 import { Avatar } from './Avatar';
 import styles from './UserBadge.module.css';
 

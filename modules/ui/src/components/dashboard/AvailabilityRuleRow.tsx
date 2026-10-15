@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import type { ResourceAvailabilityRule } from '@domain';
-import { DAY_LABELS } from '@domain';
+import type { ResourceAvailabilityRule } from '@fe/domain';
+import { DAY_LABELS } from '@fe/domain';
 import styles from './AvailabilityRuleRow.module.css';
 
 interface Props {

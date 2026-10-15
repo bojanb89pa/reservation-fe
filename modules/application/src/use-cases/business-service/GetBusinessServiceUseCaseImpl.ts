@@ -2,7 +2,7 @@ import type {
   BusinessServiceRepository,
   GetBusinessServiceUseCase,
   BusinessService,
-} from '@domain';
+} from '@fe/domain';
 
 export class GetBusinessServiceUseCaseImpl implements GetBusinessServiceUseCase {
   constructor(private readonly businessServiceRepository: BusinessServiceRepository) {}

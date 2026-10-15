@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NotFoundError, UnauthorizedError } from '@domain';
+import { NotFoundError, UnauthorizedError } from '@fe/domain';
 
 /**
  * NotFoundError/UnauthorizedError carry a hardcoded English message from the domain

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BusinessErrorCode } from '@domain';
-import type { Business } from '@domain';
+import { BusinessErrorCode } from '@fe/domain';
+import type { Business } from '@fe/domain';
 import { OverlappingPendingSection } from '../OverlappingPendingSection';
 import '../../../i18n';
 

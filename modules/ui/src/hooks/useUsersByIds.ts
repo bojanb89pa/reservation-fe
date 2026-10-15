@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import type { User } from '@domain';
+import type { User } from '@fe/domain';
 import { getUsersByIdsUseCase } from '../app/container';
 
 /**

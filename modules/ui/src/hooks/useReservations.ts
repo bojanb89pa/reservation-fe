@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { CreateReservationCommand } from '@domain';
+import type { CreateReservationCommand } from '@fe/domain';
 import {
   createReservationUseCase,
   getAllReservationsUseCase,

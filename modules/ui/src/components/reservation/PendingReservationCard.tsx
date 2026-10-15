@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
-import { ReservationSlotTakenError } from '@domain';
-import type { Reservation } from '@domain';
+import { ReservationSlotTakenError } from '@fe/domain';
+import type { Reservation } from '@fe/domain';
 import { useApproveReservation, useRejectReservation } from '../../hooks/useReservations';
 import { useInvalidateResourceSlots } from '../../hooks/useResourceSlots';
 import { useIsBusinessMember } from '../../hooks/useBusinessMembers';

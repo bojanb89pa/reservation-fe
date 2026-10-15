@@ -5,7 +5,7 @@ import type {
   CreateBusinessCategoryCommand,
   UpdateBusinessCategoryCommand,
   UpdateBusinessCategoryAppearanceCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class BusinessCategoryApiRepository implements BusinessCategoryRepository {
   constructor(private readonly client: AxiosInstance) {}

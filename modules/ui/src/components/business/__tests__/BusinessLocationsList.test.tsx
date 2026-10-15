@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import type { BusinessLocation } from '@domain';
+import type { BusinessLocation } from '@fe/domain';
 import { BusinessLocationsList } from '../BusinessLocationsList';
 import '../../../i18n';
 

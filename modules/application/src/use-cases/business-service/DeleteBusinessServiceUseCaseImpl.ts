@@ -2,7 +2,7 @@ import type {
   BusinessServiceRepository,
   DeleteBusinessServiceUseCase,
   BusinessService,
-} from '@domain';
+} from '@fe/domain';
 
 export class DeleteBusinessServiceUseCaseImpl implements DeleteBusinessServiceUseCase {
   constructor(private readonly businessServiceRepository: BusinessServiceRepository) {}

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { AddServiceToLocationCommand } from '@domain';
+import type { AddServiceToLocationCommand } from '@fe/domain';
 import {
   listLocationServicesUseCase,
   addServiceToLocationUseCase,

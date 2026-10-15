@@ -2,7 +2,7 @@ import type {
   LocalizedBusinessCategoryRepository,
   GetLocalizedBusinessCategoryUseCase,
   LocalizedBusinessCategory,
-} from '@domain';
+} from '@fe/domain';
 
 export class GetLocalizedBusinessCategoryUseCaseImpl implements GetLocalizedBusinessCategoryUseCase {
   constructor(

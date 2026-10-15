@@ -3,7 +3,7 @@ import type {
   UpdateUserStatusUseCase,
   User,
   UpdateUserStatusCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class UpdateUserStatusUseCaseImpl implements UpdateUserStatusUseCase {
   constructor(private readonly userRepository: UserRepository) {}

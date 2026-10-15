@@ -5,7 +5,7 @@ import type {
   NearbyBusiness,
   PageRequest,
   PageResponse,
-} from '@domain';
+} from '@fe/domain';
 
 export class SearchNearbyBusinessesUseCaseImpl implements SearchNearbyBusinessesUseCase {
   constructor(private readonly nearbyBusinessRepository: NearbyBusinessRepository) {}

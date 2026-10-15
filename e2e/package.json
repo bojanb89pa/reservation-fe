@@ -1,5 +1,5 @@
 {
-  "name": "reserva-e2e",
+  "name": "@fe/e2e",
   "private": true,
   "type": "module",
   "scripts": {

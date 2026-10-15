@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAllResourcesUseCase, createResourceUseCase } from '../app/container';
-import type { CreateResourceCommand } from '@domain';
+import type { CreateResourceCommand } from '@fe/domain';
 
 export const resourceKeys = {
   all: ['resources'] as const,

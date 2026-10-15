@@ -4,7 +4,7 @@ import {
   createAvailabilityRuleUseCase,
   deleteAvailabilityRuleUseCase,
 } from '../app/container';
-import type { CreateAvailabilityRuleCommand } from '@domain';
+import type { CreateAvailabilityRuleCommand } from '@fe/domain';
 
 export const ruleKeys = {
   byResource: (resourceId: string) => ['availability-rules', resourceId] as const,

@@ -5,7 +5,7 @@ import {
   MAX_PROFILE_PICTURE_SIZE_IN_BYTES,
   FileUploadError,
   FileUploadErrorCode,
-} from '@domain';
+} from '@fe/domain';
 
 /** `accept` for the file input — the domain constant is the only source of the allowed types. */
 export const PROFILE_PICTURE_ACCEPT = ALLOWED_PROFILE_PICTURE_CONTENT_TYPES.join(',');

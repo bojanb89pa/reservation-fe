@@ -5,7 +5,7 @@ import type {
   CreateResourceCommand,
   PageRequest,
   PageResponse,
-} from '@domain';
+} from '@fe/domain';
 
 export class ResourceApiRepository implements ResourceRepository {
   constructor(private readonly client: AxiosInstance) {}

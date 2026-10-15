@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { Business } from '@domain';
+import type { Business } from '@fe/domain';
 import { BusinessImage } from '../business/BusinessImage';
 import { BusinessImagePicker } from '../business/BusinessImagePicker';
 import { useUploadFile } from '../../hooks/useFileUpload';

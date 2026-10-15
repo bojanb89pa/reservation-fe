@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ResetUserPasswordUseCaseImpl } from '../user/ResetUserPasswordUseCaseImpl';
-import type { UserRepository, User, ResetUserPasswordCommand } from '@domain';
+import type { UserRepository, User, ResetUserPasswordCommand } from '@fe/domain';
 
 const id = 'c0ffee00-0000-0000-0000-000000000001';
 

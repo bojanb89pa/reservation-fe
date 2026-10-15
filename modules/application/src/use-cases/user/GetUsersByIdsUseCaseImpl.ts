@@ -1,4 +1,4 @@
-import type { UserRepository, GetUsersByIdsUseCase, User } from '@domain';
+import type { UserRepository, GetUsersByIdsUseCase, User } from '@fe/domain';
 
 export class GetUsersByIdsUseCaseImpl implements GetUsersByIdsUseCase {
   constructor(private readonly userRepository: UserRepository) {}

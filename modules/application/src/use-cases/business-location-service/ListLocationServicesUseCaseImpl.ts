@@ -2,7 +2,7 @@ import type {
   BusinessLocationServiceRepository,
   ListLocationServicesUseCase,
   BusinessLocationService,
-} from '@domain';
+} from '@fe/domain';
 
 export class ListLocationServicesUseCaseImpl implements ListLocationServicesUseCase {
   constructor(

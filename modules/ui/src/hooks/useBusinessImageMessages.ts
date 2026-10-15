@@ -5,7 +5,7 @@ import {
   MAX_BUSINESS_IMAGE_SIZE_IN_BYTES,
   FileUploadError,
   FileUploadErrorCode,
-} from '@domain';
+} from '@fe/domain';
 
 /** `accept` for the file input — the domain constant is the only source of the allowed types. */
 export const BUSINESS_IMAGE_ACCEPT = ALLOWED_BUSINESS_IMAGE_CONTENT_TYPES.join(',');

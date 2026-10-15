@@ -5,7 +5,7 @@ import type {
   NearbyBusinessSearchFilter,
   PageRequest,
   PageResponse,
-} from '@domain';
+} from '@fe/domain';
 import { withResolvedImageUrl } from '../api/resolveApiUrl';
 
 export class NearbyBusinessApiRepository implements NearbyBusinessRepository {

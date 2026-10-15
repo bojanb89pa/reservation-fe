@@ -1,4 +1,4 @@
-import type { AuthSession } from '@domain';
+import type { AuthSession } from '@fe/domain';
 
 /** Dispatched on `window` after a transparent background refresh succeeds. */
 export const AUTH_SESSION_REFRESHED_EVENT = 'auth:session-refreshed';

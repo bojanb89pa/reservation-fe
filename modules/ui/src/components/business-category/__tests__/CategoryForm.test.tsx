@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import type { BusinessCategory } from '@domain';
+import type { BusinessCategory } from '@fe/domain';
 import { CategoryForm } from '../CategoryForm';
 import '../../../i18n';
 

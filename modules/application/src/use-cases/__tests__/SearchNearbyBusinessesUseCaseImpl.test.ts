@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SearchNearbyBusinessesUseCaseImpl } from '../business/SearchNearbyBusinessesUseCaseImpl';
-import type { NearbyBusinessRepository, NearbyBusiness, PageResponse, NearbyBusinessSearchFilter, BusinessCategory } from '@domain';
+import type { NearbyBusinessRepository, NearbyBusiness, PageResponse, NearbyBusinessSearchFilter, BusinessCategory } from '@fe/domain';
 
 const category: BusinessCategory = {
   id: 'category-001',

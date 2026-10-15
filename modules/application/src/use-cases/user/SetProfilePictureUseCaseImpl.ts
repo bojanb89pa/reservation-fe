@@ -3,7 +3,7 @@ import type {
   SetProfilePictureUseCase,
   SetProfilePictureCommand,
   User,
-} from '@domain';
+} from '@fe/domain';
 
 export class SetProfilePictureUseCaseImpl implements SetProfilePictureUseCase {
   constructor(private readonly userRepository: UserRepository) {}

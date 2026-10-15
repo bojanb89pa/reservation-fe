@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { UpdateBusinessLocationFromPlaceCommand } from '@domain';
+import type { UpdateBusinessLocationFromPlaceCommand } from '@fe/domain';
 import { updateLocationFromPlaceUseCase } from '../app/container';
 
 const locationKeys = {

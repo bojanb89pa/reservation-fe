@@ -3,7 +3,7 @@ import type {
   UpdateBusinessServiceUseCase,
   UpdateBusinessServiceCommand,
   BusinessService,
-} from '@domain';
+} from '@fe/domain';
 
 export class UpdateBusinessServiceUseCaseImpl implements UpdateBusinessServiceUseCase {
   constructor(private readonly businessServiceRepository: BusinessServiceRepository) {}

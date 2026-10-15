@@ -3,7 +3,7 @@ import type {
   CreateReservationUseCase,
   Reservation,
   CreateReservationCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class CreateReservationUseCaseImpl implements CreateReservationUseCase {
   constructor(private readonly reservationRepository: ReservationRepository) {}

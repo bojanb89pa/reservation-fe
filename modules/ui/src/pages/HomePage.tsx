@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { DEFAULT_CATEGORY_SYMBOL, DEFAULT_CATEGORY_COLOR } from '@domain';
+import { DEFAULT_CATEGORY_SYMBOL, DEFAULT_CATEGORY_COLOR } from '@fe/domain';
 import { useSearchBusinesses } from '../hooks/useBusinesses';
 import { useBusinessCategories } from '../hooks/useBusinessCategories';
 import { BusinessCard } from '../components/business/BusinessCard';

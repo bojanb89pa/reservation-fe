@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { AuthSession } from '@domain';
+import type { AuthSession } from '@fe/domain';
 import { AUTH_SESSION_EXPIRED_EVENT, tokenStorage } from '../app/container';
 
 interface AuthState {

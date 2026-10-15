@@ -10,7 +10,7 @@ import type {
   SetBusinessCategoryCommand,
   SetBusinessImageCommand,
   UpdateOverlappingPendingSettingCommand,
-} from '@domain';
+} from '@fe/domain';
 import { withResolvedImageUrl } from '../api/resolveApiUrl';
 
 function resolvePage(page: PageResponse<Business>): PageResponse<Business> {

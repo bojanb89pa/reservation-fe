@@ -3,7 +3,7 @@ import type {
   ResourceAvailabilityRuleRepository,
   ResourceAvailabilityRule,
   CreateAvailabilityRuleCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class ResourceAvailabilityRuleApiRepository implements ResourceAvailabilityRuleRepository {
   constructor(private readonly client: AxiosInstance) {}

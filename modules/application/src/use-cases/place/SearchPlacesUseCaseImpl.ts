@@ -1,4 +1,4 @@
-import type { PlaceAutocompleteSuggestion, PlaceRepository, SearchPlacesUseCase } from '@domain';
+import type { PlaceAutocompleteSuggestion, PlaceRepository, SearchPlacesUseCase } from '@fe/domain';
 
 export class SearchPlacesUseCaseImpl implements SearchPlacesUseCase {
   constructor(private readonly placeRepository: PlaceRepository) {}

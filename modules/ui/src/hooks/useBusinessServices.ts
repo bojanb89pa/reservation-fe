@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { CreateBusinessServiceCommand, UpdateBusinessServiceCommand } from '@domain';
+import type { CreateBusinessServiceCommand, UpdateBusinessServiceCommand } from '@fe/domain';
 import {
   listBusinessServicesUseCase,
   createBusinessServiceUseCase,

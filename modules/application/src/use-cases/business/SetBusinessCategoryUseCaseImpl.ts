@@ -1,4 +1,4 @@
-import type { BusinessRepository, SetBusinessCategoryUseCase, Business } from '@domain';
+import type { BusinessRepository, SetBusinessCategoryUseCase, Business } from '@fe/domain';
 
 export class SetBusinessCategoryUseCaseImpl implements SetBusinessCategoryUseCase {
   constructor(private readonly businessRepository: BusinessRepository) {}

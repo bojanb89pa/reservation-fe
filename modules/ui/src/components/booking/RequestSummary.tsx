@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { Resource, BusinessService } from '@domain';
+import type { Resource, BusinessService } from '@fe/domain';
 import styles from './RequestSummary.module.css';
 
 interface Props {

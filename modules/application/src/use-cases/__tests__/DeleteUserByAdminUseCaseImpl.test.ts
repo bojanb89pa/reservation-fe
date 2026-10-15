@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { DeleteUserByAdminUseCaseImpl } from '../user/DeleteUserByAdminUseCaseImpl';
-import type { UserRepository } from '@domain';
+import type { UserRepository } from '@fe/domain';
 
 const id = 'c0ffee00-0000-0000-0000-000000000001';
 

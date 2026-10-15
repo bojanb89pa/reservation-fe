@@ -3,7 +3,7 @@ import type {
   CreateLocalizedBusinessCategoryUseCase,
   LocalizedBusinessCategory,
   CreateLocalizedBusinessCategoryCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class CreateLocalizedBusinessCategoryUseCaseImpl implements CreateLocalizedBusinessCategoryUseCase {
   constructor(

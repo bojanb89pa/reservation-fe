@@ -3,7 +3,7 @@ import type {
   AddResourceToLocationUseCase,
   BusinessLocationResource,
   AddResourceToLocationCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class AddResourceToLocationUseCaseImpl implements AddResourceToLocationUseCase {
   constructor(

@@ -2,7 +2,7 @@ import type {
   AvailabilityBlockRepository,
   GetAvailabilityBlocksUseCase,
   AvailabilityBlock,
-} from '@domain';
+} from '@fe/domain';
 
 export class GetAvailabilityBlocksUseCaseImpl implements GetAvailabilityBlocksUseCase {
   constructor(private readonly blockRepository: AvailabilityBlockRepository) {}

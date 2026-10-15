@@ -1,5 +1,5 @@
 import type { AxiosInstance } from 'axios';
-import type { AuthRepository, AuthSession, User, UserRegistration } from '@domain';
+import type { AuthRepository, AuthSession, User, UserRegistration } from '@fe/domain';
 import { env } from '../config/environment';
 
 interface TokenResponse {

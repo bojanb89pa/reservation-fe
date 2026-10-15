@@ -1,4 +1,4 @@
-import type { BusinessRepository, DeleteBusinessUseCase, Business } from '@domain';
+import type { BusinessRepository, DeleteBusinessUseCase, Business } from '@fe/domain';
 
 export class DeleteBusinessUseCaseImpl implements DeleteBusinessUseCase {
   constructor(private readonly businessRepository: BusinessRepository) {}

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { UserSummary } from '@domain';
+import type { UserSummary } from '@fe/domain';
 import { useUserSearch } from '../../hooks/useUserSearch';
 import styles from './UserAutocompleteInput.module.css';
 

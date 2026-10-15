@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { UpdateOwnProfileCommand, User } from '@domain';
+import type { UpdateOwnProfileCommand, User } from '@fe/domain';
 import { updateOwnProfileUseCase } from '../app/container';
 
 /**

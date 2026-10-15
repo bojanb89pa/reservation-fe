@@ -4,7 +4,7 @@ import type {
   Business,
   PageRequest,
   PageResponse,
-} from '@domain';
+} from '@fe/domain';
 
 export class GetAllBusinessesForAdminUseCaseImpl implements GetAllBusinessesForAdminUseCase {
   constructor(private readonly businessRepository: BusinessRepository) {}

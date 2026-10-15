@@ -3,7 +3,7 @@ import type {
   CreateUserByAdminUseCase,
   User,
   AdminCreateUserCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class CreateUserByAdminUseCaseImpl implements CreateUserByAdminUseCase {
   constructor(private readonly userRepository: UserRepository) {}

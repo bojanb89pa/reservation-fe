@@ -4,11 +4,7 @@
     "composite": true,
     "emitDeclarationOnly": true,
     "declarationDir": "./dist",
-    "rootDir": "./src",
-    "baseUrl": ".",
-    "paths": {
-      "@domain": ["../domain/src/index.ts"]
-    }
+    "rootDir": "./src"
   },
   "exclude": ["**/__tests__/**", "**/*.test.ts", "**/*.test.tsx"],
   "include": ["src"],

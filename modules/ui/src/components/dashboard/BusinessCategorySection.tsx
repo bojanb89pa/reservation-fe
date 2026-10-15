@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { Business } from '@domain';
+import type { Business } from '@fe/domain';
 import { useBusinessCategories } from '../../hooks/useBusinessCategories';
 import { useSetBusinessCategory } from '../../hooks/useBusinesses';
 import styles from './BusinessCategorySection.module.css';

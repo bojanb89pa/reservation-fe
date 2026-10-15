@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import type { User } from '@domain';
+import type { User } from '@fe/domain';
 import '../../../i18n';
 
 const execute = vi.fn();

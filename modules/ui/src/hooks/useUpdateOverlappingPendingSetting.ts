@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { Business } from '@domain';
+import type { Business } from '@fe/domain';
 import { updateOverlappingPendingSettingUseCase } from '../app/container';
 import { businessKeys } from './useBusinesses';
 

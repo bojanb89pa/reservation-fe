@@ -3,7 +3,7 @@ import type {
   AddBusinessMemberUseCase,
   BusinessMembership,
   AddMemberCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class AddBusinessMemberUseCaseImpl implements AddBusinessMemberUseCase {
   constructor(private readonly businessMembershipRepository: BusinessMembershipRepository) {}

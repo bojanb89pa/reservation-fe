@@ -2,7 +2,7 @@ import {
   authAxiosClient,
   authenticatedAuthAxiosClient,
   resourceAxiosClient,
-} from '@infrastructure';
+} from '@fe/infrastructure';
 import {
   AuthApiRepository,
   BusinessApiRepository,
@@ -24,7 +24,7 @@ import {
   FileApiRepository,
   UserApiRepository,
   ClientApplicationApiRepository,
-} from '@infrastructure';
+} from '@fe/infrastructure';
 import {
   RegisterUseCaseImpl,
   GetMyBusinessesUseCaseImpl,
@@ -100,15 +100,15 @@ import {
   ResetUserPasswordUseCaseImpl,
   DeleteUserByAdminUseCaseImpl,
   RegisterClientApplicationUseCaseImpl,
-} from '@application';
+} from '@fe/application';
 
 // Re-export infrastructure primitives consumed only within this module's hooks/state.
 // IMPORTANT: Only container/index.ts may import from @infrastructure.
 // All other UI files that need these values must import from here.
-export { env } from '@infrastructure';
-export { tokenStorage } from '@infrastructure';
-export { setLoginCookiesBeforeAuthRedirect } from '@infrastructure';
-export { AUTH_SESSION_EXPIRED_EVENT } from '@infrastructure';
+export { env } from '@fe/infrastructure';
+export { tokenStorage } from '@fe/infrastructure';
+export { setLoginCookiesBeforeAuthRedirect } from '@fe/infrastructure';
+export { AUTH_SESSION_EXPIRED_EVENT } from '@fe/infrastructure';
 
 // ── Repositories ──────────────────────────────────────────────────────────────
 export const authApiRepository = new AuthApiRepository(authAxiosClient);

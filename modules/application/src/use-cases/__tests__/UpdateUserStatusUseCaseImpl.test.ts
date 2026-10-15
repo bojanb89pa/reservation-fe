@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { UpdateUserStatusUseCaseImpl } from '../user/UpdateUserStatusUseCaseImpl';
-import type { UserRepository, User, UpdateUserStatusCommand } from '@domain';
+import type { UserRepository, User, UpdateUserStatusCommand } from '@fe/domain';
 
 const id = 'c0ffee00-0000-0000-0000-000000000001';
 

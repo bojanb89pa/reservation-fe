@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { BusinessService, DurationUnit } from '@domain';
+import type { BusinessService, DurationUnit } from '@fe/domain';
 import {
   useBusinessServices,
   useCreateBusinessService,

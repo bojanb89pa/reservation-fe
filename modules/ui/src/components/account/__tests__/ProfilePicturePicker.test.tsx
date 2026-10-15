@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeAll } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ALLOWED_PROFILE_PICTURE_CONTENT_TYPES } from '@domain';
+import { ALLOWED_PROFILE_PICTURE_CONTENT_TYPES } from '@fe/domain';
 import { ProfilePicturePicker } from '../ProfilePicturePicker';
 import '../../../i18n';
 

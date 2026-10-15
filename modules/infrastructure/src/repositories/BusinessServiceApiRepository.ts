@@ -4,7 +4,7 @@ import type {
   BusinessService,
   CreateBusinessServiceCommand,
   UpdateBusinessServiceCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class BusinessServiceApiRepository implements BusinessServiceRepository {
   constructor(private readonly client: AxiosInstance) {}

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { BusinessMemberRole, NotifyBusinessMembershipCommand } from '@domain';
+import type { BusinessMemberRole, NotifyBusinessMembershipCommand } from '@fe/domain';
 import {
   listBusinessMembersUseCase,
   addBusinessMemberUseCase,

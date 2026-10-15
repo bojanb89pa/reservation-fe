@@ -3,7 +3,7 @@ import type {
   ListBusinessMembersUseCase,
   BusinessMembership,
   BusinessMemberRole,
-} from '@domain';
+} from '@fe/domain';
 
 export class ListBusinessMembersUseCaseImpl implements ListBusinessMembersUseCase {
   constructor(private readonly businessMembershipRepository: BusinessMembershipRepository) {}

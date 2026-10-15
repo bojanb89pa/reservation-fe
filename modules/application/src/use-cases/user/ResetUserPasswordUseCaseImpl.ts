@@ -3,7 +3,7 @@ import type {
   ResetUserPasswordUseCase,
   User,
   ResetUserPasswordCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class ResetUserPasswordUseCaseImpl implements ResetUserPasswordUseCase {
   constructor(private readonly userRepository: UserRepository) {}

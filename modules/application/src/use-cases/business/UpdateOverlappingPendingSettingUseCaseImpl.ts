@@ -1,4 +1,4 @@
-import type { BusinessRepository, UpdateOverlappingPendingSettingUseCase, Business } from '@domain';
+import type { BusinessRepository, UpdateOverlappingPendingSettingUseCase, Business } from '@fe/domain';
 
 export class UpdateOverlappingPendingSettingUseCaseImpl implements UpdateOverlappingPendingSettingUseCase {
   constructor(private readonly businessRepository: BusinessRepository) {}
