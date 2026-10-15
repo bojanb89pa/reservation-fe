@@ -18,6 +18,36 @@ export function uniqueName(prefix: string): string {
   return `${prefix} ${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
 }
 
+/**
+ * U read-only režimu (`E2E_READ_ONLY=1`, noćni smoke nad staging-om) baca pre
+ * bilo kakvog upisa. Prijava (`fetchAccessToken`, `loginInBrowser`) je dozvoljena.
+ */
+export function assertWritable(what: string): void {
+  if (env.readOnly) {
+    throw new Error(`E2E_READ_ONLY: ${what} bi menjao podatke, a @smoke test sme samo da čita`);
+  }
+}
+
+const WRITE_METHODS = new Set(['post', 'put', 'patch', 'delete']);
+
+/** U read-only režimu vraća kontekst kome su metode za upis zabranjene. */
+function guardedContext(context: APIRequestContext): APIRequestContext {
+  if (!env.readOnly) return context;
+  return new Proxy(context, {
+    get(target, property, receiver) {
+      const value = Reflect.get(target, property, receiver);
+      if (typeof property === 'string' && (WRITE_METHODS.has(property) || property === 'fetch')) {
+        return (url: string, options?: { method?: string }) => {
+          const method = property === 'fetch' ? (options?.method ?? 'GET').toLowerCase() : property;
+          if (WRITE_METHODS.has(method)) assertWritable(`${method.toUpperCase()} ${url}`);
+          return (value as (...args: unknown[]) => unknown).call(target, url, options);
+        };
+      }
+      return typeof value === 'function' ? value.bind(target) : value;
+    },
+  });
+}
+
 function locationOf(response: APIResponse): string {
   const location = response.headers()['location'];
   if (!location) {
@@ -101,6 +131,7 @@ async function openActivationLink(http: APIRequestContext, email: string): Promi
 export async function createActivatedUser(
   overrides: Partial<Credentials & { firstName: string; lastName: string }> = {},
 ): Promise<Credentials> {
+  assertWritable('registracija novog naloga');
   const credentials: Credentials = {
     email: overrides.email ?? uniqueEmail(),
     password: overrides.password ?? env.userPassword,
@@ -130,6 +161,7 @@ export async function createActivatedUser(
  * browseru) — čeka aktivacioni mejl u Mailpit-u i otvara link iz njega.
  */
 export async function activateRegisteredUser(email: string): Promise<void> {
+  assertWritable(`aktivacija naloga ${email}`);
   const http = await request.newContext();
   try {
     await openActivationLink(http, email);
@@ -140,6 +172,7 @@ export async function activateRegisteredUser(email: string): Promise<void> {
 
 /** Admin iz bootstrap-a (`ADMIN_BOOTSTRAP_*`), nikad lični admin. */
 export function adminCredentials(): Credentials {
+  assertWritable('admin nalog');
   if (!env.adminPassword) {
     throw new Error('E2E_ADMIN_PASSWORD nije postavljen');
   }
@@ -162,13 +195,13 @@ export class ApiClient {
     const headers = { Authorization: `Bearer ${token}` };
     const http = await request.newContext({ baseURL: `${env.apiUrl}/`, extraHTTPHeaders: headers });
     const auth = await request.newContext({ baseURL: `${env.authUrl}/`, extraHTTPHeaders: headers });
-    return new ApiClient(http, auth);
+    return new ApiClient(guardedContext(http), guardedContext(auth));
   }
 
   static async anonymous(): Promise<ApiClient> {
     const http = await request.newContext({ baseURL: `${env.apiUrl}/` });
     const auth = await request.newContext({ baseURL: `${env.authUrl}/` });
-    return new ApiClient(http, auth);
+    return new ApiClient(guardedContext(http), guardedContext(auth));
   }
 
   get(path: string, options?: Parameters<APIRequestContext['get']>[1]) {
