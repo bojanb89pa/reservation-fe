@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { GetMyBusinessesUseCaseImpl } from '../business/GetMyBusinessesUseCaseImpl';
-import type { BusinessRepository } from '@domain';
+import type { BusinessRepository } from '@fe/domain';
 
 const mockPage = {
   content: [

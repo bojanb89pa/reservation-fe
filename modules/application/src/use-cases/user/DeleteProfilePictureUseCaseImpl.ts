@@ -1,4 +1,4 @@
-import type { UserRepository, DeleteProfilePictureUseCase, User } from '@domain';
+import type { UserRepository, DeleteProfilePictureUseCase, User } from '@fe/domain';
 
 export class DeleteProfilePictureUseCaseImpl implements DeleteProfilePictureUseCase {
   constructor(private readonly userRepository: UserRepository) {}

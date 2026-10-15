@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { CancelReservationUseCaseImpl } from '../reservation/CancelReservationUseCaseImpl';
-import type { Reservation, ReservationRepository } from '@domain';
+import type { Reservation, ReservationRepository } from '@fe/domain';
 
 const resourceId = 'resource-001';
 const reservationId = 'reservation-001';

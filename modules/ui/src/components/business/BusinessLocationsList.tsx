@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import type { BusinessLocation } from '@domain';
+import type { BusinessLocation } from '@fe/domain';
 import styles from './BusinessLocationsList.module.css';
 
 interface Props {

@@ -26,25 +26,25 @@ This module contains all technical implementations — HTTP clients, repository 
 
 ## May depend on
 
-- `@domain` — repository interfaces and domain types to implement against
-- `@application` — (available but currently unused; reserved for application-level contracts)
+- `@fe/domain` — repository interfaces and domain types to implement against
+- `@fe/application` — (available but currently unused; reserved for application-level contracts)
 
 ## Forbidden
 
 - React components or hooks
 - UI business logic or presentation state
 - Direct business decisions (routing, validation logic that belongs in domain)
-- Imports from `@ui`
+- Imports from `@fe/ui`
 
 ## Dependency rule
 
-This module may only import from `@domain` and `@application`. The `references` array in tsconfig.json points only to `../domain` and `../application`.
+This module may only import from `@fe/domain` and `@fe/application`. The `references` array in tsconfig.json points only to `../domain` and `../application`; `dependencies` in `package.json` lists `@fe/domain` and `axios`. A new third-party library is added to this package's `package.json`, not the root.
 
-All cross-module imports must go through the module index: `@domain`, `@application`. Never use deep paths.
+All cross-module imports must go through the module index: `@fe/domain`, `@fe/application`. Never use deep paths.
 
 ## Public API
 
-All exports must go through `src/index.ts`. This includes: axios clients, repository implementations, `env`, and `tokenStorage`. The UI composition root imports everything it needs from `@infrastructure`.
+All exports must go through `src/index.ts`. This includes: axios clients, repository implementations, `env`, and `tokenStorage`. The UI composition root imports everything it needs from `@fe/infrastructure`.
 
 ## File structure
 
@@ -64,7 +64,7 @@ src/
 
 ## Rules
 
-- Repository implementations must satisfy the interface defined in `@domain` — no extra public methods beyond the interface (except narrow exceptions like `AuthApiRepository.exchangeCode` for the OAuth flow)
+- Repository implementations must satisfy the interface defined in `@fe/domain` — no extra public methods beyond the interface (except narrow exceptions like `AuthApiRepository.exchangeCode` for the OAuth flow)
 - No business decisions inside adapters — they translate, not decide
 - `environment.ts` is the single place where `import.meta.env` is accessed
 - All axios error handling goes through `normalizeAxiosError` in `apiError.ts`

@@ -1,4 +1,4 @@
-import type { GetPlaceDetailsUseCase, PlaceDetails, PlaceRepository } from '@domain';
+import type { GetPlaceDetailsUseCase, PlaceDetails, PlaceRepository } from '@fe/domain';
 
 export class GetPlaceDetailsUseCaseImpl implements GetPlaceDetailsUseCase {
   constructor(private readonly placeRepository: PlaceRepository) {}

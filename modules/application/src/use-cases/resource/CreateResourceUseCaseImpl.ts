@@ -3,7 +3,7 @@ import type {
   CreateResourceUseCase,
   Resource,
   CreateResourceCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class CreateResourceUseCaseImpl implements CreateResourceUseCase {
   constructor(private readonly resourceRepository: ResourceRepository) {}

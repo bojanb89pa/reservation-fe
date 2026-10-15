@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BusinessErrorCode } from '@domain';
-import type { Business } from '@domain';
+import { BusinessErrorCode } from '@fe/domain';
+import type { Business } from '@fe/domain';
 import { useCurrentUserId } from '../../hooks/useCurrentRoles';
 import { useUpdateOverlappingPendingSetting } from '../../hooks/useUpdateOverlappingPendingSetting';
 import styles from './BusinessImageSection.module.css';

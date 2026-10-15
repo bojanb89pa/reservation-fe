@@ -87,8 +87,9 @@ while [ $# -gt 0 ]; do
 done
 base="${1:?upotreba: scoped-check.sh [--local] [--print] <base_ref>}"
 
+# Jedan install u root-u pokriva sve workspace-e (modules/*, apps/*, e2e).
 install="yarn install --frozen-lockfile --prefer-offline --non-interactive"
-e2e_cmd="(cd e2e && PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 $install && yarn typecheck && yarn test:list > /dev/null)"
+e2e_cmd="yarn workspace @fe/e2e typecheck && yarn workspace @fe/e2e test:list > /dev/null"
 full_cmd="$install && yarn lint && yarn test --run && yarn build && $e2e_cmd"
 [ "$local_mode" = true ] && full_cmd="$install && yarn lint && yarn test --run && yarn tsc -b && $e2e_cmd"
 
@@ -118,9 +119,10 @@ command_for_diff() {
         m="${file#modules/}"
         mods["${m%%/*}"]=1
         ;;
-      # ui i src/ ulaze u bundle, pa za njih ide sve, sa vite build-om.
+      # ui i apps/ ulaze u bundle, pa za njih ide sve, sa vite build-om.
       # Isto za root konfiguraciju (package.json, yarn.lock, tsconfig*,
-      # vite/vitest/eslint config), .github/, scripts/ i sve nepoznato.
+      # vite/vitest/eslint config), package.json bilo kog workspace-a,
+      # .github/, scripts/ i sve nepoznato.
       *) full=true ;;
     esac
   done < <(changed_files | sort -u)
@@ -143,7 +145,9 @@ command_for_diff() {
     # u jednom modulu ne obara lint u drugom.
     parts+=("$install && yarn lint && yarn test --run --passWithNoTests $test_paths && scripts/ci/scoped-check.sh typecheck $allowed_list")
   fi
-  [ "$e2e" = true ] && parts+=("$e2e_cmd")
+  if [ "$e2e" = true ]; then
+    if [ "${#parts[@]}" -eq 0 ]; then parts+=("$install && $e2e_cmd"); else parts+=("$e2e_cmd"); fi
+  fi
 
   [ "${#parts[@]}" -eq 0 ] && return
   local out="" p

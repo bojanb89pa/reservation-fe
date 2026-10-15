@@ -5,7 +5,7 @@ import type {
   Business,
   PageRequest,
   PageResponse,
-} from '@domain';
+} from '@fe/domain';
 
 export class SearchBusinessesUseCaseImpl implements SearchBusinessesUseCase {
   constructor(private readonly businessRepository: BusinessRepository) {}

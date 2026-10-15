@@ -28,9 +28,12 @@ yarn test:coverage  # vitest with coverage
 yarn format         # prettier
 ```
 
-E2E tests live in `e2e/` (own `package.json`, Playwright). They run only in
+E2E tests live in `e2e/` (workspace `@fe/e2e`, Playwright). They run only in
 GitHub Actions (`e2e.yml`); locally just `yarn --cwd e2e typecheck` and
 `yarn --cwd e2e test:list`. Rules: `e2e/CLAUDE.md`.
+
+The repo is a Yarn 1 workspace: one `yarn install` in the root installs every
+package, and there is one `yarn.lock`.
 
 ## Tech Stack
 
@@ -38,7 +41,7 @@ GitHub Actions (`e2e.yml`); locally just `yarn --cwd e2e typecheck` and
 |---|---|
 | Language | TypeScript 5.x (strict) |
 | Framework | React 18 |
-| Build | Vite 5, project references (`tsc -b`) |
+| Build | Vite 6 (`apps/web`), Yarn 1 workspaces, `tsc -b` |
 | Routing | react-router-dom 6 |
 | Async state | @tanstack/react-query 5 |
 | Client state | zustand 5 |
@@ -51,35 +54,34 @@ GitHub Actions (`e2e.yml`); locally just `yarn --cwd e2e typecheck` and
 ## Architecture
 
 Clean Architecture across four modules under `modules/`. Each module is a
-TypeScript project with its own `tsconfig.json`, and cross-module imports go
-through path aliases defined in `vite.config.ts`.
+workspace package (`@fe/<module>`) with its own `package.json` and
+`tsconfig.json`. A package is consumed straight from source: its `exports`
+points at `src/index.ts`, so there is no per-package build step and no path
+aliases. The app that bundles them lives in `apps/web`.
 
 ```
-modules/domain          ← pure TypeScript, zero dependencies
-modules/application     ← use case implementations, depends on @domain
-modules/infrastructure  ← HTTP clients and repository adapters, depends on @domain
-modules/ui              ← React components, pages, hooks, routing, state
-src/main.tsx            ← entry point, renders App from @ui
+modules/domain          ← @fe/domain: pure TypeScript, zero dependencies
+modules/application     ← @fe/application: use case implementations, depends on @fe/domain
+modules/infrastructure  ← @fe/infrastructure: HTTP clients and repository adapters, depends on @fe/domain
+modules/ui              ← @fe/ui: React components, pages, hooks, routing, state
+apps/web                ← @fe/web: Vite app; src/main.tsx renders App from @fe/ui
+e2e                     ← @fe/e2e: Playwright tests and demo seed
 ```
 
 **Dependency flow:** `ui → application → domain ← infrastructure`
 
-| Alias | Resolves to |
-|---|---|
-| `@domain` | `modules/domain/src/index.ts` |
-| `@application` | `modules/application/src/index.ts` |
-| `@infrastructure` | `modules/infrastructure/src/index.ts` |
-| `@ui` | `modules/ui/src/index.ts` |
-| `@` | `src/` |
+A package lists every package it imports in its own `package.json`
+(`"@fe/domain": "*"` for workspace packages). The layer rules below are
+enforced by eslint (`no-restricted-imports` in `eslint.config.js`).
 
 ## Layer rules (summary)
 
 | Module | May import | Forbidden |
 |---|---|---|
-| `domain` | nothing | React, browser APIs, axios/fetch, any `@` alias |
-| `application` | `@domain` | React, browser APIs, axios/fetch, `@infrastructure`, `@ui` |
-| `infrastructure` | `@domain`, `@application` | React, `@ui`, business decisions |
-| `ui` | `@domain`, `@application` | `@infrastructure` (except composition root), direct axios/fetch, business logic |
+| `domain` | nothing | React, browser APIs, axios/fetch, any `@fe/*` package |
+| `application` | `@fe/domain` | React, browser APIs, axios/fetch, `@fe/infrastructure`, `@fe/ui` |
+| `infrastructure` | `@fe/domain`, `@fe/application` | React, `@fe/ui`, business decisions |
+| `ui` | `@fe/domain`, `@fe/application` | `@fe/infrastructure` (except composition root), direct axios/fetch, business logic |
 
 The full rules for each module live in `modules/<module>/CLAUDE.md`. Read the
 one for the module you are editing.
@@ -87,7 +89,7 @@ one for the module you are editing.
 ## Hard Rules
 
 - **All cross-module imports go through the module index.** Write
-  `import { Business } from '@domain'`, never `@domain/entities/Business`.
+  `import { Business } from '@fe/domain'`, never `@fe/domain/entities/Business`.
 - **Everything public is exported from `src/index.ts`.** A type another module
   needs but the index does not export does not exist.
 - **`import.meta.env` is read only in `modules/infrastructure/src/config/environment.ts`.**
@@ -95,7 +97,7 @@ one for the module you are editing.
 - **Axios errors go through `normalizeAxiosError`** in
   `modules/infrastructure/src/api/apiError.ts`.
 - **Composition root exception.** `modules/ui/src/app/container/index.ts` is the
-  only file in `ui` allowed to import `@infrastructure`. Everything else in
+  only file in `ui` allowed to import `@fe/infrastructure`. Everything else in
   `ui` imports wired instances from `../app/container`.
 - **Domain types mirror BE DTOs exactly** — same field names, same nullability,
   same enum members. The source of truth is the fe-brief generated by the BE

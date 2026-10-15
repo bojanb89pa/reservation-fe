@@ -1,5 +1,5 @@
 import { useTranslation, Trans } from 'react-i18next';
-import type { BusinessService } from '@domain';
+import type { BusinessService } from '@fe/domain';
 import styles from './DeleteServiceDialog.module.css';
 
 interface Props {

@@ -1,5 +1,5 @@
 import type { AxiosInstance } from 'axios';
-import type { ReservationRepository, Reservation, CreateReservationCommand } from '@domain';
+import type { ReservationRepository, Reservation, CreateReservationCommand } from '@fe/domain';
 
 export class ReservationApiRepository implements ReservationRepository {
   constructor(private readonly client: AxiosInstance) {}

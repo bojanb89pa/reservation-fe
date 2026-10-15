@@ -32,13 +32,13 @@ This module contains the pure business domain. It has zero dependencies on any o
 - HTTP clients (`axios`, `fetch`)
 - Database logic or ORM
 - Infrastructure implementations
-- Imports from `@application`, `@infrastructure`, or `@ui`
+- Imports from `@fe/application`, `@fe/infrastructure`, or `@fe/ui`
 
 ## Dependency rule
 
 **This module has NO dependencies on any other module.**
 
-No `references` array in tsconfig.json points outward. Any import that is not relative (within this module) or from a standard library/language is forbidden.
+No `references` array in tsconfig.json points outward, and `package.json` has no `dependencies`. Any import that is not relative (within this module) or from a standard library/language is forbidden.
 
 ## Public API
 

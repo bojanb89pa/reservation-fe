@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { BusinessMemberRole, UserSummary } from '@domain';
+import type { BusinessMemberRole, UserSummary } from '@fe/domain';
 import {
   useBusinessMembers,
   useAddBusinessMember,

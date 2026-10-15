@@ -2,7 +2,7 @@ import type {
   BusinessLocationRepository,
   ListBusinessLocationsUseCase,
   BusinessLocation,
-} from '@domain';
+} from '@fe/domain';
 
 export class ListBusinessLocationsUseCaseImpl implements ListBusinessLocationsUseCase {
   constructor(private readonly businessLocationRepository: BusinessLocationRepository) {}

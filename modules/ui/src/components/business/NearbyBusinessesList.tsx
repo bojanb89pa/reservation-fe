@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import type { NearbyBusiness, PageResponse } from '@domain';
+import type { NearbyBusiness, PageResponse } from '@fe/domain';
 import { BusinessCard } from './BusinessCard';
 import styles from './NearbyBusinessesList.module.css';
 

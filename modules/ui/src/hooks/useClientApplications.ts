@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import type { CreateClientApplicationCommand } from '@domain';
+import type { CreateClientApplicationCommand } from '@fe/domain';
 import { registerClientApplicationUseCase } from '../app/container';
 
 export function useCreateClientApplication() {

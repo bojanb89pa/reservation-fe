@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { User, Role } from '@domain';
+import type { User, Role } from '@fe/domain';
 import styles from './UserForm.module.css';
 
 const ALL_ROLES: Role[] = ['ROLE_USER', 'ROLE_ADMIN'];

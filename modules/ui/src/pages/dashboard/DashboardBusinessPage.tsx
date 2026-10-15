@@ -17,8 +17,8 @@ import { BusinessCategorySection } from '../../components/dashboard/BusinessCate
 import { BusinessImageSection } from '../../components/dashboard/BusinessImageSection';
 import { OverlappingPendingSection } from '../../components/dashboard/OverlappingPendingSection';
 import { ServiceSection } from '../../components/business-service/ServiceSection';
-import type { ResourceType, DayOfWeek } from '@domain';
-import { DAYS_ORDERED, DAY_LABELS } from '@domain';
+import type { ResourceType, DayOfWeek } from '@fe/domain';
+import { DAYS_ORDERED, DAY_LABELS } from '@fe/domain';
 import styles from './DashboardBusinessPage.module.css';
 
 const RESOURCE_TYPES: ResourceType[] = [

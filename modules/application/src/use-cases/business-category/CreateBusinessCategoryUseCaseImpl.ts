@@ -3,7 +3,7 @@ import type {
   CreateBusinessCategoryUseCase,
   BusinessCategory,
   CreateBusinessCategoryCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class CreateBusinessCategoryUseCaseImpl implements CreateBusinessCategoryUseCase {
   constructor(private readonly businessCategoryRepository: BusinessCategoryRepository) {}

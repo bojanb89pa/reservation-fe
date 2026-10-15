@@ -2,7 +2,7 @@ import type {
   BusinessMembershipRepository,
   RemoveBusinessMemberUseCase,
   RemoveMemberCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class RemoveBusinessMemberUseCaseImpl implements RemoveBusinessMemberUseCase {
   constructor(private readonly businessMembershipRepository: BusinessMembershipRepository) {}

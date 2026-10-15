@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { BusinessContactInfo, ContactInfoType } from '@domain';
+import type { BusinessContactInfo, ContactInfoType } from '@fe/domain';
 import {
   useBusinessContactInfo,
   useAddContactInfo,

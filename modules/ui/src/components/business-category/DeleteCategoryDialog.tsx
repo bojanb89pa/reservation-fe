@@ -1,5 +1,5 @@
 import { useTranslation, Trans } from 'react-i18next';
-import type { BusinessCategory } from '@domain';
+import type { BusinessCategory } from '@fe/domain';
 import styles from './DeleteCategoryDialog.module.css';
 
 interface Props {

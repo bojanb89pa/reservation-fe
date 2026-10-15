@@ -3,7 +3,7 @@ import type {
   ClientApplicationRepository,
   CreateClientApplicationCommand,
   RegisterClientApplicationUseCase,
-} from '@domain';
+} from '@fe/domain';
 
 export class RegisterClientApplicationUseCaseImpl implements RegisterClientApplicationUseCase {
   constructor(private readonly clientApplicationRepository: ClientApplicationRepository) {}

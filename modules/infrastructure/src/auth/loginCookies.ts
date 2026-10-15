@@ -1,4 +1,4 @@
-import type { LoginLanguage, LoginTheme } from '@domain';
+import type { LoginLanguage, LoginTheme } from '@fe/domain';
 
 /**
  * Sets the `theme`/`lang` cookies auth-service's server-rendered `/login` page reads,

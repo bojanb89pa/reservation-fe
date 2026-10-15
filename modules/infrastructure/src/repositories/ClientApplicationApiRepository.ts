@@ -1,5 +1,5 @@
 import type { AxiosInstance } from 'axios';
-import type { ClientApplicationRepository, ClientApplication, CreateClientApplicationCommand } from '@domain';
+import type { ClientApplicationRepository, ClientApplication, CreateClientApplicationCommand } from '@fe/domain';
 
 export class ClientApplicationApiRepository implements ClientApplicationRepository {
   constructor(private readonly client: AxiosInstance) {}

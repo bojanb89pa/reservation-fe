@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { RegisterClientApplicationUseCaseImpl } from '../client-application/RegisterClientApplicationUseCaseImpl';
-import type { ClientApplication, ClientApplicationRepository, CreateClientApplicationCommand, ValidationError } from '@domain';
+import type { ClientApplication, ClientApplicationRepository, CreateClientApplicationCommand, ValidationError } from '@fe/domain';
 
 const mockClientApplication: ClientApplication = {
   id: 'app-123',

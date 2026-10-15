@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import type { Business, BusinessLocation, BusinessCategory, PageResponse } from '@domain';
+import type { Business, BusinessLocation, BusinessCategory, PageResponse } from '@fe/domain';
 import { ClientApplicationForm } from '../ClientApplicationForm';
 import '../../../i18n';
 

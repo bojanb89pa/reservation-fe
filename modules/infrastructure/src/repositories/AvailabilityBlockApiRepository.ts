@@ -1,5 +1,5 @@
 import type { AxiosInstance } from 'axios';
-import type { AvailabilityBlockRepository, AvailabilityBlock } from '@domain';
+import type { AvailabilityBlockRepository, AvailabilityBlock } from '@fe/domain';
 
 export class AvailabilityBlockApiRepository implements AvailabilityBlockRepository {
   constructor(private readonly client: AxiosInstance) {}

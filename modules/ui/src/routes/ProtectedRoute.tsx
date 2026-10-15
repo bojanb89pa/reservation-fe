@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toLoginTheme, toLoginLanguage } from '@domain';
+import { toLoginTheme, toLoginLanguage } from '@fe/domain';
 import { useAuthStore } from '../state/authStore';
 import { env, setLoginCookiesBeforeAuthRedirect } from '../app/container';
 

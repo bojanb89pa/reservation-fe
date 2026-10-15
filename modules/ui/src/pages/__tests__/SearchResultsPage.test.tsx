@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import type { SearchResult } from '@domain';
+import type { SearchResult } from '@fe/domain';
 import { SearchResultsPage } from '../SearchResultsPage';
 import '../../i18n';
 

@@ -25,7 +25,7 @@ This module contains use cases — the orchestration layer that coordinates doma
 
 ## May depend on
 
-- `@domain` — entities, repository interfaces, use case interfaces, types
+- `@fe/domain` — entities, repository interfaces, use case interfaces, types
 
 ## Forbidden
 
@@ -33,13 +33,13 @@ This module contains use cases — the orchestration layer that coordinates doma
 - Browser APIs (`window`, `document`, `localStorage`, `fetch`)
 - Direct HTTP calls (`axios`, `fetch`)
 - Infrastructure implementations (repository classes, API clients)
-- Imports from `@infrastructure` or `@ui`
+- Imports from `@fe/infrastructure` or `@fe/ui`
 
 ## Dependency rule
 
-This module may only import from `@domain`. The `references` array in tsconfig.json points only to `../domain`.
+This module may only import from `@fe/domain`. The `references` array in tsconfig.json points only to `../domain`, and `dependencies` in `package.json` lists only `@fe/domain`.
 
-All imports from the domain must go through `@domain` (the index). Never use deep paths like `@domain/entities/Foo`.
+All imports from the domain must go through `@fe/domain` (the index). Never use deep paths like `@fe/domain/entities/Foo`.
 
 ## Public API
 

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import type { Role } from '@domain';
+import type { Role } from '@fe/domain';
 import styles from './RoleBadgeList.module.css';
 
 interface Props {

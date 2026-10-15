@@ -3,7 +3,7 @@ import type {
   CreateBusinessLocationUseCase,
   CreateBusinessLocationCommand,
   BusinessLocation,
-} from '@domain';
+} from '@fe/domain';
 
 export class CreateBusinessLocationUseCaseImpl implements CreateBusinessLocationUseCase {
   constructor(private readonly businessLocationRepository: BusinessLocationRepository) {}

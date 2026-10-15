@@ -7,8 +7,8 @@ import {
   FileUploadErrorCode,
   MAX_BUSINESS_IMAGE_SIZE_IN_BYTES,
   MAX_PROFILE_PICTURE_SIZE_IN_BYTES,
-} from '@domain';
-import type { FileUploadRepository, PendingUpload } from '@domain';
+} from '@fe/domain';
+import type { FileUploadRepository, PendingUpload } from '@fe/domain';
 
 const pendingUpload: PendingUpload = {
   uploadId: 'c0ffee00-0000-0000-0000-000000000001',

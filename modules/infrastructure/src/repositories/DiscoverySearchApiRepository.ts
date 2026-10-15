@@ -5,7 +5,7 @@ import type {
   SearchResult,
   PageRequest,
   PageResponse,
-} from '@domain';
+} from '@fe/domain';
 import { withResolvedImageUrl } from '../api/resolveApiUrl';
 
 export class DiscoverySearchApiRepository implements DiscoverySearchRepository {

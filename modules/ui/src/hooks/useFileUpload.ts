@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
-import { BUSINESS_IMAGE_UPLOAD_TYPE } from '@domain';
-import type { UploadType } from '@domain';
+import { BUSINESS_IMAGE_UPLOAD_TYPE } from '@fe/domain';
+import type { UploadType } from '@fe/domain';
 import { uploadFileUseCase } from '../app/container';
 
 /**

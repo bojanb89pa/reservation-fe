@@ -1,4 +1,4 @@
-import type { ResourceAvailabilityRuleRepository, DeleteAvailabilityRuleUseCase } from '@domain';
+import type { ResourceAvailabilityRuleRepository, DeleteAvailabilityRuleUseCase } from '@fe/domain';
 
 export class DeleteAvailabilityRuleUseCaseImpl implements DeleteAvailabilityRuleUseCase {
   constructor(private readonly ruleRepository: ResourceAvailabilityRuleRepository) {}

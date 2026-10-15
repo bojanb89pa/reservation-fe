@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SearchUsersForAdminUseCaseImpl } from '../user/SearchUsersForAdminUseCaseImpl';
-import type { UserRepository, User, PageResponse } from '@domain';
+import type { UserRepository, User, PageResponse } from '@fe/domain';
 
 const user: User = {
   id: 'c0ffee00-0000-0000-0000-000000000001',

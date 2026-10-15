@@ -1,7 +1,7 @@
 import type {
   BusinessLocationResourceRepository,
   RemoveResourceFromLocationUseCase,
-} from '@domain';
+} from '@fe/domain';
 
 export class RemoveResourceFromLocationUseCaseImpl implements RemoveResourceFromLocationUseCase {
   constructor(

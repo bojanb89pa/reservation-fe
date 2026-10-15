@@ -4,7 +4,7 @@ import type {
   BusinessLocation,
   CreateBusinessLocationCommand,
   UpdateBusinessLocationFromPlaceCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class BusinessLocationApiRepository implements BusinessLocationRepository {
   constructor(private readonly client: AxiosInstance) {}

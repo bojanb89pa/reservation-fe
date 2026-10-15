@@ -3,7 +3,7 @@ import type {
   UpdateUserByAdminUseCase,
   User,
   AdminUpdateUserCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class UpdateUserByAdminUseCaseImpl implements UpdateUserByAdminUseCase {
   constructor(private readonly userRepository: UserRepository) {}

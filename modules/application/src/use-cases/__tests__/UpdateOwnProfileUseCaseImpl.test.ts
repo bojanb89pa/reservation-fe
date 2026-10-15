@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { UpdateOwnProfileUseCaseImpl } from '../user/UpdateOwnProfileUseCaseImpl';
-import type { UserRepository, User, UpdateOwnProfileCommand } from '@domain';
+import type { UserRepository, User, UpdateOwnProfileCommand } from '@fe/domain';
 
 const user: User = {
   id: 'c0ffee00-0000-0000-0000-000000000001',

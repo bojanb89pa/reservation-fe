@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import type { User } from '@domain';
+import type { User } from '@fe/domain';
 import { UserBadge } from '../UserBadge';
 import '../../i18n';
 

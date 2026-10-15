@@ -1,4 +1,4 @@
-import type { BusinessLocationServiceRepository, RemoveServiceFromLocationUseCase } from '@domain';
+import type { BusinessLocationServiceRepository, RemoveServiceFromLocationUseCase } from '@fe/domain';
 
 export class RemoveServiceFromLocationUseCaseImpl implements RemoveServiceFromLocationUseCase {
   constructor(

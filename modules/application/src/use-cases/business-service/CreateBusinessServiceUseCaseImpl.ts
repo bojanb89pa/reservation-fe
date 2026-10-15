@@ -3,7 +3,7 @@ import type {
   CreateBusinessServiceUseCase,
   CreateBusinessServiceCommand,
   BusinessService,
-} from '@domain';
+} from '@fe/domain';
 
 export class CreateBusinessServiceUseCaseImpl implements CreateBusinessServiceUseCase {
   constructor(private readonly businessServiceRepository: BusinessServiceRepository) {}

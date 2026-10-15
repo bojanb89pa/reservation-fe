@@ -6,7 +6,7 @@ import type {
   AdminUpdateUserCommand,
   UpdateUserStatusCommand,
   ResetUserPasswordCommand,
-} from '@domain';
+} from '@fe/domain';
 import {
   searchUsersForAdminUseCase,
   getUserByIdForAdminUseCase,

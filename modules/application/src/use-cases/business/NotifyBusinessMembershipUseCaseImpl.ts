@@ -2,7 +2,7 @@ import type {
   BusinessMembershipRepository,
   NotifyBusinessMembershipUseCase,
   NotifyBusinessMembershipCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class NotifyBusinessMembershipUseCaseImpl implements NotifyBusinessMembershipUseCase {
   constructor(private readonly businessMembershipRepository: BusinessMembershipRepository) {}

@@ -3,7 +3,7 @@ import type {
   UpsertLocalizedBusinessCategoryTranslationUseCase,
   LocalizedBusinessCategory,
   UpsertTranslationCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class UpsertLocalizedBusinessCategoryTranslationUseCaseImpl implements UpsertLocalizedBusinessCategoryTranslationUseCase {
   constructor(

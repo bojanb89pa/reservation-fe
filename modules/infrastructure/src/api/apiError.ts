@@ -9,7 +9,7 @@ import {
   UnauthorizedError,
   ReservationSlotTakenError,
   ReservationErrorCode,
-} from '@domain';
+} from '@fe/domain';
 
 export interface ApiErrorBody {
   message?: string;

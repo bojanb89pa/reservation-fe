@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { SetBusinessImageUseCaseImpl } from '../business/SetBusinessImageUseCaseImpl';
-import { NotFoundError } from '@domain';
-import type { Business, BusinessRepository } from '@domain';
+import { NotFoundError } from '@fe/domain';
+import type { Business, BusinessRepository } from '@fe/domain';
 
 const businessId = 'a1b2c3d4-0000-0000-0000-000000000001';
 const uploadId = 'c0ffee00-0000-0000-0000-000000000001';

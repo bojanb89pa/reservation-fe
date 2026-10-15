@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { User } from '@domain';
+import type { User } from '@fe/domain';
 import { useUpdateOwnProfile } from '../../hooks/useUpdateOwnProfile';
 import { useProfileNameMessages } from '../../hooks/useProfileNameMessages';
 import styles from './ProfilePictureSection.module.css';

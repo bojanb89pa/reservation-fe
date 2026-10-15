@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { ContactInfoType } from '@domain';
+import type { ContactInfoType } from '@fe/domain';
 import {
   listContactInfoUseCase,
   addContactInfoUseCase,

@@ -3,7 +3,7 @@ import type {
   BusinessLocationRepository,
   UpdateBusinessLocationFromPlaceCommand,
   UpdateLocationFromPlaceUseCase,
-} from '@domain';
+} from '@fe/domain';
 
 export class UpdateLocationFromPlaceUseCaseImpl implements UpdateLocationFromPlaceUseCase {
   constructor(private readonly businessLocationRepository: BusinessLocationRepository) {}

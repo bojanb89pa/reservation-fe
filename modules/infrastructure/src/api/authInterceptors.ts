@@ -1,6 +1,6 @@
 import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
-import type { AuthSession } from '@domain';
-import { toLoginLanguage, toLoginTheme } from '@domain';
+import type { AuthSession } from '@fe/domain';
+import { toLoginLanguage, toLoginTheme } from '@fe/domain';
 import { env } from '../config/environment';
 import { AuthApiRepository } from '../repositories/AuthApiRepository';
 import { setLoginCookiesBeforeAuthRedirect } from '../auth/loginCookies';

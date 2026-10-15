@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import type { BusinessCategory } from '@domain';
-import { DEFAULT_CATEGORY_COLOR } from '@domain';
+import type { BusinessCategory } from '@fe/domain';
+import { DEFAULT_CATEGORY_COLOR } from '@fe/domain';
 import { BusinessImage } from './BusinessImage';
 import styles from './BusinessCard.module.css';
 

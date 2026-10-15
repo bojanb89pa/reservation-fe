@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ListBusinessMembersUseCaseImpl } from '../business/ListBusinessMembersUseCaseImpl';
-import type { BusinessMembershipRepository } from '@domain';
+import type { BusinessMembershipRepository } from '@fe/domain';
 
 const mockMembers = [
   {

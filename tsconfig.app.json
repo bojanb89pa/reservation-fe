@@ -16,15 +16,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true,
-    "baseUrl": ".",
-    "paths": {
-      "@domain": ["./modules/domain/src/index.ts"],
-      "@application": ["./modules/application/src/index.ts"],
-      "@infrastructure": ["./modules/infrastructure/src/index.ts"],
-      "@ui": ["./modules/ui/src/index.ts"],
-      "@/*": ["./src/*"]
-    }
+    "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "modules/*/src"]
+  "include": ["apps/web/src", "modules/*/src"]
 }

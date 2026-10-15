@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { BusinessService, DurationUnit } from '@domain';
+import type { BusinessService, DurationUnit } from '@fe/domain';
 import styles from './ServiceForm.module.css';
 
 export interface ServiceFormValues {

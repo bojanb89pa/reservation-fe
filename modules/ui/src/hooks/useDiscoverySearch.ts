@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import type { DiscoverySearchQuery } from '@domain';
+import type { DiscoverySearchQuery } from '@fe/domain';
 import { discoverySearchUseCase } from '../app/container';
 
 export const discoverySearchKeys = {

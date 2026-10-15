@@ -8,10 +8,10 @@ behave when the ticket does not answer a question.
 
 | Layer | Source root | Alias | Public API |
 |---|---|---|---|
-| domain | `modules/domain/src/` | `@domain` | `modules/domain/src/index.ts` |
-| application | `modules/application/src/` | `@application` | `modules/application/src/index.ts` |
-| infrastructure | `modules/infrastructure/src/` | `@infrastructure` | `modules/infrastructure/src/index.ts` |
-| ui | `modules/ui/src/` | `@ui` | `modules/ui/src/index.ts` |
+| domain | `modules/domain/src/` | `@fe/domain` | `modules/domain/src/index.ts` |
+| application | `modules/application/src/` | `@fe/application` | `modules/application/src/index.ts` |
+| infrastructure | `modules/infrastructure/src/` | `@fe/infrastructure` | `modules/infrastructure/src/index.ts` |
+| ui | `modules/ui/src/` | `@fe/ui` | `modules/ui/src/index.ts` |
 
 **Dependency flow:** `ui → application → domain ← infrastructure`
 
@@ -27,7 +27,7 @@ These apply to every headless (`-p`) session. They are non-negotiable.
    implement against.
 
 2. **Stay in your module.** Write only under `modules/<your-layer>/`. If your
-   layer needs something that does not exist in `@domain`, that is a missing
+   layer needs something that does not exist in `@fe/domain`, that is a missing
    prerequisite, not your job to add. Stop and return `needs_input`.
 
 3. **No placeholders.** Every file must typecheck. Never write
@@ -44,8 +44,8 @@ These apply to every headless (`-p`) session. They are non-negotiable.
 5. **Export or it does not exist.** Anything another module needs must be
    re-exported from your module's `src/index.ts`.
 
-6. **Never use deep import paths.** `import { Business } from '@domain'`, never
-   `from '@domain/entities/Business'`.
+6. **Never use deep import paths.** `import { Business } from '@fe/domain'`, never
+   `from '@fe/domain/entities/Business'`.
 
 7. **Forbidden imports are absolute.** If a file seems to require a forbidden
    import, the boundary is wrong — emit a WARNING and implement without it.
@@ -101,7 +101,7 @@ Rules: `modules/application/CLAUDE.md`
 ### What to create
 
 `*UseCaseImpl` classes in `src/use-cases/<domain>/`, implementing use case
-interfaces from `@domain` and receiving repository interfaces through the
+interfaces from `@fe/domain` and receiving repository interfaces through the
 constructor. Unit tests in `src/use-cases/__tests__/`.
 
 ### Tests
@@ -127,8 +127,8 @@ const useCase = new GetBusinessUseCaseImpl(repo);
 
 ### Pre-exit checklist (application)
 
-- [ ] Imports only from `@domain`, through the index
-- [ ] No React, no axios/fetch, no browser APIs, no `@infrastructure` or `@ui`
+- [ ] Imports only from `@fe/domain`, through the index
+- [ ] No React, no axios/fetch, no browser APIs, no `@fe/infrastructure` or `@fe/ui`
 - [ ] Repositories arrive via constructor, never imported concretely
 - [ ] Every new use case has a test that covers success and the failure path
 - [ ] Every new class is exported from `src/index.ts`
@@ -165,7 +165,7 @@ Adapters translate, they do not decide.
 | Unsure how to send a list filter | Query parameters for `GET`, request body for `POST` |
 | BE returns a field the domain type lacks | Ignore it in the mapper; do not widen the domain type from here |
 | Unsure which domain error a status maps to | 404 → not-found error, 4xx → validation error, 5xx → generic; warn |
-| Tempted to add a public helper method | Do not — the interface from `@domain` is the whole public surface |
+| Tempted to add a public helper method | Do not — the interface from `@fe/domain` is the whole public surface |
 
 ### Pre-exit checklist (infrastructure)
 
@@ -174,7 +174,7 @@ Adapters translate, they do not decide.
 - [ ] All error handling goes through `normalizeAxiosError`
 - [ ] No `import.meta.env` outside `config/environment.ts`
 - [ ] New `VITE_` variables added to `.env.example`
-- [ ] No React, no `@ui`, no business decisions
+- [ ] No React, no `@fe/ui`, no business decisions
 - [ ] Every new class is exported from `src/index.ts`
 - [ ] `yarn lint` passes
 
@@ -192,7 +192,7 @@ routes in `src/routes/`, presentation state in `src/state/`.
 ### Composition root
 
 `src/app/container/index.ts` is the only file in this module allowed to import
-`@infrastructure`. Everything else imports wired instances from
+`@fe/infrastructure`. Everything else imports wired instances from
 `../app/container`. If a feature needs a new use case instance, add it to the
 container and consume it from there. This rule has no exceptions.
 
@@ -211,12 +211,12 @@ container and consume it from there. This rule has no exceptions.
 
 ### Pre-exit checklist (ui)
 
-- [ ] No `@infrastructure` import outside `app/container/index.ts`
+- [ ] No `@fe/infrastructure` import outside `app/container/index.ts`
 - [ ] No axios/fetch anywhere in this module
 - [ ] No business logic or validation inside components
 - [ ] Async state goes through react-query in a hook, not inline in a component
 - [ ] Every user-visible string has an i18n key
-- [ ] Domain types imported from `@domain`, not redeclared locally
+- [ ] Domain types imported from `@fe/domain`, not redeclared locally
 - [ ] New routes registered in `src/routes/`
 - [ ] `yarn test` and `yarn lint` pass
 
@@ -229,10 +229,10 @@ container and consume it from there. This rule has no exceptions.
 import axios from 'axios';                        // in modules/application
 
 // WRONG — deep import bypassing the module index
-import { Business } from '@domain/entities/Business';
+import { Business } from '@fe/domain/entities/Business';
 
 // WRONG — a component importing infrastructure directly
-import { businessApiRepository } from '@infrastructure';  // in a page component
+import { businessApiRepository } from '@fe/infrastructure';  // in a page component
 
 // RIGHT — the component takes the wired instance from the composition root
 import { getBusinessUseCase } from '../../app/container';

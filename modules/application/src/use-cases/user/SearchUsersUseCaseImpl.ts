@@ -3,7 +3,7 @@ import type {
   SearchUsersUseCase,
   UserSummary,
   SearchUsersQuery,
-} from '@domain';
+} from '@fe/domain';
 
 export class SearchUsersUseCaseImpl implements SearchUsersUseCase {
   constructor(private readonly userRepository: UserRepository) {}

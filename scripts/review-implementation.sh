@@ -77,70 +77,70 @@ check_forbidden() {
   fi
 }
 
-# ── @domain: must import nothing from other layers
-check_forbidden "from '@application'\|from '@infrastructure'\|from '@ui'" \
+# ── @fe/domain: must import nothing from other layers
+check_forbidden "from '@fe/application'\|from '@fe/infrastructure'\|from '@fe/ui'" \
   "modules/domain/src" \
-  "@domain imports from another layer (forbidden)"
+  "@fe/domain imports from another layer (forbidden)"
 check_forbidden "import React\|from 'react'" \
   "modules/domain/src" \
-  "@domain contains React imports (forbidden)"
+  "@fe/domain contains React imports (forbidden)"
 check_forbidden "import axios\|from 'axios'" \
   "modules/domain/src" \
-  "@domain imports axios (forbidden)"
+  "@fe/domain imports axios (forbidden)"
 
-# ── @application: may only import from @domain
-check_forbidden "from '@infrastructure'\|from '@ui'" \
+# ── @fe/application: may only import from @fe/domain
+check_forbidden "from '@fe/infrastructure'\|from '@fe/ui'" \
   "modules/application/src" \
-  "@application imports from @infrastructure or @ui (forbidden)"
+  "@fe/application imports from @fe/infrastructure or @fe/ui (forbidden)"
 check_forbidden "import React\|from 'react'" \
   "modules/application/src" \
-  "@application contains React imports (forbidden)"
+  "@fe/application contains React imports (forbidden)"
 check_forbidden "import axios\|from 'axios'\|import fetch" \
   "modules/application/src" \
-  "@application uses HTTP client (fetch/axios) directly (forbidden)"
+  "@fe/application uses HTTP client (fetch/axios) directly (forbidden)"
 
-# ── @infrastructure: may only import from @domain
-check_forbidden "from '@application'\|from '@ui'" \
+# ── @fe/infrastructure: may only import from @fe/domain
+check_forbidden "from '@fe/application'\|from '@fe/ui'" \
   "modules/infrastructure/src" \
-  "@infrastructure imports from @application or @ui (forbidden)"
+  "@fe/infrastructure imports from @fe/application or @fe/ui (forbidden)"
 check_forbidden "import React\|from 'react'" \
   "modules/infrastructure/src" \
-  "@infrastructure contains React imports (forbidden)"
+  "@fe/infrastructure contains React imports (forbidden)"
 
-# ── @ui: may NOT import @infrastructure directly except via container/index.ts
+# ── @fe/ui: may NOT import @fe/infrastructure directly except via container/index.ts
 UI_INFRA_DIRECT=$(grep -r --include="*.ts" --include="*.tsx" \
-  "from '@infrastructure'" \
+  "from '@fe/infrastructure'" \
   "modules/ui/src" 2>/dev/null \
   | grep -v "dist\|node_modules\|container/index" \
   | grep -v "^modules/ui/src/app/container/index.ts" || true)
 
 if [[ -n "$UI_INFRA_DIRECT" ]]; then
-  fail "@ui imports @infrastructure outside of container/index.ts (forbidden)"
+  fail "@fe/ui imports @fe/infrastructure outside of container/index.ts (forbidden)"
   printf '%s\n' "$UI_INFRA_DIRECT" | sed "s|$PROJECT_ROOT/||" | sed 's/^/    /'
   VIOLATIONS=$((VIOLATIONS + 1))
 fi
 
-# ── @ui: may NOT import @application directly except via container/index.ts
+# ── @fe/ui: may NOT import @fe/application directly except via container/index.ts
 UI_APP_DIRECT=$(grep -r --include="*.ts" --include="*.tsx" \
-  "from '@application'" \
+  "from '@fe/application'" \
   "modules/ui/src" 2>/dev/null \
   | grep -v "dist\|node_modules\|container/index" \
   | grep -v "^modules/ui/src/app/container/index.ts" || true)
 
 if [[ -n "$UI_APP_DIRECT" ]]; then
-  fail "@ui imports @application outside of container/index.ts (forbidden)"
+  fail "@fe/ui imports @fe/application outside of container/index.ts (forbidden)"
   printf '%s\n' "$UI_APP_DIRECT" | sed "s|$PROJECT_ROOT/||" | sed 's/^/    /'
   VIOLATIONS=$((VIOLATIONS + 1))
 fi
 
-# ── @ui components/pages/hooks: must not call fetch/axios directly
+# ── @fe/ui components/pages/hooks: must not call fetch/axios directly
 UI_DIRECT_HTTP=$(grep -r --include="*.ts" --include="*.tsx" \
   "import axios\|from 'axios'\|fetch(" \
   "modules/ui/src" 2>/dev/null \
   | grep -v "dist\|node_modules\|infrastructure\|container\|axiosClient" || true)
 
 if [[ -n "$UI_DIRECT_HTTP" ]]; then
-  fail "@ui uses fetch/axios directly (use infrastructure via container)"
+  fail "@fe/ui uses fetch/axios directly (use infrastructure via container)"
   printf '%s\n' "$UI_DIRECT_HTTP" | sed "s|$PROJECT_ROOT/||" | sed 's/^/    /'
   VIOLATIONS=$((VIOLATIONS + 1))
 fi
@@ -192,7 +192,7 @@ if command -v yarn &>/dev/null; then
   # Scope to source directories only — excludes .claude/worktrees and other non-source paths.
   yarn prettier --check \
     "modules/**/*.{ts,tsx,css}" \
-    "src/**/*.{ts,tsx,css}" \
+    "apps/*/src/**/*.{ts,tsx,css}" \
     "*.{ts,tsx,js,json}" 2>&1
   FMT_EXIT=$?
   set -e

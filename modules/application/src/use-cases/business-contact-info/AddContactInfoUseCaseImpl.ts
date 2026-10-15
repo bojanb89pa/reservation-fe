@@ -3,7 +3,7 @@ import type {
   AddContactInfoUseCase,
   BusinessContactInfo,
   AddContactInfoCommand,
-} from '@domain';
+} from '@fe/domain';
 
 export class AddContactInfoUseCaseImpl implements AddContactInfoUseCase {
   constructor(private readonly businessContactInfoRepository: BusinessContactInfoRepository) {}

@@ -90,10 +90,9 @@ jobs:
         with:
           node-version: "22"
           cache: yarn
-          cache-dependency-path: |
-            yarn.lock
-            e2e/yarn.lock
+          cache-dependency-path: yarn.lock
 
+      # Jedan install u root-u pokriva i e2e (yarn workspace @fe/e2e).
       - name: Build FE
         run: |
           yarn install --frozen-lockfile
@@ -102,7 +101,6 @@ jobs:
       - name: Install E2E
         working-directory: e2e
         run: |
-          yarn install --frozen-lockfile
           yarn typecheck
           yarn playwright install --with-deps chromium
 
@@ -205,12 +203,13 @@ jobs:
         with:
           node-version: "22"
           cache: yarn
-          cache-dependency-path: e2e/yarn.lock
+          cache-dependency-path: yarn.lock
 
+      # Root install (e2e je workspace); FE se ovde ne build-uje.
       - name: Install E2E
-        working-directory: e2e
         run: |
           yarn install --frozen-lockfile
+          cd e2e
           yarn typecheck
           yarn playwright install --with-deps chromium
 

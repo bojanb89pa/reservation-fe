@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
-import type { AvailabilityBlock, BusinessService, Resource } from '@domain';
+import type { AvailabilityBlock, BusinessService, Resource } from '@fe/domain';
 import { useResourceSlots } from '../../hooks/useResourceSlots';
 import { ErrorState } from '../ErrorState';
 import { useAvailabilityBlocks } from '../../hooks/useAvailabilityBlocks';

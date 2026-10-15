@@ -2,7 +2,7 @@ import type {
   ResourceAvailabilityRuleRepository,
   GetAvailabilityRulesUseCase,
   ResourceAvailabilityRule,
-} from '@domain';
+} from '@fe/domain';
 
 export class GetAvailabilityRulesUseCaseImpl implements GetAvailabilityRulesUseCase {
   constructor(private readonly ruleRepository: ResourceAvailabilityRuleRepository) {}

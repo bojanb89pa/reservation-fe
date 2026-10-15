@@ -5,7 +5,7 @@ import type {
   AdminUserSearchFilter,
   PageRequest,
   PageResponse,
-} from '@domain';
+} from '@fe/domain';
 
 export class SearchUsersForAdminUseCaseImpl implements SearchUsersForAdminUseCase {
   constructor(private readonly userRepository: UserRepository) {}

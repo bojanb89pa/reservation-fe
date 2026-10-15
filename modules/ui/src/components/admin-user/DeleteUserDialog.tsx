@@ -1,5 +1,5 @@
 import { useTranslation, Trans } from 'react-i18next';
-import type { User } from '@domain';
+import type { User } from '@fe/domain';
 import styles from './DeleteUserDialog.module.css';
 
 interface Props {

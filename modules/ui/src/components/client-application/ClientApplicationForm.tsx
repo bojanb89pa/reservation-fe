@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { Business, ClientApplicationScope, CreateClientApplicationCommand } from '@domain';
+import type { Business, ClientApplicationScope, CreateClientApplicationCommand } from '@fe/domain';
 import { useAllBusinessesForAdmin } from '../../hooks/useBusinesses';
 import { useBusinessLocations } from '../../hooks/useBusinessLocations';
 import { useBusinessCategories } from '../../hooks/useBusinessCategories';

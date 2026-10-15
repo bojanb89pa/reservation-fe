@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { SearchUsersUseCaseImpl } from '../user/SearchUsersUseCaseImpl';
-import type { UserRepository, UserSummary } from '@domain';
+import type { UserRepository, UserSummary } from '@fe/domain';
 
 const mockUsers: UserSummary[] = [
   { id: 'a1b2c3d4-0000-0000-0000-000000000001', email: 'john@example.com', firstName: 'John', lastName: 'Doe' },

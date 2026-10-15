@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { toLoginTheme, toLoginLanguage } from '@domain';
+import { toLoginTheme, toLoginLanguage } from '@fe/domain';
 import { useAuthStore } from '../state/authStore';
 import { authApiRepository, env, tokenStorage, setLoginCookiesBeforeAuthRedirect } from '../app/container';
 

@@ -3,7 +3,7 @@ import type {
   SubmitBusinessUseCase,
   SubmitBusinessCommand,
   Business,
-} from '@domain';
+} from '@fe/domain';
 
 export class CreateBusinessUseCaseImpl implements SubmitBusinessUseCase {
   constructor(private readonly businessRepository: BusinessRepository) {}

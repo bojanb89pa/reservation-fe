@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { CreateBusinessLocationCommand } from '@domain';
+import type { CreateBusinessLocationCommand } from '@fe/domain';
 import { listBusinessLocationsUseCase, createBusinessLocationUseCase } from '../app/container';
 
 const locationKeys = {

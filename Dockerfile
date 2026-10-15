@@ -6,7 +6,15 @@
 FROM --platform=$BUILDPLATFORM node:22-alpine AS build
 WORKDIR /app
 
+# Prvo samo manifesti workspace-a, da se sloj sa zavisnostima kešira dok se
+# menja samo kod.
 COPY package.json yarn.lock ./
+COPY apps/web/package.json apps/web/
+COPY modules/domain/package.json modules/domain/
+COPY modules/application/package.json modules/application/
+COPY modules/infrastructure/package.json modules/infrastructure/
+COPY modules/ui/package.json modules/ui/
+COPY e2e/package.json e2e/
 RUN corepack enable && yarn install --frozen-lockfile
 
 COPY . .
@@ -27,6 +35,6 @@ RUN yarn build
 FROM nginx:alpine AS runtime
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/apps/web/dist /usr/share/nginx/html
 
 EXPOSE 80

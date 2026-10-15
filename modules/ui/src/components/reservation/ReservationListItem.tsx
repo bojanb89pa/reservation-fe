@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
-import type { Reservation, User } from '@domain';
+import type { Reservation, User } from '@fe/domain';
 import {
   useApproveReservation,
   useRejectReservation,

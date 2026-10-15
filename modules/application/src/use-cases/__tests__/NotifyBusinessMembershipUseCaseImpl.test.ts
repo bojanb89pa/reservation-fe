@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NotifyBusinessMembershipUseCaseImpl } from '../business/NotifyBusinessMembershipUseCaseImpl';
-import type { BusinessMembershipRepository } from '@domain';
+import type { BusinessMembershipRepository } from '@fe/domain';
 
 let mockRepo: BusinessMembershipRepository;
 

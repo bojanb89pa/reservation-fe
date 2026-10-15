@@ -1,5 +1,5 @@
 import type { AxiosInstance } from 'axios';
-import type { PlaceRepository, PlaceAutocompleteSuggestion, PlaceDetails } from '@domain';
+import type { PlaceRepository, PlaceAutocompleteSuggestion, PlaceDetails } from '@fe/domain';
 
 export class PlaceApiRepository implements PlaceRepository {
   constructor(private readonly client: AxiosInstance) {}

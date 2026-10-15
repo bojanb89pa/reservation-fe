@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { BusinessCategory } from '@domain';
+import type { BusinessCategory } from '@fe/domain';
 import styles from './CategoryForm.module.css';
 
 const SUPPORTED_LOCALES = ['en', 'sr'] as const;

@@ -4,7 +4,7 @@ import type {
   BusinessMemberRole,
   BusinessMembershipRepository,
   NotifyBusinessMembershipCommand,
-} from '@domain';
+} from '@fe/domain';
 
 function roleSegment(role: BusinessMemberRole): string {
   return role === 'OWNER' ? 'owners' : 'employees';

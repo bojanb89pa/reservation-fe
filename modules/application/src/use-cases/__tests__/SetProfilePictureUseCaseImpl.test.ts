@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SetProfilePictureUseCaseImpl } from '../user/SetProfilePictureUseCaseImpl';
-import type { UserRepository, User, SetProfilePictureCommand } from '@domain';
+import type { UserRepository, User, SetProfilePictureCommand } from '@fe/domain';
 
 const user: User = {
   id: 'c0ffee00-0000-0000-0000-000000000001',

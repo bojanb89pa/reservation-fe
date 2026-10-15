@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GetUsersByIdsUseCaseImpl } from '../user/GetUsersByIdsUseCaseImpl';
-import type { UserRepository, User } from '@domain';
+import type { UserRepository, User } from '@fe/domain';
 
 const users: User[] = [
   {

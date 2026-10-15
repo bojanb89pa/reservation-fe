@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { LoginUseCaseImpl } from '../auth/LoginUseCaseImpl';
-import type { AuthRepository, AuthSession } from '@domain';
+import type { AuthRepository, AuthSession } from '@fe/domain';
 
 const mockSession: AuthSession = {
   accessToken: 'tok-abc',

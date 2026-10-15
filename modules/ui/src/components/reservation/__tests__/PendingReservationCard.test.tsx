@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReservationSlotTakenError } from '@domain';
-import type { Reservation } from '@domain';
+import { ReservationSlotTakenError } from '@fe/domain';
+import type { Reservation } from '@fe/domain';
 import { PendingReservationCard } from '../PendingReservationCard';
 import '../../../i18n';
 

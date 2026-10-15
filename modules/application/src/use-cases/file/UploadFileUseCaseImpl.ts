@@ -3,14 +3,14 @@ import type {
   UploadFileUseCase,
   UploadFileCommand,
   PendingUpload,
-} from '@domain';
+} from '@fe/domain';
 import {
   BUSINESS_IMAGE_UPLOAD_TYPE,
   PROFILE_PICTURE_UPLOAD_TYPE,
   FileUploadError,
   validateBusinessImage,
   validateProfilePicture,
-} from '@domain';
+} from '@fe/domain';
 
 export class UploadFileUseCaseImpl implements UploadFileUseCase {
   constructor(private readonly fileUploadRepository: FileUploadRepository) {}

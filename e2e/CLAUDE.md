@@ -11,7 +11,7 @@ root `yarn lint`/`yarn test`/`tsc -b`.
   touch `e2e/**`, and manually.
 - **Never start the stack or a browser on the home server (Raspberry Pi).**
   Locally only run:
-  - `yarn --cwd e2e install --frozen-lockfile` (if `e2e/node_modules` is missing)
+  - `yarn install --frozen-lockfile` in the repo root (if `node_modules` is missing; `e2e` is a workspace)
   - `yarn --cwd e2e typecheck`
   - `yarn --cwd e2e test:list`
 

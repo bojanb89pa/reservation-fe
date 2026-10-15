@@ -2,7 +2,7 @@ import type {
   ResourceSlotRepository,
   GetResourceSlotsUseCase,
   ResourceSlot,
-} from '@domain';
+} from '@fe/domain';
 
 export class GetResourceSlotsUseCaseImpl implements GetResourceSlotsUseCase {
   constructor(private readonly slotRepository: ResourceSlotRepository) {}

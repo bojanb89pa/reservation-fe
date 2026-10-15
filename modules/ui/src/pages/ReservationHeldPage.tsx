@@ -1,9 +1,9 @@
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
-import type { Reservation } from '@domain';
-import type { Business } from '@domain';
-import type { Resource } from '@domain';
-import type { BusinessService } from '@domain';
+import type { Reservation } from '@fe/domain';
+import type { Business } from '@fe/domain';
+import type { Resource } from '@fe/domain';
+import type { BusinessService } from '@fe/domain';
 import styles from './ReservationHeldPage.module.css';
 
 interface HeldState {

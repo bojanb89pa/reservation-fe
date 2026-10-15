@@ -1,5 +1,5 @@
 import type { AxiosInstance } from 'axios';
-import type { ResourceSlotRepository, ResourceSlot } from '@domain';
+import type { ResourceSlotRepository, ResourceSlot } from '@fe/domain';
 
 export class ResourceSlotApiRepository implements ResourceSlotRepository {
   constructor(private readonly client: AxiosInstance) {}

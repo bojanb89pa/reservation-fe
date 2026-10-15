@@ -4,7 +4,7 @@ import type {
   CreateBusinessCategoryCommand,
   UpdateBusinessCategoryCommand,
   UpdateBusinessCategoryAppearanceCommand,
-} from '@domain';
+} from '@fe/domain';
 import {
   listBusinessCategoriesUseCase,
   createBusinessCategoryUseCase,
