@@ -28,6 +28,7 @@ export { BusinessLocationResourceApiRepository } from './repositories/BusinessLo
 export { BusinessLocationServiceApiRepository } from './repositories/BusinessLocationServiceApiRepository';
 export { PlaceApiRepository } from './repositories/PlaceApiRepository';
 export { DiscoverySearchApiRepository } from './repositories/DiscoverySearchApiRepository';
+export { SearchSuggestionApiRepository } from './repositories/SearchSuggestionApiRepository';
 export { BusinessContactInfoApiRepository } from './repositories/BusinessContactInfoApiRepository';
 export { FileApiRepository } from './repositories/FileApiRepository';
 export { UserApiRepository } from './repositories/UserApiRepository';
