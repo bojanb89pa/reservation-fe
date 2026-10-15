@@ -39,8 +39,12 @@ e2e/
   page (`#username`, `#password`) is handled by `loginInBrowser` — don't repeat it.
 - **No `waitForTimeout`.** Wait for a state: `expect(...).toBeVisible()`,
   `page.waitForURL(...)`, `expect.poll(...)`.
-- **`@smoke` in the title = read-only.** Such a test may later run against staging,
-  so it must not create, change or delete anything, and must not need Mailpit.
+- **`@smoke` in the title = read-only.** These tests run every night against staging
+  (`smoke-staging` job in `.github/workflows/e2e.yml`, with `E2E_READ_ONLY=1`), so they
+  must not create, change or delete anything and must not need Mailpit or the admin.
+  In read-only mode `createActivatedUser`, `adminCredentials` and every API write throw.
+  The only account a `@smoke` test may sign in with is the existing demo user
+  (`env.demoEmail` / `env.demoPassword`); signing in and out is allowed.
 - **Never weaken a test to make it pass:** no `test.skip`, `test.fixme`,
   `.only`, loosened assertions or changed expectations. If the app behaves
   wrongly, that is the finding — report it.

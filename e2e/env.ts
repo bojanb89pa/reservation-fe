@@ -30,4 +30,19 @@ export const env = {
   adminPassword: read('E2E_ADMIN_PASSWORD', ''),
   /** Lozinka za naloge koje testovi sami prave. */
   userPassword: read('E2E_USER_PASSWORD', 'E2e-Passw0rd!'),
+
+  /**
+   * Postojeći demo korisnik iz `yarn seed:demo` (`data/demo/accounts.json`).
+   * Jedini nalog sa kojim `@smoke` test sme da se prijavi, jer na staging-u
+   * testovi ne prave naloge. Podrazumevana lozinka je ona iz CI seed-a.
+   */
+  demoEmail: read('E2E_DEMO_EMAIL', 'user-1@demo.reserva.test'),
+  demoPassword: read('E2E_DEMO_PASSWORD', 'E2e-Demo-Passw0rd!'),
+
+  /**
+   * `E2E_READ_ONLY=1` (noćni smoke nad staging-om): API pomoćne funkcije
+   * odbijaju svaki upis, pa test koji je pogrešno označen `@smoke` padne pre
+   * nego što išta promeni na staging-u.
+   */
+  readOnly: read('E2E_READ_ONLY', '') === '1',
 } as const;
