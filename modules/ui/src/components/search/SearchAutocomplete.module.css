@@ -1,0 +1,44 @@
+.wrapper {
+  position: relative;
+}
+
+.popup {
+  position: absolute;
+  z-index: 20;
+  top: 100%;
+  left: 0;
+  right: 0;
+  min-width: 240px;
+  margin-top: 14px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md, 6px);
+  overflow: hidden;
+  text-align: left;
+}
+
+.groupHeader {
+  padding: 8px 14px 4px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--ink-500);
+}
+
+.option {
+  padding: 9px 14px;
+  font-size: var(--text-sm);
+  color: var(--ink-900);
+  cursor: pointer;
+}
+
+.option:hover,
+.optionActive {
+  background: var(--surface-2);
+}
+
+.status {
+  padding: 10px 14px;
+  font-size: var(--text-sm);
+  color: var(--ink-500);
+}

@@ -7,6 +7,7 @@ import { DEFAULT_CATEGORY_SYMBOL, DEFAULT_CATEGORY_COLOR } from '@fe/domain';
 import { useSearchBusinesses } from '../hooks/useBusinesses';
 import { useBusinessCategories } from '../hooks/useBusinessCategories';
 import { BusinessCard } from '../components/business/BusinessCard';
+import { SearchAutocomplete } from '../components/search/SearchAutocomplete';
 import styles from './HomePage.module.css';
 
 // ─── Motion ───────────────────────────────────────────────────────────────────
@@ -47,7 +48,6 @@ export function HomePage() {
   const { t } = useTranslation();
   const prefersReducedMotion = useReducedMotion();
   const [what, setWhat] = useState('');
-  const [where, setWhere] = useState('');
   const { data: businesses, isLoading } = useSearchBusinesses({}, 0, 6);
   const { data: categories = [] } = useBusinessCategories();
 
@@ -60,9 +60,7 @@ export function HomePage() {
 
   const handleSearch = () => {
     if (!what.trim()) return;
-    const params = new URLSearchParams({ q: what.trim() });
-    if (where.trim()) params.set('city', where.trim());
-    navigate(`/search?${params.toString()}`);
+    navigate(`/search?${new URLSearchParams({ q: what.trim() }).toString()}`);
   };
 
   const heroLines = t('home.heroTitle').split('\n');
@@ -107,22 +105,12 @@ export function HomePage() {
             <div className={styles.search}>
               <div className={styles.searchField}>
                 <span className={styles.searchLabel}>{t('home.searchWhat')}</span>
-                <input
-                  aria-label={t('home.searchWhat')}
+                <SearchAutocomplete
+                  label={t('home.searchWhat')}
                   placeholder={t('home.searchWhatPlaceholder')}
                   value={what}
-                  onChange={(e) => setWhat(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                />
-              </div>
-              <div className={styles.searchDivider} />
-              <div className={styles.searchField}>
-                <span className={styles.searchLabel}>{t('home.searchWhere')}</span>
-                <input
-                  placeholder={t('home.searchWherePlaceholder')}
-                  value={where}
-                  onChange={(e) => setWhere(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  onChange={setWhat}
+                  onSubmit={handleSearch}
                 />
               </div>
               <button className={styles.searchGo} onClick={handleSearch} aria-label="Search">

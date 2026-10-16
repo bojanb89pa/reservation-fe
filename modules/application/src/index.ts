@@ -54,6 +54,7 @@ export { ConfirmLocationUseCaseImpl } from './use-cases/business-location/Confir
 
 export { DiscoverySearchUseCaseImpl } from './use-cases/discovery/DiscoverySearchUseCaseImpl';
 export { SearchPlacesUseCaseImpl } from './use-cases/place/SearchPlacesUseCaseImpl';
+export { GetSearchSuggestionsUseCaseImpl } from './use-cases/search-suggestion/GetSearchSuggestionsUseCaseImpl';
 export { GetPlaceDetailsUseCaseImpl } from './use-cases/place/GetPlaceDetailsUseCaseImpl';
 
 export { CreateReservationUseCaseImpl } from './use-cases/reservation/CreateReservationUseCaseImpl';
