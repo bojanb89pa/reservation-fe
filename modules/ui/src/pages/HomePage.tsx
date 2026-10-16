@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
@@ -7,8 +8,11 @@ import { DEFAULT_CATEGORY_SYMBOL, DEFAULT_CATEGORY_COLOR } from '@fe/domain';
 import { useSearchBusinesses } from '../hooks/useBusinesses';
 import { useBusinessCategories } from '../hooks/useBusinessCategories';
 import { BusinessCard } from '../components/business/BusinessCard';
+import { focusInputOnBarMouseDown } from '../components/search/focusInputOnBarMouseDown';
 import { SearchAutocomplete } from '../components/search/SearchAutocomplete';
 import styles from './HomePage.module.css';
+
+const DESKTOP_QUERY = '(hover: hover) and (pointer: fine)';
 
 // ─── Motion ───────────────────────────────────────────────────────────────────
 
@@ -58,6 +62,61 @@ export function HomePage() {
   const orbY2 = useTransform(scrollY, [0, 600], [0, -60]);
   const orbY3 = useTransform(scrollY, [0, 600], [0, 50]);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  const searchShellRef = useRef<HTMLDivElement>(null);
+
+  // Programmatic focus never scrolls by itself (preventScroll); scrolling to the bar is opt-in.
+  const focusSearch = useCallback(
+    ({ scroll = false }: { scroll?: boolean } = {}) => {
+      if (scroll) {
+        searchShellRef.current?.scrollIntoView({
+          block: 'start',
+          behavior: prefersReducedMotion ? 'auto' : 'smooth',
+        });
+      }
+      const input = inputRef.current;
+      if (!input) return;
+      input.focus({ preventScroll: true });
+      const end = input.value.length;
+      input.setSelectionRange(end, end);
+    },
+    [prefersReducedMotion],
+  );
+
+  // Desktop only: typing anywhere on the page starts a search.
+  useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return;
+    const mql = window.matchMedia(DESKTOP_QUERY);
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key.length !== 1 || e.key === ' ' || e.isComposing) return;
+      if (e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return;
+      const active = document.activeElement;
+      if (active?.closest('input, textarea, select, [contenteditable]')) return;
+      if (document.querySelector('[aria-modal="true"]')) return;
+      e.preventDefault();
+      flushSync(() => setWhat((v) => v + e.key));
+      focusSearch({ scroll: true });
+    };
+
+    let attached = false;
+    const sync = () => {
+      if (mql.matches && !attached) {
+        document.addEventListener('keydown', onKeyDown);
+        attached = true;
+      } else if (!mql.matches && attached) {
+        document.removeEventListener('keydown', onKeyDown);
+        attached = false;
+      }
+    };
+    sync();
+    mql.addEventListener('change', sync);
+    return () => {
+      mql.removeEventListener('change', sync);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [focusSearch]);
+
   const handleSearch = () => {
     if (!what.trim()) return;
     navigate(`/search?${new URLSearchParams({ q: what.trim() }).toString()}`);
@@ -68,19 +127,21 @@ export function HomePage() {
   return (
     <>
       <section className={styles.hero} ref={heroRef}>
-        <div className={styles.gridOverlay} />
-        <motion.div
-          className={styles.orb1}
-          style={prefersReducedMotion ? undefined : { y: orbY1 }}
-        />
-        <motion.div
-          className={styles.orb2}
-          style={prefersReducedMotion ? undefined : { y: orbY2 }}
-        />
-        <motion.div
-          className={styles.orb3}
-          style={prefersReducedMotion ? undefined : { y: orbY3 }}
-        />
+        <div className={styles.heroBackdrop} aria-hidden="true">
+          <div className={styles.gridOverlay} />
+          <motion.div
+            className={styles.orb1}
+            style={prefersReducedMotion ? undefined : { y: orbY1 }}
+          />
+          <motion.div
+            className={styles.orb2}
+            style={prefersReducedMotion ? undefined : { y: orbY2 }}
+          />
+          <motion.div
+            className={styles.orb3}
+            style={prefersReducedMotion ? undefined : { y: orbY3 }}
+          />
+        </div>
 
         <motion.div className={styles.heroInner} variants={stagger} initial="hidden" animate="show">
           <motion.div variants={rise} className={styles.heroEyebrow}>
@@ -101,11 +162,15 @@ export function HomePage() {
             {t('home.heroSub')}
           </motion.p>
 
-          <motion.div variants={rise} className={styles.searchShell}>
-            <div className={styles.search}>
+          <motion.div variants={rise} className={styles.searchShell} ref={searchShellRef}>
+            <div
+              className={styles.search}
+              onMouseDown={(e) => focusInputOnBarMouseDown(e, inputRef)}
+            >
               <div className={styles.searchField}>
                 <span className={styles.searchLabel}>{t('home.searchWhat')}</span>
                 <SearchAutocomplete
+                  ref={inputRef}
                   label={t('home.searchWhat')}
                   placeholder={t('home.searchWhatPlaceholder')}
                   value={what}

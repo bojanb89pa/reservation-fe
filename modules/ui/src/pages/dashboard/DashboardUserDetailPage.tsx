@@ -36,8 +36,7 @@ export function DashboardUserDetailPage() {
   } = useAdminUserById(id);
   const { mutateAsync: updateUser, isPending: updating } = useUpdateAdminUser();
   const { mutateAsync: updateStatus, isPending: updatingStatus } = useUpdateAdminUserStatus();
-  const { mutateAsync: resetPassword, isPending: resettingPassword } =
-    useResetAdminUserPassword();
+  const { mutateAsync: resetPassword, isPending: resettingPassword } = useResetAdminUserPassword();
   const { mutateAsync: deleteUser, isPending: deleting } = useDeleteAdminUser();
 
   const [panel, setPanel] = useState<Panel>('view');

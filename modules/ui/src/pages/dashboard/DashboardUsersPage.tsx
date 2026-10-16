@@ -90,8 +90,7 @@ export function DashboardUsersPage() {
   const { mutateAsync: createUser, isPending: creating } = useCreateAdminUser();
   const { mutateAsync: updateUser, isPending: updating } = useUpdateAdminUser();
   const { mutateAsync: updateStatus, isPending: updatingStatus } = useUpdateAdminUserStatus();
-  const { mutateAsync: resetPassword, isPending: resettingPassword } =
-    useResetAdminUserPassword();
+  const { mutateAsync: resetPassword, isPending: resettingPassword } = useResetAdminUserPassword();
   const { mutateAsync: deleteUser, isPending: deleting } = useDeleteAdminUser();
 
   const [mode, setMode] = useState<Mode>({ type: 'idle' });
@@ -198,12 +197,7 @@ export function DashboardUsersPage() {
       {mode.type === 'create' && (
         <div className={styles.formCard}>
           <h3 className={styles.formTitle}>{t('dashboardUsers.createTitle')}</h3>
-          <UserForm
-            onSave={handleCreate}
-            onCancel={reset}
-            isPending={creating}
-            error={formError}
-          />
+          <UserForm onSave={handleCreate} onCancel={reset} isPending={creating} error={formError} />
         </div>
       )}
 

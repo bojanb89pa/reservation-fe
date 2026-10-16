@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { createRef, useState } from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, within, waitFor } from '@testing-library/react';
+import { render, screen, within, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -131,5 +131,47 @@ describe('SearchAutocomplete', () => {
     await user.type(screen.getByRole('combobox', { name: 'What' }), '   ');
     await waitFor(() => expect(screen.queryByRole('listbox')).not.toBeInTheDocument());
     expect(execute).not.toHaveBeenCalled();
+  });
+
+  it('mousedown on the popup is default-prevented so the input keeps focus', async () => {
+    const user = userEvent.setup();
+    renderIt();
+    const input = screen.getByRole('combobox', { name: 'What' });
+    await user.type(input, 'n');
+    const listbox = await screen.findByRole('listbox', { name: 'searchAutocomplete.listLabel' });
+    const notCancelled = fireEvent.mouseDown(listbox.parentElement as HTMLElement);
+    expect(notCancelled).toBe(false);
+    expect(input).toHaveFocus();
+    expect(screen.getByRole('listbox')).toBeInTheDocument();
+  });
+
+  it('scrolls the active option into view on arrow navigation', async () => {
+    const scrollIntoView = vi.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    const user = userEvent.setup();
+    renderIt();
+    await user.type(screen.getByRole('combobox', { name: 'What' }), 'n');
+    await screen.findByRole('listbox', { name: 'searchAutocomplete.listLabel' });
+    await user.keyboard('{ArrowDown}');
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalledWith({ block: 'nearest' }));
+  });
+
+  it('exposes a ref to the input', () => {
+    const ref = createRef<HTMLInputElement>();
+    const client = new QueryClient();
+    render(
+      <QueryClientProvider client={client}>
+        <MemoryRouter>
+          <SearchAutocomplete
+            ref={ref}
+            label="What"
+            value=""
+            onChange={vi.fn()}
+            onSubmit={vi.fn()}
+          />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+    expect(ref.current).toBe(screen.getByRole('combobox', { name: 'What' }));
   });
 });
