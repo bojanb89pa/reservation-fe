@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import type { RefObject } from 'react';
 import type { MotionValue } from 'framer-motion';
 import {
   AdditiveBlending,
@@ -12,10 +13,13 @@ import {
   Scene,
   ShaderMaterial,
   Vector3,
+  Vector4,
   WebGLRenderer,
 } from 'three';
 import { generateSceneData } from './sceneData';
 import { clamp01 } from './sceneLogic';
+import { WAVE_MAX, createWaveQueue } from './pulseQueue';
+import type { HeroSceneHandle } from './pulseQueue';
 import styles from './HeroScene.module.css';
 
 interface Props {
@@ -23,12 +27,15 @@ interface Props {
   progress: MotionValue<number>;
   /** Called when initialisation or the GL context fails, so the page can show the static backdrop. */
   onError: () => void;
+  /** Element (the search bar) the typing waves originate from. */
+  originRef?: RefObject<HTMLElement>;
 }
 
 const FOV = 50;
 const CAMERA_Z = 14;
 const MAX_TILT = (2.5 * Math.PI) / 180;
-const CURSOR_RADIUS = 2.6;
+const CURSOR_RADIUS = 3.2;
+const WAVE_BAND = 1.8; // world units, half-width of the ring
 const THEME_TAU = 0.1; // seconds; ≈300ms to settle
 
 interface ThemeParams {
@@ -36,10 +43,26 @@ interface ThemeParams {
   alpha: number;
   lineAlpha: number;
   lineDensity: number;
+  fog: number;
+  cursorGain: number;
 }
 
-const DARK: ThemeParams = { size: 1, alpha: 0.9, lineAlpha: 0.32, lineDensity: 1 };
-const LIGHT: ThemeParams = { size: 0.72, alpha: 0.85, lineAlpha: 0.3, lineDensity: 0.5 };
+const DARK: ThemeParams = {
+  size: 1.1,
+  alpha: 0.9,
+  lineAlpha: 0.42,
+  lineDensity: 1,
+  fog: 0.8,
+  cursorGain: 1,
+};
+const LIGHT: ThemeParams = {
+  size: 0.95,
+  alpha: 0.9,
+  lineAlpha: 0.45,
+  lineDensity: 0.8,
+  fog: 0.45,
+  cursorGain: 1.35,
+};
 
 const TOKENS = ['--primary', '--secondary', '--accent', '--cyan'] as const;
 
@@ -48,7 +71,7 @@ function readColors(light: boolean): Color[] {
   return TOKENS.map((token) => {
     const color = new Color(style.getPropertyValue(token).trim());
     // Light theme: deeper, more saturated dots so they hold contrast on a bright background.
-    if (light) color.offsetHSL(0, 0.08, -0.08);
+    if (light) color.offsetHSL(0, 0.1, -0.15);
     return color;
   });
 }
@@ -60,6 +83,10 @@ const COMMON_GLSL = /* glsl */ `
   uniform vec3 uMouse;
   uniform float uCursorOn;
   uniform float uCursorRadius;
+  uniform float uCursorGain;
+  uniform float uFog;
+  uniform vec4 uWave[${WAVE_MAX}]; // xy source, z strength, w progress (<0 = inactive)
+  uniform float uWaveMaxR;
 
   vec3 statePos(vec3 a, vec3 b, vec3 c, float seed) {
     float s1 = smoothstep(0.25, 0.55, uProgress);
@@ -71,11 +98,25 @@ const COMMON_GLSL = /* glsl */ `
   }
 
   float cursorInfluence(vec3 p) {
-    return (1.0 - smoothstep(0.0, uCursorRadius, distance(p.xy, uMouse.xy))) * uCursorOn;
+    return (1.0 - smoothstep(0.0, uCursorRadius, distance(p.xy, uMouse.xy))) * uCursorOn * uCursorGain;
   }
 
   float depthFog(float depth) {
-    return 1.0 - 0.8 * smoothstep(9.0, 30.0, depth);
+    return 1.0 - uFog * smoothstep(9.0, 30.0, depth);
+  }
+
+  // Light ring spreading from each typing wave source.
+  float waveInfluence(vec3 p) {
+    float sum = 0.0;
+    for (int i = 0; i < ${WAVE_MAX}; i++) {
+      vec4 w = uWave[i];
+      if (w.w < 0.0) continue;
+      float r = w.w * uWaveMaxR;
+      float d = (distance(p.xy, w.xy) - r) / ${WAVE_BAND.toFixed(1)};
+      float fade = pow(1.0 - w.w, 1.3) * smoothstep(0.0, 0.08, w.w);
+      sum += w.z * exp(-d * d) * fade;
+    }
+    return min(sum, 1.6);
   }
 
   // Quiet, fading network during the final TRANSITION phase.
@@ -96,17 +137,20 @@ const POINT_VERT = /* glsl */ `
   varying float vAlpha;
   varying float vTone;
   varying float vLight;
+  varying float vWave;
 
   void main() {
     vec3 p = statePos(position, aPos1, aPos2, aSeed);
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     float depth = -mv.z;
     float c = cursorInfluence(p);
-    gl_PointSize = aSize * uSize * uPixelRatio * (14.0 / depth) * (1.0 + 0.6 * c);
+    float w = waveInfluence(p);
+    gl_PointSize = aSize * uSize * uPixelRatio * (14.0 / depth) * (1.0 + 0.8 * c + 0.6 * w);
     gl_Position = projectionMatrix * mv;
-    vAlpha = uAlpha * depthFog(depth) * tail() * (0.7 + 0.5 * c);
+    vAlpha = uAlpha * depthFog(depth) * tail() * (0.75 + 0.7 * c + 1.0 * w);
     vTone = aTone;
     vLight = c;
+    vWave = w;
   }
 `;
 
@@ -115,17 +159,20 @@ const POINT_FRAG = /* glsl */ `
   uniform vec3 uC1;
   uniform vec3 uC2;
   uniform vec3 uC3;
+  uniform vec3 uCw;
   varying float vAlpha;
   varying float vTone;
   varying float vLight;
+  varying float vWave;
 
   void main() {
     float d = length(gl_PointCoord - 0.5) * 2.0;
     if (d > 1.0) discard;
     // Soft circle: bright core, gentle falloff — no post-processing glow.
-    float glow = pow(1.0 - d, 1.6);
+    float glow = min(pow(1.0 - d, 1.3) + 0.35 * pow(1.0 - d, 4.0), 1.0);
     vec3 col = vTone < 0.5 ? uC0 : vTone < 1.5 ? uC1 : vTone < 2.5 ? uC2 : uC3;
-    gl_FragColor = vec4(col, glow * vAlpha);
+    col = mix(col, uCw, clamp(vWave, 0.0, 1.0) * 0.7);
+    gl_FragColor = vec4(col, min(glow * vAlpha, 1.0));
   }
 `;
 
@@ -140,6 +187,7 @@ const LINE_VERT = /* glsl */ `
   uniform float uLineAlpha;
   uniform float uLineDensity;
   varying float vAlpha;
+  varying float vWave;
 
   void main() {
     vec3 p = statePos(position, aPos1, aPos2, aSeed);
@@ -147,19 +195,26 @@ const LINE_VERT = /* glsl */ `
     gl_Position = projectionMatrix * mv;
     float c = cursorInfluence(p);
     float shown = aKind < 0.5
-      ? smoothstep(aStart, aStart + 0.1, uProgress) * (1.0 - smoothstep(0.55, 0.8, uProgress) * 0.25)
+      ? smoothstep(aStart, aStart + 0.1, uProgress) * (1.0 - smoothstep(0.55, 0.8, uProgress) * 0.08)
           * step(aRank, uLineDensity)
       : 0.0;
     float hover = c * c;
-    vAlpha = uLineAlpha * depthFog(-mv.z) * tail() * max(shown, hover * 1.4);
+    float w = waveInfluence(p);
+    float base = max(shown, hover * 1.8);
+    float kindNet = aKind < 0.5 ? 1.0 : 0.0;
+    vAlpha = uLineAlpha * depthFog(-mv.z) * tail() * (base * (1.0 + 0.8 * w) + 0.5 * w * kindNet);
+    vWave = w;
   }
 `;
 
 const LINE_FRAG = /* glsl */ `
   uniform vec3 uC0;
+  uniform vec3 uCw;
   varying float vAlpha;
+  varying float vWave;
   void main() {
-    gl_FragColor = vec4(uC0, vAlpha);
+    vec3 col = mix(uC0, uCw, clamp(vWave, 0.0, 1.0) * 0.7);
+    gl_FragColor = vec4(col, min(vAlpha, 1.0));
   }
 `;
 
@@ -185,6 +240,11 @@ function buildScene(canvas: HTMLCanvasElement) {
     uMouse: { value: new Vector3() },
     uCursorOn: { value: 0 },
     uCursorRadius: { value: CURSOR_RADIUS },
+    uCursorGain: { value: 1 },
+    uFog: { value: 0.8 },
+    uWave: { value: Array.from({ length: WAVE_MAX }, () => new Vector4(0, 0, 0, -1)) },
+    uWaveMaxR: { value: 30 },
+    uCw: { value: new Color() },
     uC0: { value: new Color() },
     uC1: { value: new Color() },
     uC2: { value: new Color() },
@@ -268,8 +328,14 @@ function buildScene(canvas: HTMLCanvasElement) {
   };
 }
 
-export default function HeroScene({ progress, onError }: Props) {
+const HeroScene = forwardRef<HeroSceneHandle, Props>(function HeroScene(
+  { progress, onError, originRef },
+  ref,
+) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const pulseRef = useRef<HeroSceneHandle['pulse'] | null>(null);
+
+  useImperativeHandle(ref, () => ({ pulse: (options) => pulseRef.current?.(options) }), []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -357,6 +423,18 @@ export default function HeroScene({ progress, onError }: Props) {
     let last = performance.now();
     let time = 0;
     const halfH = Math.tan((FOV * Math.PI) / 360) * CAMERA_Z;
+    const waves = createWaveQueue();
+
+    // Typing wave: the source is the centre of the search bar, unprojected onto the scene plane.
+    pulseRef.current = ({ strength }) => {
+      if (!onScreen || document.hidden) return;
+      const origin = originRef?.current?.getBoundingClientRect();
+      const rect = canvas.getBoundingClientRect();
+      if (!origin || rect.width === 0 || rect.height === 0) return;
+      const nx = ((origin.left + origin.width / 2 - rect.left) / rect.width) * 2 - 1;
+      const ny = -(((origin.top + origin.height / 2 - rect.top) / rect.height) * 2 - 1);
+      waves.add({ x: nx * halfH * camera.aspect, y: ny * halfH, strength }, performance.now());
+    };
 
     const frame = (now: number) => {
       raf = requestAnimationFrame(frame);
@@ -377,6 +455,8 @@ export default function HeroScene({ progress, onError }: Props) {
         c.lerp(targetColors[i], k);
         uniformColors[i].value.copy(c);
       });
+      sharedUniforms.uFog.value = current.fog;
+      sharedUniforms.uCursorGain.value = current.cursorGain;
       pointMaterial.uniforms.uSize.value = current.size;
       pointMaterial.uniforms.uAlpha.value = current.alpha;
       lineMaterial.uniforms.uLineAlpha.value = current.lineAlpha;
@@ -396,6 +476,18 @@ export default function HeroScene({ progress, onError }: Props) {
       sharedUniforms.uMouse.value.set(mouse.x * halfH * camera.aspect, mouse.y * halfH, 0);
       sharedUniforms.uCursorOn.value +=
         ((mouse.inside ? 1 : 0) - sharedUniforms.uCursorOn.value) * tk;
+
+      // Typing waves: a darker tone than --primary on light, a lighter one on dark.
+      sharedUniforms.uCw.value
+        .copy(uniformColors[0].value)
+        .offsetHSL(0, 0.05, isLight() ? -0.1 : 0.12);
+      sharedUniforms.uWaveMaxR.value = halfH * camera.aspect * 2.2;
+      const active = waves.active(performance.now());
+      for (let i = 0; i < WAVE_MAX; i++) {
+        const w = active[i];
+        if (w) sharedUniforms.uWave.value[i].set(w.x, w.y, w.strength, w.progress);
+        else sharedUniforms.uWave.value[i].set(0, 0, 0, -1);
+      }
 
       renderer.render(scene, camera);
     };
@@ -426,6 +518,7 @@ export default function HeroScene({ progress, onError }: Props) {
     sync();
 
     return () => {
+      pulseRef.current = null;
       if (raf !== 0) cancelAnimationFrame(raf);
       raf = 0;
       onScreen = false;
@@ -439,7 +532,9 @@ export default function HeroScene({ progress, onError }: Props) {
       canvas.removeEventListener('webglcontextlost', onContextLost);
       built.dispose();
     };
-  }, [progress, onError]);
+  }, [progress, onError, originRef]);
 
   return <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />;
-}
+});
+
+export default HeroScene;
