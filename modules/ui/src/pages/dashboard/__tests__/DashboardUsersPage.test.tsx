@@ -140,9 +140,9 @@ describe('DashboardUsersPage', () => {
     );
 
     // Now user clicks Next to go to page 2
-    const nextButton = screen.getAllByRole('button').find((btn) =>
-      btn.textContent?.includes('Next'),
-    );
+    const nextButton = screen
+      .getAllByRole('button')
+      .find((btn) => btn.textContent?.includes('Next'));
     expect(nextButton).toBeInTheDocument();
     fireEvent.click(nextButton!);
 
@@ -201,9 +201,9 @@ describe('DashboardUsersPage', () => {
     renderWithProviders(<DashboardUsersPage />);
 
     // Go to page 2
-    const nextButton = screen.getAllByRole('button').find((btn) =>
-      btn.textContent?.includes('Next'),
-    );
+    const nextButton = screen
+      .getAllByRole('button')
+      .find((btn) => btn.textContent?.includes('Next'));
     fireEvent.click(nextButton!);
 
     // Type search

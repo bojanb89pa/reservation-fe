@@ -1,4 +1,4 @@
-import { useId, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useId, useMemo, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -45,7 +45,10 @@ function groupSuggestions(suggestions: SearchSuggestion[]): {
   return { groups, flat };
 }
 
-export function SearchAutocomplete({ value, onChange, onSubmit, label, placeholder }: Props) {
+export const SearchAutocomplete = forwardRef<HTMLInputElement, Props>(function SearchAutocomplete(
+  { value, onChange, onSubmit, label, placeholder },
+  forwardedRef,
+) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const baseId = useId();
@@ -54,6 +57,14 @@ export function SearchAutocomplete({ value, onChange, onSubmit, label, placehold
   const [dismissed, setDismissed] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
 
+  const setInputRef = useCallback(
+    (node: HTMLInputElement | null) => {
+      if (typeof forwardedRef === 'function') forwardedRef(node);
+      else if (forwardedRef) forwardedRef.current = node;
+    },
+    [forwardedRef],
+  );
+
   const { data, isFetching, isError } = useSearchSuggestions(value);
   const { groups, flat } = useMemo(() => groupSuggestions(data ?? []), [data]);
 
@@ -61,6 +72,14 @@ export function SearchAutocomplete({ value, onChange, onSubmit, label, placehold
   const open = focused && hasText && !dismissed;
   const optionId = (i: number) => `${baseId}-option-${i}`;
   const activeValid = open && activeIndex >= 0 && activeIndex < flat.length;
+
+  // Keep the highlighted option inside the scrollable popup while navigating with arrows.
+  useEffect(() => {
+    if (!activeValid) return;
+    document.getElementById(`${baseId}-option-${activeIndex}`)?.scrollIntoView?.({
+      block: 'nearest',
+    });
+  }, [activeIndex, activeValid, baseId]);
 
   const select = (suggestion: SearchSuggestion) => {
     setDismissed(true);
@@ -107,6 +126,7 @@ export function SearchAutocomplete({ value, onChange, onSubmit, label, placehold
   return (
     <div className={styles.wrapper}>
       <input
+        ref={setInputRef}
         role="combobox"
         aria-label={label}
         aria-autocomplete="list"
@@ -126,7 +146,12 @@ export function SearchAutocomplete({ value, onChange, onSubmit, label, placehold
         onKeyDown={handleKeyDown}
       />
       {open && (
-        <div className={styles.popup}>
+        <div
+          className={styles.popup}
+          data-search-popup
+          // Keep focus in the input when the scrollbar or popup chrome is pressed, so the list stays open.
+          onMouseDown={(e) => e.preventDefault()}
+        >
           <div
             id={listId}
             role="listbox"
@@ -167,4 +192,4 @@ export function SearchAutocomplete({ value, onChange, onSubmit, label, placehold
       )}
     </div>
   );
-}
+});

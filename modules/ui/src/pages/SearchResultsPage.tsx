@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDiscoverySearch } from '../hooks/useDiscoverySearch';
+import { focusInputOnBarMouseDown } from '../components/search/focusInputOnBarMouseDown';
 import { SearchAutocomplete } from '../components/search/SearchAutocomplete';
 import { ErrorState } from '../components/ErrorState';
 import { BusinessImage } from '../components/business/BusinessImage';
@@ -15,6 +16,7 @@ export function SearchResultsPage() {
   const city = searchParams.get('city') ?? '';
   const [input, setInput] = useState(q);
   const [page, setPage] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Keep the field and paging in step with the URL (place suggestions navigate here with new params).
   useEffect(() => {
@@ -48,10 +50,11 @@ export function SearchResultsPage() {
             : t('search.titleLoading')}
       </h1>
 
-      <div className={styles.searchBar}>
+      <div className={styles.searchBar} onMouseDown={(e) => focusInputOnBarMouseDown(e, inputRef)}>
         <div className={styles.searchField}>
           <span className={styles.searchLabel}>{t('search.what')}</span>
           <SearchAutocomplete
+            ref={inputRef}
             label={t('search.what')}
             placeholder={t('search.whatPlaceholder')}
             value={input}
