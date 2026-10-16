@@ -160,7 +160,7 @@ test.describe('E2E-015 slika biznisa', () => {
 
     // Lista: kartica u rezultatima pretrage.
     await page.goto('/');
-    await page.getByRole('textbox', { name: 'What' }).fill(business.name);
+    await page.getByRole('combobox', { name: 'What' }).fill(business.name);
     await page.getByRole('button', { name: 'Search' }).click();
     await page.waitForURL((url) => url.pathname === '/search');
     const card = page.getByRole('link', { name: new RegExp(escapeRegex(business.name)) });

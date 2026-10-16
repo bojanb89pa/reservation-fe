@@ -61,7 +61,7 @@ function escapeRegex(value: string): string {
 
 async function searchFromHome(page: import('@playwright/test').Page, query: string): Promise<void> {
   await page.goto('/');
-  await page.getByRole('textbox', { name: 'What' }).fill(query);
+  await page.getByRole('combobox', { name: 'What' }).fill(query);
   await page.getByRole('button', { name: 'Search' }).click();
   await page.waitForURL((url) => url.pathname === '/search');
 }
