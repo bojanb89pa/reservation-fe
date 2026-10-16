@@ -95,11 +95,7 @@ export function BusinessListPage() {
       )}
 
       {isError && (
-        <ErrorState
-          message={t('businessList.error')}
-          onRetry={refetch}
-          isRetrying={isRefetching}
-        />
+        <ErrorState message={t('businessList.error')} onRetry={refetch} isRetrying={isRefetching} />
       )}
 
       {data && (
