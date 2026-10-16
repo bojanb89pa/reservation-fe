@@ -71,6 +71,7 @@ test.describe('Polje pretrage na naslovnoj: fokus i lista predloga', () => {
 
     await page.goto('/');
     const combobox = page.getByRole('combobox', { name: 'What' });
+    await expect(combobox).toBeVisible();
     await expect(combobox).not.toBeFocused();
 
     await page.keyboard.type(prefix);

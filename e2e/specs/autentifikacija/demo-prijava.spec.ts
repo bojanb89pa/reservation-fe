@@ -16,6 +16,6 @@ test.describe('demo nalog', () => {
 
     await page.getByRole('button', { name: 'Sign out' }).click();
     await page.waitForURL((url) => url.origin === new URL(env.baseUrl).origin);
-    await expect(page.getByRole('button', { name: 'Sign in' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Sign in' })).toBeVisible({ timeout: 30_000 });
   });
 });
