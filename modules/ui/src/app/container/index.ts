@@ -20,6 +20,7 @@ import {
   AvailabilityBlockApiRepository,
   PlaceApiRepository,
   DiscoverySearchApiRepository,
+  SearchSuggestionApiRepository,
   BusinessContactInfoApiRepository,
   FileApiRepository,
   UserApiRepository,
@@ -75,6 +76,7 @@ import {
   UpdateLocationFromPlaceUseCaseImpl,
   ConfirmLocationUseCaseImpl,
   DiscoverySearchUseCaseImpl,
+  GetSearchSuggestionsUseCaseImpl,
   SearchPlacesUseCaseImpl,
   GetPlaceDetailsUseCaseImpl,
   AddResourceToLocationUseCaseImpl,
@@ -136,6 +138,7 @@ const businessLocationServiceRepository = new BusinessLocationServiceApiReposito
 const nearbyBusinessRepository = new NearbyBusinessApiRepository(resourceAxiosClient);
 const placeRepository = new PlaceApiRepository(resourceAxiosClient);
 const discoverySearchRepository = new DiscoverySearchApiRepository(resourceAxiosClient);
+const searchSuggestionRepository = new SearchSuggestionApiRepository(resourceAxiosClient);
 const businessContactInfoRepository = new BusinessContactInfoApiRepository(resourceAxiosClient);
 // Multipart upload of a pending file — authenticated, the upload is bound to its uploader.
 // Business-image uploads go through the resource-service host; profile-picture uploads
@@ -247,6 +250,10 @@ export const updateLocationFromPlaceUseCase = new UpdateLocationFromPlaceUseCase
 export const confirmLocationUseCase = new ConfirmLocationUseCaseImpl(businessLocationRepository);
 
 export const discoverySearchUseCase = new DiscoverySearchUseCaseImpl(discoverySearchRepository);
+
+export const getSearchSuggestionsUseCase = new GetSearchSuggestionsUseCaseImpl(
+  searchSuggestionRepository,
+);
 
 export const searchPlacesUseCase = new SearchPlacesUseCaseImpl(placeRepository);
 export const getPlaceDetailsUseCase = new GetPlaceDetailsUseCaseImpl(placeRepository);
