@@ -222,6 +222,15 @@ const sr: Translation = {
     browseMore: 'Pretraži više',
     notFound: 'Rezervacija nije pronađena.',
   },
+  searchAutocomplete: {
+    listLabel: 'Predlozi pretrage',
+    groupPLACE: 'Mesta',
+    groupCATEGORY: 'Kategorije',
+    groupBUSINESS: 'Biznisi',
+    empty: 'Nema predloga.',
+    error: 'Predlozi nisu mogli da se učitaju.',
+    loading: 'Učitavanje predloga…',
+  },
   auth: {
     almostThere: 'Skoro gotovo',
     checkInbox: 'Proveri mejl.',

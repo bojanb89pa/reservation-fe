@@ -7,6 +7,7 @@ import { DEFAULT_CATEGORY_SYMBOL, DEFAULT_CATEGORY_COLOR } from '@fe/domain';
 import { useSearchBusinesses } from '../hooks/useBusinesses';
 import { useBusinessCategories } from '../hooks/useBusinessCategories';
 import { BusinessCard } from '../components/business/BusinessCard';
+import { SearchAutocomplete } from '../components/search/SearchAutocomplete';
 import styles from './HomePage.module.css';
 
 // ─── Motion ───────────────────────────────────────────────────────────────────
@@ -107,12 +108,12 @@ export function HomePage() {
             <div className={styles.search}>
               <div className={styles.searchField}>
                 <span className={styles.searchLabel}>{t('home.searchWhat')}</span>
-                <input
-                  aria-label={t('home.searchWhat')}
+                <SearchAutocomplete
+                  label={t('home.searchWhat')}
                   placeholder={t('home.searchWhatPlaceholder')}
                   value={what}
-                  onChange={(e) => setWhat(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  onChange={setWhat}
+                  onSubmit={handleSearch}
                 />
               </div>
               <div className={styles.searchDivider} />

@@ -219,6 +219,15 @@ const en = {
     browseMore: 'Browse more',
     notFound: 'Reservation not found.',
   },
+  searchAutocomplete: {
+    listLabel: 'Search suggestions',
+    groupPLACE: 'Places',
+    groupCATEGORY: 'Categories',
+    groupBUSINESS: 'Businesses',
+    empty: 'No suggestions found.',
+    error: 'Could not load suggestions.',
+    loading: 'Loading suggestions…',
+  },
   auth: {
     almostThere: 'Almost there',
     checkInbox: 'Check your inbox.',
