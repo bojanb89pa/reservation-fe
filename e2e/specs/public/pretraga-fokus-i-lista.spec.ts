@@ -120,7 +120,10 @@ test.describe('Polje pretrage na naslovnoj: fokus i lista predloga', () => {
     const { prefix } = await prepareBusinesses();
 
     await page.goto('/');
-    await page.getByRole('combobox', { name: 'What' }).fill(prefix);
+    const combobox = page.getByRole('combobox', { name: 'What' });
+    // Pravo kucanje skroluje do faze SEARCH scene, pa lista staje između header-a i dna ekrana.
+    await page.keyboard.type(prefix);
+    await expect(combobox).toHaveValue(prefix);
     const listbox = page.getByRole('listbox', { name: 'Search suggestions' });
     await expect(listbox).toBeVisible();
     await expect(page.getByRole('group', { name: 'Places' })).toBeVisible();

@@ -105,7 +105,10 @@ async function prepareFixture(): Promise<Fixture> {
 async function typeInSearch(page: Page, text: string) {
   await page.goto('/');
   const combobox = page.getByRole('combobox', { name: 'What' });
-  await combobox.fill(text);
+  // Pravo kucanje (type-to-focus) skroluje do faze SEARCH 3D scene, pa cela lista staje u
+  // ekran; `fill` ne skroluje, pa bi donje opcije ostale ispod ivice ili ispod sledeće sekcije.
+  await page.keyboard.type(text);
+  await expect(combobox).toHaveValue(text);
   await expect(page.getByRole('listbox', { name: 'Search suggestions' })).toBeVisible();
   return combobox;
 }
