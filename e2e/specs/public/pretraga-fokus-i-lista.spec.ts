@@ -71,6 +71,7 @@ test.describe('Polje pretrage na naslovnoj: fokus i lista predloga', () => {
 
     await page.goto('/');
     const combobox = page.getByRole('combobox', { name: 'What' });
+    await expect(combobox).toBeVisible();
     await expect(combobox).not.toBeFocused();
 
     await page.keyboard.type(prefix);
@@ -121,6 +122,7 @@ test.describe('Polje pretrage na naslovnoj: fokus i lista predloga', () => {
 
     await page.goto('/');
     const combobox = page.getByRole('combobox', { name: 'What' });
+    await expect(combobox).toBeVisible();
     // Pravo kucanje skroluje do faze SEARCH scene, pa lista staje između header-a i dna ekrana.
     await page.keyboard.type(prefix);
     await expect(combobox).toHaveValue(prefix);
