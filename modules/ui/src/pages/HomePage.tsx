@@ -48,7 +48,6 @@ export function HomePage() {
   const { t } = useTranslation();
   const prefersReducedMotion = useReducedMotion();
   const [what, setWhat] = useState('');
-  const [where, setWhere] = useState('');
   const { data: businesses, isLoading } = useSearchBusinesses({}, 0, 6);
   const { data: categories = [] } = useBusinessCategories();
 
@@ -61,9 +60,7 @@ export function HomePage() {
 
   const handleSearch = () => {
     if (!what.trim()) return;
-    const params = new URLSearchParams({ q: what.trim() });
-    if (where.trim()) params.set('city', where.trim());
-    navigate(`/search?${params.toString()}`);
+    navigate(`/search?${new URLSearchParams({ q: what.trim() }).toString()}`);
   };
 
   const heroLines = t('home.heroTitle').split('\n');
@@ -114,16 +111,6 @@ export function HomePage() {
                   value={what}
                   onChange={setWhat}
                   onSubmit={handleSearch}
-                />
-              </div>
-              <div className={styles.searchDivider} />
-              <div className={styles.searchField}>
-                <span className={styles.searchLabel}>{t('home.searchWhere')}</span>
-                <input
-                  placeholder={t('home.searchWherePlaceholder')}
-                  value={where}
-                  onChange={(e) => setWhere(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 />
               </div>
               <button className={styles.searchGo} onClick={handleSearch} aria-label="Search">
