@@ -3,7 +3,7 @@
 // i bez nje — pretraga je upotrebljiva od učitavanja, skrol kroz hero stiže do kategorija i
 // kucanje bez klika otvara predloge ispod header-a.
 
-import type { APIResponse } from '@playwright/test';
+import type { APIResponse, Page } from '@playwright/test';
 import { expect, test } from '../../fixtures/auth';
 import { ApiClient, adminCredentials, createActivatedUser, uniqueName } from '../../fixtures/api';
 
@@ -13,6 +13,35 @@ interface PageResponseDto<T> {
 
 async function expectOk(response: APIResponse, label: string): Promise<void> {
   expect(response.ok(), `${label}: HTTP ${response.status()} ${await response.text()}`).toBe(true);
+}
+
+/** Skuplja neuhvaćene greške stranice i `console.error` (bez grešaka učitavanja resursa i WebGL-a). */
+function collectErrors(page: Page): string[] {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
+  page.on('console', (m) => {
+    if (m.type() !== 'error') return;
+    const text = m.text();
+    if (/Failed to load resource|WebGL/i.test(text)) return;
+    errors.push(`console: ${text}`);
+  });
+  return errors;
+}
+
+/** Kucanje, brisanje i lepljenje (skok od više karaktera) u polju pretrage. */
+async function typeDeletePaste(page: Page): Promise<void> {
+  const combobox = page.getByRole('combobox', { name: 'What' });
+  await expect(combobox).toBeVisible();
+  await combobox.click();
+  await page.keyboard.type('abc');
+  await expect(combobox).toHaveValue('abc');
+  await page.keyboard.press('Backspace');
+  await expect(combobox).toHaveValue('ab');
+  await page.keyboard.press('Delete');
+  await combobox.fill('pasted value');
+  await expect(combobox).toHaveValue('pasted value');
+  await combobox.fill('');
+  await expect(combobox).toHaveValue('');
 }
 
 /** Pravi jedan aktivan biznis sa jedinstvenim prefiksom u nazivu i vraća prefiks. */
@@ -84,6 +113,16 @@ test.describe('Naslovna: hero na desktop viewport-u', () => {
     await expect(page.getByRole('heading', { level: 1 })).toBeInViewport();
   });
 
+  test('kucanje, brisanje i lepljenje u traci rade bez grešaka u konzoli @smoke', async ({
+    page,
+  }) => {
+    const errors = collectErrors(page);
+    await page.goto('/');
+    await typeDeletePaste(page);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    expect(errors).toEqual([]);
+  });
+
   test('kucanje bez klika otvara predloge cele ispod header-a', async ({ page }) => {
     const prefix = await prepareBusiness();
 
@@ -119,5 +158,26 @@ test.describe('Naslovna: hero na telefonu', () => {
     await expect(combobox).toBeVisible();
     await expect(page.locator('canvas')).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Pick a category to begin.' })).toBeAttached();
+  });
+
+  test('kucanje, brisanje i lepljenje rade bez grešaka u konzoli @smoke', async ({ page }) => {
+    const errors = collectErrors(page);
+    await page.goto('/');
+    await typeDeletePaste(page);
+    await expect(page.locator('canvas')).toHaveCount(0);
+    expect(errors).toEqual([]);
+  });
+});
+
+test.describe('Naslovna: bez scene (reduced-motion)', () => {
+  test.use({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
+
+  test('nema canvas-a, kucanje radi isto i nema grešaka u konzoli @smoke', async ({ page }) => {
+    const errors = collectErrors(page);
+    await page.goto('/');
+    await expect(page.getByRole('combobox', { name: 'What' })).toBeVisible();
+    await expect(page.locator('canvas')).toHaveCount(0);
+    await typeDeletePaste(page);
+    expect(errors).toEqual([]);
   });
 });
