@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { BusinessSearchFilter, CreateBusinessLocationCommand } from '@fe/domain';
+import type { Business, BusinessSearchFilter, CreateBusinessLocationCommand } from '@fe/domain';
 import {
   getMyBusinessesUseCase,
   getAllBusinessesForAdminUseCase,
@@ -48,6 +48,28 @@ export function useAllBusinessesForAdmin(page = 0, size = 50) {
   return useQuery({
     queryKey: ['businesses', 'admin', page, size] as const,
     queryFn: () => getAllBusinessesForAdminUseCase.execute({ page, size }),
+  });
+}
+
+export const ADMIN_BUSINESSES_PAGE_SIZE = 100;
+export const ADMIN_BUSINESSES_MAX_PAGES = 20;
+
+/** Loads every admin business page (size 100, capped at 20 pages) into one flat list. */
+export function useAllBusinessesForAdminComplete() {
+  return useQuery({
+    queryKey: ['businesses', 'admin', 'complete'] as const,
+    queryFn: async () => {
+      const all: Business[] = [];
+      for (let page = 0; page < ADMIN_BUSINESSES_MAX_PAGES; page++) {
+        const result = await getAllBusinessesForAdminUseCase.execute({
+          page,
+          size: ADMIN_BUSINESSES_PAGE_SIZE,
+        });
+        all.push(...result.content);
+        if (page + 1 >= result.totalPages) break;
+      }
+      return all;
+    },
   });
 }
 

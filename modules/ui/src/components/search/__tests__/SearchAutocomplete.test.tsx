@@ -57,6 +57,25 @@ describe('SearchAutocomplete', () => {
     execute.mockResolvedValue(suggestions);
   });
 
+  it('limits the popup max-height to the space left below it', async () => {
+    const user = userEvent.setup();
+    const rect = vi
+      .spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockReturnValue({ top: 450 } as DOMRect);
+    const innerHeight = window.innerHeight;
+    Object.defineProperty(window, 'innerHeight', { value: 720, configurable: true });
+    try {
+      const { container } = renderIt();
+      await user.type(screen.getByRole('combobox', { name: 'What' }), 'n');
+      await screen.findByRole('listbox', { name: 'searchAutocomplete.listLabel' });
+      const popup = container.querySelector<HTMLElement>('[data-search-popup]');
+      expect(popup?.style.maxHeight).toBe('254px');
+    } finally {
+      rect.mockRestore();
+      Object.defineProperty(window, 'innerHeight', { value: innerHeight, configurable: true });
+    }
+  });
+
   it('renders groups in arrival order and keeps server order of options', async () => {
     const user = userEvent.setup();
     renderIt();

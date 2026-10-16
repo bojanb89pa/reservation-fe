@@ -133,6 +133,26 @@ describe('ClientApplicationForm', () => {
     );
   });
 
+  it('offers businesses beyond the first page and narrows them with the name filter', async () => {
+    getAllBusinessesForAdminUseCase.execute.mockImplementation(
+      async ({ page }: { page: number }) => ({
+        ...businessesPage,
+        content: [page === 0 ? business : { ...business, id: 'biz-101', name: 'Late Bloomer' }],
+        page,
+        totalPages: 2,
+      }),
+    );
+    renderWithClient(<ClientApplicationForm onSubmit={vi.fn()} isPending={false} />);
+
+    await waitFor(() => expect(screen.getByText('Late Bloomer')).toBeInTheDocument());
+    expect(screen.getByText('Barber House')).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText('Filter businesses'), { target: { value: 'late' } });
+
+    expect(screen.getByText('Late Bloomer')).toBeInTheDocument();
+    expect(screen.queryByText('Barber House')).not.toBeInTheDocument();
+  });
+
   it('disables submit until the name and scope are filled in', () => {
     renderWithClient(<ClientApplicationForm onSubmit={vi.fn()} isPending={false} />);
     expect(screen.getByRole('button', { name: 'Register application' })).toBeDisabled();
