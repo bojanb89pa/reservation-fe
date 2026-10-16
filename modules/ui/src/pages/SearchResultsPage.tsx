@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDiscoverySearch } from '../hooks/useDiscoverySearch';
+import { SearchAutocomplete } from '../components/search/SearchAutocomplete';
 import { ErrorState } from '../components/ErrorState';
 import { BusinessImage } from '../components/business/BusinessImage';
 import styles from './SearchResultsPage.module.css';
@@ -10,62 +11,38 @@ export function SearchResultsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { t } = useTranslation();
 
-  const [whatInput, setWhatInput] = useState(searchParams.get('q') ?? '');
-  const [whereInput, setWhereInput] = useState(searchParams.get('city') ?? '');
-  const [debouncedWhat, setDebouncedWhat] = useState(whatInput);
-  const [debouncedWhere, setDebouncedWhere] = useState(whereInput);
+  const q = searchParams.get('q') ?? '';
+  const city = searchParams.get('city') ?? '';
+  const [input, setInput] = useState(q);
   const [page, setPage] = useState(0);
-  const whatRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const whereRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Keep the field and paging in step with the URL (place suggestions navigate here with new params).
   useEffect(() => {
-    if (whatRef.current) clearTimeout(whatRef.current);
-    whatRef.current = setTimeout(() => {
-      setDebouncedWhat(whatInput);
-      setPage(0);
-      setSearchParams((prev) => {
-        const next = new URLSearchParams(prev);
-        if (whatInput.trim()) next.set('q', whatInput.trim());
-        else next.delete('q');
-        return next;
-      });
-    }, 300);
-    return () => {
-      if (whatRef.current) clearTimeout(whatRef.current);
-    };
-  }, [whatInput, setSearchParams]);
+    setInput(q);
+    setPage(0);
+  }, [q, city]);
 
-  useEffect(() => {
-    if (whereRef.current) clearTimeout(whereRef.current);
-    whereRef.current = setTimeout(() => {
-      setDebouncedWhere(whereInput);
-      setPage(0);
-      setSearchParams((prev) => {
-        const next = new URLSearchParams(prev);
-        if (whereInput.trim()) next.set('city', whereInput.trim());
-        else next.delete('city');
-        return next;
-      });
-    }, 300);
-    return () => {
-      if (whereRef.current) clearTimeout(whereRef.current);
-    };
-  }, [whereInput, setSearchParams]);
+  const handleSubmit = () => {
+    // Free search: a previously selected city is dropped.
+    const next = new URLSearchParams();
+    if (input.trim()) next.set('q', input.trim());
+    setSearchParams(next);
+  };
 
   const { data, isLoading, isError, refetch, isRefetching } = useDiscoverySearch(
-    { q: debouncedWhat, city: debouncedWhere || undefined },
+    { q, city: city || undefined },
     page,
     20,
   );
 
-  const isEmpty = debouncedWhat.trim().length === 0;
+  const isEmpty = q.trim().length === 0;
 
   return (
     <div className={styles.page}>
       <div className="eyebrow-rule">{t('search.eyebrow')}</div>
       <h1 className="section-title">
         {data
-          ? t('search.titleWithCount', { count: data.totalElements, q: debouncedWhat })
+          ? t('search.titleWithCount', { count: data.totalElements, q })
           : isEmpty
             ? t('search.titleEmpty')
             : t('search.titleLoading')}
@@ -74,22 +51,12 @@ export function SearchResultsPage() {
       <div className={styles.searchBar}>
         <div className={styles.searchField}>
           <span className={styles.searchLabel}>{t('search.what')}</span>
-          <input
-            className={styles.searchInput}
+          <SearchAutocomplete
+            label={t('search.what')}
             placeholder={t('search.whatPlaceholder')}
-            value={whatInput}
-            onChange={(e) => setWhatInput(e.target.value)}
-            autoFocus
-          />
-        </div>
-        <div className={styles.searchDivider} />
-        <div className={styles.searchField}>
-          <span className={styles.searchLabel}>{t('search.where')}</span>
-          <input
-            className={styles.searchInput}
-            placeholder={t('search.wherePlaceholder')}
-            value={whereInput}
-            onChange={(e) => setWhereInput(e.target.value)}
+            value={input}
+            onChange={setInput}
+            onSubmit={handleSubmit}
           />
         </div>
       </div>
@@ -107,7 +74,7 @@ export function SearchResultsPage() {
       )}
 
       {data && data.content.length === 0 && (
-        <p className={styles.noResults}>{t('search.noResults', { q: debouncedWhat })}</p>
+        <p className={styles.noResults}>{t('search.noResults', { q })}</p>
       )}
 
       {data && data.content.length > 0 && (
