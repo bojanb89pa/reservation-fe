@@ -1,6 +1,6 @@
 // E2E-002 · Pretraga biznisa
 //
-// Pretraga počinje na početnoj (polje "What" iz hero sekcije), rezultati se
+// Pretraga počinje na početnoj (jedinstveno polje, combobox "What", iz hero sekcije), rezultati se
 // prikazuju na `/search`. Biznis pravi svaki test sam preko admin API-ja
 // (`POST /businesses/admin` odmah aktivira biznis), da test ne zavisi od
 // demo-seed biznisa koji ne postoji garantovano na CI stacku.
@@ -93,7 +93,7 @@ async function createService(
 
 async function searchFromHome(page: import('@playwright/test').Page, query: string): Promise<void> {
   await page.goto('/');
-  await page.getByRole('textbox', { name: 'What' }).fill(query);
+  await page.getByRole('combobox', { name: 'What' }).fill(query);
   await page.getByRole('button', { name: 'Search' }).click();
   await page.waitForURL((url) => url.pathname === '/search');
 }
