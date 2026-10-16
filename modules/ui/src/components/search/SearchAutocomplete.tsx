@@ -1,9 +1,10 @@
-import { forwardRef, useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { SearchSuggestion, SearchSuggestionType } from '@fe/domain';
 import { useSearchSuggestions } from '../../hooks/useSearchSuggestions';
+import { computePopupMaxHeight } from './popupMaxHeight';
 import styles from './SearchAutocomplete.module.css';
 
 interface Props {
@@ -72,6 +73,33 @@ export const SearchAutocomplete = forwardRef<HTMLInputElement, Props>(function S
   const open = focused && hasText && !dismissed;
   const optionId = (i: number) => `${baseId}-option-${i}`;
   const activeValid = open && activeIndex >= 0 && activeIndex < flat.length;
+
+  const popupRef = useRef<HTMLDivElement>(null);
+
+  // Cap the popup to the space left below it, so it never extends past the viewport bottom
+  // (the sticky 3D hero does not move with page scroll). Direct style write: no state per pixel.
+  useEffect(() => {
+    if (!open) return;
+    let frame = 0;
+    const apply = () => {
+      frame = 0;
+      const popup = popupRef.current;
+      if (!popup) return;
+      const { top } = popup.getBoundingClientRect();
+      popup.style.maxHeight = `${computePopupMaxHeight(top, window.innerHeight)}px`;
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(apply);
+    };
+    apply();
+    window.addEventListener('resize', schedule);
+    window.addEventListener('scroll', schedule, true);
+    return () => {
+      window.removeEventListener('resize', schedule);
+      window.removeEventListener('scroll', schedule, true);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [open]);
 
   // Keep the highlighted option inside the scrollable popup while navigating with arrows.
   useEffect(() => {
@@ -147,6 +175,7 @@ export const SearchAutocomplete = forwardRef<HTMLInputElement, Props>(function S
       />
       {open && (
         <div
+          ref={popupRef}
           className={styles.popup}
           data-search-popup
           // Keep focus in the input when the scrollbar or popup chrome is pressed, so the list stays open.
