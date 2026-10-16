@@ -53,7 +53,8 @@ interface Fixture {
 
 /**
  * Kategorija iz seed-a + aktivan biznis u njoj, čiji naziv i grad počinju nazivom kategorije,
- * pa upit `category.name` pogađa mesto, kategoriju i biznis.
+ * pa upit `category.name` pogađa mesto, kategoriju i biznis. Naziv biznisa počinje i gradom,
+ * pa upit `city` vraća tačno dva predloga: mesto, pa biznis.
  */
 async function prepareFixture(): Promise<Fixture> {
   const anonymous = await ApiClient.anonymous();
@@ -72,7 +73,8 @@ async function prepareFixture(): Promise<Fixture> {
     const city = uniqueName(category.name);
     const created = await adminApi.post('/businesses/admin', {
       data: {
-        name: uniqueName(category.name),
+        // Naziv počinje gradom (pa i nazivom kategorije): upit po gradu vraća mesto i biznis.
+        name: uniqueName(city),
         ownerId,
         location: {
           name: 'E2E lokacija',
@@ -176,7 +178,8 @@ test.describe('E2E-002b jedinstvena pretraga sa autocomplete-om', () => {
     const { city } = await prepareFixture();
 
     // Upit je jedinstveni grad ovog testa, pa ostaci drugih testova (isti prefiks kategorije)
-    // ne mogu da uđu u listu ispred njega.
+    // ne mogu da uđu u listu. Lista ima dva predloga (mesto, biznis); sa jednim bi ArrowDown
+    // kružno ostao na istom predlogu.
     const combobox = await typeInSearch(page, city);
 
     await combobox.press('Escape');
