@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Business, ClientApplicationScope, CreateClientApplicationCommand } from '@fe/domain';
-import { useAllBusinessesForAdmin } from '../../hooks/useBusinesses';
+import { useAllBusinessesForAdminComplete } from '../../hooks/useBusinesses';
 import { useBusinessLocations } from '../../hooks/useBusinessLocations';
 import { useBusinessCategories } from '../../hooks/useBusinessCategories';
 import styles from './ClientApplicationForm.module.css';
@@ -29,11 +29,17 @@ export function ClientApplicationForm({ onSubmit, isPending }: Props) {
   const [locationIds, setLocationIds] = useState<string[]>([]);
   const [categoryId, setCategoryId] = useState('');
 
-  // Admin-only page: page-size 100 mirrors DashboardBusinessesPage's admin listing.
-  const { data: businessesPage } = useAllBusinessesForAdmin(0, 100);
-  const businesses = (businessesPage?.content ?? []).filter(
-    (b): b is Business & { id: string } => b.id !== null,
-  );
+  const [businessFilter, setBusinessFilter] = useState('');
+  const { data: allBusinesses, isLoading: businessesLoading } = useAllBusinessesForAdminComplete();
+  const normalizedFilter = businessFilter.trim().toLowerCase();
+  const businesses = (allBusinesses ?? [])
+    .filter((b): b is Business & { id: string } => b.id !== null)
+    .filter(
+      (b) =>
+        normalizedFilter === '' ||
+        b.id === businessId ||
+        b.name.toLowerCase().includes(normalizedFilter),
+    );
 
   // WARNING: SINGLE_LOCATION also requires picking a business first, since there is no global
   // location listing endpoint to search locations directly — verify before merging.
@@ -115,6 +121,16 @@ export function ClientApplicationForm({ onSubmit, isPending }: Props) {
 
       {needsBusiness && (
         <div className="form-field">
+          <label className="form-label" htmlFor="client-application-business-filter">
+            {t('clientApplicationForm.businessFilterLabel')}
+          </label>
+          <input
+            id="client-application-business-filter"
+            className="form-input"
+            placeholder={t('clientApplicationForm.businessFilterPlaceholder')}
+            value={businessFilter}
+            onChange={(e) => setBusinessFilter(e.target.value)}
+          />
           <label className="form-label" htmlFor="client-application-business">
             {t('clientApplicationForm.businessLabel')}
           </label>
@@ -122,9 +138,14 @@ export function ClientApplicationForm({ onSubmit, isPending }: Props) {
             id="client-application-business"
             className="form-input"
             value={businessId}
+            disabled={businessesLoading}
             onChange={(e) => handleBusinessChange(e.target.value)}
           >
-            <option value="">{t('clientApplicationForm.selectBusinessPlaceholder')}</option>
+            <option value="">
+              {businessesLoading
+                ? t('clientApplicationForm.loadingBusinesses')
+                : t('clientApplicationForm.selectBusinessPlaceholder')}
+            </option>
             {businesses.map((b) => (
               <option key={b.id} value={b.id}>
                 {b.name}
@@ -197,9 +218,7 @@ export function ClientApplicationForm({ onSubmit, isPending }: Props) {
 
       <div className={styles.actions}>
         <button type="submit" className="btn btn-secondary" disabled={!canSubmit || isPending}>
-          {isPending
-            ? t('clientApplicationForm.registering')
-            : t('clientApplicationForm.register')}
+          {isPending ? t('clientApplicationForm.registering') : t('clientApplicationForm.register')}
         </button>
       </div>
     </form>
