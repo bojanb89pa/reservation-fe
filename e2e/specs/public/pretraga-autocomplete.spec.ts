@@ -173,9 +173,11 @@ test.describe('E2E-002b jedinstvena pretraga sa autocomplete-om', () => {
   test('tastatura: strelice biraju predlog, Enter ga otvara, Esc zatvara listu', async ({
     page,
   }) => {
-    const { category, city } = await prepareFixture();
+    const { city } = await prepareFixture();
 
-    const combobox = await typeInSearch(page, category.name);
+    // Upit je jedinstveni grad ovog testa, pa ostaci drugih testova (isti prefiks kategorije)
+    // ne mogu da uđu u listu ispred njega.
+    const combobox = await typeInSearch(page, city);
 
     await combobox.press('Escape');
     await expect(page.getByRole('listbox', { name: 'Search suggestions' })).toBeHidden();
