@@ -1,0 +1,12 @@
+/* Fills the sticky stage; sits below content and popups, ignores the pointer. */
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  /* Blend into --bg toward the bottom so the next section follows naturally. */
+  mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
+}

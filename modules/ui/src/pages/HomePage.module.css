@@ -5,6 +5,33 @@
   overflow-x: clip;
 }
 
+/* ── 3D scene mode (desktop): tall section with a sticky one-viewport stage ── */
+.heroScene {
+  padding: 0;
+  height: 225vh;
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: 80px 28px 40px;
+  overflow-x: clip;
+}
+
+.stage > .heroInner {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Fallback hero: the wrapper adds no box, so the layout is exactly the pre-scene one. */
+.plainStage {
+  display: contents;
+}
+
 .heroBackdrop {
   position: absolute;
   inset: 0;
