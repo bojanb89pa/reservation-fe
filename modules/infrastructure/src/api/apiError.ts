@@ -61,6 +61,14 @@ const RESERVATION_APPROVE_PATH = /\/reservations\/[^/]+\/approve\/?$/;
 const CLIENT_APPLICATION_RESERVATION_PATH = /\/client-applications\/reservations\/?$/;
 /** `PATCH /businesses/{id}/overlapping-pending-reservations` — owner-only setting. */
 const OVERLAPPING_PENDING_PATH = /\/businesses\/[^/]+\/overlapping-pending-reservations\/?$/;
+/** `GET /admin/client-applications/{id}` — partner detail (resource-service). */
+const CLIENT_APPLICATION_DETAIL_PATH = /\/admin\/client-applications\/([^/]+)\/?$/;
+/** `GET|PUT /admin/client-applications/{id}/integration` — partner integration (auth-service). */
+const CLIENT_APPLICATION_INTEGRATION_PATH =
+  /\/admin\/client-applications\/([^/]+)\/integration\/?$/;
+/** `POST /client-application-consents/{id}/approve|revoke` — owner consent decisions. */
+const CLIENT_APPLICATION_CONSENT_PATH =
+  /\/client-application-consents\/([^/]+)\/(?:approve|revoke)\/?$/;
 
 // WARNING: 401 on admin-user routes stays a generic ApiError (not UnauthorizedError) because authInterceptors.ts's refresh-retry only fires for `instanceof ApiError` — verify before merging
 type AdminUserDomainError = NotFoundError | ConflictError | ValidationError | UnauthorizedError;
@@ -81,6 +89,16 @@ const RESERVATION_CANCEL_REASON_BY_STATUS: Readonly<
 > = {
   404: () => new NotFoundError('Reservation'),
   409: (message) => new ConflictError(message),
+  422: (message) => new UnprocessableEntityError(message),
+};
+
+type ClientApplicationDomainError = NotFoundError | ValidationError | UnprocessableEntityError;
+
+const CLIENT_APPLICATION_INTEGRATION_REASON_BY_STATUS: Readonly<
+  Partial<Record<number, (message: string, id: string) => ClientApplicationDomainError>>
+> = {
+  400: (message) => new ValidationError(message),
+  404: (_message, id) => new NotFoundError('ClientApplication', id),
   422: (message) => new UnprocessableEntityError(message),
 };
 
@@ -133,6 +151,23 @@ function isOverlappingPendingRequest(config: InternalAxiosRequestConfig | undefi
   return method === 'PATCH' && OVERLAPPING_PENDING_PATH.test(path);
 }
 
+function toClientApplicationError(
+  config: InternalAxiosRequestConfig | undefined,
+  status: number,
+  message: string,
+): ClientApplicationDomainError | null {
+  const path = (config?.url ?? '').split('?')[0];
+  const integrationId = CLIENT_APPLICATION_INTEGRATION_PATH.exec(path)?.[1];
+  if (integrationId) {
+    return CLIENT_APPLICATION_INTEGRATION_REASON_BY_STATUS[status]?.(message, integrationId) ?? null;
+  }
+  const detailId = CLIENT_APPLICATION_DETAIL_PATH.exec(path)?.[1];
+  if (detailId && status === 404) return new NotFoundError('ClientApplication', detailId);
+  const consentId = CLIENT_APPLICATION_CONSENT_PATH.exec(path)?.[1];
+  if (consentId && status === 404) return new NotFoundError('ClientApplicationConsent', consentId);
+  return null;
+}
+
 // WARNING: non-file, non-admin-user, non-reservation routes keep returning ApiError with a status, as before — verify before merging
 export function normalizeAxiosError(
   error: AxiosError<ApiErrorBody>,
@@ -141,7 +176,8 @@ export function normalizeAxiosError(
   | FileUploadError
   | AdminUserDomainError
   | ReservationCancelDomainError
-  | ReservationSlotTakenError {
+  | ReservationSlotTakenError
+  | ClientApplicationDomainError {
   const status = error.response?.status ?? 0;
   const body = error.response?.data;
   const message = body?.message ?? body?.error ?? error.message ?? 'An unexpected error occurred';
@@ -160,6 +196,9 @@ export function normalizeAxiosError(
     const toDomainError = RESERVATION_CANCEL_REASON_BY_STATUS[status];
     if (toDomainError) return toDomainError(message);
   }
+
+  const clientApplicationError = toClientApplicationError(error.config, status, message);
+  if (clientApplicationError) return clientApplicationError;
 
   if (
     status === 409 &&

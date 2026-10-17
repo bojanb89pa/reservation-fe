@@ -33,3 +33,5 @@ export { BusinessContactInfoApiRepository } from './repositories/BusinessContact
 export { FileApiRepository } from './repositories/FileApiRepository';
 export { UserApiRepository } from './repositories/UserApiRepository';
 export { ClientApplicationApiRepository } from './repositories/ClientApplicationApiRepository';
+export { ClientApplicationIntegrationApiRepository } from './repositories/ClientApplicationIntegrationApiRepository';
+export { ClientApplicationConsentApiRepository } from './repositories/ClientApplicationConsentApiRepository';
