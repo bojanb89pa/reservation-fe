@@ -91,9 +91,9 @@ export function generateSceneData(count = POINT_COUNT): SceneData {
     seed[i] = rng();
     size[i] = 3 + rng() * 3.5;
     const r = rng();
-    tone[i] = r < 0.88 ? 0 : r < 0.92 ? 1 : r < 0.96 ? 2 : 3;
-    // Accents are a bit larger so they read as highlights.
-    if (tone[i] !== 0) size[i] += 1.5;
+    tone[i] = r < 0.83 ? 0 : r < 0.89 ? 1 : r < 0.945 ? 2 : 3;
+    // Accents are larger so they read as highlights.
+    if (tone[i] !== 0) size[i] += 2.2;
   }
 
   const segments: SceneData['segments'] = [];

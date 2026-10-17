@@ -17,6 +17,8 @@ import {
   SEARCH_SCROLL_PROGRESS,
   scrollTargetForProgress,
 } from '../components/home/HeroScene/sceneLogic';
+import { pulseStrengthForChange } from '../components/home/HeroScene/pulseQueue';
+import type { HeroSceneHandle } from '../components/home/HeroScene/pulseQueue';
 import styles from './HomePage.module.css';
 
 // three is loaded only when the scene is actually shown (desktop conditions), never in the initial chunk.
@@ -84,6 +86,16 @@ export function HomePage() {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const searchShellRef = useRef<HTMLDivElement>(null);
+  const sceneRef = useRef<HeroSceneHandle>(null);
+  const prevWhatRef = useRef(what);
+
+  // Every change of the search value (typing, deleting, pasting, suggestion pick) sends a light wave.
+  // Imperative — no scene state; a no-op while the scene is not mounted.
+  useEffect(() => {
+    const strength = pulseStrengthForChange(prevWhatRef.current, what);
+    prevWhatRef.current = what;
+    if (strength !== null) sceneRef.current?.pulse({ strength });
+  }, [what]);
 
   // Programmatic focus never scrolls by itself (preventScroll); scrolling to the bar is opt-in.
   const focusSearch = useCallback(
@@ -137,6 +149,7 @@ export function HomePage() {
   useSearchWindow({
     progress: heroProgress,
     enabled: sceneActive,
+    target: heroRef,
     focus: focusOnEnter,
     blur: blurOnLeave,
     canBlur,
@@ -190,7 +203,12 @@ export function HomePage() {
           {sceneActive ? (
             <SceneErrorBoundary onError={handleSceneError}>
               <Suspense fallback={null}>
-                <HeroScene progress={heroProgress} onError={handleSceneError} />
+                <HeroScene
+                  ref={sceneRef}
+                  progress={heroProgress}
+                  onError={handleSceneError}
+                  originRef={searchShellRef}
+                />
               </Suspense>
             </SceneErrorBoundary>
           ) : (

@@ -67,18 +67,28 @@ export interface SearchWindowHandlers {
 }
 
 /**
- * Tracks entering/leaving the SEARCH window. Enter focuses the field; leave blurs it,
- * but only if the field is empty and the suggestion list is closed.
+ * Tracks entering/leaving the SEARCH window. Entering focuses the field, but only after a real
+ * user scroll (`markScrolled`); `sync` adopts the current state silently (mount, `enabled` change,
+ * hero resize). Leaving blurs the field, but only if it is empty and the suggestion list is closed.
  */
 export function createSearchWindowController(handlers: SearchWindowHandlers) {
   let inside = false;
+  let scrolled = false;
   return {
+    /** Adopts the state for `progress` without calling focus or blur. */
+    sync(progress: number) {
+      inside = isInSearchWindow(progress);
+    },
+    markScrolled() {
+      scrolled = true;
+    },
     update(progress: number) {
       const now = isInSearchWindow(progress);
       if (now === inside) return;
       inside = now;
-      if (now) handlers.focus();
-      else if (handlers.canBlur()) handlers.blur();
+      if (now) {
+        if (scrolled) handlers.focus();
+      } else if (handlers.canBlur()) handlers.blur();
     },
     isInside: () => inside,
   };
