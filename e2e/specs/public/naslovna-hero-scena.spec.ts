@@ -169,6 +169,45 @@ test.describe('Naslovna: hero na telefonu', () => {
   });
 });
 
+test.describe('Naslovna: promena teme sa hero scenom', () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  test('prelaz svetla/tamna tema ne pravi scenu ponovo i ne baca greške, kucanje radi u obe @smoke', async ({
+    page,
+  }) => {
+    const errors = collectErrors(page);
+    await page.goto('/');
+    const combobox = page.getByRole('combobox', { name: 'What' });
+    await expect(combobox).toBeVisible();
+
+    const canvas = page.locator('canvas');
+    const hasCanvas = (await canvas.count()) > 0;
+    if (hasCanvas) {
+      await canvas.first().evaluate((el) => el.setAttribute('data-e2e-marker', 'hero-canvas'));
+    }
+
+    const html = page.locator('html');
+    const initial = (await html.getAttribute('data-theme')) === 'light' ? 'light' : 'dark';
+    const other = initial === 'light' ? 'dark' : 'light';
+    const toggleName = (to: string) =>
+      to === 'light' ? 'Switch to light mode' : 'Switch to dark mode';
+
+    await page.getByRole('button', { name: toggleName(other) }).first().click();
+    await expect(html).toHaveAttribute('data-theme', other);
+    await typeDeletePaste(page);
+
+    await page.getByRole('button', { name: toggleName(initial) }).first().click();
+    await expect(html).toHaveAttribute('data-theme', initial);
+    await typeDeletePaste(page);
+
+    if (hasCanvas) {
+      await expect(page.locator('canvas[data-e2e-marker="hero-canvas"]')).toHaveCount(1);
+    }
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    expect(errors).toEqual([]);
+  });
+});
+
 test.describe('Naslovna: bez scene (reduced-motion)', () => {
   test.use({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
 

@@ -43,6 +43,7 @@ interface ThemeParams {
   alpha: number;
   lineAlpha: number;
   lineDensity: number;
+  lineHover: number;
   fog: number;
   cursorGain: number;
 }
@@ -52,28 +53,35 @@ const DARK: ThemeParams = {
   alpha: 0.9,
   lineAlpha: 0.42,
   lineDensity: 1,
+  lineHover: 1.8,
   fog: 0.8,
   cursorGain: 1,
 };
 const LIGHT: ThemeParams = {
-  size: 0.95,
-  alpha: 0.9,
-  lineAlpha: 0.45,
-  lineDensity: 0.8,
+  size: 0.85,
+  alpha: 0.85,
+  lineAlpha: 0.25,
+  lineDensity: 0.6,
+  lineHover: 1.2,
   fog: 0.45,
-  cursorGain: 1.35,
+  cursorGain: 1.15,
 };
 
 const TOKENS = ['--primary', '--secondary', '--accent', '--cyan'] as const;
 
+/** The four dot tones followed by the line colour (last index). */
 function readColors(light: boolean): Color[] {
   const style = getComputedStyle(document.documentElement);
-  return TOKENS.map((token) => {
+  const colors = TOKENS.map((token) => {
     const color = new Color(style.getPropertyValue(token).trim());
     // Light theme: deeper, more saturated dots so they hold contrast on a bright background.
-    if (light) color.offsetHSL(0, 0.1, -0.15);
+    if (light) color.offsetHSL(0, 0.1, -0.1);
     return color;
   });
+  // Light theme: lines are a lighter, softer --primary instead of sharing the dot colour.
+  const line = new Color(style.getPropertyValue('--primary').trim());
+  if (light) line.offsetHSL(0, -0.05, 0.1);
+  return [...colors, line];
 }
 
 const COMMON_GLSL = /* glsl */ `
@@ -186,6 +194,7 @@ const LINE_VERT = /* glsl */ `
   attribute float aKind;
   uniform float uLineAlpha;
   uniform float uLineDensity;
+  uniform float uLineHover;
   varying float vAlpha;
   varying float vWave;
 
@@ -200,7 +209,7 @@ const LINE_VERT = /* glsl */ `
       : 0.0;
     float hover = c * c;
     float w = waveInfluence(p);
-    float base = max(shown, hover * 1.8);
+    float base = max(shown, hover * uLineHover);
     float kindNet = aKind < 0.5 ? 1.0 : 0.0;
     vAlpha = uLineAlpha * depthFog(-mv.z) * tail() * (base * (1.0 + 0.8 * w) + 0.5 * w * kindNet);
     vWave = w;
@@ -208,12 +217,12 @@ const LINE_VERT = /* glsl */ `
 `;
 
 const LINE_FRAG = /* glsl */ `
-  uniform vec3 uC0;
+  uniform vec3 uLineColor;
   uniform vec3 uCw;
   varying float vAlpha;
   varying float vWave;
   void main() {
-    vec3 col = mix(uC0, uCw, clamp(vWave, 0.0, 1.0) * 0.7);
+    vec3 col = mix(uLineColor, uCw, clamp(vWave, 0.0, 1.0) * 0.7);
     gl_FragColor = vec4(col, min(vAlpha, 1.0));
   }
 `;
@@ -249,6 +258,7 @@ function buildScene(canvas: HTMLCanvasElement) {
     uC1: { value: new Color() },
     uC2: { value: new Color() },
     uC3: { value: new Color() },
+    uLineColor: { value: new Color() },
   };
 
   // Points
@@ -301,7 +311,12 @@ function buildScene(canvas: HTMLCanvasElement) {
   const lineMaterial = new ShaderMaterial({
     vertexShader: LINE_VERT,
     fragmentShader: LINE_FRAG,
-    uniforms: { ...sharedUniforms, uLineAlpha: { value: 1 }, uLineDensity: { value: 1 } },
+    uniforms: {
+      ...sharedUniforms,
+      uLineAlpha: { value: 1 },
+      uLineDensity: { value: 1 },
+      uLineHover: { value: 1.8 },
+    },
     transparent: true,
     depthWrite: false,
   });
@@ -361,6 +376,7 @@ const HeroScene = forwardRef<HeroSceneHandle, Props>(function HeroScene(
       sharedUniforms.uC1,
       sharedUniforms.uC2,
       sharedUniforms.uC3,
+      sharedUniforms.uLineColor,
     ];
     const applyBlending = () => {
       const blending = isLight() ? NormalBlending : AdditiveBlending;
@@ -461,6 +477,7 @@ const HeroScene = forwardRef<HeroSceneHandle, Props>(function HeroScene(
       pointMaterial.uniforms.uAlpha.value = current.alpha;
       lineMaterial.uniforms.uLineAlpha.value = current.lineAlpha;
       lineMaterial.uniforms.uLineDensity.value = current.lineDensity;
+      lineMaterial.uniforms.uLineHover.value = current.lineHover;
 
       // Damped camera tilt (≤2.5°) towards the cursor.
       const tk = 1 - Math.exp(-dt * 4);
@@ -480,7 +497,7 @@ const HeroScene = forwardRef<HeroSceneHandle, Props>(function HeroScene(
       // Typing waves: a darker tone than --primary on light, a lighter one on dark.
       sharedUniforms.uCw.value
         .copy(uniformColors[0].value)
-        .offsetHSL(0, 0.05, isLight() ? -0.1 : 0.12);
+        .offsetHSL(0, 0.05, isLight() ? -0.15 : 0.12);
       sharedUniforms.uWaveMaxR.value = halfH * camera.aspect * 2.2;
       const active = waves.active(performance.now());
       for (let i = 0; i < WAVE_MAX; i++) {
