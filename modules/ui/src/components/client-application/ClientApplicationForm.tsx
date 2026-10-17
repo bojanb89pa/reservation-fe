@@ -8,7 +8,12 @@ import styles from './ClientApplicationForm.module.css';
 
 type ScopeType = ClientApplicationScope['type'];
 
-const SCOPE_TYPES: ScopeType[] = ['SINGLE_LOCATION', 'MULTIPLE_LOCATIONS', 'CATEGORY'];
+const SCOPE_TYPES: ScopeType[] = [
+  'SINGLE_LOCATION',
+  'MULTIPLE_LOCATIONS',
+  'LOCATION_LIST',
+  'CATEGORY',
+];
 
 interface Props {
   onSubmit: (command: CreateClientApplicationCommand) => Promise<void>;
@@ -28,6 +33,8 @@ export function ClientApplicationForm({ onSubmit, isPending }: Props) {
   const [locationId, setLocationId] = useState('');
   const [locationIds, setLocationIds] = useState<string[]>([]);
   const [categoryId, setCategoryId] = useState('');
+  // LOCATION_LIST spans several businesses, so picks (id → label) survive switching the browsed business.
+  const [pickedLocations, setPickedLocations] = useState<Record<string, string>>({});
 
   const [businessFilter, setBusinessFilter] = useState('');
   const { data: allBusinesses, isLoading: businessesLoading } = useAllBusinessesForAdminComplete();
@@ -43,7 +50,10 @@ export function ClientApplicationForm({ onSubmit, isPending }: Props) {
 
   // WARNING: SINGLE_LOCATION also requires picking a business first, since there is no global
   // location listing endpoint to search locations directly — verify before merging.
-  const needsBusiness = scopeType === 'SINGLE_LOCATION' || scopeType === 'MULTIPLE_LOCATIONS';
+  const needsBusiness =
+    scopeType === 'SINGLE_LOCATION' ||
+    scopeType === 'MULTIPLE_LOCATIONS' ||
+    scopeType === 'LOCATION_LIST';
   const { data: locations = [] } = useBusinessLocations(needsBusiness ? businessId : '');
 
   const { data: categories = [] } = useBusinessCategories();
@@ -53,6 +63,7 @@ export function ClientApplicationForm({ onSubmit, isPending }: Props) {
     setBusinessId('');
     setLocationId('');
     setLocationIds([]);
+    setPickedLocations({});
     setCategoryId('');
   };
 
@@ -66,7 +77,22 @@ export function ClientApplicationForm({ onSubmit, isPending }: Props) {
     setLocationIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
+  const togglePickedLocation = (id: string, label: string) => {
+    setPickedLocations((prev) => {
+      if (id in prev) {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      }
+      return { ...prev, [id]: label };
+    });
+  };
+
   const buildScope = (): ClientApplicationScope | null => {
+    if (scopeType === 'LOCATION_LIST') {
+      const ids = Object.keys(pickedLocations);
+      return ids.length > 0 ? { type: 'LOCATION_LIST', locationIds: ids } : null;
+    }
     if (scopeType === 'SINGLE_LOCATION') {
       return locationId ? { type: 'SINGLE_LOCATION', locationId } : null;
     }
@@ -193,6 +219,50 @@ export function ClientApplicationForm({ onSubmit, isPending }: Props) {
             </label>
           ))}
         </fieldset>
+      )}
+
+      {scopeType === 'LOCATION_LIST' && businessId && (
+        <fieldset className={styles.fieldset}>
+          <legend className={styles.legend}>{t('clientApplicationForm.locationsLabel')}</legend>
+          {locations.length === 0 && (
+            <div className={styles.empty}>{t('clientApplicationForm.noLocations')}</div>
+          )}
+          {locations.map((loc) => (
+            <label key={loc.id} className={styles.checkboxOption}>
+              <input
+                type="checkbox"
+                checked={loc.id in pickedLocations}
+                onChange={() => togglePickedLocation(loc.id, locationLabel(loc))}
+              />
+              {locationLabel(loc)}
+            </label>
+          ))}
+        </fieldset>
+      )}
+
+      {scopeType === 'LOCATION_LIST' && (
+        <div className="form-field">
+          <div className="form-label">{t('clientApplicationForm.selectedLocationsLabel')}</div>
+          {Object.keys(pickedLocations).length === 0 ? (
+            <div className={styles.empty}>{t('clientApplicationForm.noSelectedLocations')}</div>
+          ) : (
+            <ul aria-label={t('clientApplicationForm.selectedLocationsLabel')}>
+              {Object.entries(pickedLocations).map(([id, label]) => (
+                <li key={id}>
+                  {label}{' '}
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    aria-label={t('clientApplicationForm.removeLocation', { name: label })}
+                    onClick={() => togglePickedLocation(id, label)}
+                  >
+                    ×
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       )}
 
       {scopeType === 'CATEGORY' && (

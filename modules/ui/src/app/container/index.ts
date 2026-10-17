@@ -25,6 +25,8 @@ import {
   FileApiRepository,
   UserApiRepository,
   ClientApplicationApiRepository,
+  ClientApplicationIntegrationApiRepository,
+  ClientApplicationConsentApiRepository,
 } from '@fe/infrastructure';
 import {
   RegisterUseCaseImpl,
@@ -102,6 +104,14 @@ import {
   ResetUserPasswordUseCaseImpl,
   DeleteUserByAdminUseCaseImpl,
   RegisterClientApplicationUseCaseImpl,
+  ListClientApplicationsUseCaseImpl,
+  GetClientApplicationUseCaseImpl,
+  GetClientApplicationIntegrationUseCaseImpl,
+  UpdateClientApplicationIntegrationUseCaseImpl,
+  GetPublicClientApplicationIntegrationUseCaseImpl,
+  ListMyClientApplicationConsentsUseCaseImpl,
+  ApproveClientApplicationConsentUseCaseImpl,
+  RevokeClientApplicationConsentUseCaseImpl,
 } from '@fe/application';
 
 // Re-export infrastructure primitives consumed only within this module's hooks/state.
@@ -150,6 +160,15 @@ const fileUploadRepository = new FileApiRepository(
 // Profile picture and batch user lookup live on the auth-service host, same as the upload above.
 const userRepository = new UserApiRepository(authenticatedAuthAxiosClient);
 const clientApplicationRepository = new ClientApplicationApiRepository(resourceAxiosClient);
+// Integration config lives on auth-service: admin routes need the Bearer client, the public
+// (owner-facing) route is unauthenticated.
+const clientApplicationIntegrationRepository = new ClientApplicationIntegrationApiRepository(
+  authenticatedAuthAxiosClient,
+  authAxiosClient,
+);
+const clientApplicationConsentRepository = new ClientApplicationConsentApiRepository(
+  resourceAxiosClient,
+);
 
 // ── Use Cases ─────────────────────────────────────────────────────────────────
 export const registerUseCase = new RegisterUseCaseImpl(authApiRepository);
@@ -316,4 +335,23 @@ export const deleteUserByAdminUseCase = new DeleteUserByAdminUseCaseImpl(userRep
 
 export const registerClientApplicationUseCase = new RegisterClientApplicationUseCaseImpl(
   clientApplicationRepository,
+);
+export const listClientApplicationsUseCase = new ListClientApplicationsUseCaseImpl(
+  clientApplicationRepository,
+);
+export const getClientApplicationUseCase = new GetClientApplicationUseCaseImpl(
+  clientApplicationRepository,
+);
+export const getClientApplicationIntegrationUseCase =
+  new GetClientApplicationIntegrationUseCaseImpl(clientApplicationIntegrationRepository);
+export const updateClientApplicationIntegrationUseCase =
+  new UpdateClientApplicationIntegrationUseCaseImpl(clientApplicationIntegrationRepository);
+export const getPublicClientApplicationIntegrationUseCase =
+  new GetPublicClientApplicationIntegrationUseCaseImpl(clientApplicationIntegrationRepository);
+export const listMyClientApplicationConsentsUseCase =
+  new ListMyClientApplicationConsentsUseCaseImpl(clientApplicationConsentRepository);
+export const approveClientApplicationConsentUseCase =
+  new ApproveClientApplicationConsentUseCaseImpl(clientApplicationConsentRepository);
+export const revokeClientApplicationConsentUseCase = new RevokeClientApplicationConsentUseCaseImpl(
+  clientApplicationConsentRepository,
 );
