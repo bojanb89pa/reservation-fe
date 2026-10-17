@@ -94,3 +94,11 @@ export { UpdateContactInfoUseCaseImpl } from './use-cases/business-contact-info/
 export { RemoveContactInfoUseCaseImpl } from './use-cases/business-contact-info/RemoveContactInfoUseCaseImpl';
 
 export { RegisterClientApplicationUseCaseImpl } from './use-cases/client-application/RegisterClientApplicationUseCaseImpl';
+export { ListClientApplicationsUseCaseImpl } from './use-cases/client-application/ListClientApplicationsUseCaseImpl';
+export { GetClientApplicationUseCaseImpl } from './use-cases/client-application/GetClientApplicationUseCaseImpl';
+export { GetClientApplicationIntegrationUseCaseImpl } from './use-cases/client-application/GetClientApplicationIntegrationUseCaseImpl';
+export { UpdateClientApplicationIntegrationUseCaseImpl } from './use-cases/client-application/UpdateClientApplicationIntegrationUseCaseImpl';
+export { GetPublicClientApplicationIntegrationUseCaseImpl } from './use-cases/client-application/GetPublicClientApplicationIntegrationUseCaseImpl';
+export { ListMyClientApplicationConsentsUseCaseImpl } from './use-cases/client-application/ListMyClientApplicationConsentsUseCaseImpl';
+export { ApproveClientApplicationConsentUseCaseImpl } from './use-cases/client-application/ApproveClientApplicationConsentUseCaseImpl';
+export { RevokeClientApplicationConsentUseCaseImpl } from './use-cases/client-application/RevokeClientApplicationConsentUseCaseImpl';

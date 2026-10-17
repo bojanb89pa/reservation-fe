@@ -14,6 +14,8 @@ let mockRepository: ClientApplicationRepository;
 beforeEach(() => {
   mockRepository = {
     register: vi.fn().mockResolvedValue(mockClientApplication),
+    getAll: vi.fn(),
+    getById: vi.fn(),
   };
 });
 
