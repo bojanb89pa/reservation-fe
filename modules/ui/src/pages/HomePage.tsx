@@ -149,6 +149,7 @@ export function HomePage() {
   useSearchWindow({
     progress: heroProgress,
     enabled: sceneActive,
+    target: heroRef,
     focus: focusOnEnter,
     blur: blurOnLeave,
     canBlur,

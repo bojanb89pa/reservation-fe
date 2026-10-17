@@ -65,6 +65,7 @@ describe('createSearchWindowController', () => {
 
   it('focuses once on entering SEARCH and blurs on leaving', () => {
     const { focus, blur, controller } = setup();
+    controller.markScrolled();
     controller.update(0.1);
     controller.update(0.56);
     controller.update(0.7);
@@ -76,14 +77,52 @@ describe('createSearchWindowController', () => {
 
   it('blurs when scrolling back up past the window', () => {
     const { blur, controller } = setup();
-    controller.update(0.6);
+    controller.sync(0.6);
     controller.update(0.4);
     expect(blur).toHaveBeenCalledTimes(1);
   });
 
+  it('does not focus when the initial state is inside the window', () => {
+    const { focus, controller } = setup();
+    controller.sync(0.6);
+    controller.update(0.6);
+    expect(focus).not.toHaveBeenCalled();
+    expect(controller.isInside()).toBe(true);
+  });
+
+  it('does not focus on entering the window without a user scroll', () => {
+    const { focus, controller } = setup();
+    controller.update(0.1);
+    controller.update(0.6);
+    expect(focus).not.toHaveBeenCalled();
+  });
+
+  it('focuses on entering the window after a scroll', () => {
+    const { focus, controller } = setup();
+    controller.sync(0.1);
+    controller.markScrolled();
+    controller.update(0.6);
+    expect(focus).toHaveBeenCalledTimes(1);
+  });
+
+  it('blurs on leaving with an empty field', () => {
+    const { blur, controller } = setup(true);
+    controller.sync(0.6);
+    controller.update(0.9);
+    expect(blur).toHaveBeenCalledTimes(1);
+  });
+
+  it('re-syncing (enabled change) never focuses', () => {
+    const { focus, controller } = setup();
+    controller.markScrolled();
+    controller.sync(0.1);
+    controller.sync(0.6);
+    expect(focus).not.toHaveBeenCalled();
+  });
+
   it('does not blur when the field has text or the list is open', () => {
     const { blur, controller } = setup(false);
-    controller.update(0.6);
+    controller.sync(0.6);
     controller.update(0.9);
     expect(blur).not.toHaveBeenCalled();
   });
