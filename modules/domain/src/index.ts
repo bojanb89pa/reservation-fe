@@ -101,7 +101,24 @@ export type {
   ClientApplication,
   ClientApplicationScope,
   CreateClientApplicationCommand,
+  ConsentStatus,
+  ClientApplicationLocationConsent,
+  ClientApplicationDetail,
+  OwnerClientApplicationConsent,
+  OwnerClientApplicationConsentLocation,
 } from './entities/ClientApplication';
+export type {
+  TrustedIssuerType,
+  TrustedIssuer,
+  ClientApplicationOAuthScope,
+  ClientApplicationIntegration,
+  UpdateClientApplicationIntegrationCommand,
+  PublicClientApplicationIntegration,
+} from './entities/ClientApplicationIntegration';
+export {
+  TRUSTED_ISSUER_TYPES,
+  CLIENT_APPLICATION_OAUTH_SCOPES,
+} from './entities/ClientApplicationIntegration';
 
 // Errors
 export {
@@ -119,6 +136,10 @@ export {
   ReservationErrorCode,
   BusinessErrorCode,
 } from './errors/ReservationError';
+export {
+  ClientApplicationIntegrationErrorCode,
+  ClientApplicationConsentErrorCode,
+} from './errors/ClientApplicationError';
 
 // Repository interfaces
 export type { AuthRepository } from './repositories/AuthRepository';
@@ -141,6 +162,8 @@ export type { BusinessLocationServiceRepository } from './repositories/BusinessL
 export type { FileUploadRepository } from './repositories/FileUploadRepository';
 export type { UserRepository } from './repositories/UserRepository';
 export type { ClientApplicationRepository } from './repositories/ClientApplicationRepository';
+export type { ClientApplicationIntegrationRepository } from './repositories/ClientApplicationIntegrationRepository';
+export type { ClientApplicationConsentRepository } from './repositories/ClientApplicationConsentRepository';
 
 // Types
 export type { PageRequest, PageResponse } from './types/Page';
@@ -236,6 +259,14 @@ export type { CreateLocalizedBusinessCategoryUseCase } from './use-cases/localiz
 export type { UpdateLocalizedBusinessCategoryUseCase } from './use-cases/localized-business-category/UpdateLocalizedBusinessCategoryUseCase';
 export type { UpsertLocalizedBusinessCategoryTranslationUseCase } from './use-cases/localized-business-category/UpsertLocalizedBusinessCategoryTranslationUseCase';
 export type { RegisterClientApplicationUseCase } from './use-cases/client-application/RegisterClientApplicationUseCase';
+export type { ListClientApplicationsUseCase } from './use-cases/client-application/ListClientApplicationsUseCase';
+export type { GetClientApplicationUseCase } from './use-cases/client-application/GetClientApplicationUseCase';
+export type { GetClientApplicationIntegrationUseCase } from './use-cases/client-application/GetClientApplicationIntegrationUseCase';
+export type { UpdateClientApplicationIntegrationUseCase } from './use-cases/client-application/UpdateClientApplicationIntegrationUseCase';
+export type { GetPublicClientApplicationIntegrationUseCase } from './use-cases/client-application/GetPublicClientApplicationIntegrationUseCase';
+export type { ListMyClientApplicationConsentsUseCase } from './use-cases/client-application/ListMyClientApplicationConsentsUseCase';
+export type { ApproveClientApplicationConsentUseCase } from './use-cases/client-application/ApproveClientApplicationConsentUseCase';
+export type { RevokeClientApplicationConsentUseCase } from './use-cases/client-application/RevokeClientApplicationConsentUseCase';
 
 // Search suggestions
 export type { SearchSuggestion, SearchSuggestionType } from './entities/SearchSuggestion';
