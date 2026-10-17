@@ -15,6 +15,7 @@ const BASE_NAV_ITEMS: NavItem[] = [
   { to: '/dashboard', labelKey: 'dashboard.overview', end: true },
   { to: '/dashboard/businesses', labelKey: 'dashboard.myBusinesses' },
   { to: '/dashboard/reservations', labelKey: 'dashboard.reservations' },
+  { to: '/dashboard/partners', labelKey: 'dashboard.partners' },
 ];
 
 const ADMIN_NAV_ITEMS: NavItem[] = [

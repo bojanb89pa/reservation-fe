@@ -1,0 +1,80 @@
+.topbar {
+  margin-bottom: 28px;
+}
+
+.back {
+  font-size: var(--text-sm);
+  color: var(--primary);
+}
+
+.eyebrow {
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.pageTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--ink-900);
+  margin: 6px 0 0;
+}
+
+.section {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 24px;
+  margin-bottom: 28px;
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 18px;
+  color: var(--ink-900);
+  letter-spacing: -0.02em;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  font-size: var(--text-sm);
+  color: var(--ink-700);
+  margin-bottom: 6px;
+}
+
+.label {
+  font-weight: 500;
+  color: var(--ink-500);
+  min-width: 90px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.empty {
+  font-size: var(--text-sm);
+  color: var(--ink-500);
+}
+
+.success {
+  color: var(--ink-700);
+  margin-bottom: 12px;
+}

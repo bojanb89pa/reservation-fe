@@ -110,6 +110,31 @@ describe('ClientApplicationForm', () => {
     );
   });
 
+  it('submits a LOCATION_LIST scope without a businessId', async () => {
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
+    renderWithClient(<ClientApplicationForm onSubmit={onSubmit} isPending={false} />);
+
+    fireEvent.change(screen.getByLabelText('Application name'), {
+      target: { value: 'Multi Partner' },
+    });
+    fireEvent.click(screen.getByRole('radio', { name: 'Locations from several businesses' }));
+
+    await waitFor(() => expect(screen.getByText('Barber House')).toBeInTheDocument());
+    fireEvent.change(screen.getByLabelText('Business'), { target: { value: 'biz-1' } });
+
+    await waitFor(() => expect(screen.getByText('Main branch')).toBeInTheDocument());
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Main branch' }));
+
+    fireEvent.click(screen.getByRole('button', { name: 'Register application' }));
+
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith({
+        name: 'Multi Partner',
+        scope: { type: 'LOCATION_LIST', locationIds: ['loc-1'] },
+      }),
+    );
+  });
+
   it('submits a CATEGORY scope when the category branch is selected', async () => {
     const onSubmit = vi.fn().mockResolvedValue(undefined);
     renderWithClient(<ClientApplicationForm onSubmit={onSubmit} isPending={false} />);

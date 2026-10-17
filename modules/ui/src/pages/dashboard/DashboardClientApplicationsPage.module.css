@@ -66,3 +66,34 @@
   color: var(--ink-500);
   min-width: 90px;
 }
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.listRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.listLink {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.listMeta {
+  font-size: var(--text-sm);
+  color: var(--ink-500);
+  text-align: right;
+  word-break: break-all;
+}
+
+.empty {
+  font-size: var(--text-sm);
+  color: var(--ink-500);
+}

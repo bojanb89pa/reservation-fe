@@ -1,0 +1,93 @@
+.topbar {
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.pageTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--ink-900);
+  margin: 6px 0 0;
+}
+
+.intro {
+  color: var(--ink-700);
+  font-size: var(--text-sm);
+  margin: 12px 0 0;
+}
+
+.location {
+  margin-bottom: 32px;
+}
+
+.locationTitle {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: var(--ink-900);
+}
+
+.locationAddress {
+  font-size: var(--text-sm);
+  color: var(--ink-500);
+  margin-bottom: 14px;
+}
+
+.statusTitle {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-500);
+  margin: 16px 0 8px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 16px 20px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cardName {
+  font-weight: 600;
+  color: var(--ink-900);
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  font-size: var(--text-sm);
+  color: var(--ink-700);
+}
+
+.label {
+  font-weight: 500;
+  color: var(--ink-500);
+  min-width: 90px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.empty {
+  font-size: var(--text-sm);
+  color: var(--ink-500);
+}
