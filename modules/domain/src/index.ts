@@ -101,6 +101,7 @@ export type {
   ClientApplication,
   ClientApplicationScope,
   CreateClientApplicationCommand,
+  SetClientApplicationEnabledCommand,
   ConsentStatus,
   ClientApplicationLocationConsent,
   ClientApplicationDetail,
@@ -260,6 +261,7 @@ export type { UpdateLocalizedBusinessCategoryUseCase } from './use-cases/localiz
 export type { UpsertLocalizedBusinessCategoryTranslationUseCase } from './use-cases/localized-business-category/UpsertLocalizedBusinessCategoryTranslationUseCase';
 export type { RegisterClientApplicationUseCase } from './use-cases/client-application/RegisterClientApplicationUseCase';
 export type { ListClientApplicationsUseCase } from './use-cases/client-application/ListClientApplicationsUseCase';
+export type { SetClientApplicationEnabledUseCase } from './use-cases/client-application/SetClientApplicationEnabledUseCase';
 export type { GetClientApplicationUseCase } from './use-cases/client-application/GetClientApplicationUseCase';
 export type { GetClientApplicationIntegrationUseCase } from './use-cases/client-application/GetClientApplicationIntegrationUseCase';
 export type { UpdateClientApplicationIntegrationUseCase } from './use-cases/client-application/UpdateClientApplicationIntegrationUseCase';
