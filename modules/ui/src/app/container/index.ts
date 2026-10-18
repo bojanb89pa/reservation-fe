@@ -106,6 +106,7 @@ import {
   RegisterClientApplicationUseCaseImpl,
   ListClientApplicationsUseCaseImpl,
   GetClientApplicationUseCaseImpl,
+  SetClientApplicationEnabledUseCaseImpl,
   GetClientApplicationIntegrationUseCaseImpl,
   UpdateClientApplicationIntegrationUseCaseImpl,
   GetPublicClientApplicationIntegrationUseCaseImpl,
@@ -340,6 +341,9 @@ export const listClientApplicationsUseCase = new ListClientApplicationsUseCaseIm
   clientApplicationRepository,
 );
 export const getClientApplicationUseCase = new GetClientApplicationUseCaseImpl(
+  clientApplicationRepository,
+);
+export const setClientApplicationEnabledUseCase = new SetClientApplicationEnabledUseCaseImpl(
   clientApplicationRepository,
 );
 export const getClientApplicationIntegrationUseCase =
