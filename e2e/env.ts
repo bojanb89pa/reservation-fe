@@ -21,6 +21,9 @@ export const env = {
   /** Mailpit HTTP API (aktivacioni mejlovi). Na staging-u ga nema. */
   mailpitUrl: read('E2E_MAILPIT_URL', 'http://localhost:8025'),
 
+  /** Test OIDC izdavalac (`oidc-issuer` u compose.e2e.yml); samo za E2E, na staging-u ga nema. */
+  oidcIssuer: read('E2E_OIDC_ISSUER', 'http://oidc-issuer:8090'),
+
   oauthClientId: read('E2E_OAUTH_CLIENT_ID', 'reservation'),
   oauthClientSecret: read('E2E_OAUTH_CLIENT_SECRET', 'e2e-secret'),
   oauthRedirectUri: read('E2E_OAUTH_REDIRECT_URI', 'http://localhost:5173/callback'),
