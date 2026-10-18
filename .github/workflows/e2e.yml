@@ -76,6 +76,13 @@ jobs:
       - name: auth-service u /etc/hosts
         run: echo "127.0.0.1 auth-service" | sudo tee -a /etc/hosts
 
+      # Test OIDC izdavalac (compose.e2e.yml) se zove isto iz auth-service
+      # kontejnera i sa runnera; ključevi su samo za E2E i nastaju ovde.
+      - name: oidc-issuer u /etc/hosts i test ključevi
+        run: |
+          echo "127.0.0.1 oidc-issuer" | sudo tee -a /etc/hosts
+          node e2e/oidc-issuer/generate-keys.mjs
+
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
@@ -120,6 +127,7 @@ jobs:
           }
           check auth-service http://auth-service:8081/auth/.well-known/openid-configuration
           check resource-service http://localhost:8080/api/business-categories
+          check oidc-issuer http://oidc-issuer:8090/.well-known/openid-configuration
           check mailpit http://localhost:8025/api/v1/info
           check fe http://localhost:5173/
 
