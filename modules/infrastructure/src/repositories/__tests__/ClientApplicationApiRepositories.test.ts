@@ -19,6 +19,7 @@ function mockClient() {
     get: vi.fn().mockResolvedValue({ data: 'body' }),
     post: vi.fn().mockResolvedValue({ data: 'body' }),
     put: vi.fn().mockResolvedValue({ data: 'body' }),
+    patch: vi.fn().mockResolvedValue({ data: 'body' }),
   };
 }
 
@@ -35,6 +36,22 @@ describe('ClientApplicationApiRepository', () => {
     const repo = new ClientApplicationApiRepository(client as unknown as AxiosInstance);
     await expect(repo.getById('a1')).resolves.toBe('body');
     expect(client.get).toHaveBeenCalledWith('/admin/client-applications/a1');
+  });
+
+  it('setEnabled calls PATCH /admin/client-applications/{id} with { enabled }', async () => {
+    const client = mockClient();
+    const repo = new ClientApplicationApiRepository(client as unknown as AxiosInstance);
+    await expect(repo.setEnabled({ clientApplicationId: 'a1', enabled: false })).resolves.toBe(
+      'body',
+    );
+    expect(client.patch).toHaveBeenCalledWith('/admin/client-applications/a1', {
+      enabled: false,
+    });
+  });
+
+  it('maps 404 on PATCH /admin/client-applications/{id} to NotFoundError', () => {
+    const error = normalizeAxiosError(httpError('patch', '/admin/client-applications/a1', 404));
+    expect(error).toBeInstanceOf(NotFoundError);
   });
 });
 
