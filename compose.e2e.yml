@@ -48,12 +48,26 @@ services:
     ports:
       - "8025:8025"
 
+  # Statički test OIDC izdavalac (discovery + jwks.json), SAMO ZA E2E: ključevi
+  # nastaju u CI-ju (`e2e/oidc-issuer/generate-keys.mjs`) i nigde se drugde ne
+  # koriste. Dostupan kao `oidc-issuer:8090` iz auth-service kontejnera, a sa
+  # runnera preko `127.0.0.1 oidc-issuer` u /etc/hosts.
+  oidc-issuer:
+    image: nginx:1.27-alpine
+    ports:
+      - "8090:8090"
+    volumes:
+      - ./e2e/oidc-issuer/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./e2e/oidc-issuer/www:/usr/share/nginx/html:ro
+
   auth-service:
     image: ghcr.io/bojanb89pa/reservation-auth-service:${BE_IMAGE_TAG:-latest}
     depends_on:
       auth-postgres:
         condition: service_healthy
       mailpit:
+        condition: service_started
+      oidc-issuer:
         condition: service_started
     ports:
       - "8081:8081"

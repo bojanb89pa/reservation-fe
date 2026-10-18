@@ -5,27 +5,43 @@
 // integration endpoint-i bez tajni, i odbijanje token exchange-a koje ne traži
 // spoljnog izdavaoca.
 //
-// NIJE pokriveno (traži izmenu `compose.e2e.yml`, van dozvoljenog opsega ovog
-// agenta): uspešna zamena ID tokena, claim-ovi/scope presek, vezivanje po
-// (issuer, subject)/Google sub, vlasništvo rezervacije (404) i rezervacija
-// 201/422 CLIENT_APPLICATION_LOCATION_CONSENT_NOT_APPROVED. Za to je potreban
-// test OIDC izdavalac (statičan servis sa discovery + jwks.json) dostupan iz
-// auth-service kontejnera.
+// Tiket #330 dodaje (nad test OIDC izdavaocem `oidc-issuer` iz compose.e2e.yml):
+// uspešnu zamenu ID tokena + claim-ove/scope presek, odbijanja (aud, izdavalac
+// drugog partnera, istekao token, loš potpis), vezivanje po (issuer, subject),
+// vlasništvo rezervacije (404 za tuđu) i rezervaciju sa APPROVED / 422 posle opoziva.
+//
+// NIJE pokriveno: isključen partner (nema API-ja za isključivanje; `enabled`
+// se ne može menjati bez upisa u bazu) i vezivanje po Google `sub` (traži
+// postojeći nalog povezan sa Google-om, a Google se ne može simulirati).
 
 import { expect, test } from '../fixtures/auth';
-import { ApiClient, adminCredentials, createActivatedUser } from '../fixtures/api';
+import { ApiClient, adminCredentials, createActivatedUser, uniqueEmail } from '../fixtures/api';
 import {
   ID_TOKEN_TYPE,
+  OIDC_JWKS_URI,
+  approveConsent,
   assertStatus,
+  createBookableLocation,
   createBusinessWithLocation,
+  decodeJwtClaims,
+  exchangeIdToken,
   exchangeToken,
   fetchDetail,
   fetchOwnerConsents,
   fetchUserId,
   integrationBody,
+  oidcIntegrationBody,
+  partnerApi,
+  partnerReservationBody,
   registerPartner,
+  revokeConsent,
   saveIntegration,
   signIdTokenWithUnknownKey,
+  signOidcIdToken,
+  uniqueAudience,
+  uniqueSubject,
+  type BookableLocation,
+  type PartnerReservationDto,
   type ClientApplicationDto,
   type ClientApplicationDetailDto,
   type IntegrationBody,
@@ -327,6 +343,241 @@ test.describe('epic:67 javni endpoint-i partnera i token exchange (odbijanja)', 
       expect(unknownIssuer.body.access_token).toBeUndefined();
     } finally {
       await adminApi.dispose();
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Uspešan token exchange nad test OIDC izdavaocem (`oidc-issuer`, compose.e2e.yml)
+// ---------------------------------------------------------------------------
+
+interface PartnerSetup {
+  adminApi: ApiClient;
+  ownerApi: ApiClient;
+  partner: ClientApplicationDto;
+  audience: string;
+  bookable: BookableLocation;
+}
+
+/** Biznis + rezervabilan resurs + partner sa integracijom koja veruje test izdavaocu (bez saglasnosti). */
+async function setUpPartner(namePrefix: string): Promise<PartnerSetup> {
+  const adminApi = await ApiClient.as(adminCredentials());
+  const owner = await createActivatedUser();
+  const ownerApi = await ApiClient.as(owner);
+  const ownerId = await fetchUserId(adminApi, owner.email);
+  const bookable = await createBookableLocation(adminApi, ownerId);
+  const partner = await registerPartner(adminApi, [bookable.location.id], namePrefix);
+  const audience = uniqueAudience();
+  await saveIntegration(adminApi, partner.id, oidcIntegrationBody(audience));
+  return { adminApi, ownerApi, partner, audience, bookable };
+}
+
+async function tearDown(setup: PartnerSetup): Promise<void> {
+  await setup.ownerApi.dispose();
+  await setup.adminApi.dispose();
+}
+
+test.describe('epic:67 token exchange: uspešna zamena i odbijanja (test OIDC izdavalac)', () => {
+  test('uspešna zamena ID tokena: 10 min, bez refresh tokena, scope je presek, claim-ovi partnerskog tokena', async () => {
+    const setup = await setUpPartner('E2E Partner exchange ok');
+    try {
+      const { partner, audience } = setup;
+      const email = uniqueEmail('guest');
+      const subject = uniqueSubject();
+
+      // Bez `scope`: svi dozvoljeni scope-ovi partnera.
+      const all = await exchangeIdToken(partner.id, signOidcIdToken({ aud: audience, sub: subject, email }));
+      expect(all.status, JSON.stringify(all.body)).toBe(200);
+      expect(all.body.token_type).toBe('Bearer');
+      expect(all.body.issued_token_type).toBe('urn:ietf:params:oauth:token-type:access_token');
+      expect(all.body.refresh_token).toBeUndefined();
+      expect(all.body.expires_in).toBeGreaterThan(540);
+      expect(all.body.expires_in).toBeLessThanOrEqual(600);
+      expect((all.body.scope ?? '').split(' ').sort()).toEqual(['reservation:create', 'reservation:read:own']);
+
+      const claims = decodeJwtClaims(all.body.access_token ?? '');
+      expect(claims['clientApplicationId']).toBe(partner.id);
+      expect(claims['externalIdentityId']).toEqual(expect.any(String));
+      expect(claims['sub']).toBe(claims['externalIdentityId']);
+      expect(claims['guestEmail']).toBe(email);
+      expect(claims['guestEmailVerified']).toBe(true);
+      expect(claims['linkedUserId'] ?? null).toBeNull();
+      expect((claims['scope'] as string[]).slice().sort()).toEqual(['reservation:create', 'reservation:read:own']);
+      const lifetime = (claims['exp'] as number) - (claims['iat'] as number);
+      expect(lifetime).toBeGreaterThan(540);
+      expect(lifetime).toBeLessThanOrEqual(600);
+
+      // Sa `scope`: presek traženog i dozvoljenog (nepoznat scope otpada).
+      const intersection = await exchangeIdToken(partner.id, signOidcIdToken({ aud: audience, sub: subject, email }), {
+        scope: 'reservation:create reservation:delete',
+      });
+      expect(intersection.status, JSON.stringify(intersection.body)).toBe(200);
+      expect(intersection.body.scope).toBe('reservation:create');
+
+      // Nijedan traženi scope nije dozvoljen.
+      const none = await exchangeIdToken(partner.id, signOidcIdToken({ aud: audience }), { scope: 'reservation:delete' });
+      expect(none.status).toBe(400);
+      expect(none.body.error).toBe('invalid_scope');
+      expect(none.body.access_token).toBeUndefined();
+    } finally {
+      await tearDown(setup);
+    }
+  });
+
+  test('odbija pogrešan aud, izdavaoca drugog partnera, istekao token i loš potpis', async () => {
+    const setup = await setUpPartner('E2E Partner exchange odbijanja');
+    try {
+      const { partner, audience, adminApi, bookable } = setup;
+
+      const wrongAudience = await exchangeIdToken(partner.id, signOidcIdToken({ aud: 'neki-drugi-audience' }));
+      expect(wrongAudience.status).toBe(400);
+      expect(wrongAudience.body.error).toBe('invalid_grant');
+      expect(wrongAudience.body.access_token).toBeUndefined();
+
+      // Drugi partner veruje drugom izdavaocu; token test izdavaoca nije za njega.
+      const otherPartner = await registerPartner(adminApi, [bookable.location.id], 'E2E Partner drugi izdavalac');
+      const otherAudience = uniqueAudience();
+      await saveIntegration(
+        adminApi,
+        otherPartner.id,
+        oidcIntegrationBody(otherAudience, {
+          trustedIssuers: [
+            {
+              type: 'OIDC',
+              issuer: 'https://drugi-izdavalac.e2e.reserva.test',
+              jwksUri: OIDC_JWKS_URI,
+              audiences: [otherAudience],
+            },
+          ],
+        }),
+      );
+      const foreignIssuer = await exchangeIdToken(otherPartner.id, signOidcIdToken({ aud: otherAudience }));
+      expect(foreignIssuer.status).toBe(400);
+      expect(foreignIssuer.body.error).toBe('invalid_grant');
+      expect(foreignIssuer.body.access_token).toBeUndefined();
+
+      const expired = await exchangeIdToken(partner.id, signOidcIdToken({ aud: audience, expiresInSeconds: -3600 }));
+      expect(expired.status).toBe(400);
+      expect(expired.body.error).toBe('invalid_grant');
+      expect(expired.body.access_token).toBeUndefined();
+
+      const badSignature = await exchangeIdToken(partner.id, signOidcIdToken({ aud: audience, badSignature: true }));
+      expect(badSignature.status).toBe(400);
+      expect(badSignature.body.error).toBe('invalid_grant');
+      expect(badSignature.body.access_token).toBeUndefined();
+
+      // Kontrola: ispravan token istog partnera prolazi.
+      const valid = await exchangeIdToken(partner.id, signOidcIdToken({ aud: audience }));
+      expect(valid.status, JSON.stringify(valid.body)).toBe(200);
+    } finally {
+      await tearDown(setup);
+    }
+  });
+
+  test('identitet se vezuje po (issuer, subject): isti subject daje isti identitet, drugi subject drugi', async () => {
+    const setup = await setUpPartner('E2E Partner vezivanje');
+    try {
+      const { partner, audience } = setup;
+      const subject = uniqueSubject();
+      const identityOf = async (sub: string, email: string): Promise<unknown> => {
+        const result = await exchangeIdToken(partner.id, signOidcIdToken({ aud: audience, sub, email }));
+        expect(result.status, JSON.stringify(result.body)).toBe(200);
+        return decodeJwtClaims(result.body.access_token ?? '')['externalIdentityId'];
+      };
+
+      const first = await identityOf(subject, uniqueEmail('prvi'));
+      const again = await identityOf(subject, uniqueEmail('drugi'));
+      const other = await identityOf(uniqueSubject(), uniqueEmail('treci'));
+      expect(again).toBe(first);
+      expect(other).not.toBe(first);
+    } finally {
+      await tearDown(setup);
+    }
+  });
+});
+
+test.describe('epic:67 rezervacija partnerskim tokenom', () => {
+  test('rezervacija sa APPROVED saglasnošću prolazi; pre odobravanja i posle opoziva je 422', async () => {
+    const setup = await setUpPartner('E2E Partner rezervacija');
+    try {
+      const { partner, audience, ownerApi, bookable } = setup;
+      const exchange = await exchangeIdToken(partner.id, signOidcIdToken({ aud: audience }));
+      expect(exchange.status, JSON.stringify(exchange.body)).toBe(200);
+      const api = await partnerApi(exchange.body.access_token ?? '');
+      try {
+        const body = partnerReservationBody(bookable);
+        const consentCode = 'CLIENT_APPLICATION_LOCATION_CONSENT_NOT_APPROVED';
+
+        // Pre odobravanja (PENDING).
+        const pending = await api.post('/client-applications/reservations', body);
+        expect(pending.status()).toBe(422);
+        expect(((await pending.json()) as { code?: string }).code).toBe(consentCode);
+
+        const consent = await approveConsent(ownerApi, partner.id);
+        const created = await api.post('/client-applications/reservations', body);
+        expect([200, 201], await created.text()).toContain(created.status());
+        const reservation = (await created.json()) as PartnerReservationDto;
+        expect(reservation.resourceId).toBe(bookable.resourceId);
+        expect(reservation.startTime).toBe(bookable.startTime);
+
+        // Opoziv odmah blokira nove rezervacije (drugi termin, da ne bude 409).
+        await revokeConsent(ownerApi, consent.id);
+        const afterRevoke = await api.post('/client-applications/reservations', {
+          ...body,
+          startTime: bookable.startTime.replace('T08:00', 'T09:00'),
+          endTime: bookable.endTime.replace('T08:30', 'T09:30'),
+        });
+        expect(afterRevoke.status()).toBe(422);
+        expect(((await afterRevoke.json()) as { code?: string }).code).toBe(consentCode);
+      } finally {
+        await api.dispose();
+      }
+    } finally {
+      await tearDown(setup);
+    }
+  });
+
+  test('rezervacija se vezuje za external identity: svoju vidi isti identitet, tuđa je 404; token ne važi na Reserva endpoint-ima', async () => {
+    const setup = await setUpPartner('E2E Partner identitet rezervacije');
+    try {
+      const { partner, audience, ownerApi, bookable } = setup;
+      await approveConsent(ownerApi, partner.id);
+      const subject = uniqueSubject();
+
+      const tokenFor = async (sub: string): Promise<string> => {
+        const exchange = await exchangeIdToken(partner.id, signOidcIdToken({ aud: audience, sub }));
+        expect(exchange.status, JSON.stringify(exchange.body)).toBe(200);
+        return exchange.body.access_token ?? '';
+      };
+      const apiA = await partnerApi(await tokenFor(subject));
+      const apiA2 = await partnerApi(await tokenFor(subject)); // nova zamena, isti identitet
+      const apiB = await partnerApi(await tokenFor(uniqueSubject()));
+      try {
+        const created = await apiA.post('/client-applications/reservations', partnerReservationBody(bookable));
+        expect([200, 201], await created.text()).toContain(created.status());
+        const reservation = (await created.json()) as PartnerReservationDto;
+
+        const own = await apiA2.get(`/client-applications/reservations/${reservation.id}`);
+        expect(own.status()).toBe(200);
+        expect(((await own.json()) as PartnerReservationDto).id).toBe(reservation.id);
+        const ownList = (await (await apiA2.get('/client-applications/reservations')).json()) as PartnerReservationDto[];
+        expect(ownList.map((r) => r.id)).toEqual([reservation.id]);
+
+        // Tuđa i nepostojeća rezervacija daju isti 404; tuđa se ne pojavljuje u listi.
+        expect((await apiB.get(`/client-applications/reservations/${reservation.id}`)).status()).toBe(404);
+        expect((await apiB.get(`/client-applications/reservations/${crypto.randomUUID()}`)).status()).toBe(404);
+        const foreignList = (await (await apiB.get('/client-applications/reservations')).json()) as PartnerReservationDto[];
+        expect(foreignList).toEqual([]);
+
+        // Partnerski token ne važi na Reserva korisničkim endpoint-ima.
+        expect((await apiA.get('/reservations')).status()).toBe(403);
+      } finally {
+        await apiA.dispose();
+        await apiA2.dispose();
+        await apiB.dispose();
+      }
+    } finally {
+      await tearDown(setup);
     }
   });
 });
