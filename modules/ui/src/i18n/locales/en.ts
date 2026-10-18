@@ -371,6 +371,22 @@ const en = {
     consentDecidedAt: 'Decided at',
     notDecided: '—',
   },
+  clientApplicationEnabled: {
+    switchLabel: 'Partner {{name}} enabled',
+    stateEnabled: 'Enabled',
+    stateDisabled: 'Disabled',
+    cancel: 'Cancel',
+    disableTitle: 'Disable {{name}}?',
+    disableBody:
+      'After disabling, token exchange for this partner returns invalid_client. Existing reservations and consents stay untouched.',
+    disableConfirm: 'Disable partner',
+    enableTitle: 'Enable {{name}}?',
+    enableBody:
+      'The partner will be able to exchange tokens again. Existing reservations and consents stay untouched.',
+    enableConfirm: 'Enable partner',
+    errorForbidden: 'You are not allowed to change this partner, or the change failed.',
+    errorNotFound: 'This partner no longer exists.',
+  },
   consentStatus: {
     PENDING: 'Pending',
     APPROVED: 'Approved',

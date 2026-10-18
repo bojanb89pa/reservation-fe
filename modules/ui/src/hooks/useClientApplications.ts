@@ -1,6 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type {
+  ClientApplication,
+  ClientApplicationDetail,
   CreateClientApplicationCommand,
+  SetClientApplicationEnabledCommand,
   UpdateClientApplicationIntegrationCommand,
 } from '@fe/domain';
 import {
@@ -11,6 +14,7 @@ import {
   listClientApplicationsUseCase,
   listMyClientApplicationConsentsUseCase,
   registerClientApplicationUseCase,
+  setClientApplicationEnabledUseCase,
   revokeClientApplicationConsentUseCase,
   updateClientApplicationIntegrationUseCase,
 } from '../app/container';
@@ -39,6 +43,23 @@ export function useClientApplication(id: string) {
     queryKey: [...CLIENT_APPLICATIONS_KEY, id],
     queryFn: () => getClientApplicationUseCase.execute(id),
     enabled: id !== '',
+  });
+}
+
+export function useSetClientApplicationEnabled() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (command: SetClientApplicationEnabledCommand) =>
+      setClientApplicationEnabledUseCase.execute(command),
+    onSuccess: (updated) => {
+      queryClient.setQueryData<ClientApplicationDetail>(
+        [...CLIENT_APPLICATIONS_KEY, updated.id],
+        (old) => (old ? { ...old, ...updated } : old),
+      );
+      queryClient.setQueryData<ClientApplication[]>(CLIENT_APPLICATIONS_KEY, (old) =>
+        old?.map((app) => (app.id === updated.id ? updated : app)),
+      );
+    },
   });
 }
 

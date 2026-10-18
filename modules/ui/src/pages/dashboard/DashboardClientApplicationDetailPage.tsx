@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ClientApplicationIntegrationErrorCode } from '@fe/domain';
+import { ClientApplicationIntegrationErrorCode, NotFoundError } from '@fe/domain';
 import type { UpdateClientApplicationIntegrationCommand } from '@fe/domain';
 import {
   useClientApplication,
   useClientApplicationIntegration,
+  useSetClientApplicationEnabled,
   useUpdateClientApplicationIntegration,
 } from '../../hooks/useClientApplications';
+import { ClientApplicationEnabledSwitch } from '../../components/client-application/ClientApplicationEnabledSwitch';
 import { ClientApplicationIntegrationForm } from '../../components/client-application/ClientApplicationIntegrationForm';
 import { ClientApplicationScopeSummary } from '../../components/client-application/ClientApplicationScopeSummary';
 import styles from './DashboardClientApplicationDetailPage.module.css';
@@ -37,6 +39,9 @@ export function DashboardClientApplicationDetailPage() {
   const integration = useClientApplicationIntegration(id);
   const { mutateAsync: updateIntegration, isPending } = useUpdateClientApplicationIntegration();
 
+  const { mutateAsync: setEnabled, isPending: isTogglePending } = useSetClientApplicationEnabled();
+  const [toggleError, setToggleError] = useState<string | null>(null);
+
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
@@ -52,7 +57,23 @@ export function DashboardClientApplicationDetailPage() {
     }
   };
 
-  const formatDate = (iso: string | null) =>
+  const handleToggle = async (enabled: boolean): Promise<boolean> => {
+    setToggleError(null);
+    try {
+      await setEnabled({ clientApplicationId: id, enabled });
+      return true;
+    } catch (err: unknown) {
+      // WARNING: 403 is not a distinct domain error, so every non-404 failure shows the forbidden/generic message — verify before merging
+      setToggleError(
+        err instanceof NotFoundError
+          ? t('clientApplicationEnabled.errorNotFound')
+          : t('clientApplicationEnabled.errorForbidden'),
+      );
+      return false;
+    }
+  };
+
+  const formatDate =(iso: string | null) =>
     iso ? new Date(iso).toLocaleString(i18n.language) : t('clientApplicationDetail.notDecided');
 
   const detail = application.data;
@@ -82,11 +103,13 @@ export function DashboardClientApplicationDetailPage() {
             </div>
             <div className={styles.row}>
               <span className={styles.label}>{t('dashboardClientApplications.resultEnabled')}</span>
-              <span>
-                {detail.enabled
-                  ? t('dashboardClientApplications.enabledYes')
-                  : t('dashboardClientApplications.enabledNo')}
-              </span>
+              <ClientApplicationEnabledSwitch
+                applicationName={detail.name}
+                enabled={detail.enabled}
+                isPending={isTogglePending}
+                error={toggleError}
+                onConfirm={handleToggle}
+              />
             </div>
             <div className={styles.row}>
               <span className={styles.label}>{t('clientApplicationDetail.scope')}</span>
