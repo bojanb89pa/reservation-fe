@@ -1,5 +1,6 @@
 import { createSign, generateKeyPairSync } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { expect, request, type APIResponse } from '@playwright/test';
 import { env } from '../env';
 import { assertWritable, ApiClient, uniqueEmail, uniqueName } from './api';
@@ -207,7 +208,8 @@ export const OIDC_ISSUER = env.oidcIssuer;
 export const OIDC_JWKS_URI = `${OIDC_ISSUER}/jwks.json`;
 
 function testPrivateKey(): string {
-  return readFileSync(new URL('../oidc-issuer/private/test-private-key.pem', import.meta.url), 'utf8');
+  // Playwright i seed se uvek pokreću iz `e2e/` (`yarn --cwd e2e ...`); `import.meta` ne radi u CJS buildu seed-a.
+  return readFileSync(resolve(process.cwd(), 'oidc-issuer/private/test-private-key.pem'), 'utf8');
 }
 
 export interface IdTokenOptions {
