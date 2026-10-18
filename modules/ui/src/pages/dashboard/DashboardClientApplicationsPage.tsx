@@ -3,14 +3,20 @@ import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import { ReservationSlotTakenError } from '@fe/domain';
 import type { ClientApplication, CreateClientApplicationCommand } from '@fe/domain';
-import { useCreateClientApplication } from '../../hooks/useClientApplications';
+import { Link } from 'react-router-dom';
+import {
+  useClientApplications,
+  useCreateClientApplication,
+} from '../../hooks/useClientApplications';
 import { ClientApplicationForm } from '../../components/client-application/ClientApplicationForm';
+import { ClientApplicationScopeSummary } from '../../components/client-application/ClientApplicationScopeSummary';
 import styles from './DashboardClientApplicationsPage.module.css';
 
 export function DashboardClientApplicationsPage() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { mutateAsync: createClientApplication, isPending } = useCreateClientApplication();
+  const { data: applications, isLoading, isError } = useClientApplications();
 
   const [result, setResult] = useState<ClientApplication | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -67,6 +73,33 @@ export function DashboardClientApplicationsPage() {
           {error}
         </div>
       )}
+
+      <div className={styles.formWrap}>
+        <h3 className={styles.formTitle}>{t('dashboardClientApplications.listTitle')}</h3>
+        {isLoading && <div className="spinner" />}
+        {isError && <div className="error-box">{t('dashboardClientApplications.errorList')}</div>}
+        {applications && applications.length === 0 && (
+          <div className={styles.empty}>{t('dashboardClientApplications.empty')}</div>
+        )}
+        {applications && applications.length > 0 && (
+          <ul className={styles.list}>
+            {applications.map((app) => (
+              <li key={app.id} className={styles.listRow} data-testid="client-application-row">
+                <Link to={`/dashboard/client-applications/${app.id}`} className={styles.listLink}>
+                  {app.name}
+                </Link>
+                <span className={styles.listMeta}>
+                  <ClientApplicationScopeSummary scope={app.scope} />
+                  {' · '}
+                  {app.enabled
+                    ? t('dashboardClientApplications.enabledYes')
+                    : t('dashboardClientApplications.enabledNo')}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
       <div className={styles.formWrap}>
         <h3 className={styles.formTitle}>{t('dashboardClientApplications.formTitle')}</h3>
