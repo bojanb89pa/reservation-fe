@@ -374,6 +374,22 @@ const sr: Translation = {
     consentDecidedAt: 'Datum odluke',
     notDecided: '—',
   },
+  clientApplicationEnabled: {
+    switchLabel: 'Partner {{name}} uključen',
+    stateEnabled: 'Uključen',
+    stateDisabled: 'Isključen',
+    cancel: 'Otkaži',
+    disableTitle: 'Isključiti {{name}}?',
+    disableBody:
+      'Nakon isključivanja, token exchange za ovog partnera vraća invalid_client. Postojeće rezervacije i saglasnosti ostaju netaknute.',
+    disableConfirm: 'Isključi partnera',
+    enableTitle: 'Uključiti {{name}}?',
+    enableBody:
+      'Partner će ponovo moći da razmenjuje tokene. Postojeće rezervacije i saglasnosti ostaju netaknute.',
+    enableConfirm: 'Uključi partnera',
+    errorForbidden: 'Nemate dozvolu da izmenite ovog partnera ili izmena nije uspela.',
+    errorNotFound: 'Ovaj partner više ne postoji.',
+  },
   consentStatus: {
     PENDING: 'Na čekanju',
     APPROVED: 'Odobreno',

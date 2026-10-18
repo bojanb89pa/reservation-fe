@@ -17,6 +17,12 @@ export interface CreateClientApplicationCommand {
   scope: ClientApplicationScope;
 }
 
+/** Admin switches a partner on or off. Existing reservations and consents stay untouched. */
+export interface SetClientApplicationEnabledCommand {
+  clientApplicationId: string;
+  enabled: boolean;
+}
+
 /** Business owner's decision on a partner for one location. */
 export type ConsentStatus = 'PENDING' | 'APPROVED' | 'REVOKED';
 

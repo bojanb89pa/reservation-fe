@@ -4,6 +4,7 @@ import type {
   ClientApplication,
   ClientApplicationDetail,
   CreateClientApplicationCommand,
+  SetClientApplicationEnabledCommand,
 } from '@fe/domain';
 
 export class ClientApplicationApiRepository implements ClientApplicationRepository {
@@ -21,6 +22,14 @@ export class ClientApplicationApiRepository implements ClientApplicationReposito
 
   async getById(id: string): Promise<ClientApplicationDetail> {
     const response = await this.client.get<ClientApplicationDetail>(`/admin/client-applications/${id}`);
+    return response.data;
+  }
+
+  async setEnabled(command: SetClientApplicationEnabledCommand): Promise<ClientApplication> {
+    const response = await this.client.patch<ClientApplication>(
+      `/admin/client-applications/${command.clientApplicationId}`,
+      { enabled: command.enabled },
+    );
     return response.data;
   }
 }

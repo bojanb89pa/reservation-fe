@@ -16,6 +16,7 @@ beforeEach(() => {
     register: vi.fn().mockResolvedValue(mockClientApplication),
     getAll: vi.fn(),
     getById: vi.fn(),
+    setEnabled: vi.fn(),
   };
 });
 

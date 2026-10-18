@@ -10,8 +10,10 @@
 // drugog partnera, istekao token, loš potpis), vezivanje po (issuer, subject),
 // vlasništvo rezervacije (404 za tuđu) i rezervaciju sa APPROVED / 422 posle opoziva.
 //
-// NIJE pokriveno: isključen partner (nema API-ja za isključivanje; `enabled`
-// se ne može menjati bez upisa u bazu) i vezivanje po Google `sub` (traži
+// Tiket #341 (epic 71) dodaje isključivanje/ponovno uključivanje partnera
+// (PATCH /admin/client-applications/{id}, API + UI prekidač sa potvrdom).
+//
+// NIJE pokriveno: vezivanje po Google `sub` (traži
 // postojeći nalog povezan sa Google-om, a Google se ne može simulirati).
 
 import { expect, test } from '../fixtures/auth';
@@ -576,6 +578,137 @@ test.describe('epic:67 rezervacija partnerskim tokenom', () => {
         await apiA2.dispose();
         await apiB.dispose();
       }
+    } finally {
+      await tearDown(setup);
+    }
+  });
+});
+
+test.describe('epic:71 admin isključuje i ponovo uključuje partnera', () => {
+  test('API: isključen partner dobija invalid_client, postojeći token ne rezerviše, ponovo uključen radi; obični korisnik 403', async ({
+    anonymousApi,
+  }) => {
+    const setup = await setUpPartner('E2E Partner isključivanje');
+    try {
+      const { partner, audience, adminApi, ownerApi, bookable } = setup;
+      expect(partner.enabled).toBe(true);
+      const consent = await approveConsent(ownerApi, partner.id);
+
+      const subject = uniqueSubject();
+      const before = await exchangeIdToken(partner.id, signOidcIdToken({ aud: audience, sub: subject }));
+      expect(before.status, JSON.stringify(before.body)).toBe(200);
+      const api = await partnerApi(before.body.access_token ?? '');
+      try {
+        const body = partnerReservationBody(bookable);
+        const created = await api.post('/client-applications/reservations', body);
+        expect([200, 201], await created.text()).toContain(created.status());
+        const reservation = (await created.json()) as PartnerReservationDto;
+
+        // Obični korisnik i anonimni ne smeju da menjaju `enabled`; loš zahtev i nepoznat partner.
+        await assertStatus(
+          await ownerApi.patch(`/admin/client-applications/${partner.id}`, { data: { enabled: false } }),
+          403,
+          'PATCH enabled, običan korisnik',
+        );
+        await assertStatus(
+          await anonymousApi.patch(`/admin/client-applications/${partner.id}`, { data: { enabled: false } }),
+          401,
+          'PATCH enabled, bez tokena',
+        );
+        await assertStatus(
+          await adminApi.patch(`/admin/client-applications/${partner.id}`, { data: {} }),
+          400,
+          'PATCH bez enabled',
+        );
+        await assertStatus(
+          await adminApi.patch(`/admin/client-applications/${crypto.randomUUID()}`, { data: { enabled: false } }),
+          404,
+          'PATCH nepostojeći partner',
+        );
+        expect((await fetchDetail(adminApi, partner.id)).enabled).toBe(true);
+
+        const disabled = await adminApi.patch(`/admin/client-applications/${partner.id}`, { data: { enabled: false } });
+        await assertStatus(disabled, 200, 'PATCH enabled=false');
+        expect(((await disabled.json()) as ClientApplicationDto).enabled).toBe(false);
+
+        // Novi token exchange: invalid_client.
+        const rejected = await exchangeIdToken(partner.id, signOidcIdToken({ aud: audience }));
+        expect(rejected.status).toBe(401);
+        expect(rejected.body.error).toBe('invalid_client');
+        expect(rejected.body.access_token).toBeUndefined();
+
+        // Postojeći (još važeći) token više ne pravi rezervaciju (drugi termin, da ne bude 409).
+        const blocked = await api.post('/client-applications/reservations', {
+          ...body,
+          startTime: bookable.startTime.replace('T08:00', 'T09:00'),
+          endTime: bookable.endTime.replace('T08:30', 'T09:30'),
+        });
+        expect(blocked.status(), await blocked.text()).toBeGreaterThanOrEqual(400);
+        expect(blocked.status()).toBeLessThan(500);
+
+        // Saglasnost ostaje netaknuta.
+        const detail = await fetchDetail(adminApi, partner.id);
+        expect(detail.enabled).toBe(false);
+        expect(detail.consents.find((c) => c.id === consent.id)?.status).toBe('APPROVED');
+
+        const enabled = await adminApi.patch(`/admin/client-applications/${partner.id}`, { data: { enabled: true } });
+        await assertStatus(enabled, 200, 'PATCH enabled=true');
+        expect(((await enabled.json()) as ClientApplicationDto).enabled).toBe(true);
+
+        // Ponovo uključen: nova zamena radi, a isti identitet i dalje vidi ranije napravljenu rezervaciju.
+        const after = await exchangeIdToken(partner.id, signOidcIdToken({ aud: audience, sub: subject }));
+        expect(after.status, JSON.stringify(after.body)).toBe(200);
+        const apiAfter = await partnerApi(after.body.access_token ?? '');
+        try {
+          expect((await apiAfter.get(`/client-applications/reservations/${reservation.id}`)).status()).toBe(200);
+        } finally {
+          await apiAfter.dispose();
+        }
+      } finally {
+        await api.dispose();
+      }
+    } finally {
+      await tearDown(setup);
+    }
+  });
+
+  test('UI: admin isključuje i ponovo uključuje partnera preko prekidača sa potvrdom', async ({ page, loginAs }) => {
+    const setup = await setUpPartner('E2E Partner prekidač');
+    try {
+      const { partner, audience, adminApi } = setup;
+      await loginAs(adminCredentials());
+      await page.goto(`/dashboard/client-applications/${partner.id}`);
+      await expect(page.getByRole('heading', { level: 1, name: partner.name })).toBeVisible();
+
+      const toggle = page.getByRole('switch', { name: `Partner ${partner.name} enabled` });
+      await expect(toggle).toBeChecked();
+
+      // Odustajanje ne menja ništa.
+      await toggle.click();
+      const disableDialog = page.getByRole('dialog', { name: `Disable ${partner.name}?` });
+      await expect(disableDialog).toBeVisible();
+      await disableDialog.getByRole('button', { name: 'Cancel' }).click();
+      await expect(disableDialog).toBeHidden();
+      await expect(toggle).toBeChecked();
+      expect((await fetchDetail(adminApi, partner.id)).enabled).toBe(true);
+
+      await toggle.click();
+      await disableDialog.getByRole('button', { name: 'Disable partner' }).click();
+      await expect(disableDialog).toBeHidden();
+      await expect(toggle).not.toBeChecked();
+      await expect.poll(async () => (await fetchDetail(adminApi, partner.id)).enabled).toBe(false);
+      const rejected = await exchangeIdToken(partner.id, signOidcIdToken({ aud: audience }));
+      expect(rejected.status).toBe(401);
+      expect(rejected.body.error).toBe('invalid_client');
+
+      const enableDialog = page.getByRole('dialog', { name: `Enable ${partner.name}?` });
+      await toggle.click();
+      await enableDialog.getByRole('button', { name: 'Enable partner' }).click();
+      await expect(enableDialog).toBeHidden();
+      await expect(toggle).toBeChecked();
+      await expect.poll(async () => (await fetchDetail(adminApi, partner.id)).enabled).toBe(true);
+      const ok = await exchangeIdToken(partner.id, signOidcIdToken({ aud: audience }));
+      expect(ok.status, JSON.stringify(ok.body)).toBe(200);
     } finally {
       await tearDown(setup);
     }

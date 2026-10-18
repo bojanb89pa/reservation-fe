@@ -2,6 +2,7 @@ import type {
   ClientApplication,
   ClientApplicationDetail,
   CreateClientApplicationCommand,
+  SetClientApplicationEnabledCommand,
 } from '../entities/ClientApplication';
 
 export interface ClientApplicationRepository {
@@ -9,4 +10,6 @@ export interface ClientApplicationRepository {
   getAll(): Promise<ClientApplication[]>;
   /** Rejects with `NotFoundError` when the application does not exist. */
   getById(id: string): Promise<ClientApplicationDetail>;
+  /** Admin only. Rejects with `NotFoundError` when the application does not exist. */
+  setEnabled(command: SetClientApplicationEnabledCommand): Promise<ClientApplication>;
 }

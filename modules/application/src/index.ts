@@ -102,3 +102,4 @@ export { GetPublicClientApplicationIntegrationUseCaseImpl } from './use-cases/cl
 export { ListMyClientApplicationConsentsUseCaseImpl } from './use-cases/client-application/ListMyClientApplicationConsentsUseCaseImpl';
 export { ApproveClientApplicationConsentUseCaseImpl } from './use-cases/client-application/ApproveClientApplicationConsentUseCaseImpl';
 export { RevokeClientApplicationConsentUseCaseImpl } from './use-cases/client-application/RevokeClientApplicationConsentUseCaseImpl';
+export { SetClientApplicationEnabledUseCaseImpl } from './use-cases/client-application/SetClientApplicationEnabledUseCaseImpl';

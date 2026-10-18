@@ -9,6 +9,7 @@ beforeEach(() => {
     register: vi.fn(),
     getAll: vi.fn(),
     getById: vi.fn(),
+    setEnabled: vi.fn(),
   };
 });
 
