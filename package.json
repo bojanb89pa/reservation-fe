@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "dev": "yarn workspace @fe/web dev",
-    "build": "tsc -b && yarn workspace @fe/web build",
+    "build": "tsc -b && yarn workspace @fe/web build && yarn workspace @fe/widget build",
     "preview": "yarn workspace @fe/web preview",
     "typecheck": "tsc -b",
     "lint": "eslint . --max-warnings 0",
