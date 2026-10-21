@@ -112,7 +112,25 @@ export async function openHostPage(page: Page, options: HostPageOptions): Promis
       ? route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>attacker</title>' })
       : route.fulfill({ status: 404, body: '' }),
   );
+
+  // Dijagnostika: ako loader ne napravi iframe, CI log kaže zašto (status widget.js, greške u konzoli).
+  const diagnostics: string[] = [];
+  page.on('console', (m) => {
+    if (m.type() === 'error' || m.type() === 'warning') diagnostics.push(`console.${m.type()}: ${m.text()}`);
+  });
+  page.on('pageerror', (e) => diagnostics.push(`pageerror: ${e.message}`));
+  page.on('requestfailed', (r) => diagnostics.push(`requestfailed: ${r.url()} ${r.failure()?.errorText ?? ''}`));
+  page.on('response', (r) => {
+    if (r.url().includes('/widget.js') || r.url().includes('/widget/'))
+      diagnostics.push(`response: ${r.status()} ${r.url()} ${r.headers()['content-type'] ?? ''}`);
+  });
+
   await page.goto(`${origin}/`);
+  try {
+    await page.locator('iframe[title="Reserva"]').waitFor({ state: 'attached', timeout: 15_000 });
+  } catch {
+    throw new Error(`loader nije napravio iframe na ${origin}:\n${diagnostics.join('\n') || '(bez dijagnostike)'}`);
+  }
 }
 
 export function widgetIframe(page: Page): FrameLocator {
