@@ -18,5 +18,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["apps/web/src", "modules/*/src"]
+  "include": ["apps/web/src", "apps/widget/src", "modules/*/src"]
 }

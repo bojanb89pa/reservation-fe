@@ -120,6 +120,48 @@ export {
   TRUSTED_ISSUER_TYPES,
   CLIENT_APPLICATION_OAUTH_SCOPES,
 } from './entities/ClientApplicationIntegration';
+export type {
+  ClientApplicationWidgetLocation,
+  ClientApplicationWidgetConfig,
+  WidgetConfig,
+  WidgetUnavailableReason,
+  WidgetAvailability,
+  WidgetTheme,
+  WidgetLocale,
+} from './entities/ClientApplicationWidget';
+export {
+  WIDGET_UNAVAILABLE_REASONS,
+  DEFAULT_WIDGET_THEME,
+  DEFAULT_WIDGET_LOCALE,
+  toWidgetTheme,
+  toWidgetLocale,
+} from './entities/ClientApplicationWidget';
+export type { ExchangeIdentityTokenCommand, TokenExchangeResult } from './entities/TokenExchange';
+export type {
+  CreateClientApplicationReservationCommand,
+  ClientApplicationReservation,
+  ClientApplicationReservationServiceInfo,
+} from './entities/ClientApplicationReservation';
+export type {
+  WidgetProtocolVersion,
+  WidgetMessageTypeValue,
+  WidgetReadyMessage,
+  WidgetNeedIdentityMessage,
+  WidgetIdentityMessage,
+  WidgetResizeMessage,
+  ReservationCreatedPayload,
+  WidgetReservationCreatedMessage,
+  WidgetUnavailableMessage,
+  WidgetToHostMessage,
+  HostToWidgetMessage,
+  WidgetMessage,
+} from './entities/WidgetMessage';
+export {
+  WIDGET_PROTOCOL_VERSION,
+  WidgetMessageType,
+  toReservationCreatedPayload,
+  parseWidgetMessage,
+} from './entities/WidgetMessage';
 
 // Errors
 export {
@@ -141,6 +183,7 @@ export {
   ClientApplicationIntegrationErrorCode,
   ClientApplicationConsentErrorCode,
 } from './errors/ClientApplicationError';
+export { TokenExchangeError, TokenExchangeErrorCode } from './errors/TokenExchangeError';
 
 // Repository interfaces
 export type { AuthRepository } from './repositories/AuthRepository';
@@ -165,6 +208,8 @@ export type { UserRepository } from './repositories/UserRepository';
 export type { ClientApplicationRepository } from './repositories/ClientApplicationRepository';
 export type { ClientApplicationIntegrationRepository } from './repositories/ClientApplicationIntegrationRepository';
 export type { ClientApplicationConsentRepository } from './repositories/ClientApplicationConsentRepository';
+export type { ClientApplicationWidgetRepository } from './repositories/ClientApplicationWidgetRepository';
+export type { TokenExchangeRepository } from './repositories/TokenExchangeRepository';
 
 // Types
 export type { PageRequest, PageResponse } from './types/Page';
@@ -174,6 +219,7 @@ export type { AdminUserSearchFilter } from './types/AdminUserSearchFilter';
 export type { DiscoverySearchQuery } from './types/DiscoverySearchQuery';
 export type { LoginTheme, LoginLanguage } from './types/LoginPreferences';
 export type { SearchUsersQuery } from './types/SearchUsersQuery';
+export type { WidgetMountOptions } from './types/WidgetMountOptions';
 export {
   DEFAULT_LOGIN_THEME,
   DEFAULT_LOGIN_LANGUAGE,
@@ -269,6 +315,9 @@ export type { GetPublicClientApplicationIntegrationUseCase } from './use-cases/c
 export type { ListMyClientApplicationConsentsUseCase } from './use-cases/client-application/ListMyClientApplicationConsentsUseCase';
 export type { ApproveClientApplicationConsentUseCase } from './use-cases/client-application/ApproveClientApplicationConsentUseCase';
 export type { RevokeClientApplicationConsentUseCase } from './use-cases/client-application/RevokeClientApplicationConsentUseCase';
+export type { GetWidgetConfigUseCase } from './use-cases/widget/GetWidgetConfigUseCase';
+export type { ExchangeIdentityTokenUseCase } from './use-cases/widget/ExchangeIdentityTokenUseCase';
+export type { CreateClientApplicationReservationUseCase } from './use-cases/widget/CreateClientApplicationReservationUseCase';
 
 // Search suggestions
 export type { SearchSuggestion, SearchSuggestionType } from './entities/SearchSuggestion';

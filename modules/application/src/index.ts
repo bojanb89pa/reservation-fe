@@ -103,3 +103,12 @@ export { ListMyClientApplicationConsentsUseCaseImpl } from './use-cases/client-a
 export { ApproveClientApplicationConsentUseCaseImpl } from './use-cases/client-application/ApproveClientApplicationConsentUseCaseImpl';
 export { RevokeClientApplicationConsentUseCaseImpl } from './use-cases/client-application/RevokeClientApplicationConsentUseCaseImpl';
 export { SetClientApplicationEnabledUseCaseImpl } from './use-cases/client-application/SetClientApplicationEnabledUseCaseImpl';
+
+export { GetWidgetConfigUseCaseImpl } from './use-cases/widget/GetWidgetConfigUseCaseImpl';
+export { ExchangeIdentityTokenUseCaseImpl } from './use-cases/widget/ExchangeIdentityTokenUseCaseImpl';
+export { CreateClientApplicationReservationUseCaseImpl } from './use-cases/widget/CreateClientApplicationReservationUseCaseImpl';
+export {
+  resolveWidgetAvailability,
+  mapReservationErrorToUnavailableReason,
+} from './use-cases/widget/resolveWidgetAvailability';
+export { isAllowedMessageOrigin } from './use-cases/widget/isAllowedMessageOrigin';

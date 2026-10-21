@@ -2,6 +2,7 @@ import {
   authAxiosClient,
   authenticatedAuthAxiosClient,
   resourceAxiosClient,
+  publicResourceAxiosClient,
 } from '@fe/infrastructure';
 import {
   AuthApiRepository,
@@ -27,6 +28,8 @@ import {
   ClientApplicationApiRepository,
   ClientApplicationIntegrationApiRepository,
   ClientApplicationConsentApiRepository,
+  ClientApplicationWidgetApiRepository,
+  TokenExchangeApiRepository,
 } from '@fe/infrastructure';
 import {
   RegisterUseCaseImpl,
@@ -113,6 +116,9 @@ import {
   ListMyClientApplicationConsentsUseCaseImpl,
   ApproveClientApplicationConsentUseCaseImpl,
   RevokeClientApplicationConsentUseCaseImpl,
+  GetWidgetConfigUseCaseImpl,
+  ExchangeIdentityTokenUseCaseImpl,
+  CreateClientApplicationReservationUseCaseImpl,
 } from '@fe/application';
 
 // Re-export infrastructure primitives consumed only within this module's hooks/state.
@@ -359,3 +365,19 @@ export const approveClientApplicationConsentUseCase =
 export const revokeClientApplicationConsentUseCase = new RevokeClientApplicationConsentUseCaseImpl(
   clientApplicationConsentRepository,
 );
+
+// Reserva booking widget: widget-config and booking go through the public client (never the
+// Reserva user session); the partner access token is passed explicitly per request.
+const clientApplicationWidgetRepository = new ClientApplicationWidgetApiRepository(
+  publicResourceAxiosClient,
+);
+const tokenExchangeRepository = new TokenExchangeApiRepository(authAxiosClient);
+export const getWidgetConfigUseCase = new GetWidgetConfigUseCaseImpl(
+  clientApplicationWidgetRepository,
+  clientApplicationIntegrationRepository,
+);
+export const exchangeIdentityTokenUseCase = new ExchangeIdentityTokenUseCaseImpl(
+  tokenExchangeRepository,
+);
+export const createClientApplicationReservationUseCase =
+  new CreateClientApplicationReservationUseCaseImpl(clientApplicationWidgetRepository);

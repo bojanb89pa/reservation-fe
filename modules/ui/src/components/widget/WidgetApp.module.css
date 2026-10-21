@@ -1,0 +1,36 @@
+/* The root is measured for `reserva:resize`, so it must size to its content, not the viewport. */
+.root {
+  padding: var(--space-3, 12px);
+  background: var(--bg);
+  color: var(--ink-900);
+}
+
+.message {
+  margin: 0;
+  padding: var(--space-4, 16px);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg, 12px);
+  background: var(--surface);
+  color: var(--ink-700);
+  font-family: var(--font-ui);
+}
+
+.created {
+  composes: message;
+  border-color: var(--color-success);
+}
+
+.createdTitle {
+  margin: 0 0 var(--space-1, 4px);
+  color: var(--ink-900);
+  font-weight: 600;
+}
+
+.createdWhen {
+  margin: 0;
+  font-family: var(--font-mono);
+}
+
+.error {
+  margin-bottom: var(--space-3, 12px);
+}
