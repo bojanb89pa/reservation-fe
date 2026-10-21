@@ -122,6 +122,7 @@ export function integrationBody(overrides: Partial<IntegrationBody> = {}): Integ
         type: 'OIDC',
         issuer: 'https://issuer.e2e.reserva.test',
         jwksUri: 'https://issuer.e2e.reserva.test/jwks.json',
+        inlineJwk: null,
         audiences: ['e2e-partner-audience'],
       },
     ],
