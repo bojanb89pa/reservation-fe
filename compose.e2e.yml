@@ -15,7 +15,7 @@ x-e2e-common: &e2e-common
   AUTH_ISSUER_URI: http://auth-service:8081/auth
   AUTH_OAUTH2_AUTHORIZE_URL: http://auth-service:8081/auth/oauth2/authorize
   AUTH_OAUTH2_TOKEN_URL: http://auth-service:8081/auth/oauth2/token
-  CORS_ALLOWED_ORIGINS: http://localhost:5173,http://localhost:5175
+  CORS_ALLOWED_ORIGINS: http://localhost:5173
   STORAGE_BASE_PATH: /tmp/reserva-storage
 
 services:
@@ -110,6 +110,9 @@ services:
       - "8080:8080"
     environment:
       <<: *e2e-common
+      # Demo partner sajt (5175) menja ID token za sesiju na resource-service-u.
+      # Samo ovde: auth-service ostaje na jednom origin-u (odjava ga koristi).
+      CORS_ALLOWED_ORIGINS: http://localhost:5173,http://localhost:5175
       RESOURCE_DB_HOST: resource-postgres
       RESOURCE_DB_PORT: "5432"
       RESOURCE_DB_NAME: reservation_resource
