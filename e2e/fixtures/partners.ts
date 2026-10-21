@@ -50,7 +50,7 @@ export interface OwnerConsentDto {
 }
 
 export interface IntegrationBody {
-  trustedIssuers: { type: 'OIDC' | 'PARTNER_KEY'; issuer: string; jwksUri: string | null; audiences: string[] }[];
+  trustedIssuers: { type: 'OIDC' | 'PARTNER_KEY'; issuer: string; jwksUri: string | null; inlineJwk?: string | null; audiences: string[] }[];
   allowedOrigins: string[];
   allowedScopes: string[];
 }

@@ -64,6 +64,30 @@ describe('useWidgetBridge (iframe side)', () => {
     expect(postMessage.mock.calls.map((call) => call[1])).not.toContain('*');
   });
 
+  it('remembers the tokenType of the identity message', () => {
+    const { result } = renderHook(() =>
+      useWidgetBridge({ parentOrigin: PARTNER, allowedOrigins: [PARTNER] }),
+    );
+    expect(result.current.getIdentityTokenType()).toBeUndefined();
+    act(() =>
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          origin: PARTNER,
+          source: window.parent,
+          data: {
+            v: WIDGET_PROTOCOL_VERSION,
+            type: WidgetMessageType.IDENTITY,
+            idToken: 'assertion',
+            tokenType: 'jwt',
+          },
+        }),
+      ),
+    );
+    expect(result.current.getIdentityTokenType()).toBe('jwt');
+    act(() => identityMessage(PARTNER, 'plain'));
+    expect(result.current.getIdentityTokenType()).toBeUndefined();
+  });
+
   it('requestIdentity resolves with the next identity message', async () => {
     vi.spyOn(window.parent, 'postMessage').mockImplementation(() => undefined);
     const { result } = renderHook(() =>
