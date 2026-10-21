@@ -6,6 +6,7 @@ import {
   ClientApplicationIntegrationErrorCode,
   NotFoundError,
   UnprocessableEntityError,
+  ValidationError,
 } from '@fe/domain';
 import { DashboardClientApplicationDetailPage } from '../DashboardClientApplicationDetailPage';
 import '../../../i18n';
@@ -146,5 +147,16 @@ describe('DashboardClientApplicationDetailPage', () => {
       }),
     );
     expect(await screen.findByRole('alert')).toHaveTextContent(/allowed origin is invalid/i);
+  });
+
+  it('translates the 400 partner_key_invalid key', async () => {
+    updateIntegration.execute.mockRejectedValue(
+      new ValidationError(ClientApplicationIntegrationErrorCode.PARTNER_KEY_INVALID),
+    );
+    renderPage();
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Save integration' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(/partner key is invalid/i);
   });
 });

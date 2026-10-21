@@ -423,6 +423,22 @@ const sr: Translation = {
     errorOriginInvalid:
       'Origin nije ispravan (koristi scheme://host[:port] bez putanje i završne kose crte)',
     errorScopeUnsupported: 'Jedan od dozvoljenih scope-ova nije podržan',
+    errorPartnerKeyInvalid:
+      'Partnerski ključ nije ispravan (navedi tačno jedno: JWKS URL ili javni RSA / EC P-256 JWK)',
+    keySource: 'Izvor ključa izdavaoca {{n}}',
+    keySourceJwksUri: 'JWKS URL',
+    keySourceInlineJwk: 'Inline JWK',
+    issuerInlineJwk: 'Inline JWK izdavaoca {{n}} (JSON)',
+    inlineJwkPlaceholder: '{"kty":"RSA","n":"…","e":"AQAB"}',
+    partnerKeyProblem: {
+      ISSUER_INVALID: 'Izdavalac ne sme biti prazan niti sadržati razmake',
+      KEY_MISSING: 'Popuni JWKS URL ili inline JWK',
+      KEY_AMBIGUOUS: 'Popuni samo jedno: JWKS URL ili inline JWK',
+      JWKS_URI_NOT_ABSOLUTE: 'JWKS URL mora biti apsolutan URL (https://…)',
+      INLINE_JWK_NOT_JSON_OBJECT: 'Inline JWK mora biti JSON objekat',
+      INLINE_JWK_UNSUPPORTED_KEY: 'Ključ mora biti RSA, ili EC sa krivom P-256',
+      INLINE_JWK_PRIVATE: 'Ključ mora biti samo javni (ukloni privatne članove poput "d")',
+    },
   },
   dashboardPartners: {
     title: 'Partneri',
@@ -714,7 +730,8 @@ const sr: Translation = {
   legal: {
     eyebrow: 'Pravne informacije',
     lastUpdated: 'Poslednja izmena',
-    notice: 'Ovaj tekst opisuje kako Reserva danas radi. To su opšte informacije, a ne pravni savet.',
+    notice:
+      'Ovaj tekst opisuje kako Reserva danas radi. To su opšte informacije, a ne pravni savet.',
     contactTitle: 'Kontakt',
     contactText: 'Pitanja ili zahtevi u vezi sa vašim podacima ili ovim uslovima:',
     agreeNote: 'Nastavkom prihvatate',

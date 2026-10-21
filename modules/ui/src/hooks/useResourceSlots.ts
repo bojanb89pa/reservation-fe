@@ -2,13 +2,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getResourceSlotsUseCase } from '../app/container';
 
 export const slotKeys = {
-  byRange: (
-    resourceId: string,
-    serviceId: string,
-    from: string,
-    to: string,
-    duration?: number,
-  ) => ['resource-slots', resourceId, serviceId, from, to, duration ?? null] as const,
+  byRange: (resourceId: string, serviceId: string, from: string, to: string, duration?: number) =>
+    ['resource-slots', resourceId, serviceId, from, to, duration ?? null] as const,
 };
 
 export function useResourceSlots(

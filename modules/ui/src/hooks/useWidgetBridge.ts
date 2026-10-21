@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { WIDGET_PROTOCOL_VERSION, WidgetMessageType, parseWidgetMessage } from '@fe/domain';
-import type { WidgetToHostMessage } from '@fe/domain';
+import type { IdentityTokenType, WidgetToHostMessage } from '@fe/domain';
 import { isAllowedMessageOrigin } from '@fe/application';
 
 const IDENTITY_TIMEOUT_MS = 10_000;
@@ -28,6 +28,7 @@ export function useWidgetBridge({ parentOrigin, allowedOrigins }: Options) {
     isAllowedMessageOrigin(parentOrigin, allowedOrigins);
   const [identityToken, setIdentityToken] = useState<IdentityToken>(undefined);
   const waitersRef = useRef<Array<(idToken: string | null) => void>>([]);
+  const tokenTypeRef = useRef<IdentityTokenType | undefined>(undefined);
 
   const send = useCallback(
     (message: WidgetToHostMessage) => {
@@ -47,6 +48,7 @@ export function useWidgetBridge({ parentOrigin, allowedOrigins }: Options) {
       }
       const message = parseWidgetMessage(event.data);
       if (message?.type !== WidgetMessageType.IDENTITY) return;
+      tokenTypeRef.current = message.tokenType;
       setIdentityToken(message.idToken);
       const waiters = waitersRef.current;
       waitersRef.current = [];
@@ -75,5 +77,8 @@ export function useWidgetBridge({ parentOrigin, allowedOrigins }: Options) {
     [send],
   );
 
-  return { trusted, send, identityToken, requestIdentity };
+  /** `tokenType` of the latest identity message; `undefined` means `id_token`. */
+  const getIdentityTokenType = useCallback(() => tokenTypeRef.current, []);
+
+  return { trusted, send, identityToken, requestIdentity, getIdentityTokenType };
 }

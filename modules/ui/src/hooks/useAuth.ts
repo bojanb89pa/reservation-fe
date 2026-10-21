@@ -1,7 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { toLoginTheme, toLoginLanguage } from '@fe/domain';
 import { useAuthStore } from '../state/authStore';
-import { authApiRepository, env, tokenStorage, setLoginCookiesBeforeAuthRedirect } from '../app/container';
+import {
+  authApiRepository,
+  env,
+  tokenStorage,
+  setLoginCookiesBeforeAuthRedirect,
+} from '../app/container';
 
 export function useIsAdmin(): boolean {
   const session = useAuthStore((s) => s.session);

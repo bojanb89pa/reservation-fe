@@ -115,20 +115,50 @@ Napomena: dekodiranje tokena u primeru služi samo za proveru isteka. Potpis pro
 
 ## 4. Put 2: partner ima backend i sam potpisuje tvrdnju
 
-> **Status:** backend podrška za put 2 stiže u kasnijem epicu (reservation-agents #77). Do tada je put 2 samo opisan. Detalji ključa (`PARTNER_KEY`) i zaštite od ponavljanja `jti` opisani su u planu (`docs/plan-faza-2-widget-partneri.md` u repou reservation-agents). Tačne vrednosti claim-ova (npr. `iss` i `aud`) uskladite sa planom i sa Reservom pre puštanja u rad.
+Partner sa sopstvenim backend-om potpisuje kratkotrajnu tvrdnju (JWT) o identitetu svog prijavljenog korisnika. Front dobija taj token od vašeg backend-a i vraća ga kroz `getIdentityToken`. Reserva proverava potpis vašim javnim ključem, pa vam nije potreban OIDC izdavalac.
 
-Partner sa sopstvenim backend-om potpisuje kratkotrajnu tvrdnju o identitetu svog prijavljenog korisnika. Front dobija taj token od vašeg backend-a i vraća ga kroz `getIdentityToken`.
+### Registracija ključa
 
-Obavezni claim-ovi:
+Administrator Reserve u integraciji partnera dodaje pouzdanog izdavaoca tipa `PARTNER_KEY`:
 
-| Claim | Značenje |
-|---|---|
-| `iss` | Identifikator partnera kao izdavaoca. |
-| `sub` | Stabilan identifikator korisnika kod partnera. |
-| `aud` | Odredište tvrdnje (Reserva). |
-| `exp` | Rok važenja. Držite ga kratkim, nekoliko minuta. |
-| `iat` | Vreme izdavanja. |
-| `jti` | Jedinstven ID tvrdnje, za zaštitu od ponavljanja. Svaka tvrdnja dobija nov `jti`. |
+- `issuer`: vaš identifikator (URL ili neki neprozirni ID, bez razmaka). To je `iss` u svakoj tvrdnji.
+- Javni ključ, **tačno jedan** od dva izvora:
+  - **JWKS URL**: apsolutan URL na kom objavljujete JWKS, ili
+  - **Inline JWK**: jedan javni JWK kao JSON objekat.
+- Ključ je `RSA` ili `EC` sa krivom `P-256`, bez privatnih članova (`d`, `p`, `q`, `dp`, `dq`, `qi`). Ključ sa privatnim članom se odbija.
+- `audiences` se za `PARTNER_KEY` ne popunjava (šalje se `[]`).
+
+Neispravan ključ, ili oba/nijedan izvor: backend vraća 400 (`partner_key_invalid`).
+
+### Widget
+
+Dodajte `identityTokenType: 'jwt'` u opcije `mount`. Bez toga widget šalje token kao ID token (put 1):
+
+```js
+window.ReservaWidget.push(['mount', '#reserva-widget', {
+  clientId: '<javni client application id>',
+  locationId: '<id lokacije>',
+  identityTokenType: 'jwt', // 'id_token' (podrazumevano, put 1) | 'jwt' (put 2)
+  getIdentityToken,         // vraća vašu potpisanu tvrdnju
+}]);
+```
+
+### Zaglavlje i claim-ovi
+
+`alg` je `RS256` ili `ES256`. `kid` je opcion i koristi se za izbor ključa iz JWKS-a.
+
+| Claim | Obavezan | Značenje |
+|---|---|---|
+| `iss` | da | Registrovani `PARTNER_KEY` izdavalac. |
+| `aud` | da | Mora sadržati `reserva`. |
+| `sub` | da | Stabilan identifikator korisnika kod partnera. |
+| `email` | da | Samo kontakt podatak. Nikad se ne koristi za vezivanje naloga. |
+| `email_verified` | ne | Da li je email potvrđen. |
+| `exp` | da | Najviše 300 s od prijema tvrdnje i od `iat`. |
+| `iat` | ne | Vreme izdavanja. |
+| `jti` | da | Jedinstven po partneru. Ponovljen `jti` se odbija, pa svaka tvrdnja dobija nov. |
+
+Dozvoljeno odstupanje sata je 60 s.
 
 Privatni ključ čuva se samo na serveru: u tajnama okruženja, nikad u front kodu, repou ni odgovoru API-ja.
 
@@ -142,13 +172,13 @@ import { randomUUID } from 'node:crypto';
 const privateKey = await importPKCS8(process.env.PARTNER_KEY, 'ES256');
 
 export async function signIdentityAssertion(user) {
-  return new SignJWT({})
+  return new SignJWT({ email: user.email, email_verified: user.emailVerified })
     .setProtectedHeader({ alg: 'ES256', kid: process.env.PARTNER_KEY_ID })
-    .setIssuer('<iss>')
+    .setIssuer('<iss>')       // registrovani PARTNER_KEY izdavalac
     .setSubject(user.id)
-    .setAudience('<aud>')
+    .setAudience('reserva')
     .setIssuedAt()
-    .setExpirationTime('5m')
+    .setExpirationTime('5m')  // najviše 300 s
     .setJti(randomUUID())
     .sign(privateKey);
 }
@@ -171,6 +201,27 @@ getIdentityToken: async () => {
   return (await response.json()).token; // svež token za svaki poziv
 },
 ```
+
+### Šta Reserva radi sa tvrdnjom
+
+Widget menja tvrdnju za Reserva token pozivom `POST /auth/oauth2/token` (`application/x-www-form-urlencoded`):
+
+| Polje | Vrednost |
+|---|---|
+| `grant_type` | `urn:ietf:params:oauth:grant-type:token-exchange` |
+| `client_id` | javni client application id |
+| `subject_token` | vaša potpisana tvrdnja |
+| `subject_token_type` | `urn:ietf:params:oauth:token-type:jwt` |
+| `scope` | opciono |
+
+Moguće greške:
+
+- `invalid_grant`: tvrdnja je odbijena (potpis, `iss`, `aud`, `exp`, ponovljen `jti`...).
+- `invalid_client`: partner je nepoznat ili isključen.
+- `invalid_scope`: traženi scope nije dozvoljen partneru.
+- `invalid_request`: pogrešan `subject_token_type`.
+
+Dobijeni Reserva token služi za pravljenje rezervacije, koja nosi `externalIdentityId` korisnika.
 
 ## 5. Bezbednosne napomene
 

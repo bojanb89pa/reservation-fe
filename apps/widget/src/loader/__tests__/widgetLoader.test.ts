@@ -161,6 +161,21 @@ describe('widget.js loader', () => {
       );
     });
 
+    it('sends tokenType when identityTokenType is set', async () => {
+      const { iframe, api } = setup({ identityTokenType: 'jwt' });
+      const postMessage = vi.spyOn(iframe.contentWindow!, 'postMessage');
+      await api.refreshIdentity();
+      expect(postMessage).toHaveBeenCalledWith(
+        {
+          v: WIDGET_PROTOCOL_VERSION,
+          type: WidgetMessageType.IDENTITY,
+          idToken: 'id-token',
+          tokenType: 'jwt',
+        },
+        RESERVA,
+      );
+    });
+
     it('sends a null token for a guest or when getIdentityToken throws', async () => {
       const { iframe, api } = setup({
         getIdentityToken: vi.fn().mockRejectedValue(new Error('boom')),
