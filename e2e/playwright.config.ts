@@ -22,12 +22,18 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      testIgnore: '**/responsive/**',
+      testIgnore: ['**/responsive/**', '**/widget-booking.spec.ts'],
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      // Widget specovi serviraju host stranicu preko `page.route` sa "lažnog" origin-a
+      // (javni address space) koji učitava widget.js sa loopback-a; Chromium Local Network
+      // Access provera to inače blokira. Zastavice važe samo ovde: na celom `chromium`
+      // projektu su oborile odjavu u demo-prijava.spec.ts.
+      name: 'widget',
+      testMatch: '**/widget-booking.spec.ts',
       use: {
         ...devices['Desktop Chrome'],
-        // Widget specovi serviraju host stranicu preko `page.route` sa "lažnog" origin-a
-        // (javni address space) koji učitava widget.js sa loopback-a; Chromium Local Network
-        // Access provera to inače blokira. Ovo ne menja ponašanje aplikacije.
         launchOptions: {
           args: [
             '--disable-features=LocalNetworkAccessChecks,PrivateNetworkAccessSendPreflights,PrivateNetworkAccessForNavigations,BlockInsecurePrivateNetworkRequests',

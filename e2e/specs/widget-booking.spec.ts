@@ -350,8 +350,14 @@ test.describe('epic:75 widget: provera origin-a poruka', () => {
         );
         parent.postMessage({ v: 1, type: 'reserva:unavailable', reason: 'PARTNER_DISABLED' }, '*');
         parent.postMessage({ v: 1, type: 'reserva:resize', height: 5000 }, '*');
-        // Napadač → widget iframe, sa ispravnim ID tokenom.
-        parent.frames[0]!.postMessage({ v: 1, type: 'reserva:identity', idToken: token }, '*');
+        // Napadač → widget iframe, sa ispravnim ID tokenom. Napadačev iframe je u HTML-u, a
+        // widget iframe loader pravi kasnije, pa `frames[0]` je sam napadač: šalje se svim
+        // ostalim frame-ovima roditelja.
+        for (let i = 0; i < parent.frames.length; i++) {
+          if (parent.frames[i] !== window) {
+            parent.frames[i]!.postMessage({ v: 1, type: 'reserva:identity', idToken: token }, '*');
+          }
+        }
       }, validToken);
 
       await expect
