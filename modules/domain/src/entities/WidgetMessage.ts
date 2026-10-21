@@ -2,6 +2,8 @@ import type { ClientApplicationReservation } from './ClientApplicationReservatio
 import type { ReservationStatus } from './Reservation';
 import type { WidgetUnavailableReason } from './ClientApplicationWidget';
 import { WIDGET_UNAVAILABLE_REASONS } from './ClientApplicationWidget';
+import type { IdentityTokenType } from './TokenExchange';
+import { IDENTITY_TOKEN_TYPES } from './TokenExchange';
 
 /**
  * Versioned postMessage protocol between the loader (`widget.js`, on the partner page)
@@ -42,8 +44,10 @@ export type WidgetNeedIdentityMessage = WidgetMessageBase<typeof WidgetMessageTy
 export interface WidgetIdentityMessage extends WidgetMessageBase<
   typeof WidgetMessageType.IDENTITY
 > {
-  /** Partner's OIDC ID token; `null` for a guest (not logged in at the partner). */
+  /** Partner's identity token; `null` for a guest (not logged in at the partner). */
   idToken: string | null;
+  /** Kind of `idToken` (the loader's `identityTokenType`); absent means `id_token`. */
+  tokenType?: IdentityTokenType;
 }
 
 export interface WidgetResizeMessage extends WidgetMessageBase<typeof WidgetMessageType.RESIZE> {
@@ -141,8 +145,16 @@ export function parseWidgetMessage(data: unknown): WidgetMessage | null {
     case WidgetMessageType.NEED_IDENTITY:
       return { v, type: data.type };
     case WidgetMessageType.IDENTITY:
-      return data.idToken === null || typeof data.idToken === 'string'
-        ? { v, type: data.type, idToken: data.idToken }
+      if (data.idToken !== null && typeof data.idToken !== 'string') return null;
+      if (data.tokenType === undefined) return { v, type: data.type, idToken: data.idToken };
+      return typeof data.tokenType === 'string' &&
+        (IDENTITY_TOKEN_TYPES as readonly string[]).includes(data.tokenType)
+        ? {
+            v,
+            type: data.type,
+            idToken: data.idToken,
+            tokenType: data.tokenType as IdentityTokenType,
+          }
         : null;
     case WidgetMessageType.RESIZE:
       return typeof data.height === 'number' && Number.isFinite(data.height) && data.height >= 0
