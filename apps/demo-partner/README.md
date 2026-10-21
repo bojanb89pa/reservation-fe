@@ -42,3 +42,38 @@ Ovaj kod (`src/testIdentity.ts`) ne postoji u produkcijskom build-u: grana iza
 `import.meta.env.VITE_DEMO_IDENTITY === 'test'` u `src/identity.ts` nestaje dead-code
 eliminacijom. `src/__tests__/bundle.test.ts` pravi produkcijski bundle i proverava da test koda
 nema u njemu.
+
+## Deploy
+
+Sajt je na `https://demo-business.bojanlab.com`. Workflow `.github/workflows/deploy-demo-partner.yml`
+se pokreće na push u `main` koji menja `apps/demo-partner/**` (ili sam workflow) i ručno
+(`workflow_dispatch`):
+
+1. GitHub runner builduje arm64 image `ghcr.io/bojanb89pa/reservation-demo-partner`
+   (`apps/demo-partner/Dockerfile`, nginx servira statiku) i pušuje ga u GHCR.
+2. Self-hosted runner na Pi-ju radi `git pull`, `docker compose pull demo-partner` i
+   `docker compose up -d demo-partner`, pa proveri da kontejner vraća `index.html`.
+
+Traefik ruta za `demo-business.bojanlab.com` je u `compose.yaml` (servis `demo-partner`, mreža `web`).
+Widget sme da se ugradi sa ovog origin-a zahvaljujući `WIDGET_FRAME_ANCESTORS` na `reserva-fe`.
+
+`VITE_*` vrednosti se ugrađuju u bundle pri build-u; promena zahteva novi build. Produkcijski image
+nikad ne dobija `VITE_DEMO_IDENTITY`, pa test režima u njemu nema.
+
+### Repo varijable (postavlja čovek posle seed-a)
+
+Settings → Secrets and variables → Actions → Variables:
+
+| Varijabla | Vrednost |
+|---|---|
+| `DEMO_CLIENT_ID` | javni ID client application-a „Beogradski Berberin“ iz seed-a |
+| `DEMO_NO_CONSENT_LOCATION_ID` | ID lokacije bez saglasnosti biznisa |
+
+Posle postavljanja pokreni workflow ručno (Actions → Build & deploy (demo partner) → Run workflow).
+`VITE_GOOGLE_CLIENT_ID` i `VITE_RESERVA_ORIGIN` su u samom workflow-u (javne vrednosti), a
+`VITE_DEMO_LOCATION_ID` ima podrazumevanu vrednost u Dockerfile-u.
+
+### E2E
+
+`e2e.yml` builduje sajt sa `VITE_DEMO_IDENTITY=test` i `VITE_RESERVA_ORIGIN=http://localhost:5173`, servira
+ga na `http://localhost:5175` i izlaže URL kao env `DEMO_PARTNER_URL`.

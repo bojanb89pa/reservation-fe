@@ -68,6 +68,7 @@ jobs:
       VITE_OAUTH_CLIENT_ID: reservation
       VITE_OAUTH_CLIENT_SECRET: e2e-secret
       VITE_OAUTH_REDIRECT_URI: http://localhost:5173/callback
+      DEMO_PARTNER_URL: http://localhost:5175
     steps:
       - uses: actions/checkout@v4
 
@@ -115,6 +116,18 @@ jobs:
         run: |
           nohup yarn preview --port 5173 --strictPort > /tmp/vite-preview.log 2>&1 &
 
+      # Demo partner sajt u test režimu (VITE_DEMO_IDENTITY=test): ID token dolazi iz
+      # window.__DEMO_ID_TOKEN__ / ?idToken=, ne od Google-a. Port 5175 je na
+      # WIDGET_FRAME_ANCESTORS listi. VITE_DEMO_CLIENT_ID i lokacije nisu poznati pre
+      # seed-a, pa ostaju prazni.
+      - name: Build & serve demo partner (test režim)
+        env:
+          VITE_DEMO_IDENTITY: test
+          VITE_RESERVA_ORIGIN: http://localhost:5173
+        run: |
+          yarn build:demo-partner
+          nohup yarn workspace @fe/demo-partner preview --port 5175 --strictPort > /tmp/vite-demo-preview.log 2>&1 &
+
       - name: Wait for stack
         run: |
           check() {
@@ -130,6 +143,7 @@ jobs:
           check oidc-issuer http://oidc-issuer:8090/.well-known/openid-configuration
           check mailpit http://localhost:8025/api/v1/info
           check fe http://localhost:5173/
+          check demo-partner http://localhost:5175/
 
       # Demo seed (kad postoji `seed:demo` skripta): dva uzastopna pokretanja
       # nad praznim stackom; drugo sa SEED_EXPECT_NOOP=1, kad seed mora da
@@ -159,6 +173,7 @@ jobs:
           docker compose -f compose.e2e.yml logs --no-color --tail 200 auth-service resource-service > /tmp/stack.log || true
           tail -n 120 /tmp/stack.log
           cat /tmp/vite-preview.log || true
+          cat /tmp/vite-demo-preview.log || true
 
       - name: Upload Playwright report
         if: failure()
