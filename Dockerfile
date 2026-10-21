@@ -10,6 +10,7 @@ WORKDIR /app
 # menja samo kod.
 COPY package.json yarn.lock ./
 COPY apps/web/package.json apps/web/
+COPY apps/widget/package.json apps/widget/
 COPY modules/domain/package.json modules/domain/
 COPY modules/application/package.json modules/application/
 COPY modules/infrastructure/package.json modules/infrastructure/
@@ -34,7 +35,11 @@ RUN yarn build
 
 FROM nginx:alpine AS runtime
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Šablon: zvanični nginx image pri startu zameni ${WIDGET_FRAME_ANCESTORS} (envsubst) i
+# upiše rezultat u conf.d/default.conf. Lista je runtime env, ne VITE_ (nije u bundle-u).
+COPY nginx.conf /etc/nginx/templates/default.conf.template
+# apps/web/dist sadrži i /widget/ (iframe aplikacija) i /widget.js (loader).
 COPY --from=build /app/apps/web/dist /usr/share/nginx/html
+ENV WIDGET_FRAME_ANCESTORS="https://demo-business.bojanlab.com http://localhost:3000 http://localhost:5175 http://127.0.0.1:5175"
 
 EXPOSE 80

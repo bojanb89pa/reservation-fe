@@ -50,14 +50,14 @@ function slotTime(isoStr: string): string {
   return isoStr.slice(11, 16);
 }
 
-function fmtMonthYear(year: number, month: number): string {
-  return new Date(year, month, 1).toLocaleString('en-US', { month: 'long', year: 'numeric' });
+function fmtMonthYear(year: number, month: number, locale: string): string {
+  return new Date(year, month, 1).toLocaleString(locale, { month: 'long', year: 'numeric' });
 }
 
-function fmtSlotSummary(isoStartTime: string): string {
+function fmtSlotSummary(isoStartTime: string, locale: string): string {
   const dateStr = isoStartTime.slice(0, 10);
   const d = new Date(dateStr + 'T00:00:00');
-  const datePart = d.toLocaleString('en-US', {
+  const datePart = d.toLocaleString(locale, {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
@@ -65,22 +65,24 @@ function fmtSlotSummary(isoStartTime: string): string {
   return `${datePart} · ${slotTime(isoStartTime)}`;
 }
 
-function fmtDay(dateStr: string): string {
-  return new Date(dateStr + 'T00:00:00').toLocaleString('en-US', {
+function fmtDay(dateStr: string, locale: string): string {
+  return new Date(dateStr + 'T00:00:00').toLocaleString(locale, {
     month: 'short',
     day: 'numeric',
   });
 }
 
-function unitSuffix(unit: BusinessService['durationUnit']): string {
-  if (unit === 'HOURS') return 'h';
-  if (unit === 'DAYS') return 'd';
-  return 'min';
+function fmtServiceMeta(svc: BusinessService, suffix: string): string {
+  return svc.fixedDuration
+    ? `${svc.minDuration}${suffix}`
+    : `${svc.minDuration}–${svc.maxDuration}${suffix}`;
 }
 
-function fmtServiceMeta(svc: BusinessService): string {
-  const s = unitSuffix(svc.durationUnit);
-  return svc.fixedDuration ? `${svc.minDuration}${s}` : `${svc.minDuration}–${svc.maxDuration}${s}`;
+/** Monday-first short weekday names in `locale` (2024-01-01 is a Monday). */
+function weekdayLabels(locale: string): string[] {
+  return Array.from({ length: 7 }, (_, i) =>
+    new Date(2024, 0, 1 + i).toLocaleString(locale, { weekday: 'short' }),
+  );
 }
 
 /** Inclusive→exclusive day count between two ISO dates (yyyy-mm-dd). */
@@ -129,13 +131,16 @@ export interface BookingWidgetProps {
   onResourceChange: (resource: Resource | null) => void;
   onConfirm: (selection: BookingSelection) => Promise<void>;
   isLoading?: boolean;
+  /** Embedded (iframe) mode: no eyebrow/title header. */
+  hideHeader?: boolean;
+  /**
+   * Replaces the confirm button (and its fine print) with a notice, e.g. a guest in the
+   * partner widget who has to sign in on the partner's site first.
+   */
+  confirmNotice?: string;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
-
-const DOW_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const PENDING_TOOLTIP =
-  'Someone has requested this — yours will be considered if theirs is rejected.';
 
 export function BookingWidget({
   services,
@@ -144,8 +149,18 @@ export function BookingWidget({
   onResourceChange,
   onConfirm,
   isLoading,
+  hideHeader = false,
+  confirmNotice,
 }: BookingWidgetProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language;
+  const PENDING_TOOLTIP = t('bookingWidget.pendingTooltip');
+  const unitSuffix = (unit: BusinessService['durationUnit']): string =>
+    unit === 'HOURS'
+      ? t('bookingWidget.unitHours')
+      : unit === 'DAYS'
+        ? t('bookingWidget.unitDays')
+        : t('bookingWidget.unitMinutes');
   const now = new Date();
 
   const [selectedService, setSelectedService] = useState<BusinessService | null>(
@@ -338,11 +353,11 @@ export function BookingWidget({
     if (isDays) {
       if (selectedDate && selectedLength) {
         const checkOut = addDays(selectedDate, selectedLength);
-        return `${fmtDay(selectedDate)} → ${fmtDay(checkOut)} · ${selectedLength}d`;
+        return `${fmtDay(selectedDate, locale)} → ${fmtDay(checkOut, locale)} · ${selectedLength}${t('bookingWidget.unitDays')}`;
       }
       return null;
     }
-    if (selectedSlot) return fmtSlotSummary(selectedSlot);
+    if (selectedSlot) return fmtSlotSummary(selectedSlot, locale);
     return null;
   })();
 
@@ -372,17 +387,19 @@ export function BookingWidget({
     <div className={styles.shell}>
       <div className={styles.widget}>
         {/* ── Header ── */}
-        <div className={styles.head}>
-          <div>
-            <div className={styles.eyebrow}>Book a slot</div>
-            <h3 className={styles.title}>When works for you?</h3>
+        {!hideHeader && (
+          <div className={styles.head}>
+            <div>
+              <div className={styles.eyebrow}>{t('bookingWidget.eyebrow')}</div>
+              <h3 className={styles.title}>{t('bookingWidget.title')}</h3>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* ── Services ── */}
         {services.length > 0 && (
           <div>
-            <p className={styles.sectionLabel}>Service</p>
+            <p className={styles.sectionLabel}>{t('bookingWidget.service')}</p>
             <div className={styles.tabs} role="tablist">
               {services.map((svc) => (
                 <button
@@ -395,7 +412,9 @@ export function BookingWidget({
                   onClick={() => handleServiceSelect(svc)}
                 >
                   {svc.name}
-                  <span className={styles.tabMeta}>&nbsp;· {fmtServiceMeta(svc)}</span>
+                  <span className={styles.tabMeta}>
+                    &nbsp;· {fmtServiceMeta(svc, unitSuffix(svc.durationUnit))}
+                  </span>
                 </button>
               ))}
             </div>
@@ -405,7 +424,7 @@ export function BookingWidget({
         {/* ── Resources ── */}
         {resources.length > 0 && (
           <div>
-            <p className={styles.sectionLabel}>Resource</p>
+            <p className={styles.sectionLabel}>{t('bookingWidget.resource')}</p>
             <div className={styles.tabs} role="tablist">
               {resources.map((res) => (
                 <button
@@ -428,7 +447,7 @@ export function BookingWidget({
         {/* ── Duration picker (custom MINUTES/HOURS) ── */}
         {canPick && isCustomTime && (
           <Step>
-            <p className={styles.sectionLabel}>Duration</p>
+            <p className={styles.sectionLabel}>{t('bookingWidget.duration')}</p>
             <select
               className={styles.picker}
               value={slotDuration}
@@ -446,23 +465,29 @@ export function BookingWidget({
         {/* ── Calendar ── */}
         {canPick && (
           <Step>
-            <p className={styles.sectionLabel}>{isDays ? 'Check-in date' : 'Date'}</p>
+            <p className={styles.sectionLabel}>
+              {isDays ? t('bookingWidget.checkInDate') : t('bookingWidget.date')}
+            </p>
             <div className={styles.calHead}>
               <button
                 className={styles.iconBtn}
                 onClick={handlePrevMonth}
                 disabled={!canGoPrev}
-                aria-label="Previous month"
+                aria-label={t('bookingWidget.previousMonth')}
               >
                 ‹
               </button>
-              <span className={styles.calMonth}>{fmtMonthYear(viewYear, viewMonth)}</span>
-              <button className={styles.iconBtn} onClick={handleNextMonth} aria-label="Next month">
+              <span className={styles.calMonth}>{fmtMonthYear(viewYear, viewMonth, locale)}</span>
+              <button
+                className={styles.iconBtn}
+                onClick={handleNextMonth}
+                aria-label={t('bookingWidget.nextMonth')}
+              >
                 ›
               </button>
             </div>
             <div className={styles.dow}>
-              {DOW_LABELS.map((l) => (
+              {weekdayLabels(locale).map((l) => (
                 <span key={l}>{l}</span>
               ))}
             </div>
@@ -490,9 +515,9 @@ export function BookingWidget({
         {/* ── Length picker (DAYS) ── */}
         {canPick && isDays && selectedDate && (
           <Step key={`len-${selectedDate}`}>
-            <p className={styles.sectionLabel}>Length</p>
+            <p className={styles.sectionLabel}>{t('bookingWidget.length')}</p>
             {lengthOptions.length === 0 ? (
-              <p className={styles.noSlots}>No stay fits from this check-in date.</p>
+              <p className={styles.noSlots}>{t('bookingWidget.noStayFits')}</p>
             ) : (
               <select
                 className={styles.picker}
@@ -501,7 +526,7 @@ export function BookingWidget({
               >
                 {lengthOptions.map((v) => (
                   <option key={v} value={v}>
-                    {v} {v === 1 ? 'day' : 'days'}
+                    {t('bookingWidget.day', { count: v })}
                   </option>
                 ))}
               </select>
@@ -513,11 +538,11 @@ export function BookingWidget({
         {canPick && selectedDate && !isDays && (
           <Step key={`slots-${selectedDate}-${slotDuration ?? ''}`}>
             <p className={styles.sectionLabel}>
-              Time
+              {t('bookingWidget.time')}
               {availableCount > 0 && (
                 <span className={styles.slotCount}>
                   <span className={styles.slotCountDot} aria-hidden="true" />
-                  &nbsp;{availableCount} available
+                  &nbsp;{t('bookingWidget.available', { count: availableCount })}
                 </span>
               )}
             </p>
@@ -534,7 +559,7 @@ export function BookingWidget({
                 isRetrying={refetchingSlots}
               />
             ) : daySlots.length === 0 ? (
-              <p className={styles.noSlots}>No available slots for this date.</p>
+              <p className={styles.noSlots}>{t('bookingWidget.noSlots')}</p>
             ) : (
               <div className={styles.slots}>
                 {daySlots.map((slot) => {
@@ -580,7 +605,7 @@ export function BookingWidget({
                     exit={{ opacity: 0, y: -6 }}
                     transition={{ duration: 0.18 }}
                   >
-                    {summaryWhen ?? '— pick a date & time —'}
+                    {summaryWhen ?? t('bookingWidget.pickDateTime')}
                   </motion.span>
                 </AnimatePresence>
                 <span className={styles.summaryMeta}>
@@ -589,25 +614,33 @@ export function BookingWidget({
               </div>
               {canConfirm && <span className={styles.summaryPulse} aria-hidden="true" />}
             </div>
-            <button
-              className={styles.submit}
-              disabled={!canConfirm || isLoading}
-              onClick={handleConfirm}
-            >
-              <span>{isLoading ? 'Sending…' : 'Confirm reservation'}</span>
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              >
-                <path d="M5 12h14M13 5l7 7-7 7" />
-              </svg>
-            </button>
-            <p className={styles.fineprint}>No charge until the provider confirms.</p>
+            {confirmNotice ? (
+              <p className={styles.fineprint} role="status" data-testid="booking-confirm-notice">
+                {confirmNotice}
+              </p>
+            ) : (
+              <>
+                <button
+                  className={styles.submit}
+                  disabled={!canConfirm || isLoading}
+                  onClick={handleConfirm}
+                >
+                  <span>{isLoading ? t('bookingWidget.sending') : t('bookingWidget.confirm')}</span>
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  >
+                    <path d="M5 12h14M13 5l7 7-7 7" />
+                  </svg>
+                </button>
+                <p className={styles.fineprint}>{t('bookingWidget.noCharge')}</p>
+              </>
+            )}
           </Step>
         )}
       </div>

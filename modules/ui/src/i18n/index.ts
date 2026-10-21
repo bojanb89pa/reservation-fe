@@ -3,7 +3,16 @@ import { initReactI18next } from 'react-i18next';
 import en from './locales/en';
 import sr from './locales/sr';
 
-const savedLang = typeof localStorage !== 'undefined' ? (localStorage.getItem('lang') ?? '') : '';
+function readSavedLang(): string {
+  try {
+    return typeof localStorage !== 'undefined' ? (localStorage.getItem('lang') ?? '') : '';
+  } catch {
+    // Storage can be blocked in a third-party iframe (the booking widget).
+    return '';
+  }
+}
+
+const savedLang = readSavedLang();
 const browserLang = typeof navigator !== 'undefined' ? navigator.language.split('-')[0] : 'en';
 const defaultLng = savedLang || (['en', 'sr'].includes(browserLang) ? browserLang : 'en');
 

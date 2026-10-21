@@ -12,6 +12,9 @@ services:
         VITE_OAUTH_REDIRECT_URI: ${VITE_OAUTH_REDIRECT_URI}
     container_name: reserva_fe
     restart: unless-stopped
+    environment:
+      # Origin-i kojima je dozvoljeno da ugrade /widget/ (CSP frame-ancestors), razmakom odvojeni.
+      WIDGET_FRAME_ANCESTORS: ${WIDGET_FRAME_ANCESTORS:-https://demo-business.bojanlab.com http://localhost:3000 http://localhost:5175 http://127.0.0.1:5175}
     mem_limit: 128m
     networks:
       - web
