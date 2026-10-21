@@ -23,7 +23,17 @@ export default defineConfig({
     {
       name: 'chromium',
       testIgnore: '**/responsive/**',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // Widget specovi serviraju host stranicu preko `page.route` sa "lažnog" origin-a
+        // (javni address space) koji učitava widget.js sa loopback-a; Chromium Local Network
+        // Access provera to inače blokira. Ovo ne menja ponašanje aplikacije.
+        launchOptions: {
+          args: [
+            '--disable-features=LocalNetworkAccessChecks,PrivateNetworkAccessSendPreflights,PrivateNetworkAccessForNavigations,BlockInsecurePrivateNetworkRequests',
+          ],
+        },
+      },
     },
     {
       // Specovi u `specs/responsive/` rade samo ovde, u viewport-u 390×844.
