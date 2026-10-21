@@ -9,6 +9,7 @@ import {
   UnauthorizedError,
   ReservationSlotTakenError,
   ReservationErrorCode,
+  TokenExchangeError,
 } from '@fe/domain';
 
 export interface ApiErrorBody {
@@ -16,6 +17,8 @@ export interface ApiErrorBody {
   error?: string;
   status?: number;
   code?: string;
+  /** OAuth2 error body of `POST /oauth2/token`. */
+  error_description?: string;
 }
 
 export class ApiError extends Error {
@@ -69,6 +72,11 @@ const CLIENT_APPLICATION_INTEGRATION_PATH =
 /** `POST /client-application-consents/{id}/approve|revoke` — owner consent decisions. */
 const CLIENT_APPLICATION_CONSENT_PATH =
   /\/client-application-consents\/([^/]+)\/(?:approve|revoke)\/?$/;
+/** `GET /client-applications/{id}/widget-config` — public widget config (resource-service). */
+const WIDGET_CONFIG_PATH = /\/client-applications\/([^/]+)\/widget-config\/?$/;
+/** `POST /oauth2/token` — token endpoint (auth-service). */
+const OAUTH_TOKEN_PATH = /\/oauth2\/token\/?$/;
+const TOKEN_EXCHANGE_GRANT = 'urn:ietf:params:oauth:grant-type:token-exchange';
 
 // WARNING: 401 on admin-user routes stays a generic ApiError (not UnauthorizedError) because authInterceptors.ts's refresh-retry only fires for `instanceof ApiError` — verify before merging
 type AdminUserDomainError = NotFoundError | ConflictError | ValidationError | UnauthorizedError;
@@ -168,6 +176,46 @@ function toClientApplicationError(
   return null;
 }
 
+function isTokenExchangeRequest(config: InternalAxiosRequestConfig | undefined): boolean {
+  const path = (config?.url ?? '').split('?')[0];
+  const method = (config?.method ?? '').toUpperCase();
+  if (method !== 'POST' || !OAUTH_TOKEN_PATH.test(path)) return false;
+  // Only the token-exchange grant is mapped; code/refresh grants on the same endpoint stay ApiError.
+  const data = config?.data as unknown;
+  if (data === undefined || data === null) return false;
+  const params = new URLSearchParams(typeof data === 'string' ? data : String(data));
+  return params.get('grant_type') === TOKEN_EXCHANGE_GRANT;
+}
+
+function toTokenExchangeError(body: ApiErrorBody | undefined): TokenExchangeError | null {
+  if (typeof body?.error !== 'string' || body.error === '') return null;
+  return new TokenExchangeError(body.error, body.error_description);
+}
+
+function toWidgetError(
+  config: InternalAxiosRequestConfig | undefined,
+  status: number,
+  message: string,
+  body: ApiErrorBody | undefined,
+): NotFoundError | UnprocessableEntityError | null {
+  const path = (config?.url ?? '').split('?')[0];
+  const method = (config?.method ?? '').toUpperCase();
+  const widgetId = WIDGET_CONFIG_PATH.exec(path)?.[1];
+  if (widgetId && method === 'GET' && status === 404) {
+    return new NotFoundError('ClientApplication', widgetId);
+  }
+  if (method === 'POST' && CLIENT_APPLICATION_RESERVATION_PATH.test(path)) {
+    if (status === 404) return new NotFoundError('Resource');
+    if (status === 422) {
+      const error = new UnprocessableEntityError(message);
+      // WARNING: UnprocessableEntityError has a fixed `code`; overriding it at runtime with the BE code so the application layer can read it — verify before merging
+      if (body?.code) Object.assign(error, { code: body.code });
+      return error;
+    }
+  }
+  return null;
+}
+
 // WARNING: non-file, non-admin-user, non-reservation routes keep returning ApiError with a status, as before — verify before merging
 export function normalizeAxiosError(
   error: AxiosError<ApiErrorBody>,
@@ -177,7 +225,8 @@ export function normalizeAxiosError(
   | AdminUserDomainError
   | ReservationCancelDomainError
   | ReservationSlotTakenError
-  | ClientApplicationDomainError {
+  | ClientApplicationDomainError
+  | TokenExchangeError {
   const status = error.response?.status ?? 0;
   const body = error.response?.data;
   const message = body?.message ?? body?.error ?? error.message ?? 'An unexpected error occurred';
@@ -199,6 +248,14 @@ export function normalizeAxiosError(
 
   const clientApplicationError = toClientApplicationError(error.config, status, message);
   if (clientApplicationError) return clientApplicationError;
+
+  if (isTokenExchangeRequest(error.config)) {
+    const tokenExchangeError = toTokenExchangeError(body);
+    if (tokenExchangeError) return tokenExchangeError;
+  }
+
+  const widgetError = toWidgetError(error.config, status, message, body);
+  if (widgetError) return widgetError;
 
   if (
     status === 409 &&
