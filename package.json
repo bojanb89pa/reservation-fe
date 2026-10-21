@@ -11,6 +11,8 @@
   "scripts": {
     "dev": "yarn workspace @fe/web dev",
     "build": "tsc -b && yarn workspace @fe/web build && yarn workspace @fe/widget build",
+    "build:demo-partner": "yarn workspace @fe/demo-partner build",
+    "dev:demo-partner": "yarn workspace @fe/demo-partner dev",
     "preview": "yarn workspace @fe/web preview",
     "typecheck": "tsc -b",
     "lint": "eslint . --max-warnings 0",
