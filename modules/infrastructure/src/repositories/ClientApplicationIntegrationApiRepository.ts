@@ -32,7 +32,13 @@ export class ClientApplicationIntegrationApiRepository
     const response = await this.client.put<ClientApplicationIntegration>(
       `/admin/client-applications/${command.clientApplicationId}/integration`,
       {
-        trustedIssuers: command.trustedIssuers,
+        trustedIssuers: command.trustedIssuers.map((issuer) => ({
+          type: issuer.type,
+          issuer: issuer.issuer,
+          jwksUri: issuer.jwksUri,
+          audiences: issuer.audiences,
+          inlineJwk: issuer.inlineJwk ?? null,
+        })),
         allowedOrigins: command.allowedOrigins,
         allowedScopes: command.allowedScopes,
       },
