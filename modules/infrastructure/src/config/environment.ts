@@ -4,4 +4,5 @@ export const env = {
   oauthClientId: import.meta.env['VITE_OAUTH_CLIENT_ID'] as string,
   oauthClientSecret: import.meta.env['VITE_OAUTH_CLIENT_SECRET'] as string,
   oauthRedirectUri: import.meta.env['VITE_OAUTH_REDIRECT_URI'] as string,
+  legalContactEmail: (import.meta.env['VITE_LEGAL_CONTACT_EMAIL'] as string | undefined) || 'privacy@reserva.example',
 } as const;

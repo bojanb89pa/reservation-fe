@@ -31,8 +31,8 @@ export function Footer() {
           </div>
           <div>
             <h5 className={styles.colHead}>{t('footer.info')}</h5>
-            <a href="#">{t('footer.privacy')}</a>
-            <a href="#">{t('footer.terms')}</a>
+            <Link to="/privacy">{t('footer.privacy')}</Link>
+            <Link to="/terms">{t('footer.terms')}</Link>
             <a href="#">{t('footer.help')}</a>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
 import { registerUseCase, env } from '../app/container';
 import styles from './AuthPage.module.css';
@@ -125,6 +125,11 @@ export function RegisterPage() {
             {loading ? t('auth.creatingAccount') : t('auth.createAccount')}
           </button>
         </form>
+
+        <p className={styles.footer}>
+          {t('legal.agreeNote')} <Link to="/terms">{t('footer.terms')}</Link> {t('legal.and')}{' '}
+          <Link to="/privacy">{t('footer.privacy')}</Link>.
+        </p>
 
         <p className={styles.footer}>
           {t('auth.alreadyHaveAccount')}{' '}
