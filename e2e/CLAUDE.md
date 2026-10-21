@@ -81,6 +81,11 @@ SEED_ADMIN_PASSWORD=...
 DEMO_PASSWORD=...                                # password for every demo owner/user account
 ```
 
+The seed also registers the demo partner client application ("Demo partner -
+Beogradski Berberin": scope = Dorćol + one location of another business, Google
+OIDC issuer, `allowed_origins` of the demo site, consent approved for Dorćol by
+its owner) and prints `DEMO_CLIENT_ID` and `DEMO_NO_CONSENT_LOCATION_ID` at the end.
+
 `SEED_EXPECT_NOOP=1 yarn --cwd e2e seed:demo` exits with an error if the run
 would create anything — used in CI right after a normal run, as an
 idempotency check (never a full stack reset).
