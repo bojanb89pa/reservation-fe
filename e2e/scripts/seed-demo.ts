@@ -14,6 +14,7 @@
 import { env } from '../env';
 import { ApiClient } from '../fixtures/api';
 import * as api from './seedApi';
+import { assertStatus, fetchOwnerConsents, type ClientApplicationDto, type IntegrationBody } from '../fixtures/partners';
 
 import accountsData from '../data/demo/accounts.json';
 import businessesData from '../data/demo/businesses.json';
@@ -33,6 +34,17 @@ const EXPECT_NOOP = process.env['SEED_EXPECT_NOOP'] === '1';
 
 const MAX_CONTENT_BYTES = 5 * 1024 * 1024;
 const MAX_RESERVATIONS_PER_BUSINESS = 5;
+
+// Demo partner sajt (epic #76): vrednosti iz ručnog koraka P0.
+const DEMO_PARTNER_NAME = 'Demo partner - Beogradski Berberin';
+const DEMO_PARTNER_BUSINESS = 'Beogradski Berberin';
+const DEMO_PARTNER_LOCATION_ADDRESS = 'Cara Dušana 5'; // lokacija "Beogradski Berberin - Dorćol"
+const DEMO_NO_CONSENT_BUSINESS = 'Kod Ane Frizerski Salon'; // biznis DRUGOG vlasnika
+const GOOGLE_ISSUER = 'https://accounts.google.com';
+const GOOGLE_JWKS_URI = 'https://www.googleapis.com/oauth2/v3/certs';
+const GOOGLE_CLIENT_ID = '1007490113213-9c0jfm9074fejij8r3s6ea41t6g74eld.apps.googleusercontent.com';
+const DEMO_SITE_ORIGIN = 'https://demo-business.bojanlab.com';
+const DEMO_ALLOWED_SCOPES = ['reservation:create', 'reservation:read:own'];
 
 interface OwnerAccount {
   email: string;
@@ -383,18 +395,18 @@ async function seedBusiness(
   userIdByEmail: Map<string, string>,
   categories: api.BusinessCategoryDto[],
   business: DemoBusiness,
-): Promise<void> {
+): Promise<SeededBusiness | null> {
   const ownerId = userIdByEmail.get(business.ownerEmail);
   if (!ownerId) {
     gaps.push(`${business.name}: vlasnik ${business.ownerEmail} nije pronađen među demo nalozima`);
-    return;
+    return null;
   }
   const ownerApi = await demoClientFor(demoClients, business.ownerEmail);
 
   const firstLocation = business.locations[0];
   if (!firstLocation) {
     gaps.push(`${business.name}: nema definisanu lokaciju u sadržaju, biznis je preskočen`);
-    return;
+    return null;
   }
 
   let dto = await api.findBusinessByName(admin, business.name);
@@ -432,6 +444,153 @@ async function seedBusiness(
     resourceIds,
     serviceIds,
   );
+  return { locationIds };
+}
+
+/** Lokacije jednog demo biznisa, istim redom kao u `businesses.json`. */
+interface SeededBusiness {
+  locationIds: string[];
+}
+
+function locationIdByAddress(planned: DemoBusiness, seeded: SeededBusiness, addressLine1: string): string {
+  const index = planned.locations.findIndex((l) => l.addressLine1 === addressLine1);
+  const id = index >= 0 ? seeded.locationIds[index] : undefined;
+  if (!id) throw new Error(`${planned.name}: lokacija "${addressLine1}" nije pronađena u seed-u`);
+  return id;
+}
+
+async function fetchIntegration(admin: ApiClient, clientApplicationId: string): Promise<IntegrationBody | null> {
+  const response = await admin.auth.get(`admin/client-applications/${clientApplicationId}/integration`);
+  if (response.status() === 404) return null;
+  await assertStatus(response, 200, `GET /auth/admin/client-applications/${clientApplicationId}/integration`);
+  return (await response.json()) as IntegrationBody;
+}
+
+/** Dopuni integraciju onim što demo sajt traži; postojeće stavke ostaju netaknute. Vraća true ako je upisano. */
+async function ensureIntegration(admin: ApiClient, partner: ClientApplicationDto): Promise<boolean> {
+  const current = await fetchIntegration(admin, partner.id);
+  const issuers = [...(current?.trustedIssuers ?? [])];
+  const origins = [...(current?.allowedOrigins ?? [])];
+  const scopes = [...(current?.allowedScopes ?? [])];
+  let changed = false;
+
+  const google = issuers.find((i) => i.type === 'OIDC' && i.issuer === GOOGLE_ISSUER);
+  if (!google) {
+    issuers.push({ type: 'OIDC', issuer: GOOGLE_ISSUER, jwksUri: GOOGLE_JWKS_URI, audiences: [GOOGLE_CLIENT_ID] });
+    changed = true;
+  } else if (!google.audiences.includes(GOOGLE_CLIENT_ID)) {
+    google.audiences = [...google.audiences, GOOGLE_CLIENT_ID];
+    changed = true;
+  }
+  if (!origins.includes(DEMO_SITE_ORIGIN)) {
+    origins.push(DEMO_SITE_ORIGIN);
+    changed = true;
+  }
+  for (const scope of DEMO_ALLOWED_SCOPES) {
+    if (!scopes.includes(scope)) {
+      scopes.push(scope);
+      changed = true;
+    }
+  }
+  if (!changed) return false;
+
+  const response = await admin.auth.put(`admin/client-applications/${partner.id}/integration`, {
+    data: { trustedIssuers: issuers, allowedOrigins: origins, allowedScopes: scopes },
+  });
+  await assertStatus(response, 200, `PUT /auth/admin/client-applications/${partner.id}/integration`);
+  return true;
+}
+
+interface DemoPartnerResult {
+  clientId: string;
+  noConsentLocationId: string;
+}
+
+/**
+ * Client application demo partnera: scope = lokacija Dorćol + lokacija drugog biznisa (bez saglasnosti),
+ * Google OIDC izdavalac, `allowed_origins` demo sajta i odobrena saglasnost za Dorćol (kroz API vlasnika).
+ */
+async function ensureDemoPartner(
+  admin: ApiClient,
+  demoClients: Map<string, ApiClient>,
+  seeded: Map<string, SeededBusiness>,
+): Promise<DemoPartnerResult> {
+  const consentBusiness = businesses.find((b) => b.name === DEMO_PARTNER_BUSINESS);
+  const otherBusiness = businesses.find((b) => b.name === DEMO_NO_CONSENT_BUSINESS);
+  const consentSeeded = seeded.get(DEMO_PARTNER_BUSINESS);
+  const otherSeeded = seeded.get(DEMO_NO_CONSENT_BUSINESS);
+  if (!consentBusiness || !consentSeeded || !otherBusiness || !otherSeeded) {
+    throw new Error('Demo partner: biznisi za scope nisu seed-ovani (videti nedostatke iznad)');
+  }
+  const consentLocationId = locationIdByAddress(consentBusiness, consentSeeded, DEMO_PARTNER_LOCATION_ADDRESS);
+  const noConsentLocationId = otherSeeded.locationIds[0];
+  if (!noConsentLocationId) throw new Error(`${DEMO_NO_CONSENT_BUSINESS}: nema lokaciju`);
+
+  const listResponse = await admin.get('/admin/client-applications');
+  await assertStatus(listResponse, 200, 'GET /admin/client-applications');
+  const existing = ((await listResponse.json()) as ClientApplicationDto[]).find((a) => a.name === DEMO_PARTNER_NAME);
+
+  let partner: ClientApplicationDto;
+  if (existing) {
+    partner = existing;
+    bump('partner', 'skipped');
+    // Scope se ne menja kroz API, pa neodgovarajući scope ne može da se "dovede u stanje".
+    const ids = (partner.scope as { locationIds?: string[] }).locationIds ?? [];
+    if (partner.scope.type !== 'LOCATION_LIST' || !ids.includes(consentLocationId) || !ids.includes(noConsentLocationId)) {
+      throw new Error(
+        `Partner "${DEMO_PARTNER_NAME}" (${partner.id}) već postoji sa drugačijim scope-om, a API ne dozvoljava izmenu scope-a — treba ga ručno ukloniti ili preimenovati.`,
+      );
+    }
+  } else {
+    const created = await admin.post('/admin/client-applications', {
+      data: {
+        name: DEMO_PARTNER_NAME,
+        scope: { type: 'LOCATION_LIST', locationIds: [consentLocationId, noConsentLocationId] },
+      },
+    });
+    await assertStatus(created, 200, 'POST /admin/client-applications');
+    partner = (await created.json()) as ClientApplicationDto;
+    bump('partner', 'created');
+  }
+
+  bump('partner-integracija', (await ensureIntegration(admin, partner)) ? 'created' : 'skipped');
+  if (!partner.enabled) {
+    gaps.push(`Partner "${DEMO_PARTNER_NAME}" (${partner.id}) je isključen — uključiti ga u admin panelu`);
+  }
+
+  // Saglasnost za Dorćol odobrava vlasnik tog biznisa, istim endpoint-om kao u aplikaciji.
+  const ownerApi = await demoClientFor(demoClients, consentBusiness.ownerEmail);
+  const consent = (await fetchOwnerConsents(ownerApi)).find(
+    (c) => c.clientApplication.id === partner.id && c.location.id === consentLocationId,
+  );
+  if (!consent) {
+    throw new Error(
+      `Vlasnik ${consentBusiness.ownerEmail} ne vidi saglasnost za partnera ${partner.id} na lokaciji ${consentLocationId}`,
+    );
+  }
+  if (consent.status === 'APPROVED') {
+    bump('partner-saglasnost', 'skipped');
+  } else {
+    await assertStatus(
+      await ownerApi.post(`/client-application-consents/${consent.id}/approve`),
+      200,
+      `POST /client-application-consents/${consent.id}/approve`,
+    );
+    bump('partner-saglasnost', 'created');
+  }
+
+  // Druga lokacija mora ostati bez saglasnosti; seed ništa ne opoziva, samo upozorava.
+  const otherOwnerApi = await demoClientFor(demoClients, otherBusiness.ownerEmail);
+  const otherConsent = (await fetchOwnerConsents(otherOwnerApi)).find(
+    (c) => c.clientApplication.id === partner.id && c.location.id === noConsentLocationId,
+  );
+  if (otherConsent?.status === 'APPROVED') {
+    gaps.push(
+      `Partner ${partner.id} ima odobrenu saglasnost za lokaciju ${noConsentLocationId}, a treba da je nema — opozvati ručno`,
+    );
+  }
+
+  return { clientId: partner.id, noConsentLocationId };
 }
 
 function reportCategoryGaps(categories: api.BusinessCategoryDto[]): void {
@@ -447,7 +606,7 @@ function reportCategoryGaps(categories: api.BusinessCategoryDto[]): void {
   }
 }
 
-function printReport(estimatedBytes: number): void {
+function printReport(estimatedBytes: number, partner: DemoPartnerResult): void {
   console.log('\n=== Demo seed — rezime ===');
   const rows = [...report.entries()].map(([key, counts]) => ({
     tip: key,
@@ -472,6 +631,10 @@ function printReport(estimatedBytes: number): void {
   console.log('\nDemo nalozi (bez lozinki):');
   for (const owner of accounts.owners) console.log(`  vlasnik: ${owner.email} (${owner.city})`);
   for (const user of accounts.users) console.log(`  korisnik: ${user.email}`);
+
+  console.log('\nDemo partner (upisati u repo varijable za deploy demo sajta):');
+  console.log(`  DEMO_CLIENT_ID=${partner.clientId}`);
+  console.log(`  DEMO_NO_CONSENT_LOCATION_ID=${partner.noConsentLocationId}`);
 }
 
 async function main(): Promise<void> {
@@ -491,11 +654,15 @@ async function main(): Promise<void> {
     const categories = await api.fetchCategories(admin);
     reportCategoryGaps(categories);
 
+    const seeded = new Map<string, SeededBusiness>();
     for (const business of businesses) {
-      await seedBusiness(admin, demoClients, userIdByEmail, categories, business);
+      const result = await seedBusiness(admin, demoClients, userIdByEmail, categories, business);
+      if (result) seeded.set(business.name, result);
     }
 
-    printReport(estimatedBytes);
+    const partner = await ensureDemoPartner(admin, demoClients, seeded);
+
+    printReport(estimatedBytes, partner);
 
     const totalCreated = [...report.values()].reduce((sum, c) => sum + c.created, 0);
     if (EXPECT_NOOP && totalCreated > 0) {

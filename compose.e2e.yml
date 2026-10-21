@@ -110,6 +110,9 @@ services:
       - "8080:8080"
     environment:
       <<: *e2e-common
+      # Demo partner sajt (5175) menja ID token za sesiju na resource-service-u.
+      # Samo ovde: auth-service ostaje na jednom origin-u (odjava ga koristi).
+      CORS_ALLOWED_ORIGINS: http://localhost:5173,http://localhost:5175
       RESOURCE_DB_HOST: resource-postgres
       RESOURCE_DB_PORT: "5432"
       RESOURCE_DB_NAME: reservation_resource

@@ -1,0 +1,105 @@
+name: Build & deploy (demo partner)
+
+# Demo partner sajt (apps/demo-partner) na https://demo-business.bojanlab.com.
+# Isti obrazac kao deploy-staging.yml: build arm64 image-a na GitHub runneru,
+# na Pi-ju samo `pull` + `up -d`. Traefik ruta je u compose.yaml (servis demo-partner).
+#
+# VITE_* se ugrađuju u bundle pri build-u. VITE_DEMO_CLIENT_ID i
+# VITE_DEMO_NO_CONSENT_LOCATION_ID su repo varijable koje postavlja čovek posle
+# seed-a (vidi apps/demo-partner/README.md). VITE_DEMO_IDENTITY se nikad ne
+# prosleđuje: produkcijski image nema test režim.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/demo-partner/**"
+      - ".github/workflows/deploy-demo-partner.yml"
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-fe-demo-partner
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  DEPLOY_DIR: /home/bojanb/Projects/Reservations/Code/reservation-fe
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    environment: staging
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./apps/demo-partner/Dockerfile
+          platforms: linux/arm64
+          push: true
+          build-args: |
+            VITE_GOOGLE_CLIENT_ID=1007490113213-9c0jfm9074fejij8r3s6ea41t6g74eld.apps.googleusercontent.com
+            VITE_RESERVA_ORIGIN=https://reserva.bojanlab.com
+            VITE_DEMO_CLIENT_ID=${{ vars.DEMO_CLIENT_ID }}
+            VITE_DEMO_NO_CONSENT_LOCATION_ID=${{ vars.DEMO_NO_CONSENT_LOCATION_ID }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/reservation-demo-partner:latest
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/reservation-demo-partner:${{ github.sha }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: [self-hosted, raspberry-pi]
+    environment: staging
+    steps:
+      - name: Pull latest compose config
+        run: |
+          cd "$DEPLOY_DIR"
+          git pull --ff-only
+
+      - name: Pull new image
+        run: |
+          cd "$DEPLOY_DIR"
+          docker compose pull demo-partner
+
+      # Samo demo-partner: ostali servisi se ne diraju.
+      - name: Restart service
+        run: |
+          cd "$DEPLOY_DIR"
+          docker compose up -d demo-partner
+
+      # wget unutar kontejnera (nema port na hostu); 127.0.0.1 jer nginx sluša samo IPv4.
+      - name: Health check
+        run: |
+          for _ in $(seq 1 18); do
+            if docker exec reserva_demo_partner wget -qO- http://127.0.0.1/ 2>/dev/null | grep -qi '<!doctype html'; then
+              echo "demo-partner: ok"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::demo-partner ne vraca index.html ni posle 90s"
+          docker logs --tail 50 reserva_demo_partner || true
+          exit 1
+
+      - name: Notify
+        if: always()
+        env:
+          NTFY_TOPIC_URL: ${{ secrets.NTFY_TOPIC_URL }}
+        run: |
+          [ -z "$NTFY_TOPIC_URL" ] && exit 0
+          curl -fsS -d "demo-partner deploy: ${{ job.status }} (${{ github.sha }})" "$NTFY_TOPIC_URL" || true

@@ -26,6 +26,30 @@ services:
       - "traefik.http.routers.reserva-fe.tls=true"
       - "traefik.http.services.reserva-fe.loadbalancer.server.port=80"
 
+  # Demo partner sajt (apps/demo-partner): statika preko nginx-a, bez test režima.
+  # VITE_* su ugrađeni u image pri build-u (.github/workflows/deploy-demo-partner.yml).
+  demo-partner:
+    image: ghcr.io/${GHCR_OWNER:-bojanb89pa}/reservation-demo-partner:${DEMO_IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: apps/demo-partner/Dockerfile
+      args:
+        VITE_RESERVA_ORIGIN: https://reserva.${BASE_DOMAIN}
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-}
+        VITE_DEMO_CLIENT_ID: ${DEMO_CLIENT_ID:-}
+        VITE_DEMO_NO_CONSENT_LOCATION_ID: ${DEMO_NO_CONSENT_LOCATION_ID:-}
+    container_name: reserva_demo_partner
+    restart: unless-stopped
+    mem_limit: 64m
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.demo-partner.rule=Host(`demo-business.${BASE_DOMAIN}`)"
+      - "traefik.http.routers.demo-partner.entrypoints=websecure"
+      - "traefik.http.routers.demo-partner.tls=true"
+      - "traefik.http.services.demo-partner.loadbalancer.server.port=80"
+
 networks:
   web:
     external: true

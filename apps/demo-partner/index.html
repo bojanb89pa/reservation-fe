@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="sr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Beogradski Berberin</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>Beogradski Berberin</a>
+      <div id="auth" class="auth"></div>
+    </header>
+
+    <section class="hero">
+      <h1>Beogradski Berberin</h1>
+      <p>Klasično šišanje i brijanje u Dorćolu od 2009. Demo sajt partnera Reserva platforme.</p>
+    </section>
+
+    <main class="layout">
+      <div class="content">
+        <section>
+          <h2>O nama</h2>
+          <p>
+            Tri generacije majstora, jedan princip: bez žurbe i bez kompromisa. Šišanje, uređivanje
+            brade i brijanje toplim peškirom u opuštenom ambijentu.
+          </p>
+          <p id="main-contact" class="muted"></p>
+        </section>
+        <section>
+          <h2>Radno vreme</h2>
+          <table class="hours"><tbody id="hours"></tbody></table>
+        </section>
+        <section id="no-consent-section">
+          <h2>Berberin Zemun</h2>
+          <p>Nova lokacija. Online zakazivanje preko Reserve zavisi od saglasnosti biznisa.</p>
+          <div id="reserva-widget-no-consent"></div>
+        </section>
+        <section>
+          <h2>Preporučujemo</h2>
+          <p class="muted">Drugi biznisi iz našeg kraja (zakazivanje telefonom ili mejlom).</p>
+          <div id="other-businesses" class="cards"></div>
+        </section>
+      </div>
+      <aside class="booking" aria-label="Zakazivanje">
+        <h2>Zakažite termin</h2>
+        <div id="reserva-widget"></div>
+      </aside>
+    </main>
+
+    <footer class="site-footer">Demo sajt izmišljenog partnera. Svi podaci su izmišljeni.</footer>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

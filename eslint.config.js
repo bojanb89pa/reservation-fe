@@ -39,6 +39,8 @@ export default tseslint.config(
   ]),
   ...layerRules('modules/infrastructure', ['@fe/application', '@fe/ui', '@fe/web', 'react', 'react-*', 'react/*']),
   ...layerRules('modules/ui', ['@fe/infrastructure', '@fe/web', 'axios'], ['modules/ui/src/app/container/**']),
+  // Demo partner je nezavisan sajt kao pravi partner: ne sme da uvozi nijedan `@fe/*` paket.
+  ...layerRules('apps/demo-partner', ['@fe/*', '@fe/*/**']),
 );
 
 /**
