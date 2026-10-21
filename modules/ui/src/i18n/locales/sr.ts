@@ -711,6 +711,128 @@ const sr: Translation = {
     backHome: 'Nazad na početnu',
     rejectedNote: 'Tvoja prethodna prijava nije odobrena. Možeš podneti novu.',
   },
+  legal: {
+    eyebrow: 'Pravne informacije',
+    lastUpdated: 'Poslednja izmena',
+    notice: 'Ovaj tekst opisuje kako Reserva danas radi. To su opšte informacije, a ne pravni savet.',
+    contactTitle: 'Kontakt',
+    contactText: 'Pitanja ili zahtevi u vezi sa vašim podacima ili ovim uslovima:',
+    agreeNote: 'Nastavkom prihvatate',
+    and: 'i',
+    privacy: {
+      title: 'Politika privatnosti',
+      sections: [
+        {
+          title: 'Ko smo mi',
+          paragraphs: [
+            'Reserva (reserva.bojanlab.com) je platforma za zakazivanje na kojoj korisnici rezervišu termine kod biznisa kao što su saloni, rent-a-car, apartmani i sobe. Reserva je rukovalac podacima o ličnosti opisanim ispod.',
+          ],
+        },
+        {
+          title: 'Podaci koje obrađujemo',
+          paragraphs: ['U zavisnosti od toga kako koristite Reservu, obrađujemo:'],
+          items: [
+            'Podatke naloga: email adresu, ime i prezime, profilnu sliku i lozinku (kod registracije emailom). Kod prijave preko Google-a od Google-a dobijamo email, ime, sliku i ID Google naloga.',
+            'Podatke biznisa: za vlasnike i članove biznisa — podaci o biznisu, lokacije (adresa i pozicija na mapi), usluge, resursi, radno vreme i kontakt podaci koje unesete.',
+            'Podatke o rezervacijama: koji ste termin rezervisali, njegov status i vreme, lokacija i usluga, i vaš korisnički nalog. Rezervacije napravljene preko partnerskog sajta čuvaju i kontakt email koji tamo unesete (guest email).',
+            'Podatke o partnerima: kada koristite partnerski sajt sa Reserva widget-om za zakazivanje, čuvamo izdavaoca identiteta i vaš identifikator (sub) iz partnerske prijave kako bismo rezervacije povezali sa vama, kao i identifikator partnerske aplikacije iz koje je rezervacija stigla.',
+            'Tehničke podatke: serverski logovi kao što su IP adresa i vreme zahteva, koji se čuvaju zbog bezbednosti i otklanjanja grešaka.',
+          ],
+        },
+        {
+          title: 'Šta dobijaju partneri',
+          paragraphs: [
+            'Partnerski sajt koji ugrađuje widget za zakazivanje dobija obaveštenje kada se napravi rezervacija: njen ID, status, termin i lokaciju. Od Reserve ne dobija vašu email adresu.',
+          ],
+        },
+        {
+          title: 'Zašto ih koristimo',
+          paragraphs: [
+            'Podatke koristimo da napravimo i zaštitimo vaš nalog, da zakažemo rezervacije i upravljamo njima, da biznisi vide i potvrde rezervacije, da šaljemo mejlove o nalogu i rezervacijama (na primer aktivacija naloga i obaveštenja o članstvu u biznisu) i da servis održimo bezbednim.',
+          ],
+        },
+        {
+          title: 'Kolačići i skladište u browser-u',
+          paragraphs: [
+            'Reserva ne koristi reklamne ni analitičke kolačiće. U vašem browser-u čuva sledeće:',
+          ],
+          items: [
+            'localStorage: tokene za prijavu (access, refresh i ID token), temu i jezik.',
+            'sessionStorage: stranicu na koju se vraćate posle prijave i jednokratnu oznaku „sesija je istekla”.',
+            'Kolačiće: temu i jezik, da stranica za prijavu odgovara vašim podešavanjima.',
+          ],
+        },
+        {
+          title: 'Obrađivači i hosting',
+          paragraphs: ['Koristimo sledeće pružaoce usluga:'],
+          items: [
+            'Google — prijava preko Google naloga (Google Identity).',
+            'Cloudflare — CDN i bezbedan tunel do našeg servera.',
+            'Sopstveni server — Reserva radi na sopstvenoj infrastrukturi, gde se podaci i čuvaju.',
+          ],
+        },
+        {
+          title: 'Čuvanje podataka',
+          paragraphs: [
+            'Podatke čuvamo dok nalog postoji. Posle brisanja naloga brišemo ili anonimizujemo lične podatke, osim kada zapis o rezervaciji mora da ostane biznisu na koji se odnosi.',
+          ],
+        },
+        {
+          title: 'Vaša prava',
+          paragraphs: [
+            'Ime i sliku možete da vidite i ispravite na stranici naloga. Možete da zatražite kopiju svojih podataka, ispravku, brisanje naloga i podataka, kao i ograničenje obrade ili prigovor na obradu. Zahtev pošaljite na kontakt adresu ispod; odgovaramo u roku od 30 dana. Možete se žaliti i organu nadležnom za zaštitu podataka o ličnosti.',
+          ],
+        },
+      ],
+    },
+    terms: {
+      title: 'Uslovi korišćenja',
+      sections: [
+        {
+          title: 'Korišćenje Reserve',
+          paragraphs: [
+            'Korišćenjem Reserve prihvatate ove uslove. Ako se ne slažete, nemojte koristiti servis. Dužni ste da unosite tačne podatke i da čuvate podatke za prijavu.',
+          ],
+        },
+        {
+          title: 'Rezervacije',
+          paragraphs: [
+            'Reserva vas povezuje sa biznisima. Rezervacija je dogovor između vas i biznisa; biznis može da je odobri, odbije ili otkaže. Reserva nije strana u tom dogovoru i ne odgovara za usluge koje biznis pruža.',
+          ],
+        },
+        {
+          title: 'Biznisi',
+          paragraphs: [
+            'Biznisi odgovaraju za sadržaj koji objavljuju, za njegovu tačnost i za rezervacije koje primaju. Novi biznisi prolaze proveru administratora pre nego što se prikažu, a Reserva može da odbije ili ukloni biznis.',
+          ],
+        },
+        {
+          title: 'Partnerski sajtovi',
+          paragraphs: [
+            'Neki biznisi nude zakazivanje na sopstvenom sajtu preko Reserva widget-a. Taj sajt vode oni i ima sopstvene uslove i politiku privatnosti; Reserva obrađuje samo samu rezervaciju.',
+          ],
+        },
+        {
+          title: 'Prihvatljivo korišćenje',
+          paragraphs: [
+            'Nemojte zloupotrebljavati servis: bez nezakonite upotrebe, pokušaja da se servis ošteti ili preoptereti, rezervisanja termina koje ne nameravate da iskoristite i korišćenja tuđeg naloga.',
+          ],
+        },
+        {
+          title: 'Dostupnost i odgovornost',
+          paragraphs: [
+            'Reserva se pruža „kakva jeste”, bez garancije da je uvek dostupna ili bez grešaka. U meri u kojoj zakon dozvoljava, ne odgovaramo za posrednu štetu nastalu korišćenjem servisa.',
+          ],
+        },
+        {
+          title: 'Zatvaranje naloga i izmene',
+          paragraphs: [
+            'Možete u svakom trenutku da zatražite brisanje naloga. Možemo da suspendujemo naloge koji krše ove uslove. Uslove možemo da menjamo; datum iznad pokazuje poslednju verziju, a nastavak korišćenja znači da je prihvatate.',
+          ],
+        },
+      ],
+    },
+  },
   footer: {
     tagline: 'Nađi mesto. Rezerviši termin.',
     browse: 'Pretraži',

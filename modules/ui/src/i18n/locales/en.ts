@@ -709,6 +709,129 @@ const en = {
     backHome: 'Back to home',
     rejectedNote: 'Your previous application was not approved. You can submit a new one.',
   },
+  legal: {
+    eyebrow: 'Legal',
+    lastUpdated: 'Last updated',
+    notice:
+      'This text describes how Reserva works today. It is general information, not legal advice.',
+    contactTitle: 'Contact',
+    contactText: 'Questions or requests about your data or these terms:',
+    agreeNote: 'By continuing you agree to the',
+    and: 'and',
+    privacy: {
+      title: 'Privacy Policy',
+      sections: [
+        {
+          title: 'Who we are',
+          paragraphs: [
+            'Reserva (reserva.bojanlab.com) is a booking platform where people reserve time slots at businesses such as salons, vehicle rentals, apartments and rooms. Reserva is the controller of the personal data described below.',
+          ],
+        },
+        {
+          title: 'Data we process',
+          paragraphs: ['Depending on how you use Reserva, we process:'],
+          items: [
+            'Account data: email address, first and last name, profile picture and password (when you register with email). When you sign in with Google we receive your email, name, picture and Google account ID from Google.',
+            'Business data: for business owners and members — business details, locations (address and map position), services, resources, working hours and contact details you enter.',
+            'Reservation data: which slot you booked, its status and time, the location and service, and your user account. Reservations made through a partner site also store the contact email you provide there (guest email).',
+            'Partner data: when you use a partner website with the Reserva booking widget, we store the identity issuer and your subject ID (sub) from the partner sign-in, so your reservations can be linked to you, and the identifier of the partner application the reservation came from.',
+            'Technical data: server logs such as IP address and request time, kept for security and troubleshooting.',
+          ],
+        },
+        {
+          title: 'What partners receive',
+          paragraphs: [
+            'A partner site that embeds the booking widget is told when a reservation is created: its ID, status, time slot and location. It does not receive your email address from Reserva.',
+          ],
+        },
+        {
+          title: 'Why we use it',
+          paragraphs: [
+            'We use your data to create and secure your account, to book and manage reservations, to let businesses see and confirm bookings, to send account and booking emails (for example account activation and business membership notices), and to keep the service secure.',
+          ],
+        },
+        {
+          title: 'Cookies and browser storage',
+          paragraphs: [
+            'Reserva does not use advertising or analytics cookies. It stores the following in your browser:',
+          ],
+          items: [
+            'localStorage: sign-in tokens (access, refresh and ID token), theme and language.',
+            'sessionStorage: the page to return to after sign-in and a one-time “session expired” flag.',
+            'Cookies: theme and language, so the sign-in page matches your settings.',
+          ],
+        },
+        {
+          title: 'Processors and hosting',
+          paragraphs: ['We use the following service providers:'],
+          items: [
+            'Google — sign-in with Google (Google Identity).',
+            'Cloudflare — CDN and secure tunnel to our server.',
+            'Our own server — Reserva runs on self-hosted infrastructure, where the data is stored.',
+          ],
+        },
+        {
+          title: 'Retention',
+          paragraphs: [
+            'We keep your data while your account exists. After you delete your account, we remove or anonymise personal data, except where a record of a reservation must be kept for the business involved.',
+          ],
+        },
+        {
+          title: 'Your rights',
+          paragraphs: [
+            'You can see and correct your name and picture on your account page. You can ask us to give you a copy of your data, correct it, or delete your account and data, and to restrict or object to processing. Send the request to the contact address below; we will respond within 30 days. You may also complain to your data protection authority.',
+          ],
+        },
+      ],
+    },
+    terms: {
+      title: 'Terms of Use',
+      sections: [
+        {
+          title: 'Using Reserva',
+          paragraphs: [
+            'By using Reserva you agree to these terms. If you do not agree, please do not use the service. You must give accurate information and keep your sign-in details safe.',
+          ],
+        },
+        {
+          title: 'Reservations',
+          paragraphs: [
+            'Reserva connects you with businesses. A reservation is an agreement between you and the business; the business can approve, reject or cancel it. Reserva is not a party to that agreement and is not responsible for the services the business provides.',
+          ],
+        },
+        {
+          title: 'Businesses',
+          paragraphs: [
+            'Businesses are responsible for the content they publish, for keeping it accurate, and for handling the reservations they receive. New businesses are reviewed by an administrator before they appear, and Reserva may reject or remove a business.',
+          ],
+        },
+        {
+          title: 'Partner sites',
+          paragraphs: [
+            'Some businesses offer booking through their own website using the Reserva widget. Their site is run by them and has its own terms and privacy policy; Reserva handles only the reservation itself.',
+          ],
+        },
+        {
+          title: 'Acceptable use',
+          paragraphs: [
+            'Do not abuse the service: no unlawful use, no attempts to break or overload it, no booking slots you do not intend to use, and no using someone else’s account.',
+          ],
+        },
+        {
+          title: 'Availability and liability',
+          paragraphs: [
+            'Reserva is provided “as is”, without a guarantee that it is always available or error-free. To the extent the law allows, we are not liable for indirect damage arising from use of the service.',
+          ],
+        },
+        {
+          title: 'Account closure and changes',
+          paragraphs: [
+            'You can ask us to delete your account at any time. We may suspend accounts that break these terms. We may update these terms; the date above shows the latest version, and continued use means you accept it.',
+          ],
+        },
+      ],
+    },
+  },
   footer: {
     tagline: 'Find a place. Hold a slot.',
     browse: 'Browse',

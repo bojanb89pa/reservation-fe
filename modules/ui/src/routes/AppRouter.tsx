@@ -8,6 +8,7 @@ import { AdminRoute } from './AdminRoute';
 
 import { HomePage } from '../pages/HomePage';
 import { RegisterPage } from '../pages/RegisterPage';
+import { LegalPage } from '../pages/LegalPage';
 import { OAuthCallbackPage } from '../pages/OAuthCallbackPage';
 import { BusinessListPage } from '../pages/BusinessListPage';
 import { BusinessByCategoryPage } from '../pages/BusinessByCategoryPage';
@@ -53,6 +54,8 @@ function PublicLayout() {
         <Routes>
           <Route index element={<HomePage />} />
           <Route path="register" element={<RegisterPage />} />
+          <Route path="privacy" element={<LegalPage kind="privacy" />} />
+          <Route path="terms" element={<LegalPage kind="terms" />} />
           <Route path="callback" element={<OAuthCallbackPage />} />
           <Route path="search" element={<SearchResultsPage />} />
           <Route path="businesses" element={<BusinessListPage />} />

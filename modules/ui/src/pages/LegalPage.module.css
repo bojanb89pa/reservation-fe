@@ -1,0 +1,57 @@
+.page {
+  display: flex;
+  justify-content: center;
+  padding: 60px 28px;
+}
+
+.card {
+  width: 100%;
+  max-width: 760px;
+  color: var(--ink-700);
+  font-size: var(--text-md);
+  line-height: 1.65;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin: 0 0 12px;
+  color: var(--ink-900);
+}
+
+.updated {
+  font-size: var(--text-sm);
+  color: var(--ink-500);
+  margin: 0 0 16px;
+}
+
+.notice {
+  font-size: var(--text-sm);
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-elevated);
+}
+
+.section {
+  margin-top: 32px;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--ink-900);
+  margin: 0 0 8px;
+}
+
+.section ul {
+  padding-left: 20px;
+}
+
+.section a {
+  color: var(--primary);
+}
