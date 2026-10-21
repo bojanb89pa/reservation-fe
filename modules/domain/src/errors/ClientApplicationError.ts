@@ -1,5 +1,7 @@
-/** BE message keys of a 422 on `PUT /admin/client-applications/{id}/integration`. */
+/** BE message keys of an error on `PUT /admin/client-applications/{id}/integration` (422 unless noted). */
 export enum ClientApplicationIntegrationErrorCode {
+  /** 400: a `PARTNER_KEY` issuer has no key source, both, a relative `jwksUri` or a bad `inlineJwk`. */
+  PARTNER_KEY_INVALID = 'error.client_application_integration.partner_key_invalid',
   ISSUER_INVALID = 'error.client_application_integration.issuer_invalid',
   ORIGIN_INVALID = 'error.client_application_integration.origin_invalid',
   SCOPE_UNSUPPORTED = 'error.client_application_integration.scope_unsupported',

@@ -59,6 +59,15 @@ describe('parseWidgetMessage', () => {
     ).toEqual({ v, type: 'reserva:unavailable', reason: 'PARTNER_DISABLED' });
   });
 
+  it('keeps a known identity token type and rejects an unknown one', () => {
+    expect(
+      parseWidgetMessage({ v, type: WidgetMessageType.IDENTITY, idToken: 'jwt', tokenType: 'jwt' }),
+    ).toEqual({ v, type: 'reserva:identity', idToken: 'jwt', tokenType: 'jwt' });
+    expect(
+      parseWidgetMessage({ v, type: WidgetMessageType.IDENTITY, idToken: 't', tokenType: 'saml' }),
+    ).toBeNull();
+  });
+
   it('strips extra fields from the reservation-created payload', () => {
     const parsed = parseWidgetMessage({
       v,
