@@ -18,5 +18,7 @@ export function useUsersByIds(ids: string[]) {
 }
 
 export function mapUsersById(users: User[]): Map<string, User> {
-  return new Map(users.filter((u): u is User & { id: string } => u.id !== null).map((u) => [u.id, u]));
+  return new Map(
+    users.filter((u): u is User & { id: string } => u.id !== null).map((u) => [u.id, u]),
+  );
 }

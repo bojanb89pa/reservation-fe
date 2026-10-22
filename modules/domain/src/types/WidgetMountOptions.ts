@@ -4,6 +4,7 @@ import type {
   WidgetUnavailableReason,
 } from '../entities/ClientApplicationWidget';
 import type { ReservationCreatedPayload } from '../entities/WidgetMessage';
+import type { IdentityTokenType } from '../entities/TokenExchange';
 
 /**
  * Options of the public loader call
@@ -16,8 +17,17 @@ export interface WidgetMountOptions {
   locationId: string;
   theme?: WidgetTheme;
   locale?: WidgetLocale;
-  /** Partner user's OIDC ID token, or `null` for a guest. Called on `need-identity` and `refreshIdentity()`. */
+  /**
+   * Partner user's identity token (OIDC ID token, or an assertion signed by the partner's
+   * backend), or `null` for a guest. Called on `need-identity` and `refreshIdentity()`.
+   */
   getIdentityToken: () => string | null | Promise<string | null>;
+  // WARNING: option name not in the BE brief; needed so a put 2 assertion is exchanged with subject_token_type jwt — verify before merging
+  /**
+   * What `getIdentityToken` returns: `id_token` (default, put 1) or `jwt` (assertion of a
+   * `PARTNER_KEY` issuer, put 2).
+   */
+  identityTokenType?: IdentityTokenType;
   onReservationCreated?: (reservation: ReservationCreatedPayload) => void;
   onUnavailable?: (event: { reason: WidgetUnavailableReason }) => void;
 }

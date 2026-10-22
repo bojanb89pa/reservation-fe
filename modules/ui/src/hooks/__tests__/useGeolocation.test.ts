@@ -27,7 +27,12 @@ describe('useGeolocation', () => {
   it('maps a permission-denied failure to the permissionDenied reason', async () => {
     const getCurrentPosition = vi.fn(
       (_success: PositionCallback, error: PositionErrorCallback) =>
-        void error({ code: 1, PERMISSION_DENIED: 1, POSITION_UNAVAILABLE: 2, TIMEOUT: 3 } as GeolocationPositionError),
+        void error({
+          code: 1,
+          PERMISSION_DENIED: 1,
+          POSITION_UNAVAILABLE: 2,
+          TIMEOUT: 3,
+        } as GeolocationPositionError),
     );
     Object.defineProperty(navigator, 'geolocation', {
       value: { getCurrentPosition },

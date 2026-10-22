@@ -1,4 +1,4 @@
-import { createSign, generateKeyPairSync } from 'node:crypto';
+import { createSign, generateKeyPairSync, type KeyObject } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { expect, request, type APIResponse } from '@playwright/test';
@@ -50,7 +50,7 @@ export interface OwnerConsentDto {
 }
 
 export interface IntegrationBody {
-  trustedIssuers: { type: 'OIDC' | 'PARTNER_KEY'; issuer: string; jwksUri: string | null; audiences: string[] }[];
+  trustedIssuers: { type: 'OIDC' | 'PARTNER_KEY'; issuer: string; jwksUri: string | null; inlineJwk?: string | null; audiences: string[] }[];
   allowedOrigins: string[];
   allowedScopes: string[];
 }
@@ -122,6 +122,7 @@ export function integrationBody(overrides: Partial<IntegrationBody> = {}): Integ
         type: 'OIDC',
         issuer: 'https://issuer.e2e.reserva.test',
         jwksUri: 'https://issuer.e2e.reserva.test/jwks.json',
+        inlineJwk: null,
         audiences: ['e2e-partner-audience'],
       },
     ],
@@ -429,4 +430,81 @@ export async function exchangeToken(params: Record<string, string>): Promise<Tok
   } finally {
     await http.dispose();
   }
+}
+
+// ---------------------------------------------------------------------------
+// Put 2: partner potpisuje tvrdnju o identitetu (PARTNER_KEY)
+//
+// Test sam pravi EC P-256 par ključeva; javni deo se registruje kao inline JWK.
+// ---------------------------------------------------------------------------
+
+export const JWT_TOKEN_TYPE = 'urn:ietf:params:oauth:token-type:jwt';
+export const RESERVA_ASSERTION_AUDIENCE = 'reserva';
+
+export interface PartnerKeyPair {
+  privateKey: KeyObject;
+  /** Javni JWK kao JSON string (za `inlineJwk`). */
+  inlineJwk: string;
+}
+
+export function generatePartnerKey(): PartnerKeyPair {
+  const { publicKey, privateKey } = generateKeyPairSync('ec', { namedCurve: 'P-256' });
+  return { privateKey, inlineJwk: JSON.stringify(publicKey.export({ format: 'jwk' })) };
+}
+
+export interface PartnerAssertionOptions {
+  key: PartnerKeyPair;
+  /** Registrovani PARTNER_KEY `issuer`. */
+  iss: string;
+  aud?: string;
+  sub?: string;
+  email?: string;
+  /** `null` izostavlja `jti`. */
+  jti?: string | null;
+  /** Sekundi do isteka (podrazumevano 120). */
+  expiresInSeconds?: number;
+}
+
+export function uniqueJti(): string {
+  return `jti-${uniqueName('j').replace(/\s+/g, '-')}`;
+}
+
+export function uniquePartnerIssuer(): string {
+  return `partner-${uniqueName('iss').replace(/\s+/g, '-')}`;
+}
+
+/** Tvrdnja partnerovog backenda (ES256) za `subject_token_type = jwt`. */
+export function signPartnerAssertion(options: PartnerAssertionOptions): string {
+  const now = Math.floor(Date.now() / 1000);
+  const claims: Record<string, unknown> = {
+    iss: options.iss,
+    sub: options.sub ?? uniqueSubject(),
+    aud: options.aud ?? RESERVA_ASSERTION_AUDIENCE,
+    email: options.email ?? uniqueEmail('idp'),
+    iat: now - 5,
+    exp: now + (options.expiresInSeconds ?? 120),
+  };
+  if (options.jti !== null) claims['jti'] = options.jti ?? uniqueJti();
+  const header = base64Url(JSON.stringify({ alg: 'ES256', typ: 'JWT' }));
+  const payload = base64Url(JSON.stringify(claims));
+  const signature = createSign('SHA256')
+    .update(`${header}.${payload}`)
+    .sign({ key: options.key.privateKey, dsaEncoding: 'ieee-p1363' });
+  return `${header}.${payload}.${base64Url(signature)}`;
+}
+
+/** Integracija sa jednim PARTNER_KEY izdavaocem (inline JWK). */
+export function partnerKeyIntegrationBody(issuer: string, key: PartnerKeyPair): IntegrationBody {
+  return integrationBody({
+    trustedIssuers: [{ type: 'PARTNER_KEY', issuer, jwksUri: null, inlineJwk: key.inlineJwk, audiences: [] }],
+  });
+}
+
+/** Zamena partnerske tvrdnje za partnerski access token. */
+export function exchangeAssertion(
+  partnerId: string,
+  assertion: string,
+  extra: Record<string, string> = {},
+): Promise<TokenExchangeResult> {
+  return exchangeToken({ client_id: partnerId, subject_token_type: JWT_TOKEN_TYPE, subject_token: assertion, ...extra });
 }

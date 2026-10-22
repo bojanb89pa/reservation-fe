@@ -10,6 +10,7 @@ import {
 } from '@fe/domain';
 import type {
   ClientApplicationWidgetLocation,
+  IdentityTokenType,
   Resource,
   ReservationCreatedPayload,
   WidgetToHostMessage,
@@ -29,6 +30,7 @@ interface Props {
   location: ClientApplicationWidgetLocation;
   identityToken: string | null | undefined;
   requestIdentity: () => Promise<string | null>;
+  getIdentityTokenType?: () => IdentityTokenType | undefined;
   send: (message: WidgetToHostMessage) => void;
   onUnavailable: (reason: WidgetUnavailableReason) => void;
 }
@@ -49,6 +51,7 @@ export function WidgetBooking({
   location,
   identityToken,
   requestIdentity,
+  getIdentityTokenType,
   send,
   onUnavailable,
 }: Props) {
@@ -61,6 +64,7 @@ export function WidgetBooking({
     clientApplicationId,
     requestIdentity,
     identityToken,
+    getIdentityTokenType,
   });
 
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);

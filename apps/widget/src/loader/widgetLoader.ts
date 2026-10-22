@@ -16,6 +16,7 @@
  *       theme: 'auto',            // optional: 'light' | 'dark' | 'auto' (default 'auto')
  *       locale: 'sr',             // optional: 'sr' | 'en' (default 'sr')
  *       getIdentityToken: () => myAuth.getOidcIdToken(), // string | null | Promise<string | null>
+ *       identityTokenType: 'jwt', // optional: 'id_token' (default, put 1) | 'jwt' (put 2, partner-signed assertion)
  *       onReservationCreated: (r) => {},  // { id, status, startTime, endTime, locationName }
  *       onUnavailable: ({ reason }) => {}, // 'LOCATION_OUT_OF_SCOPE' | 'CONSENT_NOT_APPROVED' | 'PARTNER_DISABLED'
  *     }]);
@@ -36,7 +37,7 @@
  * postMessage protocol (see `WidgetMessage` in @fe/domain; every message has `v` and `type`):
  *   iframe → loader: reserva:ready, reserva:need-identity, reserva:resize {height},
  *                    reserva:reservation-created {reservation}, reserva:unavailable {reason}
- *   loader → iframe: reserva:identity {idToken}
+ *   loader → iframe: reserva:identity {idToken, tokenType?}
  * Security: the loader only reacts to messages whose `event.origin` is the Reserva origin (the origin
  * `widget.js` was loaded from) and whose `event.source` is the widget's own iframe. Outgoing messages
  * always use the Reserva origin as `targetOrigin`, never `'*'`. The iframe is sandboxed WITHOUT
@@ -110,6 +111,9 @@ export function installReservaWidget(
       v: WIDGET_PROTOCOL_VERSION,
       type: WidgetMessageType.IDENTITY,
       idToken,
+      ...(instance.options.identityTokenType
+        ? { tokenType: instance.options.identityTokenType }
+        : {}),
     };
     instance.iframe.contentWindow?.postMessage(message, reservaOrigin);
   }

@@ -15,6 +15,8 @@ import { ClientApplicationScopeSummary } from '../../components/client-applicati
 import styles from './DashboardClientApplicationDetailPage.module.css';
 
 const INTEGRATION_ERROR_KEYS: Record<ClientApplicationIntegrationErrorCode, string> = {
+  [ClientApplicationIntegrationErrorCode.PARTNER_KEY_INVALID]:
+    'clientApplicationIntegration.errorPartnerKeyInvalid',
   [ClientApplicationIntegrationErrorCode.ISSUER_INVALID]:
     'clientApplicationIntegration.errorIssuerInvalid',
   [ClientApplicationIntegrationErrorCode.ORIGIN_INVALID]:
@@ -23,7 +25,7 @@ const INTEGRATION_ERROR_KEYS: Record<ClientApplicationIntegrationErrorCode, stri
     'clientApplicationIntegration.errorScopeUnsupported',
 };
 
-/** Maps a 422 carrying one of the BE message keys to its i18n key; `null` for anything else. */
+/** Maps a 400/422 carrying one of the BE message keys to its i18n key; `null` for anything else. */
 function integrationErrorKey(err: unknown): string | null {
   if (!(err instanceof Error)) return null;
   const code = (
@@ -73,7 +75,7 @@ export function DashboardClientApplicationDetailPage() {
     }
   };
 
-  const formatDate =(iso: string | null) =>
+  const formatDate = (iso: string | null) =>
     iso ? new Date(iso).toLocaleString(i18n.language) : t('clientApplicationDetail.notDecided');
 
   const detail = application.data;

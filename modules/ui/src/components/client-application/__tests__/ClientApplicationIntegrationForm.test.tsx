@@ -48,6 +48,7 @@ describe('ClientApplicationIntegrationForm', () => {
             type: 'OIDC',
             issuer: 'https://idp.partner.com',
             jwksUri: 'https://idp.partner.com/jwks',
+            inlineJwk: null,
             audiences: ['reserva'],
           },
         ],
@@ -55,6 +56,105 @@ describe('ClientApplicationIntegrationForm', () => {
         allowedScopes: ['reservation:create', 'reservation:read:own'],
       }),
     );
+  });
+
+  describe('PARTNER_KEY issuer', () => {
+    const publicJwk = '{"kty":"EC","crv":"P-256","x":"a","y":"b"}';
+
+    function renderPartnerKey(onSubmit = vi.fn().mockResolvedValue(undefined)) {
+      render(
+        <ClientApplicationIntegrationForm
+          integration={{ ...integration, trustedIssuers: [] }}
+          onSubmit={onSubmit}
+          isPending={false}
+        />,
+      );
+      fireEvent.click(screen.getByRole('button', { name: 'Add issuer' }));
+      fireEvent.change(screen.getByLabelText('Issuer 1 type'), {
+        target: { value: 'PARTNER_KEY' },
+      });
+      fireEvent.change(screen.getByLabelText('Issuer 1 URL'), {
+        target: { value: 'https://partner.example' },
+      });
+      return onSubmit;
+    }
+
+    it('shows one key field at a time and hides audiences', () => {
+      renderPartnerKey();
+      expect(screen.queryByLabelText('Issuer 1 audiences')).not.toBeInTheDocument();
+      expect(screen.getByRole('radio', { name: 'JWKS URL' })).toBeChecked();
+      expect(screen.getByLabelText('Issuer 1 JWKS URI')).toBeInTheDocument();
+      expect(screen.queryByLabelText('Issuer 1 inline JWK (JSON)')).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('radio', { name: 'Inline JWK' }));
+      expect(screen.getByLabelText('Issuer 1 inline JWK (JSON)')).toBeInTheDocument();
+      expect(screen.queryByLabelText('Issuer 1 JWKS URI')).not.toBeInTheDocument();
+    });
+
+    it('sends the unused key field as null and audiences as []', async () => {
+      const onSubmit = renderPartnerKey();
+      fireEvent.click(screen.getByRole('radio', { name: 'Inline JWK' }));
+      fireEvent.change(screen.getByLabelText('Issuer 1 inline JWK (JSON)'), {
+        target: { value: publicJwk },
+      });
+      fireEvent.click(screen.getByRole('button', { name: 'Save integration' }));
+
+      await waitFor(() => expect(onSubmit).toHaveBeenCalled());
+      expect(onSubmit.mock.calls[0][0].trustedIssuers).toEqual([
+        {
+          type: 'PARTNER_KEY',
+          issuer: 'https://partner.example',
+          jwksUri: null,
+          inlineJwk: publicJwk,
+          audiences: [],
+        },
+      ]);
+    });
+
+    it('blocks saving and explains the problem for an invalid key', async () => {
+      const onSubmit = renderPartnerKey();
+      fireEvent.click(screen.getByRole('radio', { name: 'Inline JWK' }));
+      fireEvent.change(screen.getByLabelText('Issuer 1 inline JWK (JSON)'), {
+        target: { value: '{"kty":"RSA","n":"x","e":"AQAB","d":"secret"}' },
+      });
+      fireEvent.click(screen.getByRole('button', { name: 'Save integration' }));
+
+      expect(await screen.findByRole('alert')).toHaveTextContent(/public only/i);
+      expect(onSubmit).not.toHaveBeenCalled();
+    });
+
+    it('requires a key and an absolute JWKS URL', async () => {
+      const onSubmit = renderPartnerKey();
+      fireEvent.click(screen.getByRole('button', { name: 'Save integration' }));
+      expect(await screen.findByRole('alert')).toHaveTextContent(/Fill in the JWKS URL/i);
+
+      fireEvent.change(screen.getByLabelText('Issuer 1 JWKS URI'), { target: { value: '/jwks' } });
+      expect(screen.getByRole('alert')).toHaveTextContent(/absolute URL/i);
+      expect(onSubmit).not.toHaveBeenCalled();
+    });
+
+    it('prefills INLINE_JWK when the stored issuer has an inline key', () => {
+      render(
+        <ClientApplicationIntegrationForm
+          integration={{
+            ...integration,
+            trustedIssuers: [
+              {
+                type: 'PARTNER_KEY',
+                issuer: 'partner-1',
+                jwksUri: null,
+                inlineJwk: publicJwk,
+                audiences: [],
+              },
+            ],
+          }}
+          onSubmit={vi.fn()}
+          isPending={false}
+        />,
+      );
+      expect(screen.getByRole('radio', { name: 'Inline JWK' })).toBeChecked();
+      expect(screen.getByLabelText('Issuer 1 inline JWK (JSON)')).toHaveValue(publicJwk);
+    });
   });
 
   it('adds and removes issuers', () => {

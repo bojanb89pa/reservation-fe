@@ -137,6 +137,18 @@ describe('TokenExchangeApiRepository', () => {
     });
   });
 
+  it('sends the jwt subject_token_type for a partner assertion', async () => {
+    const client = { post: vi.fn().mockResolvedValue({ data: {} }) };
+    const repo = new TokenExchangeApiRepository(client as unknown as AxiosInstance);
+    await repo.exchangeIdentityToken({
+      clientApplicationId: 'a1',
+      idToken: 'jwt',
+      subjectTokenType: 'jwt',
+    });
+    const body = client.post.mock.calls[0]?.[1] as URLSearchParams;
+    expect(body.get('subject_token_type')).toBe('urn:ietf:params:oauth:token-type:jwt');
+  });
+
   it('omits scope when none requested', async () => {
     const client = { post: vi.fn().mockResolvedValue({ data: {} }) };
     const repo = new TokenExchangeApiRepository(client as unknown as AxiosInstance);

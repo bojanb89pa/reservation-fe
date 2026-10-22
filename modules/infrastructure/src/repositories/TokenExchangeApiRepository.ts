@@ -1,9 +1,16 @@
 import type { AxiosInstance } from 'axios';
+import { DEFAULT_IDENTITY_TOKEN_TYPE } from '@fe/domain';
 import type {
   ExchangeIdentityTokenCommand,
+  IdentityTokenType,
   TokenExchangeRepository,
   TokenExchangeResult,
 } from '@fe/domain';
+
+const SUBJECT_TOKEN_TYPE_URN: Readonly<Record<IdentityTokenType, string>> = {
+  id_token: 'urn:ietf:params:oauth:token-type:id_token',
+  jwt: 'urn:ietf:params:oauth:token-type:jwt',
+};
 
 interface TokenExchangeResponse {
   access_token: string;
@@ -22,7 +29,7 @@ export class TokenExchangeApiRepository implements TokenExchangeRepository {
       grant_type: 'urn:ietf:params:oauth:grant-type:token-exchange',
       client_id: command.clientApplicationId,
       subject_token: command.idToken,
-      subject_token_type: 'urn:ietf:params:oauth:token-type:id_token',
+      subject_token_type: SUBJECT_TOKEN_TYPE_URN[command.subjectTokenType ?? DEFAULT_IDENTITY_TOKEN_TYPE],
     });
     if (command.scopes && command.scopes.length > 0) {
       params.set('scope', command.scopes.join(' '));

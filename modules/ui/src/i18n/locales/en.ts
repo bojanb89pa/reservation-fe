@@ -421,6 +421,22 @@ const en = {
     errorOriginInvalid:
       'An allowed origin is invalid (use scheme://host[:port] with no path or trailing slash)',
     errorScopeUnsupported: 'One of the allowed scopes is not supported',
+    errorPartnerKeyInvalid:
+      'The partner key is invalid (provide exactly one of a JWKS URL or a public RSA / EC P-256 JWK)',
+    keySource: 'Issuer {{n}} key source',
+    keySourceJwksUri: 'JWKS URL',
+    keySourceInlineJwk: 'Inline JWK',
+    issuerInlineJwk: 'Issuer {{n}} inline JWK (JSON)',
+    inlineJwkPlaceholder: '{"kty":"RSA","n":"…","e":"AQAB"}',
+    partnerKeyProblem: {
+      ISSUER_INVALID: 'The issuer must not be empty or contain whitespace',
+      KEY_MISSING: 'Fill in the JWKS URL or the inline JWK',
+      KEY_AMBIGUOUS: 'Fill in only one of the JWKS URL and the inline JWK',
+      JWKS_URI_NOT_ABSOLUTE: 'The JWKS URL must be an absolute URL (https://…)',
+      INLINE_JWK_NOT_JSON_OBJECT: 'The inline JWK must be a JSON object',
+      INLINE_JWK_UNSUPPORTED_KEY: 'The key must be RSA, or EC with curve P-256',
+      INLINE_JWK_PRIVATE: 'The key must be public only (remove private members such as "d")',
+    },
   },
   dashboardPartners: {
     title: 'Partners',

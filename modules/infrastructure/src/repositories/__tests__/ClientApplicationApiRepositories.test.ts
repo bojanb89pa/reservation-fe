@@ -87,6 +87,67 @@ describe('ClientApplicationIntegrationApiRepository', () => {
     });
   });
 
+  it('updateIntegration sends a PARTNER_KEY issuer with inlineJwk', async () => {
+    const { client, repo } = setup();
+    const jwk = '{"kty":"RSA","n":"abc","e":"AQAB"}';
+    await repo.updateIntegration({
+      clientApplicationId: 'a1',
+      trustedIssuers: [
+        { type: 'PARTNER_KEY', issuer: 'partner-1', jwksUri: null, audiences: [], inlineJwk: jwk },
+      ],
+      allowedOrigins: [],
+      allowedScopes: [],
+    });
+    expect(client.put).toHaveBeenCalledWith('/admin/client-applications/a1/integration', {
+      trustedIssuers: [
+        { type: 'PARTNER_KEY', issuer: 'partner-1', jwksUri: null, audiences: [], inlineJwk: jwk },
+      ],
+      allowedOrigins: [],
+      allowedScopes: [],
+    });
+  });
+
+  it('updateIntegration sends inlineJwk null for a PARTNER_KEY issuer with jwksUri', async () => {
+    const { client, repo } = setup();
+    await repo.updateIntegration({
+      clientApplicationId: 'a1',
+      trustedIssuers: [
+        {
+          type: 'PARTNER_KEY',
+          issuer: 'partner-1',
+          jwksUri: 'https://p.rs/jwks.json',
+          audiences: [],
+        },
+      ],
+      allowedOrigins: [],
+      allowedScopes: [],
+    });
+    expect(client.put).toHaveBeenCalledWith('/admin/client-applications/a1/integration', {
+      trustedIssuers: [
+        {
+          type: 'PARTNER_KEY',
+          issuer: 'partner-1',
+          jwksUri: 'https://p.rs/jwks.json',
+          audiences: [],
+          inlineJwk: null,
+        },
+      ],
+      allowedOrigins: [],
+      allowedScopes: [],
+    });
+  });
+
+  it('getIntegration returns inlineJwk as the BE sent it', async () => {
+    const { client, repo } = setup();
+    const body = {
+      trustedIssuers: [
+        { type: 'PARTNER_KEY', issuer: 'p', jwksUri: null, audiences: [], inlineJwk: '{"kty":"EC"}' },
+      ],
+    };
+    client.get.mockResolvedValue({ data: body });
+    await expect(repo.getIntegration('a1')).resolves.toBe(body);
+  });
+
   it('getPublicIntegration uses the public client', async () => {
     const { client, publicClient, repo } = setup();
     await expect(repo.getPublicIntegration('a1')).resolves.toBe('body');
@@ -143,6 +204,19 @@ describe('normalizeAxiosError client applications', () => {
     expect(unprocessable).toBeInstanceOf(UnprocessableEntityError);
     expect(unprocessable.message).toBe('error.client_application_integration.issuer_invalid');
     expect(normalizeAxiosError(httpError('put', url, 400))).toBeInstanceOf(ValidationError);
+  });
+
+  it('maps 400 partner_key_invalid on integration update to ValidationError with the key', () => {
+    const error = normalizeAxiosError(
+      httpError(
+        'put',
+        '/admin/client-applications/a1/integration',
+        400,
+        'error.client_application_integration.partner_key_invalid',
+      ),
+    );
+    expect(error).toBeInstanceOf(ValidationError);
+    expect(error.message).toBe('error.client_application_integration.partner_key_invalid');
   });
 
   it('keeps the public integration 404 and register errors as ApiError', () => {

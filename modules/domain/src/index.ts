@@ -111,6 +111,8 @@ export type {
 export type {
   TrustedIssuerType,
   TrustedIssuer,
+  PartnerKeySource,
+  PartnerKeyIssuerProblem,
   ClientApplicationOAuthScope,
   ClientApplicationIntegration,
   UpdateClientApplicationIntegrationCommand,
@@ -119,6 +121,9 @@ export type {
 export {
   TRUSTED_ISSUER_TYPES,
   CLIENT_APPLICATION_OAUTH_SCOPES,
+  PARTNER_KEY_SOURCES,
+  PARTNER_ASSERTION_AUDIENCE,
+  validatePartnerKeyIssuer,
 } from './entities/ClientApplicationIntegration';
 export type {
   ClientApplicationWidgetLocation,
@@ -136,7 +141,12 @@ export {
   toWidgetTheme,
   toWidgetLocale,
 } from './entities/ClientApplicationWidget';
-export type { ExchangeIdentityTokenCommand, TokenExchangeResult } from './entities/TokenExchange';
+export type {
+  IdentityTokenType,
+  ExchangeIdentityTokenCommand,
+  TokenExchangeResult,
+} from './entities/TokenExchange';
+export { IDENTITY_TOKEN_TYPES, DEFAULT_IDENTITY_TOKEN_TYPE } from './entities/TokenExchange';
 export type {
   CreateClientApplicationReservationCommand,
   ClientApplicationReservation,

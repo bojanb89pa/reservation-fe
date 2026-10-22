@@ -23,7 +23,7 @@ function WidgetContent() {
 
   const hasParams = !!params.clientId && !!params.locationId;
   const { data: config, isLoading, isError } = useWidgetConfig(hasParams ? params.clientId : '');
-  const { trusted, send, identityToken, requestIdentity } = useWidgetBridge({
+  const { trusted, send, identityToken, requestIdentity, getIdentityTokenType } = useWidgetBridge({
     parentOrigin: params.parentOrigin,
     allowedOrigins: config?.allowedOrigins ?? null,
   });
@@ -61,6 +61,7 @@ function WidgetContent() {
         location={availability.location}
         identityToken={identityToken}
         requestIdentity={requestIdentity}
+        getIdentityTokenType={getIdentityTokenType}
         send={send}
         onUnavailable={handleUnavailable}
       />
