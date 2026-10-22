@@ -1,58 +1,64 @@
-# Uputstvo za integraciju partnera: Reserva widget
+# Partner integration guide: Reserva widget
 
-Ovo uputstvo je za partnera koji na svoj sajt ugrađuje Reserva widget za rezervacije. Ugovor je definisan komentarom loader-a (`apps/widget/src/loader/widgetLoader.ts`) i tipovima `WidgetMountOptions` i `WidgetMessage` u `@fe/domain`. Ako se uputstvo i kod razlikuju, važi kod.
+This guide is for a partner who embeds the Reserva booking widget on their website. The contract is defined by the loader's source comment (`apps/widget/src/loader/widgetLoader.ts`) and by the `WidgetMountOptions` and `WidgetMessage` types in `@fe/domain`. If this guide and the code disagree, the code wins.
 
-## 1. Šta partner dobija od Reserve
+For a short overview, see the [README](../README.md#embedding-the-widget). For the full widget reference, see [widget.md](widget.md).
 
-- **Client application**: registracija partnera u Reservi.
-- **`clientId`**: javni identifikator client application-a. Nije tajna i ide u kod stranice.
-- **`allowed_origins`**: lista tačnih origin-a (`https://sajt-partnera.example`) sa kojih se widget sme ugraditi. Widget šalje poruke samo origin-u stranice koji je na toj listi.
-- **Saglasnost biznisa po lokaciji**: widget radi samo za lokacije biznisa koji je partneru odobrio saglasnost.
+## 1. What a partner gets from Reserva
 
-Kad widget ne može da se koristi, loader poziva `onUnavailable({ reason })`:
+- **Client application**: the partner's registration in Reserva.
+- **`clientId`**: the public identifier of the client application. It is not a secret and goes into the page code.
+- **`allowed_origins`**: the list of exact origins (for example `https://partner-site.example`) allowed to embed the widget. The widget sends messages only to a page origin on this list.
+- **Business consent per location**: the widget works only for locations of businesses that have approved consent for the partner.
 
-| `reason` | Značenje |
-|---|---|
-| `LOCATION_OUT_OF_SCOPE` | Lokacija ne pripada ovom partneru. |
-| `CONSENT_NOT_APPROVED` | Biznis nije odobrio saglasnost za tu lokaciju. |
-| `PARTNER_DISABLED` | Admin Reserve je isključio partnera. |
+When the widget cannot be used, the loader calls `onUnavailable({ reason })`:
 
-Partner u tom slučaju treba da prikaže rezervnu opciju, npr. kontakt telefon.
+| `reason`                | Meaning                                                  |
+| ----------------------- | -------------------------------------------------------- |
+| `LOCATION_OUT_OF_SCOPE` | The location does not belong to this partner.            |
+| `CONSENT_NOT_APPROVED`  | The business has not approved consent for this location. |
+| `PARTNER_DISABLED`      | A Reserva admin has disabled the partner.                |
 
-## 2. Ugradnja loader-a
+In that case the partner should show a fallback option, for example a contact phone number.
+
+## 2. Loader installation
 
 ```html
 <div id="reserva-widget"></div>
 <script>
   window.ReservaWidget = window.ReservaWidget || [];
-  window.ReservaWidget.push(['mount', '#reserva-widget', {
-    clientId: '<javni client application id>',
-    locationId: '<id lokacije>',
-    theme: 'auto',   // opciono: 'light' | 'dark' | 'auto' (podrazumevano 'auto')
-    locale: 'sr',    // opciono: 'sr' | 'en' (podrazumevano 'sr')
-    // string | null | Promise<string | null>; null znači gost
-    getIdentityToken: () => myAuth.getIdentityToken(),
-    // { id, status, startTime, endTime, locationName }
-    onReservationCreated: (reservation) => {
-      console.log('Rezervacija kreirana', reservation.id);
+  window.ReservaWidget.push([
+    'mount',
+    '#reserva-widget',
+    {
+      clientId: '<public client application id>',
+      locationId: '<location id>',
+      theme: 'auto', // optional: 'light' | 'dark' | 'auto' (default 'auto')
+      locale: 'sr', // optional: 'sr' | 'en' (default 'sr')
+      // string | null | Promise<string | null>; null means guest
+      getIdentityToken: () => myAuth.getIdentityToken(),
+      // { id, status, startTime, endTime, locationName }
+      onReservationCreated: (reservation) => {
+        console.log('Reservation created', reservation.id);
+      },
+      onUnavailable: ({ reason }) => {
+        // 'LOCATION_OUT_OF_SCOPE' | 'CONSENT_NOT_APPROVED' | 'PARTNER_DISABLED'
+        document.querySelector('#reserva-widget').textContent = 'Booking is currently unavailable.';
+      },
     },
-    onUnavailable: ({ reason }) => {
-      // 'LOCATION_OUT_OF_SCOPE' | 'CONSENT_NOT_APPROVED' | 'PARTNER_DISABLED'
-      document.querySelector('#reserva-widget').textContent = 'Rezervacija trenutno nije dostupna.';
-    },
-  }]);
+  ]);
 </script>
 <script async src="https://<reserva origin>/widget.js"></script>
 ```
 
-Obavezna polja su `clientId`, `locationId` i `getIdentityToken`. Bez njih `mount` ispisuje grešku u konzolu i ne renderuje ništa.
+The required fields are `clientId`, `locationId` and `getIdentityToken`. Without them, `mount` logs an error to the console and renders nothing.
 
-Komande se stavljaju u red `window.ReservaWidget` pre učitavanja skripte i izvršavaju se redom. Posle učitavanja `push` ih izvršava odmah.
+Commands are placed in the `window.ReservaWidget` queue before the script loads, and they run in order. After the script loads, `push` runs them immediately.
 
-- `['mount', selector, options]` renderuje iframe u prvi element koji odgovara selektoru.
-- `['refreshIdentity', selector?]` ponovo poziva `getIdentityToken()` i šalje widget-u novi identitet. Bez selektora važi za sve widget-e. Dostupno je i kao `window.ReservaWidget.refreshIdentity(selector?)`.
+- `['mount', selector, options]` renders the iframe into the first element that matches `selector`.
+- `['refreshIdentity', selector?]` calls `getIdentityToken()` again and sends the widget a new identity. Without a selector, it applies to all widgets. It is also available as `window.ReservaWidget.refreshIdentity(selector?)`.
 
-**Pozovite `refreshIdentity` posle svakog logina i logouta** korisnika na vašem sajtu:
+**Call `refreshIdentity` after every login and logout** of a user on your site:
 
 ```js
 function onAuthChanged() {
@@ -60,15 +66,15 @@ function onAuthChanged() {
 }
 ```
 
-Reserva token u widget-u traje oko 10 minuta i nema refresh. Kad istekne, widget sam traži identitet ponovo, a loader poziva `getIdentityToken()`. Ta funkcija zato uvek treba da vrati svež, nepotrošen token ili `null`.
+The Reserva token in the widget lasts about 10 minutes and cannot be refreshed. When it expires, the widget asks for an identity again, and the loader calls `getIdentityToken()`. That function must therefore always return a fresh, unused token, or `null`.
 
-Gost (`null`) vidi termine, ali ne i dugme za zakazivanje.
+A guest (`null`) sees the available slots but not the booking button.
 
-## 3. Put 1: pouzdani OIDC izdavalac (npr. Google)
+## 3. Path 1: a trusted OIDC issuer (for example Google)
 
-Ako se vaši korisnici prijavljuju preko pouzdanog OIDC izdavaoca, ID token tog izdavaoca prosleđujete direktno kroz `getIdentityToken`. Backend nije potreban.
+If your users sign in through a trusted OIDC issuer, pass that issuer's ID token directly through `getIdentityToken`. No backend is needed.
 
-Primer sa Google Identity Services, kao na demo sajtu (`apps/demo-partner`):
+Example with Google Identity Services, as on the demo site (`apps/demo-partner`):
 
 ```html
 <script src="https://accounts.google.com/gsi/client" async></script>
@@ -78,14 +84,16 @@ Primer sa Google Identity Services, kao na demo sajtu (`apps/demo-partner`):
 
   window.addEventListener('load', () => {
     google.accounts.id.initialize({
-      client_id: '<vaš Google OAuth client id>',
+      client_id: '<your Google OAuth client id>',
       callback: ({ credential }) => {
-        idToken = credential; // ID token ostaje u memoriji
+        idToken = credential; // the ID token stays in memory
         window.ReservaWidget.push(['refreshIdentity']);
       },
     });
     google.accounts.id.renderButton(document.getElementById('google-login'), {
-      type: 'standard', theme: 'outline', text: 'signin_with',
+      type: 'standard',
+      theme: 'outline',
+      text: 'signin_with',
     });
   });
 
@@ -99,92 +107,100 @@ Primer sa Google Identity Services, kao na demo sajtu (`apps/demo-partner`):
     if (!idToken) return null;
     const payload = idToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
     const { exp } = JSON.parse(atob(payload));
-    return exp * 1000 > Date.now() ? idToken : null; // istekao token tretira se kao gost
+    return exp * 1000 > Date.now() ? idToken : null; // an expired token is treated as a guest
   }
 
   window.ReservaWidget = window.ReservaWidget || [];
-  window.ReservaWidget.push(['mount', '#reserva-widget', {
-    clientId: '<javni client application id>',
-    locationId: '<id lokacije>',
-    getIdentityToken,
-  }]);
+  window.ReservaWidget.push([
+    'mount',
+    '#reserva-widget',
+    {
+      clientId: '<public client application id>',
+      locationId: '<location id>',
+      getIdentityToken,
+    },
+  ]);
 </script>
 ```
 
-Napomena: dekodiranje tokena u primeru služi samo za proveru isteka. Potpis proverava Reserva.
+Note: the token decoding in this example is only for checking expiry. Reserva verifies the signature.
 
-## 4. Put 2: partner ima backend i sam potpisuje tvrdnju
+## 4. Path 2: the partner has a backend and signs the assertion
 
-Partner sa sopstvenim backend-om potpisuje kratkotrajnu tvrdnju (JWT) o identitetu svog prijavljenog korisnika. Front dobija taj token od vašeg backend-a i vraća ga kroz `getIdentityToken`. Reserva proverava potpis vašim javnim ključem, pa vam nije potreban OIDC izdavalac.
+A partner with its own backend signs a short-lived JWT assertion about its signed-in user. The front end gets that token from your backend and returns it through `getIdentityToken`. Reserva verifies the signature with your public key, so you do not need an OIDC issuer.
 
-### Registracija ključa
+### Key registration
 
-Administrator Reserve u integraciji partnera dodaje pouzdanog izdavaoca tipa `PARTNER_KEY`:
+A Reserva administrator adds a trusted issuer of type `PARTNER_KEY` to the partner integration:
 
-- `issuer`: vaš identifikator (URL ili neki neprozirni ID, bez razmaka). To je `iss` u svakoj tvrdnji.
-- Javni ključ, **tačno jedan** od dva izvora:
-  - **JWKS URL**: apsolutan URL na kom objavljujete JWKS, ili
-  - **Inline JWK**: jedan javni JWK kao JSON objekat.
-- Ključ je `RSA` ili `EC` sa krivom `P-256`, bez privatnih članova (`d`, `p`, `q`, `dp`, `dq`, `qi`). Ključ sa privatnim članom se odbija.
-- `audiences` se za `PARTNER_KEY` ne popunjava (šalje se `[]`).
+- `issuer`: your identifier (a URL or an opaque ID, without spaces). It is the `iss` in every assertion.
+- Public key, **exactly one** of two sources:
+  - **JWKS URL**: an absolute URL where you publish your JWKS, or
+  - **Inline JWK**: a single public JWK as a JSON object.
+- The key is `RSA` or `EC` on curve `P-256`, with no private members (`d`, `p`, `q`, `dp`, `dq`, `qi`). A key with a private member is rejected.
+- `audiences` is not filled in for `PARTNER_KEY` (it is sent as `[]`).
 
-Neispravan ključ, ili oba/nijedan izvor: backend vraća 400 (`partner_key_invalid`).
+An invalid key, or both or neither source: the backend returns 400 (`partner_key_invalid`).
 
 ### Widget
 
-Dodajte `identityTokenType: 'jwt'` u opcije `mount`. Bez toga widget šalje token kao ID token (put 1):
+Add `identityTokenType: 'jwt'` to the `mount` options. Without it, the widget treats the token as an ID token (path 1):
 
 ```js
-window.ReservaWidget.push(['mount', '#reserva-widget', {
-  clientId: '<javni client application id>',
-  locationId: '<id lokacije>',
-  identityTokenType: 'jwt', // 'id_token' (podrazumevano, put 1) | 'jwt' (put 2)
-  getIdentityToken,         // vraća vašu potpisanu tvrdnju
-}]);
+window.ReservaWidget.push([
+  'mount',
+  '#reserva-widget',
+  {
+    clientId: '<public client application id>',
+    locationId: '<location id>',
+    identityTokenType: 'jwt', // 'id_token' (default, path 1) | 'jwt' (path 2)
+    getIdentityToken, // returns your signed assertion
+  },
+]);
 ```
 
-### Zaglavlje i claim-ovi
+### Header and claims
 
-`alg` je `RS256` ili `ES256`. `kid` je opcion i koristi se za izbor ključa iz JWKS-a.
+`alg` is `RS256` or `ES256`. `kid` is optional and is used to pick the key from the JWKS.
 
-| Claim | Obavezan | Značenje |
-|---|---|---|
-| `iss` | da | Registrovani `PARTNER_KEY` izdavalac. |
-| `aud` | da | Mora sadržati `reserva`. |
-| `sub` | da | Stabilan identifikator korisnika kod partnera. |
-| `email` | da | Samo kontakt podatak. Nikad se ne koristi za vezivanje naloga. |
-| `email_verified` | ne | Da li je email potvrđen. |
-| `exp` | da | Najviše 300 s od prijema tvrdnje i od `iat`. |
-| `iat` | ne | Vreme izdavanja. |
-| `jti` | da | Jedinstven po partneru. Ponovljen `jti` se odbija, pa svaka tvrdnja dobija nov. |
+| Claim            | Required | Meaning                                                                               |
+| ---------------- | -------- | ------------------------------------------------------------------------------------- |
+| `iss`            | yes      | The registered `PARTNER_KEY` issuer.                                                  |
+| `aud`            | yes      | Must contain `reserva`.                                                               |
+| `sub`            | yes      | A stable identifier of the user on your side.                                         |
+| `email`          | yes      | Contact data only. It is never used to link accounts.                                 |
+| `email_verified` | no       | Whether the email is verified.                                                        |
+| `exp`            | yes      | At most 300 s after receipt and after `iat`.                                          |
+| `iat`            | no       | Issue time.                                                                           |
+| `jti`            | yes      | Unique per partner. A repeated `jti` is rejected, so every assertion needs a new one. |
 
-Dozvoljeno odstupanje sata je 60 s.
+The allowed clock skew is 60 s.
 
-Privatni ključ čuva se samo na serveru: u tajnama okruženja, nikad u front kodu, repou ni odgovoru API-ja.
+Keep the private key on the server only: in environment secrets, never in front-end code, in the repository, or in an API response.
 
-Primer potpisivanja u Node-u (`jose`):
+Example of signing in Node.js (`jose`):
 
 ```js
 import { SignJWT, importPKCS8 } from 'jose';
 import { randomUUID } from 'node:crypto';
 
-// PARTNER_KEY: privatni ključ (PKCS#8 PEM), samo iz server okruženja
+// PARTNER_KEY: private key (PKCS#8 PEM), from the server environment only
 const privateKey = await importPKCS8(process.env.PARTNER_KEY, 'ES256');
 
 export async function signIdentityAssertion(user) {
   return new SignJWT({ email: user.email, email_verified: user.emailVerified })
     .setProtectedHeader({ alg: 'ES256', kid: process.env.PARTNER_KEY_ID })
-    .setIssuer('<iss>')       // registrovani PARTNER_KEY izdavalac
+    .setIssuer('<iss>') // the registered PARTNER_KEY issuer
     .setSubject(user.id)
     .setAudience('reserva')
     .setIssuedAt()
-    .setExpirationTime('5m')  // najviše 300 s
+    .setExpirationTime('5m') // at most 300 s
     .setJti(randomUUID())
     .sign(privateKey);
 }
 ```
 
-Endpoint vašeg backend-a vraća tvrdnju samo prijavljenom korisniku:
+Your backend endpoint returns the assertion only to a signed-in user:
 
 ```js
 app.get('/api/reserva-identity', requireLogin, async (req, res) => {
@@ -192,41 +208,41 @@ app.get('/api/reserva-identity', requireLogin, async (req, res) => {
 });
 ```
 
-Front:
+Front end:
 
 ```js
 getIdentityToken: async () => {
   const response = await fetch('/api/reserva-identity', { credentials: 'include' });
-  if (!response.ok) return null; // nije prijavljen: gost
-  return (await response.json()).token; // svež token za svaki poziv
+  if (!response.ok) return null; // not signed in: guest
+  return (await response.json()).token; // a fresh token for every call
 },
 ```
 
-### Šta Reserva radi sa tvrdnjom
+### What Reserva does with the assertion
 
-Widget menja tvrdnju za Reserva token pozivom `POST /auth/oauth2/token` (`application/x-www-form-urlencoded`):
+The widget exchanges the assertion for a Reserva token with `POST /auth/oauth2/token` (`application/x-www-form-urlencoded`):
 
-| Polje | Vrednost |
-|---|---|
-| `grant_type` | `urn:ietf:params:oauth:grant-type:token-exchange` |
-| `client_id` | javni client application id |
-| `subject_token` | vaša potpisana tvrdnja |
-| `subject_token_type` | `urn:ietf:params:oauth:token-type:jwt` |
-| `scope` | opciono |
+| Field                | Value                                             |
+| -------------------- | ------------------------------------------------- |
+| `grant_type`         | `urn:ietf:params:oauth:grant-type:token-exchange` |
+| `client_id`          | the public client application id                  |
+| `subject_token`      | your signed assertion                             |
+| `subject_token_type` | `urn:ietf:params:oauth:token-type:jwt`            |
+| `scope`              | optional                                          |
 
-Moguće greške:
+Possible errors:
 
-- `invalid_grant`: tvrdnja je odbijena (potpis, `iss`, `aud`, `exp`, ponovljen `jti`...).
-- `invalid_client`: partner je nepoznat ili isključen.
-- `invalid_scope`: traženi scope nije dozvoljen partneru.
-- `invalid_request`: pogrešan `subject_token_type`.
+- `invalid_grant`: the assertion was rejected (signature, `iss`, `aud`, `exp`, repeated `jti`, ...).
+- `invalid_client`: the partner is unknown or disabled.
+- `invalid_scope`: the requested scope is not allowed for the partner.
+- `invalid_request`: wrong `subject_token_type`.
 
-Dobijeni Reserva token služi za pravljenje rezervacije, koja nosi `externalIdentityId` korisnika.
+The resulting Reserva token is used to create reservations. A reservation carries the user's `externalIdentityId`.
 
-## 5. Bezbednosne napomene
+## 5. Security notes
 
-- **Tačan origin.** U `allowed_origins` upišite tačne origin-e (šema, host, port). Ne koristite `'*'` ni šablone.
-- **Bez `'*'` u porukama.** Loader šalje poruke iframe-u samo Reserva origin-u i prima ih samo od njega i samo od sopstvenog iframe-a. Ako pišete svoj kod oko widget-a, nemojte koristiti `postMessage(..., '*')`.
-- **Sandbox iframe-a.** Loader postavlja `sandbox` bez `allow-top-navigation` i `referrerpolicy="strict-origin"`. Ne menjajte te atribute.
-- **Reserva token se nikad ne vidi na stranici partnera.** Reserva token živi samo u iframe-u. Partnerska stranica vidi samo svoj identitet i `onReservationCreated` sa poljima `id`, `status`, `startTime`, `endTime` i `locationName`, bez email-a i bez ID-ova korisnika.
-- Identitetski token koji vraćate iz `getIdentityToken` ne upisujte u logove i ne stavljajte ga u URL.
+- **Exact origins.** Enter exact origins (scheme, host, port) in `allowed_origins`. Do not use `'*'` or patterns.
+- **No `'*'` in messages.** The loader sends messages to the iframe only to the Reserva origin, and accepts messages only from that origin and only from its own iframe. If you write your own code around the widget, do not use `postMessage(..., '*')`.
+- **Iframe sandbox.** The loader sets `sandbox` without `allow-top-navigation`, and `referrerpolicy="strict-origin"`. Do not change these attributes.
+- **The Reserva token is never visible on the partner's page.** It lives only inside the iframe. The partner page sees only its own identity and the `onReservationCreated` payload, with the fields `id`, `status`, `startTime`, `endTime` and `locationName`. It contains no email and no user or identity IDs.
+- Do not write the identity token that you return from `getIdentityToken` to logs, and do not put it in a URL.

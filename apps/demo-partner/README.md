@@ -1,79 +1,83 @@
-# Demo partner (Beogradski Berberin)
+# Demo partner ("Beogradski Berberin")
 
-Statičan Vite sajt izmišljenog partnera. Ponaša se kao pravi partner: widget ugrađuje samo preko
-javnog loader-a `{VITE_RESERVA_ORIGIN}/widget.js` i queue-a `window.ReservaWidget`, i ne uvozi
-nijedan `@fe/*` paket (eslint to zabranjuje). Nije deo root `yarn build`.
+A static Vite site for a fictional partner. It behaves like a real partner: it embeds the widget only
+through the public loader `{VITE_RESERVA_ORIGIN}/widget.js` and the `window.ReservaWidget` queue, and
+it imports no `@fe/*` package (ESLint enforces this). It is not part of the root `yarn build`.
+
+It is the live example of the integration described in [partner-integration.md](../../docs/partner-integration.md).
+The hosted copy runs at https://demo-business.bojanlab.com.
 
 ```bash
-cp apps/demo-partner/.env.example apps/demo-partner/.env.local   # popuni VITE_DEMO_CLIENT_ID
+cp apps/demo-partner/.env.example apps/demo-partner/.env.local   # fill in VITE_DEMO_CLIENT_ID
 yarn dev:demo-partner        # http://localhost:5175
 yarn build:demo-partner      # yarn workspace @fe/demo-partner build → apps/demo-partner/dist
 ```
 
-## Konfiguracija (`.env.example`)
+## Configuration (`.env.example`)
 
-| Promenljiva | Značenje |
-|---|---|
-| `VITE_RESERVA_ORIGIN` | origin sa kog se učitava `/widget.js` |
-| `VITE_DEMO_CLIENT_ID` | javni ID client application-a partnera |
-| `VITE_DEMO_LOCATION_ID` | lokacija sa saglasnošću (widget desno) |
-| `VITE_DEMO_NO_CONSENT_LOCATION_ID` | lokacija bez saglasnosti; na `onUnavailable` se prikazuje kontakt |
-| `VITE_GOOGLE_CLIENT_ID` | Google OAuth Web Client ID (javna vrednost) |
-| `VITE_DEMO_IDENTITY` | `test` = test režim, prazno = Google |
+| Variable                           | Meaning                                                                       |
+| ---------------------------------- | ----------------------------------------------------------------------------- |
+| `VITE_RESERVA_ORIGIN`              | Origin the `/widget.js` loader is loaded from                                 |
+| `VITE_DEMO_CLIENT_ID`              | Public ID of the partner's client application                                 |
+| `VITE_DEMO_LOCATION_ID`            | Location with business consent (the widget is shown on the right)             |
+| `VITE_DEMO_NO_CONSENT_LOCATION_ID` | Location without consent; on `onUnavailable` the site shows a contact instead |
+| `VITE_GOOGLE_CLIENT_ID`            | Google OAuth Web Client ID (public value)                                     |
+| `VITE_DEMO_IDENTITY`               | `test` = test mode, empty = Google                                            |
 
-## Prijava
+## Sign-in
 
-Google Identity Services, samo u browser-u: ID token ostaje u memoriji (bez kolačića i backend-a) i
-vraća se widget-u kroz `getIdentityToken`. Posle logina i logouta poziva se `refreshIdentity`.
+Google Identity Services, in the browser only: the ID token stays in memory (no cookies and no backend)
+and is returned to the widget through `getIdentityToken`. `refreshIdentity` is called after every login
+and logout.
 
-## Test režim (`VITE_DEMO_IDENTITY=test`)
+## Test mode (`VITE_DEMO_IDENTITY=test`)
 
-Samo za E2E i lokalni rad. Umesto Google dugmeta (dugme „Prijava (test)“) ID token stiže od test
-OIDC izdavaoca (`e2e/oidc-issuer`), i to prvim od:
+For E2E and local work only. Instead of the Google button (the "Sign in (test)" button), the ID token
+comes from the test OIDC issuer (`e2e/oidc-issuer`). The first of these sources wins:
 
-1. `window.__DEMO_ID_TOKEN__` — Playwright ga postavi pre učitavanja
-   (`page.addInitScript`) ili kasnije, pa pozove `window.ReservaWidget.refreshIdentity()`;
-2. query parametar `?idToken=<jwt>`.
+1. `window.__DEMO_ID_TOKEN__`. Playwright sets it before load (`page.addInitScript`), or later, and then
+   calls `window.ReservaWidget.refreshIdentity()`.
+2. The `?idToken=<jwt>` query parameter.
 
-Ako je token dostupan pri učitavanju, korisnik je prijavljen od starta; „Odjavi se“ ga odjavljuje
-(widget dobija `null`), a „Prijava (test)“ ponovo uzima trenutni token.
+If a token is available at load time, the user is signed in from the start. "Sign out" clears it (the
+widget receives `null`), and "Sign in (test)" takes the current token again.
 
-Ovaj kod (`src/testIdentity.ts`) ne postoji u produkcijskom build-u: grana iza
-`import.meta.env.VITE_DEMO_IDENTITY === 'test'` u `src/identity.ts` nestaje dead-code
-eliminacijom. `src/__tests__/bundle.test.ts` pravi produkcijski bundle i proverava da test koda
-nema u njemu.
+This code (`src/testIdentity.ts`) is not in the production build: the branch guarded by
+`import.meta.env.VITE_DEMO_IDENTITY === 'test'` in `src/identity.ts` is removed by dead-code elimination.
+`src/__tests__/bundle.test.ts` builds the production bundle and checks that no test code is in it.
 
 ## Deploy
 
-Sajt je na `https://demo-business.bojanlab.com`. Workflow `.github/workflows/deploy-demo-partner.yml`
-se pokreće na push u `main` koji menja `apps/demo-partner/**` (ili sam workflow) i ručno
+The site is at `https://demo-business.bojanlab.com`. The workflow `.github/workflows/deploy-demo-partner.yml`
+runs on a push to `main` that changes `apps/demo-partner/**` (or the workflow itself), and manually
 (`workflow_dispatch`):
 
-1. GitHub runner builduje arm64 image `ghcr.io/bojanb89pa/reservation-demo-partner`
-   (`apps/demo-partner/Dockerfile`, nginx servira statiku) i pušuje ga u GHCR.
-2. Self-hosted runner na Pi-ju radi `git pull`, `docker compose pull demo-partner` i
-   `docker compose up -d demo-partner`, pa proveri da kontejner vraća `index.html`.
+1. A GitHub runner builds an arm64 image `ghcr.io/<owner>/reservation-demo-partner`
+   (`apps/demo-partner/Dockerfile`; nginx serves the static files) and pushes it to GHCR.
+2. A self-hosted runner on the Raspberry Pi host runs `git pull`, `docker compose pull demo-partner` and
+   `docker compose up -d demo-partner`, then checks that the container returns `index.html`.
 
-Traefik ruta za `demo-business.bojanlab.com` je u `compose.yaml` (servis `demo-partner`, mreža `web`).
-Widget sme da se ugradi sa ovog origin-a zahvaljujući `WIDGET_FRAME_ANCESTORS` na `reserva-fe`.
+The Traefik route for `demo-business.<BASE_DOMAIN>` is in `compose.yaml` (service `demo-partner`, network
+`web`). The widget may be embedded from this origin because `WIDGET_FRAME_ANCESTORS` on the Reserva
+frontend lists it.
 
-`VITE_*` vrednosti se ugrađuju u bundle pri build-u; promena zahteva novi build. Produkcijski image
-nikad ne dobija `VITE_DEMO_IDENTITY`, pa test režima u njemu nema.
+`VITE_*` values are baked into the bundle at build time, so a change needs a new build. The production
+image never receives `VITE_DEMO_IDENTITY`, so it has no test mode.
 
-### Repo varijable (postavlja čovek posle seed-a)
+### Repository variables (set by hand after the seed)
 
 Settings → Secrets and variables → Actions → Variables:
 
-| Varijabla | Vrednost |
-|---|---|
-| `DEMO_CLIENT_ID` | javni ID client application-a „Beogradski Berberin“ iz seed-a |
-| `DEMO_NO_CONSENT_LOCATION_ID` | ID lokacije bez saglasnosti biznisa |
+| Variable                      | Value                                                                   |
+| ----------------------------- | ----------------------------------------------------------------------- |
+| `DEMO_CLIENT_ID`              | Public ID of the "Beogradski Berberin" client application from the seed |
+| `DEMO_NO_CONSENT_LOCATION_ID` | ID of the location without business consent                             |
 
-Posle postavljanja pokreni workflow ručno (Actions → Build & deploy (demo partner) → Run workflow).
-`VITE_GOOGLE_CLIENT_ID` i `VITE_RESERVA_ORIGIN` su u samom workflow-u (javne vrednosti), a
-`VITE_DEMO_LOCATION_ID` ima podrazumevanu vrednost u Dockerfile-u.
+After you set them, run the workflow manually (Actions → Build & deploy (demo partner) → Run workflow).
+`VITE_GOOGLE_CLIENT_ID` and `VITE_RESERVA_ORIGIN` are set in the workflow itself (public values), and
+`VITE_DEMO_LOCATION_ID` has a default value in the Dockerfile.
 
 ### E2E
 
-`e2e.yml` builduje sajt sa `VITE_DEMO_IDENTITY=test` i `VITE_RESERVA_ORIGIN=http://localhost:5173`, servira
-ga na `http://localhost:5175` i izlaže URL kao env `DEMO_PARTNER_URL`.
+The `e2e` workflow builds the site with `VITE_DEMO_IDENTITY=test` and `VITE_RESERVA_ORIGIN=http://localhost:5173`,
+serves it at `http://localhost:5175`, and exposes the URL as the `DEMO_PARTNER_URL` environment variable.
