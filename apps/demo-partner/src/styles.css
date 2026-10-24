@@ -3,6 +3,24 @@
   --gold: #c9a24b;
   --paper: #faf7f0;
   --line: #e4dcc9;
+  --text: #1f2a37;
+  --surface: #fff;
+  --muted: #6b7280;
+  --note-bg: #fffaf0;
+  --header-bg: #1f2a37;
+  --link: #8a6a1f;
+  color-scheme: light;
+}
+[data-theme='dark'] {
+  --paper: #121821;
+  --line: #2f3b4b;
+  --text: #e6e9ee;
+  --surface: #1b2430;
+  --muted: #a3adbb;
+  --note-bg: #231f14;
+  --header-bg: #0b1017;
+  --link: #e0bd6a;
+  color-scheme: dark;
 }
 * {
   box-sizing: border-box;
@@ -10,7 +28,7 @@
 body {
   margin: 0;
   font-family: system-ui, sans-serif;
-  color: var(--ink);
+  color: var(--text);
   background: var(--paper);
   line-height: 1.55;
 }
@@ -19,7 +37,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 12px 24px;
-  background: var(--ink);
+  background: var(--header-bg);
   color: #fff;
 }
 .brand {
@@ -36,11 +54,17 @@ body {
   border-left: 6px solid var(--gold);
   border-right: 6px solid var(--gold);
 }
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
 .auth {
   display: flex;
   align-items: center;
   gap: 12px;
 }
+.theme-toggle,
 .auth button {
   cursor: pointer;
   padding: 6px 12px;
@@ -67,7 +91,7 @@ body {
   align-self: start;
   position: sticky;
   top: 16px;
-  background: #fff;
+  background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 16px;
@@ -75,13 +99,17 @@ body {
 .booking h2 {
   margin-top: 0;
 }
+.hours th,
+.hours td {
+  color: var(--text);
+}
 .hours th {
   text-align: left;
   padding-right: 24px;
   font-weight: 600;
 }
 .muted {
-  color: #6b7280;
+  color: var(--muted);
 }
 .cards {
   display: grid;
@@ -89,7 +117,7 @@ body {
   gap: 16px;
 }
 .card {
-  background: #fff;
+  background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 14px;
@@ -101,11 +129,17 @@ body {
 .card p {
   margin: 0;
 }
+.card a,
+.contact-fallback a,
+.legal a {
+  color: var(--link);
+}
 .contact-fallback {
   border: 1px dashed var(--gold);
   border-radius: 10px;
   padding: 14px;
-  background: #fffaf0;
+  background: var(--note-bg);
+  color: var(--text);
 }
 .contact-fallback h3 {
   margin-top: 0;
@@ -117,7 +151,7 @@ body {
 .site-footer {
   text-align: center;
   padding: 24px;
-  color: #6b7280;
+  color: var(--muted);
   font-size: 0.85rem;
 }
 .legal {
@@ -132,7 +166,7 @@ body {
   border: 1px dashed var(--gold);
   border-radius: 10px;
   padding: 12px 16px;
-  background: #fffaf0;
+  background: var(--note-bg);
 }
 .site-footer a {
   color: inherit;

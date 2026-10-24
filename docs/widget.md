@@ -47,13 +47,13 @@ Passed as the third element of `['mount', selector, options]`.
 | `locationId`           | yes      | `string`                                          | Location to show and book. It must be in the partner's scope and approved for consent.                                                                                       |
 | `getIdentityToken`     | yes      | `() => string \| null \| Promise<string \| null>` | Returns the signed-in user's identity token, or `null` for a guest. Called whenever the widget needs an identity. Must return a fresh token each time.                       |
 | `identityTokenType`    | no       | `'id_token' \| 'jwt'`                             | `'id_token'` (default): an OIDC ID token from a trusted issuer. `'jwt'`: an assertion signed by the partner's backend. See [partner-integration.md](partner-integration.md). |
-| `theme`                | no       | `'light' \| 'dark' \| 'auto'`                     | Default `'auto'`, which follows the visitor's system color scheme (`prefers-color-scheme`).                                                                                  |
+| `theme`                | yes      | `'light' \| 'dark'`                               | Widget theme. There is no default and no `'auto'`: pass the theme of your site. Change it later with `setTheme`.                                                             |
 | `locale`               | no       | `'sr' \| 'en'`                                    | Default `'sr'`.                                                                                                                                                              |
 | `onReservationCreated` | no       | `(reservation) => void`                           | Called after a reservation is created. See below.                                                                                                                            |
 | `onUnavailable`        | no       | `({ reason }) => void`                            | Called when the widget cannot book at this location. See below.                                                                                                              |
 | `onSignInRequired`     | no       | `() => void`                                      | Called when a guest clicks "Reserve". Open your sign-in, then call `refreshIdentity`. See below.                                                                             |
 
-If `clientId`, `locationId` or `getIdentityToken` is missing, `mount` logs an error and renders nothing.
+If `clientId`, `locationId`, `theme` (`'light'` or `'dark'`) or `getIdentityToken` is missing or invalid, `mount` logs an error and renders nothing.
 Callbacks that throw are caught and logged, so they cannot break the loader.
 
 ## Commands
@@ -64,6 +64,12 @@ Callbacks that throw are caught and logged, so they cannot break the loader.
 | `['refreshIdentity', selector?]` | Calls `getIdentityToken()` again and sends the new identity to the widget. Without a selector, it applies to every mounted widget.    |
 
 The same is available as a method: `window.ReservaWidget.refreshIdentity(selector?)`, which returns a promise.
+
+| Command                          | Description                                                                                                                         |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `['setTheme', theme, selector?]` | Switches `'light'` / `'dark'` without a reload; the selected slot is kept. Also `window.ReservaWidget.setTheme(theme, selector?)`. |
+
+The loader delivers it to the iframe as the `reserva:theme` message (`{ v: 1, type: 'reserva:theme', theme }`). An unknown theme is ignored. The iframe never shows a scroll bar: its height follows the content in both directions (`reserva:resize`).
 
 Call `refreshIdentity` after every sign-in and sign-out on your site, for example:
 
@@ -201,7 +207,7 @@ sequenceDiagram
 | Console: `mount: clientId, locationId and getIdentityToken are required`     | One of the three required options is missing or empty.                                                                                 |
 | Console: `cannot determine the script origin`                                | The loader script was not loaded from a `src` that contains `widget.js`. Keep the file name unchanged.                                 |
 | Console: `getIdentityToken failed`                                           | Your `getIdentityToken` function threw. The widget then treats the visitor as a guest.                                                 |
-| Console: `unknown command`                                                   | The first element of a queued command is not `mount` or `refreshIdentity`.                                                             |
+| Console: `unknown command`                                                   | The first element of a queued command is not `mount`, `refreshIdentity` or `setTheme`.                                                             |
 | The widget says "This website is not allowed to show the booking widget."    | Your origin is not in the partner's `allowed_origins`.                                                                                 |
 | Visitor sees slots but no booking button                                     | `getIdentityToken` returned `null`, or the token is expired.                                                                           |
 | Widget shows a fallback instead of slots                                     | `onUnavailable` was called. Check `reason`.                                                                                            |

@@ -13,7 +13,7 @@
  *     window.ReservaWidget.push(['mount', '#reserva-widget', {
  *       clientId: '<public client application id>',
  *       locationId: '<location id>',
- *       theme: 'auto',            // optional: 'light' | 'dark' | 'auto' (default 'auto')
+ *       theme: 'light',           // REQUIRED: 'light' | 'dark' (without it nothing is drawn, console.error)
  *       locale: 'sr',             // optional: 'sr' | 'en' (default 'sr')
  *       getIdentityToken: () => myAuth.getOidcIdToken(), // string | null | Promise<string | null>
  *       identityTokenType: 'jwt', // optional: 'id_token' (default, put 1) | 'jwt' (put 2, partner-signed assertion)
@@ -30,6 +30,9 @@
  *   ['refreshIdentity', selector?] calls `getIdentityToken()` again and sends a new
  *                                  `reserva:identity` (all widgets, or the one mounted at `selector`).
  *                                  Also available as `window.ReservaWidget.refreshIdentity(selector?)`.
+ *   ['setTheme', theme, selector?] switches 'light' | 'dark' without reload (all widgets, or the one at
+ *                                  `selector`); sends `reserva:theme`, the booking state is kept.
+ *                                  Also available as `window.ReservaWidget.setTheme(theme, selector?)`.
  *
  * `getIdentityToken` returns the partner user's OIDC ID token, or `null` for a guest. A guest can pick
  * a slot; "Reserve" then makes the widget remember the choice and send `reserva:sign-in-required`
@@ -43,14 +46,19 @@
  *   iframe → loader: reserva:ready, reserva:need-identity, reserva:resize {height},
  *                    reserva:reservation-created {reservation}, reserva:unavailable {reason},
  *                    reserva:sign-in-required (a guest tried to book; additive, protocol stays v1)
- *   loader → iframe: reserva:identity {idToken, tokenType?}
+ *   loader → iframe: reserva:identity {idToken, tokenType?}, reserva:theme {theme: 'light' | 'dark'}
  * Security: the loader only reacts to messages whose `event.origin` is the Reserva origin (the origin
  * `widget.js` was loaded from) and whose `event.source` is the widget's own iframe. Outgoing messages
  * always use the Reserva origin as `targetOrigin`, never `'*'`. The iframe is sandboxed WITHOUT
  * `allow-top-navigation` and sends `referrerpolicy="strict-origin"`.
  */
-import { WIDGET_PROTOCOL_VERSION, WidgetMessageType, parseWidgetMessage } from '@fe/domain';
-import type { HostToWidgetMessage, WidgetMountOptions } from '@fe/domain';
+import {
+  WIDGET_PROTOCOL_VERSION,
+  WidgetMessageType,
+  isWidgetTheme,
+  parseWidgetMessage,
+} from '@fe/domain';
+import type { HostToWidgetMessage, WidgetMountOptions, WidgetTheme } from '@fe/domain';
 
 export const WIDGET_IFRAME_SANDBOX =
   'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads';
@@ -61,11 +69,13 @@ const MAX_IFRAME_HEIGHT = 10_000;
 
 export type ReservaWidgetCommand =
   | readonly ['mount', string, WidgetMountOptions]
-  | readonly ['refreshIdentity', string?];
+  | readonly ['refreshIdentity', string?]
+  | readonly ['setTheme', WidgetTheme, string?];
 
 export interface ReservaWidgetApi {
   push(...commands: ReservaWidgetCommand[]): number;
   refreshIdentity(selector?: string): Promise<void>;
+  setTheme(theme: WidgetTheme, selector?: string): void;
 }
 
 interface Instance {
@@ -86,6 +96,7 @@ function isMountOptions(value: unknown): value is WidgetMountOptions {
   if (typeof value !== 'object' || value === null) return false;
   const options = value as Partial<WidgetMountOptions>;
   return (
+    isWidgetTheme(options.theme) &&
     typeof options.clientId === 'string' &&
     options.clientId !== '' &&
     typeof options.locationId === 'string' &&
@@ -160,7 +171,7 @@ export function installReservaWidget(
     }
     if (!isMountOptions(options)) {
       console.error(
-        '[ReservaWidget] mount: clientId, locationId and getIdentityToken are required',
+        "[ReservaWidget] mount: clientId, locationId, theme ('light' | 'dark') and getIdentityToken are required",
       );
       return;
     }
@@ -168,7 +179,7 @@ export function installReservaWidget(
     const url = new URL('/widget/', reservaOrigin);
     url.searchParams.set('clientId', options.clientId);
     url.searchParams.set('locationId', options.locationId);
-    if (options.theme) url.searchParams.set('theme', options.theme);
+    url.searchParams.set('theme', options.theme);
     if (options.locale) url.searchParams.set('locale', options.locale);
     // Host page origin: the iframe posts to it (as `targetOrigin`) only if the partner allows it.
     url.searchParams.set('origin', win.location.origin);
@@ -192,8 +203,27 @@ export function installReservaWidget(
     await Promise.all(targets.map(sendIdentity));
   }
 
+  function setTheme(theme: WidgetTheme, selector?: string) {
+    if (!isWidgetTheme(theme)) {
+      console.error("[ReservaWidget] setTheme: theme must be 'light' or 'dark'");
+      return;
+    }
+    const targets = selector ? instances.filter((i) => i.selector === selector) : instances;
+    const message: HostToWidgetMessage = {
+      v: WIDGET_PROTOCOL_VERSION,
+      type: WidgetMessageType.THEME,
+      theme,
+    };
+    targets.forEach((instance) => {
+      // Keep the remembered theme so a re-sent state matches what the partner chose.
+      instance.options = { ...instance.options, theme };
+      instance.iframe.contentWindow?.postMessage(message, reservaOrigin);
+    });
+  }
+
   function run(command: ReservaWidgetCommand) {
     if (command[0] === 'mount') mount(command[1], command[2]);
+    else if (command[0] === 'setTheme') setTheme(command[1], command[2]);
     else if (command[0] === 'refreshIdentity') void refreshIdentity(command[1]);
     else console.error('[ReservaWidget] unknown command', command);
   }
@@ -204,6 +234,7 @@ export function installReservaWidget(
       return commands.length;
     },
     refreshIdentity,
+    setTheme,
   };
   holder.ReservaWidget = api;
   if (Array.isArray(previous)) (previous as ReservaWidgetCommand[]).forEach(run);

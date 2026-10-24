@@ -22,6 +22,7 @@ function mount(win: Window, doc: Document) {
     config,
     identity,
     fallbackContact: NO_CONSENT_CONTACT,
+    theme: 'dark',
   });
   return (win as unknown as { ReservaWidget: MountCommand[] }).ReservaWidget[0];
 }
@@ -36,7 +37,7 @@ describe('widget', () => {
     document.body.innerHTML = '<div id="w"></div>';
     const [name, selector, options] = mount(window, document);
     expect([name, selector]).toEqual(['mount', '#w']);
-    expect(options).toMatchObject({ clientId: 'client-1', locationId: 'loc-2' });
+    expect(options).toMatchObject({ clientId: 'client-1', locationId: 'loc-2', theme: 'dark' });
     expect((options.getIdentityToken as () => string)()).toBe('tok');
   });
 

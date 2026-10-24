@@ -569,3 +569,72 @@ test.describe('epic:75 zaglavlja: frame-ancestors', () => {
     }
   });
 });
+
+const noScroll = (page: import('@playwright/test').Page) =>
+  widgetFrame(page).evaluate(() => {
+    const doc = document.documentElement;
+    return doc.scrollHeight <= doc.clientHeight && document.body.scrollHeight <= doc.clientHeight;
+  });
+
+test.describe('epic:84 widget: obavezna tema, setTheme, bez scroll bara', () => {
+  test('iframe nema scroll u stanjima učitavanje, termini i potvrda', async ({ page }) => {
+    const setup = await setUpWidgetPartner();
+    try {
+      await openHostPage(page, { clientId: setup.partner.id, locationId: setup.locationId, idToken: null });
+      const widget = widgetIframe(page);
+      // Učitavanje: iframe je tek prikačen.
+      await expect.poll(() => noScroll(page)).toBe(true);
+
+      await selectServiceAndResource(widget);
+      await selectSlot(widget, setup.bookable);
+      await expect(widget.getByRole('button', { name: 'Confirm reservation' })).toBeEnabled();
+      await expect.poll(() => noScroll(page)).toBe(true);
+
+      await widget.getByRole('button', { name: 'Confirm reservation' }).click();
+      await expect(widget.getByTestId('widget-sign-in-pending')).toBeVisible();
+      const idToken = signOidcIdToken({ aud: setup.audience });
+      await page.evaluate((token) => {
+        const w = window as unknown as HostWindow;
+        w.__idToken = token;
+        return w.ReservaWidget.refreshIdentity();
+      }, idToken);
+      await expect(widget.getByTestId('widget-reservation-created')).toBeVisible();
+      await expect.poll(() => noScroll(page)).toBe(true);
+    } finally {
+      await tearDownWidgetPartner(setup);
+    }
+  });
+
+  test('mount bez teme ne crta widget i ispisuje grešku', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('console', (m) => {
+      if (m.type() === 'error') errors.push(m.text());
+    });
+    await openHostPage(page, { clientId: 'c', locationId: 'l', theme: null, idToken: null });
+    await expect.poll(() => errors.some((e) => e.includes('theme'))).toBe(true);
+    await expect(page.locator('iframe[title="Reserva"]')).toHaveCount(0);
+  });
+
+  test('setTheme menja temu bez reload-a i bez gubitka izabranog termina', async ({ page }) => {
+    const setup = await setUpWidgetPartner();
+    try {
+      await openHostPage(page, { clientId: setup.partner.id, locationId: setup.locationId, idToken: null });
+      const widget = widgetIframe(page);
+      await expect(widget.locator('html')).toHaveAttribute('data-theme', 'light');
+      await selectServiceAndResource(widget);
+      await selectSlot(widget, setup.bookable);
+      const confirm = widget.getByRole('button', { name: 'Confirm reservation' });
+      await expect(confirm).toBeEnabled();
+
+      await page.evaluate(() => (window as unknown as HostWindow).ReservaWidget.setTheme('dark'));
+      await expect(widget.locator('html')).toHaveAttribute('data-theme', 'dark');
+      await expect(confirm).toBeEnabled();
+
+      await page.evaluate(() => (window as unknown as HostWindow).ReservaWidget.setTheme('light'));
+      await expect(widget.locator('html')).toHaveAttribute('data-theme', 'light');
+      await expect(confirm).toBeEnabled();
+    } finally {
+      await tearDownWidgetPartner(setup);
+    }
+  });
+});
