@@ -49,15 +49,22 @@ export type WidgetAvailability =
   | { available: true; location: ClientApplicationWidgetLocation }
   | { available: false; reason: WidgetUnavailableReason };
 
-/** Theme passed by the partner; `auto` follows `prefers-color-scheme`. Maps onto the existing `data-theme` tokens. */
-export type WidgetTheme = 'light' | 'dark' | 'auto';
+/** Theme chosen by the partner (required in `mount`, changeable with `setTheme`). Maps onto the existing `data-theme` tokens. */
+export type WidgetTheme = 'light' | 'dark';
 export type WidgetLocale = 'sr' | 'en';
 
-export const DEFAULT_WIDGET_THEME: WidgetTheme = 'auto';
+export const WIDGET_THEMES: readonly WidgetTheme[] = ['light', 'dark'];
+
+// WARNING: the iframe URL always carries a theme (the loader validates it); this default only covers a hand-typed iframe URL — verify before merging
+export const DEFAULT_WIDGET_THEME: WidgetTheme = 'light';
 export const DEFAULT_WIDGET_LOCALE: WidgetLocale = 'sr';
 
+export function isWidgetTheme(value: unknown): value is WidgetTheme {
+  return value === 'light' || value === 'dark';
+}
+
 export function toWidgetTheme(value: string | null | undefined): WidgetTheme {
-  return value === 'light' || value === 'dark' || value === 'auto' ? value : DEFAULT_WIDGET_THEME;
+  return isWidgetTheme(value) ? value : DEFAULT_WIDGET_THEME;
 }
 
 export function toWidgetLocale(value: string | null | undefined): WidgetLocale {

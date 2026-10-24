@@ -15,7 +15,8 @@ export interface WidgetMountOptions {
   /** Public client application ID. */
   clientId: string;
   locationId: string;
-  theme?: WidgetTheme;
+  /** Required: `light` or `dark`. Without a valid theme `mount` logs an error and draws nothing. */
+  theme: WidgetTheme;
   locale?: WidgetLocale;
   /**
    * Partner user's identity token (OIDC ID token, or an assertion signed by the partner's

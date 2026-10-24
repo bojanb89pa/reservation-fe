@@ -1,7 +1,7 @@
 import type { ClientApplicationReservation } from './ClientApplicationReservation';
 import type { ReservationStatus } from './Reservation';
-import type { WidgetUnavailableReason } from './ClientApplicationWidget';
-import { WIDGET_UNAVAILABLE_REASONS } from './ClientApplicationWidget';
+import type { WidgetTheme, WidgetUnavailableReason } from './ClientApplicationWidget';
+import { WIDGET_UNAVAILABLE_REASONS, isWidgetTheme } from './ClientApplicationWidget';
 import type { IdentityTokenType } from './TokenExchange';
 import { IDENTITY_TOKEN_TYPES } from './TokenExchange';
 
@@ -30,6 +30,8 @@ export const WidgetMessageType = {
   UNAVAILABLE: 'reserva:unavailable',
   /** iframe → loader: a guest tried to book; the loader calls the optional `onSignInRequired()`. */
   SIGN_IN_REQUIRED: 'reserva:sign-in-required',
+  /** loader → iframe: the partner called `setTheme`; the widget switches `data-theme` without reloading. */
+  THEME: 'reserva:theme',
 } as const;
 
 export type WidgetMessageTypeValue = (typeof WidgetMessageType)[keyof typeof WidgetMessageType];
@@ -87,6 +89,10 @@ export type WidgetSignInRequiredMessage = WidgetMessageBase<
   typeof WidgetMessageType.SIGN_IN_REQUIRED
 >;
 
+export interface WidgetThemeMessage extends WidgetMessageBase<typeof WidgetMessageType.THEME> {
+  theme: WidgetTheme;
+}
+
 /** Messages the iframe sends to the loader. */
 export type WidgetToHostMessage =
   | WidgetReadyMessage
@@ -97,7 +103,7 @@ export type WidgetToHostMessage =
   | WidgetUnavailableMessage;
 
 /** Messages the loader sends to the iframe. */
-export type HostToWidgetMessage = WidgetIdentityMessage;
+export type HostToWidgetMessage = WidgetIdentityMessage | WidgetThemeMessage;
 
 export type WidgetMessage = WidgetToHostMessage | HostToWidgetMessage;
 
@@ -164,6 +170,8 @@ export function parseWidgetMessage(data: unknown): WidgetMessage | null {
             tokenType: data.tokenType as IdentityTokenType,
           }
         : null;
+    case WidgetMessageType.THEME:
+      return isWidgetTheme(data.theme) ? { v, type: data.type, theme: data.theme } : null;
     case WidgetMessageType.RESIZE:
       return typeof data.height === 'number' && Number.isFinite(data.height) && data.height >= 0
         ? { v, type: data.type, height: data.height }

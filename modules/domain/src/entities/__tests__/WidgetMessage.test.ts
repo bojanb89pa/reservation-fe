@@ -63,6 +63,16 @@ describe('parseWidgetMessage', () => {
     ).toEqual({ v, type: 'reserva:unavailable', reason: 'PARTNER_DISABLED' });
   });
 
+  it('accepts a theme message with light or dark and rejects anything else', () => {
+    expect(parseWidgetMessage({ v, type: WidgetMessageType.THEME, theme: 'dark' })).toEqual({
+      v,
+      type: 'reserva:theme',
+      theme: 'dark',
+    });
+    expect(parseWidgetMessage({ v, type: WidgetMessageType.THEME, theme: 'auto' })).toBeNull();
+    expect(parseWidgetMessage({ v, type: WidgetMessageType.THEME })).toBeNull();
+  });
+
   it('keeps a known identity token type and rejects an unknown one', () => {
     expect(
       parseWidgetMessage({ v, type: WidgetMessageType.IDENTITY, idToken: 'jwt', tokenType: 'jwt' }),

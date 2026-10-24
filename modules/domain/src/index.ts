@@ -136,6 +136,8 @@ export type {
 } from './entities/ClientApplicationWidget';
 export {
   WIDGET_UNAVAILABLE_REASONS,
+  WIDGET_THEMES,
+  isWidgetTheme,
   DEFAULT_WIDGET_THEME,
   DEFAULT_WIDGET_LOCALE,
   toWidgetTheme,
@@ -159,6 +161,7 @@ export type {
   WidgetSignInRequiredMessage,
   WidgetNeedIdentityMessage,
   WidgetIdentityMessage,
+  WidgetThemeMessage,
   WidgetResizeMessage,
   ReservationCreatedPayload,
   WidgetReservationCreatedMessage,
