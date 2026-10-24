@@ -29,5 +29,12 @@ export interface WidgetMountOptions {
    */
   identityTokenType?: IdentityTokenType;
   onReservationCreated?: (reservation: ReservationCreatedPayload) => void;
+  /**
+   * Called when a guest clicks "Reserve" (the widget got `null` from `getIdentityToken`).
+   * The partner opens its sign-in and, once signed in, calls `refreshIdentity()`; the widget
+   * then finishes the remembered reservation. Without it the widget asks the guest to sign in
+   * on the partner's site.
+   */
+  onSignInRequired?: () => void;
   onUnavailable?: (event: { reason: WidgetUnavailableReason }) => void;
 }

@@ -5,6 +5,7 @@ const GIS_SRC = 'https://accounts.google.com/gsi/client';
 interface GoogleId {
   initialize(config: { client_id: string; callback: (r: { credential: string }) => void }): void;
   renderButton(parent: HTMLElement, options: Record<string, unknown>): void;
+  prompt(): void;
   disableAutoSelect(): void;
 }
 type GoogleWindow = Window & { google?: { accounts?: { id?: GoogleId } } };
@@ -70,6 +71,12 @@ export function createGoogleIdentity(
         .then((id) =>
           id.renderButton(container, { type: 'standard', theme: 'outline', text: 'signin_with' }),
         )
+        .catch((error) => console.error('[demo-partner] Google prijava nije dostupna', error));
+    },
+    // GIS One Tap prompt ne otvara popup pa ga browser ne blokira; dugme u headeru ostaje rezerva.
+    requestSignIn() {
+      loadGis()
+        .then((id) => id.prompt())
         .catch((error) => console.error('[demo-partner] Google prijava nije dostupna', error));
     },
     signOut() {

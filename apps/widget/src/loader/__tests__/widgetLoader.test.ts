@@ -145,6 +145,33 @@ describe('widget.js loader', () => {
     });
   });
 
+  describe('sign-in required', () => {
+    const message = { v: WIDGET_PROTOCOL_VERSION, type: WidgetMessageType.SIGN_IN_REQUIRED };
+
+    it('calls onSignInRequired', () => {
+      const onSignInRequired = vi.fn();
+      const { iframe } = setup({ onSignInRequired });
+      post(RESERVA, iframe.contentWindow, message);
+      expect(onSignInRequired).toHaveBeenCalledTimes(1);
+    });
+
+    it('catches an exception thrown by onSignInRequired', () => {
+      const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      const { iframe } = setup({
+        onSignInRequired: () => {
+          throw new Error('boom');
+        },
+      });
+      expect(() => post(RESERVA, iframe.contentWindow, message)).not.toThrow();
+      expect(error).toHaveBeenCalled();
+    });
+
+    it('does nothing without the callback', () => {
+      const { iframe } = setup();
+      expect(() => post(RESERVA, iframe.contentWindow, message)).not.toThrow();
+    });
+  });
+
   describe('identity', () => {
     it('answers need-identity with the token, targeting the Reserva origin only', async () => {
       const { iframe, getIdentityToken } = setup();

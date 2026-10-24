@@ -3,7 +3,10 @@ import type { Contact } from './content';
 import { renderContact } from './contact';
 import type { IdentityProvider } from './identityProvider';
 
-export type UnavailableReason = 'LOCATION_OUT_OF_SCOPE' | 'CONSENT_NOT_APPROVED' | 'PARTNER_DISABLED';
+export type UnavailableReason =
+  | 'LOCATION_OUT_OF_SCOPE'
+  | 'CONSENT_NOT_APPROVED'
+  | 'PARTNER_DISABLED';
 
 type Command = readonly unknown[];
 type WidgetWindow = Window & { ReservaWidget?: Command[] };
@@ -43,6 +46,7 @@ export function mountWidget(win: Window, doc: Document, options: MountOptions): 
       locationId,
       locale: 'sr',
       getIdentityToken: () => identity.getIdentityToken(),
+      onSignInRequired: () => identity.requestSignIn(),
       onUnavailable: ({ reason }: { reason: UnavailableReason }) => {
         const container = doc.querySelector<HTMLElement>(selector);
         if (container) renderContact(container, fallbackContact, reason);

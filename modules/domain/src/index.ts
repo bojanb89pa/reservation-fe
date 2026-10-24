@@ -156,6 +156,7 @@ export type {
   WidgetProtocolVersion,
   WidgetMessageTypeValue,
   WidgetReadyMessage,
+  WidgetSignInRequiredMessage,
   WidgetNeedIdentityMessage,
   WidgetIdentityMessage,
   WidgetResizeMessage,

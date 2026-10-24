@@ -41,6 +41,11 @@ export interface HostPageOptions {
   locale?: 'sr' | 'en';
   /** Početni ID token koji vraća `getIdentityToken`; `null` = gost. */
   idToken?: string | null;
+  /**
+   * Ako je zadat, host registruje `onSignInRequired`: broji poziv (`__signInRequired`), postavlja
+   * ovaj ID token i zove `refreshIdentity()` (kao partner posle prijave). Bez njega callback ne postoji.
+   */
+  signInIdToken?: string;
   /** Dodaje iframe napadača (`ATTACKER_ORIGIN`) posle widget-a. */
   withAttacker?: boolean;
 }
@@ -57,6 +62,7 @@ export interface HostWindow {
   __idToken: string | null;
   __created: ReservationCreatedEvent[];
   __unavailable: { reason: string }[];
+  __signInRequired: number;
   __raw: { origin: string; type: unknown }[];
   ReservaWidget: { refreshIdentity(selector?: string): Promise<void> };
 }
@@ -68,6 +74,7 @@ function hostHtml(options: HostPageOptions): string {
     theme: options.theme,
     locale: options.locale ?? 'en',
     idToken: options.idToken ?? null,
+    signInIdToken: options.signInIdToken ?? null,
   }).replace(/</g, '\\u003c');
   // Snippet iz plana (queue + async script), plus evidencija događaja za asercije.
   return `<!doctype html>
@@ -80,12 +87,13 @@ function hostHtml(options: HostPageOptions): string {
     window.__idToken = cfg.idToken;
     window.__created = [];
     window.__unavailable = [];
+    window.__signInRequired = 0;
     window.__raw = [];
     window.addEventListener('message', function (e) {
       window.__raw.push({ origin: e.origin, type: e.data && e.data.type });
     });
     window.ReservaWidget = window.ReservaWidget || [];
-    window.ReservaWidget.push(['mount', '#reserva-widget', {
+    var mountOptions = {
       clientId: cfg.clientId,
       locationId: cfg.locationId,
       theme: cfg.theme,
@@ -93,7 +101,15 @@ function hostHtml(options: HostPageOptions): string {
       getIdentityToken: function () { return window.__idToken; },
       onReservationCreated: function (r) { window.__created.push(r); },
       onUnavailable: function (u) { window.__unavailable.push(u); }
-    }]);
+    };
+    if (cfg.signInIdToken) {
+      mountOptions.onSignInRequired = function () {
+        window.__signInRequired++;
+        window.__idToken = cfg.signInIdToken;
+        window.ReservaWidget.refreshIdentity();
+      };
+    }
+    window.ReservaWidget.push(['mount', '#reserva-widget', mountOptions]);
   </script>
   <script async src="${env.baseUrl}/widget.js"></script>
 </body></html>`;

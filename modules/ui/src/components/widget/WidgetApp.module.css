@@ -34,3 +34,14 @@
 .error {
   margin-bottom: var(--space-3, 12px);
 }
+
+.cancel {
+  margin-top: var(--space-2, 8px);
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg, 12px);
+  background: transparent;
+  color: var(--ink-900);
+  font-family: var(--font-ui);
+  cursor: pointer;
+}

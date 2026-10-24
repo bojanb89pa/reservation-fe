@@ -1,0 +1,24 @@
+.watermark {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-3, 12px);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-700);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.link:hover,
+.link:focus-visible {
+  color: var(--ink-900);
+}
+
+.logo {
+  flex: none;
+}

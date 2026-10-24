@@ -9,12 +9,23 @@ const PARTNER = 'https://partner.test';
 
 const mocks = vi.hoisted(() => ({
   getWidgetConfig: vi.fn(),
+  exchange: vi.fn(),
+  createReservation: vi.fn(),
+  slots: [] as unknown[],
 }));
 
+// A slot later today, so the calendar's current month has a selectable day.
+const TODAY = new Date();
+const TODAY_ISO = `${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}-${String(TODAY.getDate()).padStart(2, '0')}`;
+mocks.slots = [
+  { startTime: `${TODAY_ISO}T23:00:00`, endTime: `${TODAY_ISO}T23:59:00`, status: 'AVAILABLE' },
+];
+
 vi.mock('../../../app/container', () => ({
+  env: { appSiteUrl: 'http://reserva.test/' },
   getWidgetConfigUseCase: { execute: mocks.getWidgetConfig },
-  exchangeIdentityTokenUseCase: { execute: vi.fn() },
-  createClientApplicationReservationUseCase: { execute: vi.fn() },
+  exchangeIdentityTokenUseCase: { execute: mocks.exchange },
+  createClientApplicationReservationUseCase: { execute: mocks.createReservation },
   // Plain functions (not vi.fn) so `vi.restoreAllMocks()` cannot reset them.
   getAllResourcesUseCase: {
     execute: () =>
@@ -36,7 +47,7 @@ vi.mock('../../../app/container', () => ({
         },
       ]),
   },
-  getResourceSlotsUseCase: { execute: () => Promise.resolve([]) },
+  getResourceSlotsUseCase: { execute: () => Promise.resolve(mocks.slots) },
   getAvailabilityBlocksUseCase: { execute: () => Promise.resolve([]) },
 }));
 
@@ -126,23 +137,101 @@ describe('WidgetApp', () => {
     expect(postMessage).not.toHaveBeenCalled();
   });
 
-  it('shows the sign-in notice instead of the confirm button for a guest', async () => {
-    mocks.getWidgetConfig.mockResolvedValue(config());
+  /** Answers the widget's `need-identity` the way the loader would, with the current `token`. */
+  function connectLoader() {
+    const loader = { token: null as string | null };
+    const postMessage = vi
+      .spyOn(window.parent, 'postMessage')
+      .mockImplementation((message: unknown) => {
+        if ((message as { type?: string }).type === WidgetMessageType.NEED_IDENTITY) {
+          setTimeout(() => act(() => identity(loader.token)), 0);
+        }
+      });
+    return { loader, postMessage };
+  }
+
+  async function pickSlot() {
+    await userEvent.click(await screen.findByRole('tab', { name: /Room 1/ }));
+    await userEvent.click(await screen.findByRole('button', { name: String(TODAY.getDate()) }));
+    await userEvent.click(await screen.findByRole('button', { name: '23:00' }));
+  }
+
+  it('shows the watermark link in every state', async () => {
+    mocks.getWidgetConfig.mockResolvedValue(config({ enabled: false }));
     vi.spyOn(window.parent, 'postMessage').mockImplementation(() => undefined);
     render(<WidgetApp />);
 
-    await userEvent.click(await screen.findByRole('tab', { name: /Room 1/ }));
-    act(() => identity(null));
+    expect(screen.getByTestId('widget-watermark')).toHaveAttribute('href', 'http://reserva.test/');
+    await screen.findByTestId('widget-alert');
+    expect(screen.getByTestId('widget-watermark')).toHaveAttribute('target', '_blank');
+  });
 
-    expect(await screen.findByTestId('booking-confirm-notice')).toHaveTextContent(
-      'Sign in on the partner website to book a slot.',
+  it('lets a guest pick a slot and shows the confirm button', async () => {
+    mocks.getWidgetConfig.mockResolvedValue(config());
+    connectLoader();
+    render(<WidgetApp />);
+
+    await pickSlot();
+
+    expect(await screen.findByRole('button', { name: 'Confirm reservation' })).toBeEnabled();
+    expect(screen.queryByTestId('booking-confirm-notice')).toBeNull();
+  });
+
+  it('remembers the guest choice, asks for sign-in and completes after identity', async () => {
+    mocks.getWidgetConfig.mockResolvedValue(config());
+    mocks.exchange.mockResolvedValue({ accessToken: 'partner-token', expiresIn: 600 });
+    mocks.createReservation.mockResolvedValue({
+      id: 'r-1',
+      status: 'PENDING_APPROVAL',
+      startTime: `${TODAY_ISO}T23:00:00`,
+      endTime: `${TODAY_ISO}T23:59:00`,
+    });
+    const { loader, postMessage } = connectLoader();
+    render(<WidgetApp />);
+
+    await pickSlot();
+    await userEvent.click(await screen.findByRole('button', { name: 'Confirm reservation' }));
+
+    expect(await screen.findByTestId('widget-sign-in-pending')).toHaveTextContent(
+      'Sign in to confirm your reservation',
     );
-    expect(screen.queryByRole('button', { name: 'Confirm reservation' })).toBeNull();
+    expect(postMessage).toHaveBeenCalledWith(
+      { v: WIDGET_PROTOCOL_VERSION, type: WidgetMessageType.SIGN_IN_REQUIRED },
+      PARTNER,
+    );
+    expect(mocks.createReservation).not.toHaveBeenCalled();
+
+    loader.token = 'id-token';
+    act(() => identity('id-token'));
+
+    expect(await screen.findByTestId('widget-reservation-created')).toBeInTheDocument();
+    expect(mocks.createReservation).toHaveBeenCalledWith(
+      'partner-token',
+      expect.objectContaining({
+        resourceId: 'res-1',
+        serviceId: 'svc-1',
+        startTime: `${TODAY_ISO}T23:00:00`,
+      }),
+    );
+  });
+
+  it('returns to the booking form when the guest cancels', async () => {
+    mocks.getWidgetConfig.mockResolvedValue(config());
+    connectLoader();
+    render(<WidgetApp />);
+
+    await pickSlot();
+    await userEvent.click(await screen.findByRole('button', { name: 'Confirm reservation' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Cancel' }));
+
+    expect(screen.queryByTestId('widget-sign-in-pending')).toBeNull();
+    expect(await screen.findByRole('tab', { name: /Room 1/ })).toBeInTheDocument();
   });
 
   it('shows the confirm button for a signed-in user', async () => {
     mocks.getWidgetConfig.mockResolvedValue(config());
-    vi.spyOn(window.parent, 'postMessage').mockImplementation(() => undefined);
+    const { loader } = connectLoader();
+    loader.token = 'id-token';
     render(<WidgetApp />);
 
     await userEvent.click(await screen.findByRole('tab', { name: /Room 1/ }));

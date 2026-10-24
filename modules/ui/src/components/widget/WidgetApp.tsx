@@ -11,6 +11,7 @@ import { useWidgetConfig } from '../../hooks/useWidgetConfig';
 import { useWidgetParams } from '../../hooks/useWidgetParams';
 import { useWidgetResize } from '../../hooks/useWidgetResize';
 import { WidgetBooking } from './WidgetBooking';
+import { WidgetWatermark } from './WidgetWatermark';
 import styles from './WidgetApp.module.css';
 
 function WidgetContent() {
@@ -71,6 +72,7 @@ function WidgetContent() {
   return (
     <div ref={rootRef} className={styles.root}>
       {renderBody()}
+      <WidgetWatermark />
     </div>
   );
 }
