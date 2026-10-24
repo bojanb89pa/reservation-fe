@@ -51,6 +51,7 @@ Passed as the third element of `['mount', selector, options]`.
 | `locale`               | no       | `'sr' \| 'en'`                                    | Default `'sr'`.                                                                                                                                                              |
 | `onReservationCreated` | no       | `(reservation) => void`                           | Called after a reservation is created. See below.                                                                                                                            |
 | `onUnavailable`        | no       | `({ reason }) => void`                            | Called when the widget cannot book at this location. See below.                                                                                                              |
+| `onSignInRequired`     | no       | `() => void`                                      | Called when a guest clicks "Reserve". Open your sign-in, then call `refreshIdentity`. See below.                                                                             |
 
 If `clientId`, `locationId` or `getIdentityToken` is missing, `mount` logs an error and renders nothing.
 Callbacks that throw are caught and logged, so they cannot break the loader.
@@ -97,6 +98,34 @@ identity ID.
 | `LOCATION_OUT_OF_SCOPE` | The location does not belong to this partner.            | Show a fallback, for example a phone number. |
 | `CONSENT_NOT_APPROVED`  | The business has not approved consent for this location. | Show a fallback.                             |
 | `PARTNER_DISABLED`      | A Reserva administrator has disabled the partner.        | Show a fallback.                             |
+
+### `onSignInRequired()`
+
+A guest (`getIdentityToken` returned `null`) can choose a service, a resource and a slot. When they click
+"Reserve", the widget remembers the choice, shows "Sign in to confirm your reservation" with a cancel
+button, and sends `reserva:sign-in-required`. The loader then calls `onSignInRequired()`.
+
+Open your sign-in flow there. After the user is signed in, call `refreshIdentity()`; the widget receives a
+token and completes the remembered reservation by itself, without asking the user to choose again. If the
+slot was taken in the meantime, the widget shows an error and refreshes the slots.
+
+`onSignInRequired` is optional. Without it the widget stays in the "sign in on the partner's website" state.
+
+### postMessage protocol additions
+
+| Message                    | Direction       | Payload          | Meaning                                   |
+| -------------------------- | --------------- | ---------------- | ----------------------------------------- |
+| `reserva:sign-in-required` | iframe → loader | `{ v: 1, type }` | A guest tried to book. Protocol stays v1. |
+
+## Terms of use
+
+Every widget shows a "by Reserva" mark with the Reserva logo at the bottom. It links to the Reserva site
+(opens in a new tab) and is part of the iframe, so it is included in the height the widget reports.
+
+- The "by Reserva" mark **must stay visible** in every widget state.
+- It is forbidden to cover it, clip it (an iframe height or width smaller than its content, or
+  `overflow: hidden` on a parent), make it transparent, or change or remove it in any way.
+- Breaking this rule is grounds for removing the partner.
 
 ## Size and styling
 

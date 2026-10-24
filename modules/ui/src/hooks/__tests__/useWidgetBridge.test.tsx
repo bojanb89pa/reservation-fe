@@ -88,6 +88,20 @@ describe('useWidgetBridge (iframe side)', () => {
     expect(result.current.getIdentityTokenType()).toBeUndefined();
   });
 
+  it('sends sign-in-required to the exact parent origin', () => {
+    const postMessage = vi.spyOn(window.parent, 'postMessage').mockImplementation(() => undefined);
+    const { result } = renderHook(() =>
+      useWidgetBridge({ parentOrigin: PARTNER, allowedOrigins: [PARTNER] }),
+    );
+    act(() =>
+      result.current.send({ v: WIDGET_PROTOCOL_VERSION, type: WidgetMessageType.SIGN_IN_REQUIRED }),
+    );
+    expect(postMessage).toHaveBeenCalledWith(
+      { v: WIDGET_PROTOCOL_VERSION, type: WidgetMessageType.SIGN_IN_REQUIRED },
+      PARTNER,
+    );
+  });
+
   it('requestIdentity resolves with the next identity message', async () => {
     vi.spyOn(window.parent, 'postMessage').mockImplementation(() => undefined);
     const { result } = renderHook(() =>

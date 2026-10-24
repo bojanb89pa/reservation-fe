@@ -827,6 +827,7 @@ const sr: Translation = {
           title: 'Partnerski sajtovi',
           paragraphs: [
             'Neki biznisi nude zakazivanje na sopstvenom sajtu preko Reserva widget-a. Taj sajt vode oni i ima sopstvene uslove i politiku privatnosti; Reserva obrađuje samo samu rezervaciju.',
+            'Partner koji ugrađuje widget mora da ostavi oznaku „by Reserva” stalno vidljivom: zabranjeno je prekrivanje, sečenje (npr. iframe manji od sadržaja ili overflow: hidden na roditelju), providnost, izmena i uklanjanje oznake. Kršenje ovog pravila je razlog za isključenje partnera.',
           ],
         },
         {
@@ -986,6 +987,15 @@ const sr: Translation = {
     noBusiness: 'Trenutno nema ničega za rezervaciju.',
     signInRequired: 'Prijavi se na sajtu partnera da bi zakazao termin.',
     identityPending: 'Proveravam prijavu…',
+    signInPending: {
+      title: 'Prijavite se da biste potvrdili rezervaciju',
+      cancel: 'Odustani',
+      completing: 'Dovršavam rezervaciju…',
+    },
+    watermark: {
+      label: 'by Reserva',
+      linkLabel: 'by Reserva (otvara se u novom tabu)',
+    },
     unavailable: {
       LOCATION_OUT_OF_SCOPE: 'Rezervacija nije dostupna za ovu lokaciju.',
       CONSENT_NOT_APPROVED: 'Vlasnik lokacije nije odobrio rezervisanje preko ovog sajta.',

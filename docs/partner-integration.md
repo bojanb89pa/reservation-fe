@@ -68,7 +68,7 @@ function onAuthChanged() {
 
 The Reserva token in the widget lasts about 10 minutes and cannot be refreshed. When it expires, the widget asks for an identity again, and the loader calls `getIdentityToken()`. That function must therefore always return a fresh, unused token, or `null`.
 
-A guest (`null`) sees the available slots but not the booking button.
+A guest (`null`) sees the available slots and can pick one. Clicking "Reserve" makes the widget remember the choice and send `reserva:sign-in-required`, and the loader calls the optional `onSignInRequired()`. Open your sign-in there, then call `ReservaWidget.refreshIdentity()`: the widget completes the reservation without a second choice. Without `onSignInRequired` the widget asks the guest to sign in on your site.
 
 ## 3. Path 1: a trusted OIDC issuer (for example Google)
 
@@ -239,7 +239,13 @@ Possible errors:
 
 The resulting Reserva token is used to create reservations. A reservation carries the user's `externalIdentityId`.
 
-## 5. Security notes
+## 5. Terms of use
+
+- The "by Reserva" mark (with the Reserva logo) at the bottom of the widget **must stay visible** in every widget state.
+- It is forbidden to cover it, clip it (an iframe height or width smaller than its content, or `overflow: hidden` on a parent), make it transparent, or change or remove it in any way.
+- Breaking this rule is grounds for removing the partner. The same rule is in the Reserva Terms of use (`/terms`).
+
+## 6. Security notes
 
 - **Exact origins.** Enter exact origins (scheme, host, port) in `allowed_origins`. Do not use `'*'` or patterns.
 - **No `'*'` in messages.** The loader sends messages to the iframe only to the Reserva origin, and accepts messages only from that origin and only from its own iframe. If you write your own code around the widget, do not use `postMessage(..., '*')`.

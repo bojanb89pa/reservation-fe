@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ReservationSlotTakenError,
@@ -70,8 +70,13 @@ export function WidgetBooking({
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [errorKey, setErrorKey] = useState<string | null>(null);
   const [created, setCreated] = useState<ReservationCreatedPayload | null>(null);
+  // Choice made by a guest; kept until the partner signs the user in and the booking completes.
+  const [pending, setPending] = useState<BookingSelection | null>(null);
+  const submittingRef = useRef(false);
 
   async function handleConfirm(selection: BookingSelection) {
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setErrorKey(null);
     try {
       const reservation = await createReservation({
@@ -87,8 +92,15 @@ export function WidgetBooking({
         type: WidgetMessageType.RESERVATION_CREATED,
         reservation: payload,
       });
+      setPending(null);
       setCreated(payload);
     } catch (error: unknown) {
+      if (error instanceof WidgetSignInRequiredError) {
+        setPending(selection);
+        send({ v: WIDGET_PROTOCOL_VERSION, type: WidgetMessageType.SIGN_IN_REQUIRED });
+        return;
+      }
+      setPending(null);
       const reason = mapReservationErrorToUnavailableReason(error);
       if (reason) {
         onUnavailable(reason);
@@ -98,8 +110,17 @@ export function WidgetBooking({
         await invalidateSlots(selection.resource.id);
       }
       setErrorKey(errorKeyFor(error));
+    } finally {
+      submittingRef.current = false;
     }
   }
+
+  // The partner signed the user in (`reserva:identity` with a token): finish the saved booking.
+  const completePending = useRef(handleConfirm);
+  completePending.current = handleConfirm;
+  useEffect(() => {
+    if (pending && typeof identityToken === 'string') void completePending.current(pending);
+  }, [pending, identityToken]);
 
   if (resourcesLoading || servicesLoading) {
     return (
@@ -122,6 +143,25 @@ export function WidgetBooking({
     );
   }
 
+  if (pending) {
+    return (
+      <section className={styles.message} role="status" data-testid="widget-sign-in-pending">
+        <h2 className={styles.createdTitle}>{t('widget.signInPending.title')}</h2>
+        <p className={styles.createdWhen}>
+          {pending.startTime.replace('T', ' ').slice(0, 16)} –{' '}
+          {pending.endTime.replace('T', ' ').slice(0, 16)}
+        </p>
+        <p>
+          {pending.service.name} · {pending.resource.name}
+        </p>
+        <p>{isPending ? t('widget.signInPending.completing') : t('widget.signInRequired')}</p>
+        <button type="button" className={styles.cancel} onClick={() => setPending(null)}>
+          {t('widget.signInPending.cancel')}
+        </button>
+      </section>
+    );
+  }
+
   const resources = (resourcesPage?.content ?? []).filter((r) => r.id);
 
   return (
@@ -139,7 +179,6 @@ export function WidgetBooking({
         onResourceChange={setSelectedResource}
         onConfirm={handleConfirm}
         isLoading={isPending || identityToken === undefined}
-        confirmNotice={identityToken === null ? t('widget.signInRequired') : undefined}
       />
     </>
   );

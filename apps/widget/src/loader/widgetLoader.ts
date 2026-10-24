@@ -19,6 +19,8 @@
  *       identityTokenType: 'jwt', // optional: 'id_token' (default, put 1) | 'jwt' (put 2, partner-signed assertion)
  *       onReservationCreated: (r) => {},  // { id, status, startTime, endTime, locationName }
  *       onUnavailable: ({ reason }) => {}, // 'LOCATION_OUT_OF_SCOPE' | 'CONSENT_NOT_APPROVED' | 'PARTNER_DISABLED'
+ *       onSignInRequired: () => {},        // optional: a guest clicked "Reserve"; open your sign-in, then call
+ *                                          // `ReservaWidget.refreshIdentity()` — the widget finishes the booking
  *     }]);
  *   </script>
  *   <script async src="https://<reserva origin>/widget.js"></script>
@@ -29,14 +31,18 @@
  *                                  `reserva:identity` (all widgets, or the one mounted at `selector`).
  *                                  Also available as `window.ReservaWidget.refreshIdentity(selector?)`.
  *
- * `getIdentityToken` returns the partner user's OIDC ID token, or `null` for a guest (the widget then
- * shows slots but no "book" button). The Reserva partner token lasts ~10 minutes and has no refresh:
+ * `getIdentityToken` returns the partner user's OIDC ID token, or `null` for a guest. A guest can pick
+ * a slot; "Reserve" then makes the widget remember the choice and send `reserva:sign-in-required`
+ * (→ `onSignInRequired()`). After the partner signs the user in and calls `refreshIdentity`, the widget
+ * completes the remembered booking. Without `onSignInRequired` the widget just asks the guest to sign
+ * in on the partner's site. The Reserva partner token lasts ~10 minutes and has no refresh:
  * when it expires the iframe sends `reserva:need-identity` again and the loader calls
  * `getIdentityToken()` again.
  *
  * postMessage protocol (see `WidgetMessage` in @fe/domain; every message has `v` and `type`):
  *   iframe → loader: reserva:ready, reserva:need-identity, reserva:resize {height},
- *                    reserva:reservation-created {reservation}, reserva:unavailable {reason}
+ *                    reserva:reservation-created {reservation}, reserva:unavailable {reason},
+ *                    reserva:sign-in-required (a guest tried to book; additive, protocol stays v1)
  *   loader → iframe: reserva:identity {idToken, tokenType?}
  * Security: the loader only reacts to messages whose `event.origin` is the Reserva origin (the origin
  * `widget.js` was loaded from) and whose `event.source` is the widget's own iframe. Outgoing messages
@@ -136,6 +142,9 @@ export function installReservaWidget(
         break;
       case WidgetMessageType.UNAVAILABLE:
         safely(() => instance.options.onUnavailable?.({ reason: message.reason }));
+        break;
+      case WidgetMessageType.SIGN_IN_REQUIRED:
+        safely(() => instance.options.onSignInRequired?.());
         break;
       default:
         break; // ready (nothing to do) and identity (loader → iframe only)

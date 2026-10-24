@@ -60,6 +60,7 @@ jobs:
             VITE_OAUTH_CLIENT_ID=${{ vars.VITE_OAUTH_CLIENT_ID }}
             VITE_OAUTH_CLIENT_SECRET=${{ secrets.VITE_OAUTH_CLIENT_SECRET }}
             VITE_OAUTH_REDIRECT_URI=${{ vars.VITE_OAUTH_REDIRECT_URI }}
+            VITE_APP_SITE_URL=${{ vars.VITE_APP_SITE_URL }}
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository_owner }}/reservation-fe:latest
             ${{ env.REGISTRY }}/${{ github.repository_owner }}/reservation-fe:${{ github.sha }}
