@@ -69,18 +69,27 @@ test.describe('epic:75 widget: prikaz, gost i rezervacija sa ID tokenom', () => 
 
       await selectServiceAndResource(widget);
       await selectSlot(widget, setup.bookable);
-      await expect(widget.getByTestId('booking-confirm-notice')).toHaveText(SIGN_IN_NOTICE_EN);
-      await expect(widget.getByRole('button', { name: 'Confirm reservation' })).toHaveCount(0);
+      // Gost vidi aktivno „Rezerviši“; poruke o prijavi nema dok ne pokuša da potvrdi.
+      await expect(widget.getByRole('button', { name: 'Confirm reservation' })).toBeEnabled();
+      await expect(widget.getByTestId('booking-confirm-notice')).toHaveCount(0);
 
-      // Korisnik se prijavi na sajtu partnera: `refreshIdentity()` šalje novi ID token.
+      // Partner bez `onSignInRequired`: widget ostaje u stanju „prijavite se na sajtu partnera“.
+      await widget.getByRole('button', { name: 'Confirm reservation' }).click();
+      const pending = widget.getByTestId('widget-sign-in-pending');
+      await expect(pending).toBeVisible();
+      await expect(pending).toContainText(SIGN_IN_NOTICE_EN);
+      expect(await hostState(page, (w) => w.__created.length)).toBe(0);
+
+      // Korisnik se prijavi na sajtu partnera: `refreshIdentity()` šalje ID token i widget
+      // sam dovršava zapamćenu rezervaciju.
       const idToken = signOidcIdToken({ aud: setup.audience });
       await page.evaluate((token) => {
         const w = window as unknown as HostWindow;
         w.__idToken = token;
         return w.ReservaWidget.refreshIdentity();
       }, idToken);
-      await expect(widget.getByRole('button', { name: 'Confirm reservation' })).toBeVisible();
-      await expect(widget.getByTestId('booking-confirm-notice')).toHaveCount(0);
+      await expect(widget.getByTestId('widget-reservation-created')).toBeVisible();
+      await expect.poll(() => hostState(page, (w) => w.__created.length)).toBe(1);
     } finally {
       await tearDownWidgetPartner(setup);
     }
@@ -100,9 +109,8 @@ test.describe('epic:75 widget: prikaz, gost i rezervacija sa ID tokenom', () => 
       await expect(widget.locator('html')).toHaveAttribute('data-theme', 'dark');
       await expect(widget.locator('html')).toHaveAttribute('lang', 'sr');
       await selectServiceAndResource(widget);
-      await expect(widget.getByTestId('booking-confirm-notice')).toHaveText(
-        'Prijavi se na sajtu partnera da bi zakazao termin.',
-      );
+      await selectSlot(widget, setup.bookable);
+      await expect(widget.getByRole('button', { name: 'Potvrdi rezervaciju' })).toBeEnabled();
     } finally {
       await tearDownWidgetPartner(setup);
     }
@@ -160,6 +168,164 @@ test.describe('epic:75 widget: prikaz, gost i rezervacija sa ID tokenom', () => 
         await ownApi.dispose();
         await otherApi.dispose();
       }
+    } finally {
+      await tearDownWidgetPartner(setup);
+    }
+  });
+});
+
+test.describe('epic:82 widget: gost bira termin pre prijave', () => {
+  test('gost bira termin → „Rezerviši“ → sign-in-required → prijava → rezervacija se dovršava bez ponovnog izbora', async ({
+    page,
+  }) => {
+    const setup = await setUpWidgetPartner();
+    try {
+      const subject = uniqueSubject();
+      await openHostPage(page, {
+        clientId: setup.partner.id,
+        locationId: setup.locationId,
+        idToken: null,
+        signInIdToken: signOidcIdToken({ aud: setup.audience, sub: subject }),
+      });
+      const widget = widgetIframe(page);
+      await selectServiceAndResource(widget);
+      await selectSlot(widget, setup.bookable);
+      await widget.getByRole('button', { name: 'Confirm reservation' }).click();
+
+      // Partner je dobio `onSignInRequired` i prijavio korisnika; widget sam dovršava rezervaciju.
+      await expect(widget.getByTestId('widget-reservation-created')).toBeVisible();
+      expect(await hostState(page, (w) => w.__signInRequired)).toBe(1);
+      await expect
+        .poll(() => hostState(page, (w) => w.__raw.filter((m) => m.type === 'reserva:sign-in-required').length))
+        .toBe(1);
+      await expect.poll(() => hostState(page, (w) => w.__created.length)).toBe(1);
+      const [created] = (await hostState(page, (w) => w.__created)) as [ReservationCreatedEvent];
+      expect(created.startTime).toBe(setup.bookable.startTime);
+      expect(created.endTime).toBe(setup.bookable.endTime);
+
+      const own = await exchangeIdToken(setup.partner.id, signOidcIdToken({ aud: setup.audience, sub: subject }));
+      expect(own.status, JSON.stringify(own.body)).toBe(200);
+      const ownApi = await partnerApi(own.body.access_token ?? '');
+      try {
+        const seen = await ownApi.get(`/client-applications/reservations/${created.id}`);
+        expect(seen.status()).toBe(200);
+        const reservation = (await seen.json()) as PartnerReservationDto;
+        expect(reservation.resourceId).toBe(setup.bookable.resourceId);
+        expect(reservation.startTime).toBe(setup.bookable.startTime);
+      } finally {
+        await ownApi.dispose();
+      }
+    } finally {
+      await tearDownWidgetPartner(setup);
+    }
+  });
+
+  test('odustajanje u stanju čekanja prijave vraća izbor termina bez rezervacije', async ({ page }) => {
+    const setup = await setUpWidgetPartner();
+    try {
+      await openHostPage(page, { clientId: setup.partner.id, locationId: setup.locationId, idToken: null });
+      const widget = widgetIframe(page);
+      await selectServiceAndResource(widget);
+      await selectSlot(widget, setup.bookable);
+      await widget.getByRole('button', { name: 'Confirm reservation' }).click();
+      await expect(widget.getByTestId('widget-sign-in-pending')).toBeVisible();
+
+      await widget.getByRole('button', { name: 'Cancel' }).click();
+      await expect(widget.getByTestId('widget-sign-in-pending')).toHaveCount(0);
+      await expect(widget.getByRole('tablist').first()).toBeVisible();
+      expect(await hostState(page, (w) => w.__created.length)).toBe(0);
+    } finally {
+      await tearDownWidgetPartner(setup);
+    }
+  });
+});
+
+test.describe('epic:82 widget: watermark „by Reserva“', () => {
+  const watermark = (widget: ReturnType<typeof widgetIframe>) => widget.getByTestId('widget-watermark');
+
+  for (const theme of ['light', 'dark'] as const) {
+    test(`watermark je vidljiv u svim stanjima (${theme}) i vodi na sajt u novom tabu`, async ({ page }) => {
+      const setup = await setUpWidgetPartner();
+      try {
+        await openHostPage(page, { clientId: setup.partner.id, locationId: setup.locationId, theme, idToken: null });
+        const widget = widgetIframe(page);
+        const iframe = page.locator('iframe[title="Reserva"]');
+
+        await expect(watermark(widget)).toBeVisible();
+        await expect(watermark(widget)).toHaveAttribute('href', RESERVA_ORIGIN);
+        await expect(watermark(widget)).toHaveAttribute('target', '_blank');
+        await expect(watermark(widget)).toHaveAttribute('rel', /noopener/);
+        await expect(watermark(widget)).toContainText('by Reserva');
+        await expect(watermark(widget).locator('svg')).toBeVisible();
+        await expect(widget.getByRole('link', { name: 'by Reserva (opens in a new tab)' })).toBeVisible();
+
+        // Ulazi u visinu iframe-a: dno watermark-a je unutar iframe-a.
+        const inside = async () => {
+          const box = await watermark(widget).boundingBox();
+          const frameBox = await iframe.boundingBox();
+          return !!box && !!frameBox && box.y + box.height <= frameBox.y + frameBox.height + 1;
+        };
+        await expect.poll(inside).toBe(true);
+
+        await selectServiceAndResource(widget);
+        await selectSlot(widget, setup.bookable);
+        await expect(watermark(widget)).toBeVisible();
+
+        await widget.getByRole('button', { name: 'Confirm reservation' }).click();
+        await expect(widget.getByTestId('widget-sign-in-pending')).toBeVisible();
+        await expect(watermark(widget)).toBeVisible();
+        await expect.poll(inside).toBe(true);
+      } finally {
+        await tearDownWidgetPartner(setup);
+      }
+    });
+  }
+
+  test('watermark je vidljiv i u stanju potvrde', async ({ page }) => {
+    const setup = await setUpWidgetPartner();
+    try {
+      await openHostPage(page, {
+        clientId: setup.partner.id,
+        locationId: setup.locationId,
+        idToken: signOidcIdToken({ aud: setup.audience }),
+      });
+      const widget = widgetIframe(page);
+      await selectServiceAndResource(widget);
+      await selectSlot(widget, setup.bookable);
+      await widget.getByRole('button', { name: 'Confirm reservation' }).click();
+      await expect(widget.getByTestId('widget-reservation-created')).toBeVisible();
+      await expect(widget.getByTestId('widget-watermark')).toBeVisible();
+    } finally {
+      await tearDownWidgetPartner(setup);
+    }
+  });
+
+  test('watermark je vidljiv i u stanju greške', async ({ page }) => {
+    const setup = await setUpWidgetPartner();
+    try {
+      await openHostPage(page, {
+        clientId: setup.partner.id,
+        locationId: setup.locationId,
+        idToken: signOidcIdToken({ aud: uniqueAudience() }),
+      });
+      const widget = widgetIframe(page);
+      await selectServiceAndResource(widget);
+      await selectSlot(widget, setup.bookable);
+      await widget.getByRole('button', { name: 'Confirm reservation' }).click();
+      await expect(widget.getByTestId('widget-error')).toBeVisible();
+      await expect(widget.getByTestId('widget-watermark')).toBeVisible();
+    } finally {
+      await tearDownWidgetPartner(setup);
+    }
+  });
+
+  test('watermark je vidljiv i u stanju unavailable', async ({ page }) => {
+    const setup = await setUpWidgetPartner({ inScope: false });
+    try {
+      await openHostPage(page, { clientId: setup.partner.id, locationId: setup.locationId, idToken: null });
+      const widget = widgetIframe(page);
+      await expect(widget.getByTestId('widget-alert')).toBeVisible();
+      await expect(widget.getByTestId('widget-watermark')).toBeVisible();
     } finally {
       await tearDownWidgetPartner(setup);
     }
@@ -326,7 +492,9 @@ test.describe('epic:75 widget: provera origin-a poruka', () => {
       const widget = widgetIframe(page);
       const iframe = page.locator('iframe[title="Reserva"]');
       await selectServiceAndResource(widget);
-      await expect(widget.getByTestId('booking-confirm-notice')).toHaveText(SIGN_IN_NOTICE_EN);
+      await selectSlot(widget, setup.bookable);
+      await widget.getByRole('button', { name: 'Confirm reservation' }).click();
+      await expect(widget.getByTestId('widget-sign-in-pending')).toContainText(SIGN_IN_NOTICE_EN);
 
       // Evidencija poruka koje stižu u iframe, da znamo da je napadačeva obrađena.
       const inner = widgetFrame(page);
@@ -371,8 +539,8 @@ test.describe('epic:75 widget: provera origin-a poruka', () => {
       expect(await hostState(page, (w) => w.__created.length)).toBe(0);
       expect(await hostState(page, (w) => w.__unavailable.length)).toBe(0);
       expect(await iframe.evaluate((el) => (el as HTMLElement).style.height)).not.toBe('5000px');
-      await expect(widget.getByTestId('booking-confirm-notice')).toHaveText(SIGN_IN_NOTICE_EN);
-      await expect(widget.getByRole('button', { name: 'Confirm reservation' })).toHaveCount(0);
+      await expect(widget.getByTestId('widget-sign-in-pending')).toContainText(SIGN_IN_NOTICE_EN);
+      expect(await hostState(page, (w) => w.__created.length)).toBe(0);
     } finally {
       await tearDownWidgetPartner(setup);
     }
