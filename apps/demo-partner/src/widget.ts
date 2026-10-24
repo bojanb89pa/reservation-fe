@@ -2,6 +2,7 @@ import type { DemoConfig } from './config';
 import type { Contact } from './content';
 import { renderContact } from './contact';
 import type { IdentityProvider } from './identityProvider';
+import type { SiteTheme } from './theme';
 
 export type UnavailableReason =
   | 'LOCATION_OUT_OF_SCOPE'
@@ -33,17 +34,25 @@ export interface MountOptions {
   identity: IdentityProvider;
   /** Kontakt koji se prikazuje umesto widget-a kad je lokacija nedostupna. */
   fallbackContact: Contact;
+  /** Trenutna tema sajta; widget se mount-uje sa njom. */
+  theme: SiteTheme;
+}
+
+/** Menja temu svih widget-a bez reload-a (`setTheme`); radi i pre učitavanja loader-a. */
+export function setWidgetTheme(win: Window, theme: SiteTheme): void {
+  queue(win).push(['setTheme', theme]);
 }
 
 /** Stavlja `mount` u `window.ReservaWidget` queue; radi i pre i posle učitavanja loader-a. */
 export function mountWidget(win: Window, doc: Document, options: MountOptions): void {
-  const { selector, locationId, config, identity, fallbackContact } = options;
+  const { selector, locationId, config, identity, fallbackContact, theme } = options;
   queue(win).push([
     'mount',
     selector,
     {
       clientId: config.clientId,
       locationId,
+      theme,
       locale: 'sr',
       getIdentityToken: () => identity.getIdentityToken(),
       onSignInRequired: () => identity.requestSignIn(),

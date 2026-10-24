@@ -20,13 +20,15 @@ function WidgetContent() {
   const rootRef = useRef<HTMLDivElement>(null);
   const [blockedReason, setBlockedReason] = useState<WidgetUnavailableReason | null>(null);
 
-  useWidgetAppearance(params.theme, params.locale);
+  const [theme, setTheme] = useState(params.theme);
+  useWidgetAppearance(theme, params.locale);
 
   const hasParams = !!params.clientId && !!params.locationId;
   const { data: config, isLoading, isError } = useWidgetConfig(hasParams ? params.clientId : '');
   const { trusted, send, identityToken, requestIdentity, getIdentityTokenType } = useWidgetBridge({
     parentOrigin: params.parentOrigin,
     allowedOrigins: config?.allowedOrigins ?? null,
+    onTheme: setTheme,
   });
   useWidgetResize(rootRef, send);
 

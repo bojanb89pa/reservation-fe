@@ -1,0 +1,17 @@
+/* Samo za iframe widget-a: visinu određuje isključivo sadržaj (`.root`, `reserva:resize`). */
+html,
+body,
+#root {
+  min-height: 0;
+  height: auto;
+}
+
+html,
+body {
+  overflow: hidden;
+}
+
+/* Fiksni dekorativni sloj iz global.css ne sme da utiče na veličinu ni na scroll. */
+body::before {
+  display: none;
+}

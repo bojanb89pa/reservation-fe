@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { WIDGET_PROTOCOL_VERSION, WidgetMessageType, parseWidgetMessage } from '@fe/domain';
-import type { IdentityTokenType, WidgetToHostMessage } from '@fe/domain';
+import type { IdentityTokenType, WidgetTheme, WidgetToHostMessage } from '@fe/domain';
 import { isAllowedMessageOrigin } from '@fe/application';
 
 const IDENTITY_TIMEOUT_MS = 10_000;
@@ -10,6 +10,8 @@ interface Options {
   parentOrigin: string | null;
   /** Partner's `allowedOrigins`; `null` until the widget config is loaded. */
   allowedOrigins: readonly string[] | null;
+  /** Called with the theme of a `reserva:theme` message (no reload; widget state is kept). */
+  onTheme?: (theme: WidgetTheme) => void;
 }
 
 /** `undefined` = the loader has not answered yet, `null` = guest. */
@@ -21,7 +23,9 @@ type IdentityToken = string | null | undefined;
  * origin AND from `window.parent` are parsed, and every outgoing message uses it as
  * `targetOrigin` (never `'*'`).
  */
-export function useWidgetBridge({ parentOrigin, allowedOrigins }: Options) {
+export function useWidgetBridge({ parentOrigin, allowedOrigins, onTheme }: Options) {
+  const onThemeRef = useRef(onTheme);
+  onThemeRef.current = onTheme;
   const trusted =
     parentOrigin !== null &&
     allowedOrigins !== null &&
@@ -47,6 +51,10 @@ export function useWidgetBridge({ parentOrigin, allowedOrigins }: Options) {
         return;
       }
       const message = parseWidgetMessage(event.data);
+      if (message?.type === WidgetMessageType.THEME) {
+        onThemeRef.current?.(message.theme);
+        return;
+      }
       if (message?.type !== WidgetMessageType.IDENTITY) return;
       tokenTypeRef.current = message.tokenType;
       setIdentityToken(message.idToken);
