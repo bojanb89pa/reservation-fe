@@ -109,6 +109,7 @@ test.describe('epic:75 widget: prikaz, gost i rezervacija sa ID tokenom', () => 
       await expect(widget.locator('html')).toHaveAttribute('data-theme', 'dark');
       await expect(widget.locator('html')).toHaveAttribute('lang', 'sr');
       await selectServiceAndResource(widget);
+      await selectSlot(widget, setup.bookable);
       await expect(widget.getByRole('button', { name: 'Potvrdi rezervaciju' })).toBeEnabled();
     } finally {
       await tearDownWidgetPartner(setup);
