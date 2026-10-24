@@ -7,6 +7,7 @@ interface ImportMetaEnv {
   readonly VITE_OAUTH_CLIENT_SECRET: string;
   readonly VITE_OAUTH_REDIRECT_URI: string;
   readonly VITE_LEGAL_CONTACT_EMAIL?: string;
+  readonly VITE_APP_SITE_URL?: string;
 }
 
 interface ImportMeta {
