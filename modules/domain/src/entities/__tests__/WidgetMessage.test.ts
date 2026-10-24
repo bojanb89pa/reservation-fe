@@ -44,6 +44,10 @@ describe('parseWidgetMessage', () => {
       v,
       type: 'reserva:need-identity',
     });
+    expect(parseWidgetMessage({ v, type: WidgetMessageType.SIGN_IN_REQUIRED })).toEqual({
+      v,
+      type: 'reserva:sign-in-required',
+    });
     expect(parseWidgetMessage({ v, type: WidgetMessageType.IDENTITY, idToken: null })).toEqual({
       v,
       type: 'reserva:identity',

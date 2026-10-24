@@ -28,6 +28,8 @@ export const WidgetMessageType = {
   // WARNING: not in the ticket's message list, but the ticket requires the iframe to tell the loader to call onUnavailable — verify before merging
   /** iframe → loader: the widget cannot book here; the loader calls `onUnavailable({ reason })`. */
   UNAVAILABLE: 'reserva:unavailable',
+  /** iframe → loader: a guest tried to book; the loader calls the optional `onSignInRequired()`. */
+  SIGN_IN_REQUIRED: 'reserva:sign-in-required',
 } as const;
 
 export type WidgetMessageTypeValue = (typeof WidgetMessageType)[keyof typeof WidgetMessageType];
@@ -81,10 +83,15 @@ export interface WidgetUnavailableMessage extends WidgetMessageBase<
   reason: WidgetUnavailableReason;
 }
 
+export type WidgetSignInRequiredMessage = WidgetMessageBase<
+  typeof WidgetMessageType.SIGN_IN_REQUIRED
+>;
+
 /** Messages the iframe sends to the loader. */
 export type WidgetToHostMessage =
   | WidgetReadyMessage
   | WidgetNeedIdentityMessage
+  | WidgetSignInRequiredMessage
   | WidgetResizeMessage
   | WidgetReservationCreatedMessage
   | WidgetUnavailableMessage;
@@ -143,6 +150,7 @@ export function parseWidgetMessage(data: unknown): WidgetMessage | null {
   switch (data.type) {
     case WidgetMessageType.READY:
     case WidgetMessageType.NEED_IDENTITY:
+    case WidgetMessageType.SIGN_IN_REQUIRED:
       return { v, type: data.type };
     case WidgetMessageType.IDENTITY:
       if (data.idToken !== null && typeof data.idToken !== 'string') return null;
