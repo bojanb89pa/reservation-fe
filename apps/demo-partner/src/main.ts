@@ -3,7 +3,8 @@ import { mountAuthUi } from './authUi';
 import { readConfig } from './config';
 import { MAIN_CONTACT, NO_CONSENT_CONTACT, OTHER_BUSINESSES, WORKING_HOURS } from './content';
 import { createIdentity } from './identity';
-import { bindIdentityRefresh, loadWidgetScript, mountWidget } from './widget';
+import { applyTheme, mountThemeToggle, readStoredTheme } from './theme';
+import { bindIdentityRefresh, loadWidgetScript, mountWidget, setWidgetTheme } from './widget';
 
 function el<K extends keyof HTMLElementTagNameMap>(
   tag: K,
@@ -49,11 +50,16 @@ function renderStatic() {
 
 async function start() {
   renderStatic();
+  const theme = readStoredTheme();
+  applyTheme(document, theme);
   const config = readConfig();
   const identity = await createIdentity(config.googleClientId);
 
   const auth = document.querySelector<HTMLElement>('#auth');
   if (auth) mountAuthUi(auth, identity);
+
+  const toggle = document.querySelector<HTMLElement>('#theme-toggle');
+  if (toggle) mountThemeToggle(toggle, theme, (next) => setWidgetTheme(window, next));
 
   bindIdentityRefresh(window, identity);
   mountWidget(window, document, {
@@ -62,6 +68,7 @@ async function start() {
     config,
     identity,
     fallbackContact: MAIN_CONTACT,
+    theme,
   });
   if (config.noConsentLocationId) {
     mountWidget(window, document, {
@@ -70,6 +77,7 @@ async function start() {
       config,
       identity,
       fallbackContact: NO_CONSENT_CONTACT,
+      theme,
     });
   } else {
     document.querySelector('#no-consent-section')?.remove();

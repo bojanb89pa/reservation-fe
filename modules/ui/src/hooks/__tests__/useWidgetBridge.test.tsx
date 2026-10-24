@@ -64,6 +64,25 @@ describe('useWidgetBridge (iframe side)', () => {
     expect(postMessage.mock.calls.map((call) => call[1])).not.toContain('*');
   });
 
+  it('forwards reserva:theme from the parent and ignores an unknown theme', () => {
+    const onTheme = vi.fn();
+    renderHook(() =>
+      useWidgetBridge({ parentOrigin: PARTNER, allowedOrigins: [PARTNER], onTheme }),
+    );
+    const themeMessage = (theme: string) =>
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          origin: PARTNER,
+          source: window.parent,
+          data: { v: WIDGET_PROTOCOL_VERSION, type: WidgetMessageType.THEME, theme },
+        }),
+      );
+    act(() => themeMessage('auto'));
+    expect(onTheme).not.toHaveBeenCalled();
+    act(() => themeMessage('dark'));
+    expect(onTheme).toHaveBeenCalledWith('dark');
+  });
+
   it('remembers the tokenType of the identity message', () => {
     const { result } = renderHook(() =>
       useWidgetBridge({ parentOrigin: PARTNER, allowedOrigins: [PARTNER] }),

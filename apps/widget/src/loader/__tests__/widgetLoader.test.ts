@@ -22,6 +22,7 @@ function setup(options: Record<string, unknown> = {}) {
     {
       clientId: 'client-1',
       locationId: 'loc-1',
+      theme: 'light',
       getIdentityToken,
       onReservationCreated,
       onUnavailable,
@@ -75,11 +76,47 @@ describe('widget.js loader', () => {
 
     it('replays commands queued before the script loaded', () => {
       const queue: unknown[] = [
-        ['mount', '#host', { clientId: 'c', locationId: 'l', getIdentityToken: () => null }],
+        [
+          'mount',
+          '#host',
+          { clientId: 'c', locationId: 'l', theme: 'light', getIdentityToken: () => null },
+        ],
       ];
       (window as { ReservaWidget?: unknown }).ReservaWidget = queue;
       installReservaWidget(window, document, RESERVA);
       expect(document.querySelector('iframe')).not.toBeNull();
+    });
+
+    it.each([undefined, 'auto', 'blue'])('does not draw when theme is %s', (theme) => {
+      const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+      setup({ theme });
+      expect(document.querySelector('iframe')).toBeNull();
+      expect(error).toHaveBeenCalled();
+    });
+  });
+
+  describe('setTheme', () => {
+    it('posts reserva:theme to the Reserva origin of the iframe', () => {
+      const { api, iframe } = setup();
+      const postMessage = vi.fn();
+      Object.defineProperty(iframe, 'contentWindow', { value: { postMessage } });
+      api.setTheme('dark');
+      expect(postMessage).toHaveBeenCalledWith(
+        { v: WIDGET_PROTOCOL_VERSION, type: WidgetMessageType.THEME, theme: 'dark' },
+        RESERVA,
+      );
+    });
+
+    it('works as a queued command and rejects an invalid theme', () => {
+      const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const { api, iframe } = setup();
+      const postMessage = vi.fn();
+      Object.defineProperty(iframe, 'contentWindow', { value: { postMessage } });
+      api.push(['setTheme', 'dark']);
+      expect(postMessage).toHaveBeenCalledTimes(1);
+      api.setTheme('auto' as never);
+      expect(postMessage).toHaveBeenCalledTimes(1);
+      expect(error).toHaveBeenCalled();
     });
   });
 

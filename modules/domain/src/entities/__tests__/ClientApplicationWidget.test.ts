@@ -5,13 +5,13 @@ describe('toWidgetTheme', () => {
   it('passes through a recognized theme', () => {
     expect(toWidgetTheme('light')).toBe('light');
     expect(toWidgetTheme('dark')).toBe('dark');
-    expect(toWidgetTheme('auto')).toBe('auto');
   });
 
-  it('falls back to auto', () => {
-    expect(toWidgetTheme('sepia')).toBe('auto');
-    expect(toWidgetTheme(null)).toBe('auto');
-    expect(toWidgetTheme(undefined)).toBe('auto');
+  it('falls back to light, including for the removed auto', () => {
+    expect(toWidgetTheme('auto')).toBe('light');
+    expect(toWidgetTheme('sepia')).toBe('light');
+    expect(toWidgetTheme(null)).toBe('light');
+    expect(toWidgetTheme(undefined)).toBe('light');
   });
 });
 

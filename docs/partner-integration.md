@@ -33,7 +33,7 @@ In that case the partner should show a fallback option, for example a contact ph
     {
       clientId: '<public client application id>',
       locationId: '<location id>',
-      theme: 'auto', // optional: 'light' | 'dark' | 'auto' (default 'auto')
+      theme: 'light', // required: 'light' | 'dark' (without it nothing is drawn)
       locale: 'sr', // optional: 'sr' | 'en' (default 'sr')
       // string | null | Promise<string | null>; null means guest
       getIdentityToken: () => myAuth.getIdentityToken(),
@@ -57,6 +57,8 @@ Commands are placed in the `window.ReservaWidget` queue before the script loads,
 
 - `['mount', selector, options]` renders the iframe into the first element that matches `selector`.
 - `['refreshIdentity', selector?]` calls `getIdentityToken()` again and sends the widget a new identity. Without a selector, it applies to all widgets. It is also available as `window.ReservaWidget.refreshIdentity(selector?)`.
+
+- `['setTheme', theme, selector?]` switches the widget between `'light'` and `'dark'` without a reload; the chosen slot is kept. Without a selector it applies to all widgets. It is also available as `window.ReservaWidget.setTheme(theme, selector?)`. The loader sends the iframe a `reserva:theme` message (`{ v, type, theme }`). The widget never follows the system color scheme: pass the theme of your own site and call `setTheme` when your site's theme changes.
 
 **Call `refreshIdentity` after every login and logout** of a user on your site:
 

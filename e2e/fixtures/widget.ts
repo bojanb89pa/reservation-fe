@@ -37,7 +37,8 @@ export interface HostPageOptions {
   locationId: string;
   /** Origin sa kog se servira host stranica (podrazumevano `HOST_ORIGIN`). */
   origin?: string;
-  theme?: 'light' | 'dark' | 'auto';
+  /** Tema widget-a (podrazumevano 'light'); `null` = mount bez teme (loader ne sme da crta). */
+  theme?: 'light' | 'dark' | null;
   locale?: 'sr' | 'en';
   /** Početni ID token koji vraća `getIdentityToken`; `null` = gost. */
   idToken?: string | null;
@@ -64,14 +65,17 @@ export interface HostWindow {
   __unavailable: { reason: string }[];
   __signInRequired: number;
   __raw: { origin: string; type: unknown }[];
-  ReservaWidget: { refreshIdentity(selector?: string): Promise<void> };
+  ReservaWidget: {
+    refreshIdentity(selector?: string): Promise<void>;
+    setTheme(theme: 'light' | 'dark', selector?: string): void;
+  };
 }
 
 function hostHtml(options: HostPageOptions): string {
   const config = JSON.stringify({
     clientId: options.clientId,
     locationId: options.locationId,
-    theme: options.theme,
+    theme: options.theme === null ? undefined : (options.theme ?? 'light'),
     locale: options.locale ?? 'en',
     idToken: options.idToken ?? null,
     signInIdToken: options.signInIdToken ?? null,
@@ -117,6 +121,7 @@ function hostHtml(options: HostPageOptions): string {
 
 /** Servira host stranicu (i stranicu napadača) sa drugog origin-a i otvara je. */
 export async function openHostPage(page: Page, options: HostPageOptions): Promise<void> {
+  const withoutIframe = options.theme === null;
   const origin = options.origin ?? HOST_ORIGIN;
   await page.route(`${origin}/**`, (route) =>
     new URL(route.request().url()).pathname === '/'
@@ -142,6 +147,7 @@ export async function openHostPage(page: Page, options: HostPageOptions): Promis
   });
 
   await page.goto(`${origin}/`);
+  if (withoutIframe) return; // mount bez teme: iframe se ne pravi, pa nema šta da se čeka
   try {
     await page.locator('iframe[title="Reserva"]').waitFor({ state: 'attached', timeout: 15_000 });
   } catch {
