@@ -6,6 +6,8 @@ export interface IdentityProvider {
   getUserLabel(): string | null;
   /** Crta kontrolu za prijavu (Google dugme ili test dugme). */
   renderLoginButton(container: HTMLElement): void;
+  /** Widget javlja da gost želi da rezerviše (`onSignInRequired`): usmerava korisnika na prijavu. */
+  requestSignIn(): void;
   signOut(): void;
   /** Poziva se posle svakog logina i logouta; vraća funkciju za odjavu slušaoca. */
   subscribe(listener: () => void): () => void;

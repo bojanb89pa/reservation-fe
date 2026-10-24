@@ -16,7 +16,9 @@ async function bundleText(identity: string): Promise<string> {
     logLevel: 'silent',
     build: { write: false, minify: false },
   });
-  const outputs = (Array.isArray(result) ? result : [result]) as { output: { type: string; code?: string }[] }[];
+  const outputs = (Array.isArray(result) ? result : [result]) as {
+    output: { type: string; code?: string }[];
+  }[];
   return outputs
     .flatMap((o) => o.output)
     .map((chunk) => chunk.code ?? '')

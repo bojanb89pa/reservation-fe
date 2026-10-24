@@ -21,6 +21,8 @@ export function createTestIdentity(win: TestWindow): IdentityProvider {
   // Prijavljen od starta ako je token već dostupan (Playwright ga postavi pre učitavanja).
   let signedIn = source() !== null;
 
+  let loginButton: HTMLButtonElement | null = null;
+
   const token = () => (signedIn ? source() : null);
 
   return {
@@ -40,6 +42,12 @@ export function createTestIdentity(win: TestWindow): IdentityProvider {
         notify();
       });
       container.replaceChildren(button);
+      loginButton = button;
+    },
+    // Test režim ne prijavljuje sam: samo skreće pažnju na dugme, a prijavu klikom radi E2E test.
+    requestSignIn() {
+      loginButton?.scrollIntoView?.({ block: 'center' });
+      loginButton?.focus();
     },
     signOut() {
       signedIn = false;

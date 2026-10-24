@@ -825,6 +825,7 @@ const en = {
           title: 'Partner sites',
           paragraphs: [
             'Some businesses offer booking through their own website using the Reserva widget. Their site is run by them and has its own terms and privacy policy; Reserva handles only the reservation itself.',
+            'A partner embedding the widget must keep the “by Reserva” mark visible at all times: covering, clipping (for example an iframe smaller than its content or overflow: hidden on a parent), making it transparent, altering or removing it is prohibited. Breaking this rule is grounds for removing the partner.',
           ],
         },
         {
@@ -984,6 +985,15 @@ const en = {
     noBusiness: 'There is nothing to book here at the moment.',
     signInRequired: 'Sign in on the partner website to book a slot.',
     identityPending: 'Checking your sign-in…',
+    signInPending: {
+      title: 'Sign in to confirm your reservation',
+      cancel: 'Cancel',
+      completing: 'Completing your reservation…',
+    },
+    watermark: {
+      label: 'by Reserva',
+      linkLabel: 'by Reserva (opens in a new tab)',
+    },
     unavailable: {
       LOCATION_OUT_OF_SCOPE: 'Booking is not available for this location.',
       CONSENT_NOT_APPROVED: 'The location owner has not approved booking through this website.',
