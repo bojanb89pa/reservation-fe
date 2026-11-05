@@ -50,8 +50,14 @@ Call `window.ReservaWidget.push(['refreshIdentity'])` after every sign-in and si
 - **Path 2: partner-signed assertion.** If you have your own login, your backend signs a short-lived JWT about the
   user with a key you registered with Reserva. Set `identityTokenType: 'jwt'`.
 
-Full reference: [docs/widget.md](docs/widget.md). Step-by-step guide with key registration, claims and security
-notes: [docs/partner-integration.md](docs/partner-integration.md). A working example is in
+The widget guide and the partner integration guide (key registration, claims, security notes) are
+on the public API documentation site, https://reserva-docs.bojanlab.com (repository
+`bojanb89pa/reservation-docs`):
+
+- [Booking widget](https://reserva-docs.bojanlab.com/guides/widget/)
+- [Partner integration](https://reserva-docs.bojanlab.com/guides/partner-integration/)
+
+A working example is in
 [apps/demo-partner](apps/demo-partner/README.md), which is live at https://demo-business.bojanlab.com.
 
 ## Architecture
@@ -140,15 +146,13 @@ Build-time (`VITE_*`) and runtime settings, the workflows and the health checks 
 
 ## Documentation
 
-| Document                                                   | Contents                                                                        |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| [docs/widget.md](docs/widget.md)                           | Widget reference: options, commands, events, styling, security, troubleshooting |
-| [docs/partner-integration.md](docs/partner-integration.md) | Partner guide: identity paths 1 and 2, key registration, claims, security       |
-| [docs/architecture.md](docs/architecture.md)               | Monorepo layout, layers, composition root, widget protocol                      |
-| [docs/development.md](docs/development.md)                 | Local setup, dev servers, environment variables, scripts                        |
-| [docs/e2e.md](docs/e2e.md)                                 | Playwright suite, projects, environment variables, CI                           |
-| [docs/deployment.md](docs/deployment.md)                   | Staging and demo deployment, Docker images, Traefik                             |
-| [apps/demo-partner/README.md](apps/demo-partner/README.md) | The demo partner site                                                           |
+| Document                                                   | Contents                                                   |
+| ---------------------------------------------------------- | ---------------------------------------------------------- |
+| [docs/architecture.md](docs/architecture.md)               | Monorepo layout, layers, composition root, widget protocol |
+| [docs/development.md](docs/development.md)                 | Local setup, dev servers, environment variables, scripts   |
+| [docs/e2e.md](docs/e2e.md)                                 | Playwright suite, projects, environment variables, CI      |
+| [docs/deployment.md](docs/deployment.md)                   | Staging and demo deployment, Docker images, Traefik        |
+| [apps/demo-partner/README.md](apps/demo-partner/README.md) | The demo partner site                                      |
 
 ## Contributing
 
