@@ -4,7 +4,7 @@ A static Vite site for a fictional partner. It behaves like a real partner: it e
 through the public loader `{VITE_RESERVA_ORIGIN}/widget.js` and the `window.ReservaWidget` queue, and
 it imports no `@fe/*` package (ESLint enforces this). It is not part of the root `yarn build`.
 
-It is the live example of the integration described in [partner-integration.md](../../docs/partner-integration.md).
+It is the live example of the integration described in [partner integration guide](https://reserva-docs.bojanlab.com/guides/partner-integration/).
 The hosted copy runs at https://demo-business.bojanlab.com.
 
 ```bash

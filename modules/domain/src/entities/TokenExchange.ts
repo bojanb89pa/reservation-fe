@@ -20,7 +20,7 @@ export interface ExchangeIdentityTokenCommand {
   clientApplicationId: string;
   /** Partner's identity token (OIDC ID token or partner assertion JWT), sent as `subject_token`. */
   idToken: string;
-  // WARNING: brief says the FE does not call the jwt exchange; added so the widget can carry a put 2 assertion as docs/partner-integration.md describes — verify before merging
+  // WARNING: brief says the FE does not call the jwt exchange; added so the widget can carry a put 2 assertion as the partner integration guide (reserva-docs.bojanlab.com) describes — verify before merging
   /** Kind of `idToken`; omitted means {@link DEFAULT_IDENTITY_TOKEN_TYPE}. */
   subjectTokenType?: IdentityTokenType;
   /** Requested scopes; omitted means every scope the partner is allowed. */
