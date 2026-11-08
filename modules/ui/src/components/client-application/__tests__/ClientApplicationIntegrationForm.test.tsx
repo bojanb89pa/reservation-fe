@@ -157,6 +157,28 @@ describe('ClientApplicationIntegrationForm', () => {
     });
   });
 
+  it('offers the cancel-own scope as a checkbox and saves it when enabled', async () => {
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
+    render(
+      <ClientApplicationIntegrationForm
+        integration={integration}
+        onSubmit={onSubmit}
+        isPending={false}
+      />,
+    );
+
+    const checkbox = screen.getByRole('checkbox', { name: /Cancel own reservations/ });
+    expect(checkbox).not.toBeChecked();
+    fireEvent.click(checkbox);
+    fireEvent.click(screen.getByRole('button', { name: 'Save integration' }));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalled());
+    expect(onSubmit.mock.calls[0][0].allowedScopes).toEqual([
+      'reservation:create',
+      'reservation:cancel:own',
+    ]);
+  });
+
   it('adds and removes issuers', () => {
     render(
       <ClientApplicationIntegrationForm

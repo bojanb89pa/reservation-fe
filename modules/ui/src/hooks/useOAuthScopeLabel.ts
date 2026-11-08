@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 const OAUTH_SCOPE_LABEL_KEYS: Record<string, string> = {
   'reservation:create': 'oauthScopes.reservationCreate',
   'reservation:read:own': 'oauthScopes.reservationReadOwn',
+  'reservation:cancel:own': 'oauthScopes.reservationCancelOwn',
 };
 
 export function useOAuthScopeLabel() {

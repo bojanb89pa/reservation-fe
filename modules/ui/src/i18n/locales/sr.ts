@@ -398,6 +398,7 @@ const sr: Translation = {
   oauthScopes: {
     reservationCreate: 'Pravljenje rezervacija',
     reservationReadOwn: 'Pregled sopstvenih rezervacija',
+    reservationCancelOwn: 'Otkazivanje sopstvenih rezervacija',
   },
   clientApplicationIntegration: {
     title: 'Integraciona konfiguracija',
