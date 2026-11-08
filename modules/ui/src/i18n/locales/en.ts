@@ -396,6 +396,7 @@ const en = {
   oauthScopes: {
     reservationCreate: 'Create reservations',
     reservationReadOwn: 'Read own reservations',
+    reservationCancelOwn: 'Cancel own reservations',
   },
   clientApplicationIntegration: {
     title: 'Integration configuration',
