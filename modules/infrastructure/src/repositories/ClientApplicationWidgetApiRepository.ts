@@ -34,4 +34,16 @@ export class ClientApplicationWidgetApiRepository implements ClientApplicationWi
     );
     return response.data;
   }
+
+  async cancelReservation(
+    partnerAccessToken: string,
+    reservationId: string,
+  ): Promise<ClientApplicationReservation> {
+    const response = await this.client.post<ClientApplicationReservation>(
+      `/client-applications/reservations/${reservationId}/cancel`,
+      undefined,
+      { headers: { Authorization: `Bearer ${partnerAccessToken}` } },
+    );
+    return response.data;
+  }
 }
