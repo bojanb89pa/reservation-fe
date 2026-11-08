@@ -15,6 +15,7 @@ import type {
 import { GetWidgetConfigUseCaseImpl } from '../widget/GetWidgetConfigUseCaseImpl';
 import { ExchangeIdentityTokenUseCaseImpl } from '../widget/ExchangeIdentityTokenUseCaseImpl';
 import { CreateClientApplicationReservationUseCaseImpl } from '../widget/CreateClientApplicationReservationUseCaseImpl';
+import { CancelClientApplicationReservationUseCaseImpl } from '../widget/CancelClientApplicationReservationUseCaseImpl';
 import {
   mapReservationErrorToUnavailableReason,
   resolveWidgetAvailability,
@@ -29,7 +30,7 @@ const widgetConfig: ClientApplicationWidgetConfig = {
 };
 
 function widgetRepo(): ClientApplicationWidgetRepository {
-  return { getWidgetConfig: vi.fn(), createReservation: vi.fn() };
+  return { getWidgetConfig: vi.fn(), createReservation: vi.fn(), cancelReservation: vi.fn() };
 }
 function integrationRepo(): ClientApplicationIntegrationRepository {
   return { getIntegration: vi.fn(), updateIntegration: vi.fn(), getPublicIntegration: vi.fn() };
@@ -120,6 +121,36 @@ describe('CreateClientApplicationReservationUseCaseImpl', () => {
     await expect(
       new CreateClientApplicationReservationUseCaseImpl(repo).execute('tok', command),
     ).rejects.toBeInstanceOf(UnprocessableEntityError);
+  });
+});
+
+describe('CancelClientApplicationReservationUseCaseImpl', () => {
+  it('delegates token and reservation id to the repository', async () => {
+    const reservation = {} as ClientApplicationReservation;
+    const repo = widgetRepo();
+    repo.cancelReservation = vi.fn().mockResolvedValue(reservation);
+
+    expect(await new CancelClientApplicationReservationUseCaseImpl(repo).execute('tok', 'res-1')).toBe(reservation);
+    expect(repo.cancelReservation).toHaveBeenCalledWith('tok', 'res-1');
+  });
+
+  it('propagates NotFoundError', async () => {
+    const repo = widgetRepo();
+    repo.cancelReservation = vi.fn().mockRejectedValue(new NotFoundError('Reservation', 'res-1'));
+
+    await expect(new CancelClientApplicationReservationUseCaseImpl(repo).execute('tok', 'res-1')).rejects.toBeInstanceOf(
+      NotFoundError,
+    );
+  });
+
+  it('propagates UnprocessableEntityError with RESERVATION_CANCELLATION_NOT_ALLOWED', async () => {
+    const error = Object.assign(new UnprocessableEntityError('nope'), {
+      code: 'RESERVATION_CANCELLATION_NOT_ALLOWED',
+    });
+    const repo = widgetRepo();
+    repo.cancelReservation = vi.fn().mockRejectedValue(error);
+
+    await expect(new CancelClientApplicationReservationUseCaseImpl(repo).execute('tok', 'res-1')).rejects.toBe(error);
   });
 });
 
