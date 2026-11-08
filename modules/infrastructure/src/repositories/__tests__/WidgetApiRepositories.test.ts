@@ -50,6 +50,34 @@ describe('ClientApplicationWidgetApiRepository', () => {
     });
   });
 
+  it('cancelReservation posts without body using the partner token as Bearer', async () => {
+    const client = { post: vi.fn().mockResolvedValue({ data: 'res' }) };
+    const repo = new ClientApplicationWidgetApiRepository(client as unknown as AxiosInstance);
+    await expect(repo.cancelReservation('partner-tok', 'res-1')).resolves.toBe('res');
+    expect(client.post).toHaveBeenCalledWith(
+      '/client-applications/reservations/res-1/cancel',
+      undefined,
+      { headers: { Authorization: 'Bearer partner-tok' } },
+    );
+  });
+
+  it('maps cancel errors: 404, 422 with code, 403 and 401', () => {
+    const url = '/client-applications/reservations/res-1/cancel';
+    expect(normalizeAxiosError(httpError('post', url, 404))).toBeInstanceOf(NotFoundError);
+    const unprocessable = normalizeAxiosError(
+      httpError('post', url, 422, {
+        message: 'not allowed',
+        code: 'RESERVATION_CANCELLATION_NOT_ALLOWED',
+      }),
+    );
+    expect(unprocessable).toBeInstanceOf(UnprocessableEntityError);
+    expect((unprocessable as UnprocessableEntityError).code).toBe(
+      'RESERVATION_CANCELLATION_NOT_ALLOWED',
+    );
+    expect((normalizeAxiosError(httpError('post', url, 403)) as ApiError).isForbidden).toBe(true);
+    expect(normalizeAxiosError(httpError('post', url, 401))).toBeInstanceOf(ApiError);
+  });
+
   it('maps 404 on widget-config to NotFoundError', () => {
     const error = normalizeAxiosError(httpError('get', '/client-applications/a1/widget-config', 404));
     expect(error).toBeInstanceOf(NotFoundError);

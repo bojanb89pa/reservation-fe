@@ -62,6 +62,9 @@ const RESERVATION_CREATE_PATH = /\/resources\/[^/]+\/reservations\/?$/;
 const RESERVATION_APPROVE_PATH = /\/reservations\/[^/]+\/approve\/?$/;
 /** `POST /client-applications/reservations` — reservation created through a client application. */
 const CLIENT_APPLICATION_RESERVATION_PATH = /\/client-applications\/reservations\/?$/;
+/** `POST /client-applications/reservations/{id}/cancel` — partner cancels a reservation. */
+const CLIENT_APPLICATION_RESERVATION_CANCEL_PATH =
+  /\/client-applications\/reservations\/[^/]+\/cancel\/?$/;
 /** `PATCH /businesses/{id}/overlapping-pending-reservations` — owner-only setting. */
 const OVERLAPPING_PENDING_PATH = /\/businesses\/[^/]+\/overlapping-pending-reservations\/?$/;
 /** `GET /admin/client-applications/{id}` — partner detail (resource-service). */
@@ -136,6 +139,14 @@ function isAdminUserAccountsRequest(config: InternalAxiosRequestConfig | undefin
   return ADMIN_USER_ACCOUNTS_PATH.test(path);
 }
 
+function isClientApplicationReservationCancelRequest(
+  config: InternalAxiosRequestConfig | undefined,
+): boolean {
+  const path = (config?.url ?? '').split('?')[0];
+  const method = (config?.method ?? '').toUpperCase();
+  return method === 'POST' && CLIENT_APPLICATION_RESERVATION_CANCEL_PATH.test(path);
+}
+
 function isReservationCancelRequest(config: InternalAxiosRequestConfig | undefined): boolean {
   const path = (config?.url ?? '').split('?')[0];
   const method = (config?.method ?? '').toUpperCase();
@@ -204,6 +215,15 @@ function toWidgetError(
   if (widgetId && method === 'GET' && status === 404) {
     return new NotFoundError('ClientApplication', widgetId);
   }
+  if (method === 'POST' && CLIENT_APPLICATION_RESERVATION_CANCEL_PATH.test(path)) {
+    if (status === 404) return new NotFoundError('Reservation');
+    if (status === 422) {
+      const error = new UnprocessableEntityError(message);
+      // WARNING: UnprocessableEntityError has a fixed `code`; overriding it at runtime with the BE code (RESERVATION_CANCELLATION_NOT_ALLOWED) — verify before merging
+      if (body?.code) Object.assign(error, { code: body.code });
+      return error;
+    }
+  }
   if (method === 'POST' && CLIENT_APPLICATION_RESERVATION_PATH.test(path)) {
     if (status === 404) return new NotFoundError('Resource');
     if (status === 422) {
@@ -239,6 +259,11 @@ export function normalizeAxiosError(
   if (isAdminUserAccountsRequest(error.config)) {
     const toDomainError = ADMIN_USER_REASON_BY_STATUS[status];
     if (toDomainError) return toDomainError(message);
+  }
+
+  if (isClientApplicationReservationCancelRequest(error.config)) {
+    const widgetCancelError = toWidgetError(error.config, status, message, body);
+    if (widgetCancelError) return widgetCancelError;
   }
 
   if (isReservationCancelRequest(error.config)) {
