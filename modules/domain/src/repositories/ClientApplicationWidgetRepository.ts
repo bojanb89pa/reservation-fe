@@ -16,4 +16,13 @@ export interface ClientApplicationWidgetRepository {
     partnerAccessToken: string,
     command: CreateClientApplicationReservationCommand,
   ): Promise<ClientApplicationReservation>;
+  /**
+   * `POST /client-applications/reservations/{id}/cancel`, no body; needs scope `reservation:cancel:own`.
+   * Rejects with `NotFoundError` (404; also for another partner's/user's reservation),
+   * `UnprocessableEntityError` (422; code `RESERVATION_CANCELLATION_NOT_ALLOWED`); 403 without the scope.
+   */
+  cancelReservation(
+    partnerAccessToken: string,
+    reservationId: string,
+  ): Promise<ClientApplicationReservation>;
 }
