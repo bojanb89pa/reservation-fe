@@ -7,11 +7,15 @@ export type TrustedIssuerType = 'OIDC' | 'PARTNER_KEY';
 export const TRUSTED_ISSUER_TYPES: readonly TrustedIssuerType[] = ['OIDC', 'PARTNER_KEY'];
 
 /** OAuth scopes a partner may be granted in its integration configuration. */
-export type ClientApplicationOAuthScope = 'reservation:create' | 'reservation:read:own';
+export type ClientApplicationOAuthScope =
+  | 'reservation:create'
+  | 'reservation:read:own'
+  | 'reservation:cancel:own';
 
 export const CLIENT_APPLICATION_OAUTH_SCOPES: readonly ClientApplicationOAuthScope[] = [
   'reservation:create',
   'reservation:read:own',
+  'reservation:cancel:own',
 ];
 
 /**
