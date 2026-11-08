@@ -107,6 +107,7 @@ export { SetClientApplicationEnabledUseCaseImpl } from './use-cases/client-appli
 export { GetWidgetConfigUseCaseImpl } from './use-cases/widget/GetWidgetConfigUseCaseImpl';
 export { ExchangeIdentityTokenUseCaseImpl } from './use-cases/widget/ExchangeIdentityTokenUseCaseImpl';
 export { CreateClientApplicationReservationUseCaseImpl } from './use-cases/widget/CreateClientApplicationReservationUseCaseImpl';
+export { CancelClientApplicationReservationUseCaseImpl } from './use-cases/widget/CancelClientApplicationReservationUseCaseImpl';
 export {
   resolveWidgetAvailability,
   mapReservationErrorToUnavailableReason,
