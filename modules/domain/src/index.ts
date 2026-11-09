@@ -332,6 +332,7 @@ export type { RevokeClientApplicationConsentUseCase } from './use-cases/client-a
 export type { GetWidgetConfigUseCase } from './use-cases/widget/GetWidgetConfigUseCase';
 export type { ExchangeIdentityTokenUseCase } from './use-cases/widget/ExchangeIdentityTokenUseCase';
 export type { CreateClientApplicationReservationUseCase } from './use-cases/widget/CreateClientApplicationReservationUseCase';
+export type { CancelClientApplicationReservationUseCase } from './use-cases/widget/CancelClientApplicationReservationUseCase';
 
 // Search suggestions
 export type { SearchSuggestion, SearchSuggestionType } from './entities/SearchSuggestion';
