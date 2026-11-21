@@ -670,6 +670,11 @@ const sr: Translation = {
     notFound: 'Rezervacija nije pronađena.',
     error: 'Greška pri učitavanju rezervacija. Pokušaj ponovo.',
   },
+  reservationOrigin: {
+    aiAssistant: 'AI asistent',
+    aiAssistantVia: 'Rezervisano preko AI asistenta ({{client}})',
+    clientApplication: 'Partner',
+  },
   reservationList: {
     empty: 'Nema rezervacija.',
     labelService: 'Usluga',
