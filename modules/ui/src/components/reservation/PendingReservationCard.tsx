@@ -5,6 +5,7 @@ import type { Reservation } from '@fe/domain';
 import { useApproveReservation, useRejectReservation } from '../../hooks/useReservations';
 import { useInvalidateResourceSlots } from '../../hooks/useResourceSlots';
 import { useIsBusinessMember } from '../../hooks/useBusinessMembers';
+import { ReservationOriginBadge } from './ReservationOriginBadge';
 import styles from './PendingReservationCard.module.css';
 
 function formatDateTime(iso: string) {
@@ -57,6 +58,7 @@ export function PendingReservationCard({ reservation }: Props) {
         <span className={`${styles.badge} ${styles[reservation.status]}`}>
           {t(`reservationStatus.${reservation.status}`)}
         </span>
+        <ReservationOriginBadge origin={reservation.origin} originClient={reservation.originClient} />
       </div>
 
       <dl className={styles.details}>

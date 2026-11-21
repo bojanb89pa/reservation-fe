@@ -668,6 +668,11 @@ const en = {
     notFound: 'Reservation not found.',
     error: 'Failed to load reservations. Please try again.',
   },
+  reservationOrigin: {
+    aiAssistant: 'AI assistant',
+    aiAssistantVia: 'Booked via AI assistant ({{client}})',
+    clientApplication: 'Partner',
+  },
   reservationList: {
     empty: 'No reservations.',
     labelService: 'Service',
