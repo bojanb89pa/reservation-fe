@@ -37,4 +37,5 @@ export { ClientApplicationApiRepository } from './repositories/ClientApplication
 export { ClientApplicationIntegrationApiRepository } from './repositories/ClientApplicationIntegrationApiRepository';
 export { ClientApplicationConsentApiRepository } from './repositories/ClientApplicationConsentApiRepository';
 export { ClientApplicationWidgetApiRepository } from './repositories/ClientApplicationWidgetApiRepository';
+export { McpClientConsentApiRepository } from './repositories/McpClientConsentApiRepository';
 export { TokenExchangeApiRepository } from './repositories/TokenExchangeApiRepository';
