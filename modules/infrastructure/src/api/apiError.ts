@@ -75,6 +75,8 @@ const CLIENT_APPLICATION_INTEGRATION_PATH =
 /** `POST /client-application-consents/{id}/approve|revoke` — owner consent decisions. */
 const CLIENT_APPLICATION_CONSENT_PATH =
   /\/client-application-consents\/([^/]+)\/(?:approve|revoke)\/?$/;
+/** `DELETE /auth/users/me/mcp-consents?clientId=` — revoking an MCP (CIMD) client consent. */
+const MCP_CONSENT_PATH = /\/users\/me\/mcp-consents\/?$/;
 /** `GET /client-applications/{id}/widget-config` — public widget config (resource-service). */
 const WIDGET_CONFIG_PATH = /\/client-applications\/([^/]+)\/widget-config\/?$/;
 /** `POST /oauth2/token` — token endpoint (auth-service). */
@@ -187,6 +189,12 @@ function toClientApplicationError(
   return null;
 }
 
+function isMcpConsentRevokeRequest(config: InternalAxiosRequestConfig | undefined): boolean {
+  const path = (config?.url ?? '').split('?')[0];
+  const method = (config?.method ?? '').toUpperCase();
+  return method === 'DELETE' && MCP_CONSENT_PATH.test(path);
+}
+
 function isTokenExchangeRequest(config: InternalAxiosRequestConfig | undefined): boolean {
   const path = (config?.url ?? '').split('?')[0];
   const method = (config?.method ?? '').toUpperCase();
@@ -273,6 +281,11 @@ export function normalizeAxiosError(
 
   const clientApplicationError = toClientApplicationError(error.config, status, message);
   if (clientApplicationError) return clientApplicationError;
+
+  if (isMcpConsentRevokeRequest(error.config) && status === 404) {
+    const clientId = (error.config?.params as { clientId?: string } | undefined)?.clientId;
+    return new NotFoundError('McpClientConsent', clientId);
+  }
 
   if (isTokenExchangeRequest(error.config)) {
     const tokenExchangeError = toTokenExchangeError(body);
