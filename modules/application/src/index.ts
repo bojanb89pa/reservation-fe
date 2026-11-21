@@ -104,6 +104,9 @@ export { ApproveClientApplicationConsentUseCaseImpl } from './use-cases/client-a
 export { RevokeClientApplicationConsentUseCaseImpl } from './use-cases/client-application/RevokeClientApplicationConsentUseCaseImpl';
 export { SetClientApplicationEnabledUseCaseImpl } from './use-cases/client-application/SetClientApplicationEnabledUseCaseImpl';
 
+export { ListMyMcpClientConsentsUseCaseImpl } from './use-cases/mcp-consent/ListMyMcpClientConsentsUseCaseImpl';
+export { RevokeMcpClientConsentUseCaseImpl } from './use-cases/mcp-consent/RevokeMcpClientConsentUseCaseImpl';
+
 export { GetWidgetConfigUseCaseImpl } from './use-cases/widget/GetWidgetConfigUseCaseImpl';
 export { ExchangeIdentityTokenUseCaseImpl } from './use-cases/widget/ExchangeIdentityTokenUseCaseImpl';
 export { CreateClientApplicationReservationUseCaseImpl } from './use-cases/widget/CreateClientApplicationReservationUseCaseImpl';
