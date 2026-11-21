@@ -19,6 +19,7 @@ import { ReservationHeldPage } from '../pages/ReservationHeldPage';
 
 import { MyReservationsPage } from '../pages/MyReservationsPage';
 import { AccountPage } from '../pages/AccountPage';
+import { ConnectClaudePage } from '../pages/ConnectClaudePage';
 import { BusinessOnboardingPage } from '../pages/BusinessOnboardingPage';
 import { DashboardLayout } from '../pages/dashboard/DashboardLayout';
 import { DashboardOverviewPage } from '../pages/dashboard/DashboardOverviewPage';
@@ -65,6 +66,7 @@ function PublicLayout() {
           <Route path="reservation/:id/held" element={<ReservationHeldPage />} />
           <Route path="my-reservations" element={<MyReservationsPage />} />
           <Route path="account" element={<AccountPage />} />
+          <Route path="account/ai-assistants" element={<ConnectClaudePage />} />
           <Route path="business-onboarding" element={<BusinessOnboardingPage />} />
         </Routes>
       </motion.main>

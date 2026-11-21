@@ -6,4 +6,7 @@ export const env = {
   oauthRedirectUri: import.meta.env['VITE_OAUTH_REDIRECT_URI'] as string,
   legalContactEmail: (import.meta.env['VITE_LEGAL_CONTACT_EMAIL'] as string | undefined) || 'privacy@reserva.example',
   appSiteUrl: (import.meta.env['VITE_APP_SITE_URL'] as string | undefined) || window.location.origin,
+  mcpConnectorUrl:
+    (import.meta.env['VITE_MCP_CONNECTOR_URL'] as string | undefined) ||
+    'https://reserva.bojanlab.com/api/mcp',
 } as const;
