@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useCurrentUser } from '../hooks/useProfilePicture';
 import { ErrorState } from '../components/ErrorState';
@@ -39,6 +40,11 @@ export function AccountPage() {
         <>
           <ProfileNameSection user={user} />
           <ProfilePictureSection user={user} />
+          <p>
+            <Link to="/account/ai-assistants">{t('account.aiAssistantsLink')}</Link>
+            {' — '}
+            {t('account.aiAssistantsLinkHint')}
+          </p>
         </>
       )}
     </div>
