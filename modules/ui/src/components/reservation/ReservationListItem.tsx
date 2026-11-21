@@ -8,6 +8,7 @@ import {
 } from '../../hooks/useReservations';
 import { useIsBusinessMember } from '../../hooks/useBusinessMembers';
 import { useCurrentUserId } from '../../hooks/useCurrentRoles';
+import { ReservationOriginBadge } from './ReservationOriginBadge';
 import { UserBadge } from '../UserBadge';
 import styles from './ReservationListItem.module.css';
 
@@ -75,6 +76,7 @@ export function ReservationListItem({ reservation, showUserId, showActions, user
         <span className={styles.dates}>
           {formatDateTime(reservation.startTime)} → {formatDateTime(reservation.endTime)}
         </span>
+        <ReservationOriginBadge origin={reservation.origin} originClient={reservation.originClient} />
       </div>
 
       <div className={styles.meta}>

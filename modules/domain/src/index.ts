@@ -67,11 +67,13 @@ export type {
 export type {
   Reservation,
   ReservationStatus,
+  ReservationOrigin,
   ReservationServiceInfo,
   ReservationResourceInfo,
   ReservationBusinessInfo,
   CreateReservationCommand,
 } from './entities/Reservation';
+export { normalizeReservationOrigin } from './entities/Reservation';
 export type { SearchResult } from './entities/SearchResult';
 export type { NearbyBusiness, NearbyBusinessLocation } from './entities/NearbyBusiness';
 export type { Resource, CreateResourceCommand } from './entities/Resource';

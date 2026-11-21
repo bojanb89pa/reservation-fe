@@ -13,6 +13,8 @@ const cancelledReservation: Reservation = {
   startTime: '2026-10-01T09:00:00Z',
   endTime: '2026-10-01T10:00:00Z',
   status: 'CANCELLED',
+  origin: 'RESERVA_APP',
+  originClient: null,
   service: null,
   resource: null,
   business: null,
