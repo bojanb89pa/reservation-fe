@@ -198,6 +198,7 @@ export {
 export {
   ClientApplicationIntegrationErrorCode,
   ClientApplicationConsentErrorCode,
+  McpClientConsentErrorCode,
 } from './errors/ClientApplicationError';
 export { TokenExchangeError, TokenExchangeErrorCode } from './errors/TokenExchangeError';
 
@@ -335,6 +336,12 @@ export type { GetWidgetConfigUseCase } from './use-cases/widget/GetWidgetConfigU
 export type { ExchangeIdentityTokenUseCase } from './use-cases/widget/ExchangeIdentityTokenUseCase';
 export type { CreateClientApplicationReservationUseCase } from './use-cases/widget/CreateClientApplicationReservationUseCase';
 export type { CancelClientApplicationReservationUseCase } from './use-cases/widget/CancelClientApplicationReservationUseCase';
+
+// MCP client consents (connected AI applications)
+export type { McpClientConsent } from './entities/McpClientConsent';
+export type { McpClientConsentRepository } from './repositories/McpClientConsentRepository';
+export type { ListMyMcpClientConsentsUseCase } from './use-cases/mcp-consent/ListMyMcpClientConsentsUseCase';
+export type { RevokeMcpClientConsentUseCase } from './use-cases/mcp-consent/RevokeMcpClientConsentUseCase';
 
 // Search suggestions
 export type { SearchSuggestion, SearchSuggestionType } from './entities/SearchSuggestion';
