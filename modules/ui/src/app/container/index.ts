@@ -29,6 +29,7 @@ import {
   ClientApplicationIntegrationApiRepository,
   ClientApplicationConsentApiRepository,
   ClientApplicationWidgetApiRepository,
+  McpClientConsentApiRepository,
   TokenExchangeApiRepository,
 } from '@fe/infrastructure';
 import {
@@ -116,6 +117,8 @@ import {
   ListMyClientApplicationConsentsUseCaseImpl,
   ApproveClientApplicationConsentUseCaseImpl,
   RevokeClientApplicationConsentUseCaseImpl,
+  ListMyMcpClientConsentsUseCaseImpl,
+  RevokeMcpClientConsentUseCaseImpl,
   GetWidgetConfigUseCaseImpl,
   ExchangeIdentityTokenUseCaseImpl,
   CreateClientApplicationReservationUseCaseImpl,
@@ -176,6 +179,8 @@ const clientApplicationIntegrationRepository = new ClientApplicationIntegrationA
 const clientApplicationConsentRepository = new ClientApplicationConsentApiRepository(
   resourceAxiosClient,
 );
+// MCP (CIMD) client consents live on auth-service and need the Bearer client.
+const mcpClientConsentRepository = new McpClientConsentApiRepository(authenticatedAuthAxiosClient);
 
 // ── Use Cases ─────────────────────────────────────────────────────────────────
 export const registerUseCase = new RegisterUseCaseImpl(authApiRepository);
@@ -364,6 +369,12 @@ export const approveClientApplicationConsentUseCase =
   new ApproveClientApplicationConsentUseCaseImpl(clientApplicationConsentRepository);
 export const revokeClientApplicationConsentUseCase = new RevokeClientApplicationConsentUseCaseImpl(
   clientApplicationConsentRepository,
+);
+export const listMyMcpClientConsentsUseCase = new ListMyMcpClientConsentsUseCaseImpl(
+  mcpClientConsentRepository,
+);
+export const revokeMcpClientConsentUseCase = new RevokeMcpClientConsentUseCaseImpl(
+  mcpClientConsentRepository,
 );
 
 // Reserva booking widget: widget-config and booking go through the public client (never the
