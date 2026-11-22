@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BusinessErrorCode } from '@fe/domain';
 import type { Business } from '@fe/domain';
-import { useCurrentUserId } from '../../hooks/useCurrentRoles';
+import { useIsBusinessOwner } from '../../hooks/useBusinessMembers';
 import { useUpdateOverlappingPendingSetting } from '../../hooks/useUpdateOverlappingPendingSetting';
 import styles from './BusinessImageSection.module.css';
 
@@ -21,11 +21,11 @@ function isOwnerRequiredError(err: unknown): boolean {
 /** Owner-only switch; non-owners (employees, admins) do not see the section at all. */
 export function OverlappingPendingSection({ business }: Props) {
   const { t } = useTranslation();
-  const userId = useCurrentUserId();
+  const isOwner = useIsBusinessOwner(business.id ?? undefined);
   const { mutateAsync: update, isPending } = useUpdateOverlappingPendingSetting(business.id ?? '');
   const [error, setError] = useState<string | null>(null);
 
-  if (!userId || business.ownerId !== userId) return null;
+  if (!isOwner) return null;
 
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);

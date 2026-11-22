@@ -17,8 +17,9 @@ vi.mock('../../../app/container', () => ({
   removeCancellationDeadlineUseCase: { execute: (...a: unknown[]) => removeExecute(...a) },
 }));
 
-vi.mock('../../../hooks/useCurrentRoles', () => ({
-  useCurrentUserId: () => currentUserId,
+vi.mock('../../../hooks/useBusinessMembers', () => ({
+  useIsBusinessOwner: (businessId: string | undefined) =>
+    businessId === 'biz-1' && currentUserId === 'owner-1',
 }));
 
 const business: Business = {
