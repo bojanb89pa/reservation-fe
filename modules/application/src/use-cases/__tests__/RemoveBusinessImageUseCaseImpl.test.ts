@@ -14,6 +14,7 @@ const businessWithoutImage: Business = {
   category: null,
   imageUrl: null,
   allowOverlappingPendingReservations: true,
+  minNoticeMinutes: null,
 };
 
 const repoWith = (removeImage: BusinessRepository['removeImage']): BusinessRepository =>

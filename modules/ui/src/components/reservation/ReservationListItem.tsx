@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
+import { ReservationCancellationErrorCode } from '@fe/domain';
 import type { Reservation, User } from '@fe/domain';
 import {
   useApproveReservation,
@@ -19,6 +20,14 @@ function formatDateTime(iso: string) {
     hour: '2-digit',
     minute: '2-digit',
   });
+}
+
+function isDeadlinePassed(err: unknown): boolean {
+  return (
+    err instanceof Error &&
+    ((err as { code?: string }).code === ReservationCancellationErrorCode.CANCELLATION_DEADLINE_PASSED ||
+      err.message === ReservationCancellationErrorCode.CANCELLATION_DEADLINE_PASSED)
+  );
 }
 
 function truncate(id: string) {
@@ -128,8 +137,12 @@ export function ReservationListItem({ reservation, showUserId, showActions, user
       )}
 
       {error && (
-        <div className={styles.error}>
-          {error instanceof Error ? error.message : t('reservationCard.actionError')}
+        <div className={styles.error} role="alert">
+          {isDeadlinePassed(error)
+            ? t('reservationCard.errorDeadlinePassed')
+            : error instanceof Error
+              ? error.message
+              : t('reservationCard.actionError')}
         </div>
       )}
     </div>

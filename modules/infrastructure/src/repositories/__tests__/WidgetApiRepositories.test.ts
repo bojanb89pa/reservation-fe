@@ -79,7 +79,9 @@ describe('ClientApplicationWidgetApiRepository', () => {
   });
 
   it('maps 404 on widget-config to NotFoundError', () => {
-    const error = normalizeAxiosError(httpError('get', '/client-applications/a1/widget-config', 404));
+    const error = normalizeAxiosError(
+      httpError('get', '/client-applications/a1/widget-config', 404),
+    );
     expect(error).toBeInstanceOf(NotFoundError);
   });
 
@@ -212,7 +214,13 @@ describe('TokenExchangeApiRepository', () => {
 
   it('does not touch errors of other grants on the token endpoint', () => {
     const error = normalizeAxiosError(
-      httpError('post', '/oauth2/token', 400, { error: 'invalid_grant' }, 'grant_type=refresh_token'),
+      httpError(
+        'post',
+        '/oauth2/token',
+        400,
+        { error: 'invalid_grant' },
+        'grant_type=refresh_token',
+      ),
     );
     expect(error).toBeInstanceOf(ApiError);
   });

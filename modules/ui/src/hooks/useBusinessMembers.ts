@@ -68,3 +68,19 @@ export function useIsBusinessMember(businessId: string | undefined): boolean {
     (employees ?? []).some((m) => m.userId === currentUserId)
   );
 }
+
+/**
+ * Whether the signed-in user is an OWNER of the business, from the business's owner list.
+ * The business response carries no owner id, so owner-only sections must not rely on `Business.ownerId`.
+ */
+export function useIsBusinessOwner(businessId: string | undefined): boolean {
+  const currentUserId = useCurrentUserId();
+  const { data: owners } = useQuery({
+    queryKey: memberKeys.byRole(businessId ?? '', 'OWNER'),
+    queryFn: () => listBusinessMembersUseCase.execute(businessId!, 'OWNER'),
+    enabled: !!businessId && !!currentUserId,
+  });
+
+  if (!currentUserId || !businessId) return false;
+  return (owners ?? []).some((m) => m.userId === currentUserId);
+}

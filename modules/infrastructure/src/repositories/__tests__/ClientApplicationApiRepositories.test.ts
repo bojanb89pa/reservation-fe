@@ -141,7 +141,13 @@ describe('ClientApplicationIntegrationApiRepository', () => {
     const { client, repo } = setup();
     const body = {
       trustedIssuers: [
-        { type: 'PARTNER_KEY', issuer: 'p', jwksUri: null, audiences: [], inlineJwk: '{"kty":"EC"}' },
+        {
+          type: 'PARTNER_KEY',
+          issuer: 'p',
+          jwksUri: null,
+          audiences: [],
+          inlineJwk: '{"kty":"EC"}',
+        },
       ],
     };
     client.get.mockResolvedValue({ data: body });

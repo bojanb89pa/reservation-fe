@@ -11,7 +11,10 @@ export class ClientApplicationApiRepository implements ClientApplicationReposito
   constructor(private readonly client: AxiosInstance) {}
 
   async register(command: CreateClientApplicationCommand): Promise<ClientApplication> {
-    const response = await this.client.post<ClientApplication>('/admin/client-applications', command);
+    const response = await this.client.post<ClientApplication>(
+      '/admin/client-applications',
+      command,
+    );
     return response.data;
   }
 
@@ -21,7 +24,9 @@ export class ClientApplicationApiRepository implements ClientApplicationReposito
   }
 
   async getById(id: string): Promise<ClientApplicationDetail> {
-    const response = await this.client.get<ClientApplicationDetail>(`/admin/client-applications/${id}`);
+    const response = await this.client.get<ClientApplicationDetail>(
+      `/admin/client-applications/${id}`,
+    );
     return response.data;
   }
 

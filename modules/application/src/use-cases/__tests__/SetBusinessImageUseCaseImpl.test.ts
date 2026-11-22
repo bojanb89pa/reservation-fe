@@ -15,6 +15,7 @@ const business: Business = {
   category: null,
   imageUrl: `/api/businesses/${businessId}/image`,
   allowOverlappingPendingReservations: true,
+  minNoticeMinutes: null,
 };
 
 const repoWith = (setImage: BusinessRepository['setImage']): BusinessRepository =>

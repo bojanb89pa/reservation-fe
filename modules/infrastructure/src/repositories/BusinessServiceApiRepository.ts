@@ -21,9 +21,7 @@ export class BusinessServiceApiRepository implements BusinessServiceRepository {
   }
 
   async list(businessId: string): Promise<BusinessService[]> {
-    const response = await this.client.get<BusinessService[]>(
-      `/businesses/${businessId}/services`,
-    );
+    const response = await this.client.get<BusinessService[]>(`/businesses/${businessId}/services`);
     return response.data;
   }
 
