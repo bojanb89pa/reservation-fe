@@ -100,10 +100,11 @@ test.describe('E2E-010 prijava novog biznisa i odobravanje', () => {
       const nameFragment = business.name.split(' ').pop() as string;
       await searchFromHome(page, nameFragment);
 
-      // Čeka se stanje stranice rezultata (prvi /v1/search odgovor može biti autocomplete).
-      await expect(page.getByText(`No results found for "${nameFragment}".`)).toBeVisible({
-        timeout: 30_000,
-      });
+      // Čeka se učitano stanje stranice rezultata (naslov sa brojem), bez oslanjanja na to da
+      // pretraga vrati tačno 0 pogodaka (može da vrati i srodne biznise).
+      await expect(
+        page.getByRole('heading', { name: new RegExp(`results for "${escapeRegex(nameFragment)}"`) }),
+      ).toBeVisible({ timeout: 30_000 });
       await expect(
         page.getByRole('link', { name: new RegExp(escapeRegex(business.name)) }),
       ).toHaveCount(0);
