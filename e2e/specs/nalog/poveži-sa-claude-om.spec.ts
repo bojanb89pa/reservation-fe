@@ -87,4 +87,55 @@ test.describe('Poveži sa Claude-om', () => {
     await expect(page.getByRole('button', { name: TEXTS.sr.copied })).toBeVisible();
     await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(shown);
   });
+
+  for (const lang of ['sr', 'en'] as const) {
+    test(`stranica naloga ima sekciju „AI asistenti“ sa ulazom na uputstvo (${lang})`, async ({
+      page,
+      user,
+      loginAs,
+    }) => {
+      const sections = {
+        sr: { title: 'AI asistenti', cta: 'Poveži sa Claude-om' },
+        en: { title: 'AI assistants', cta: 'Connect with Claude' },
+      } as const;
+      const t = sections[lang];
+      await loginAs(user);
+      await page.evaluate((l) => localStorage.setItem('lang', l), lang);
+      await page.goto('/account');
+
+      const section = page.getByRole('region', { name: t.title });
+      await expect(section.getByRole('heading', { name: t.title, level: 2 })).toBeVisible();
+      const cta = section.getByRole('link', { name: t.cta });
+      await expect(cta).toBeVisible();
+      await expect(cta).toHaveAttribute('href', PAGE_PATH);
+      await cta.click();
+      await page.waitForURL(`**${PAGE_PATH}`);
+      await expect(page.getByRole('heading', { name: TEXTS[lang].title, level: 1 })).toBeVisible();
+    });
+  }
+
+  test('link na uputstvo je vidljivo link: podvučen, druga boja od teksta, vidljiv fokus', async ({
+    page,
+    user,
+    loginAs,
+  }) => {
+    await loginAs(user);
+    await page.evaluate(() => localStorage.setItem('lang', 'sr'));
+    await page.goto(PAGE_PATH);
+
+    const docs = page.getByRole('link', { name: TEXTS.sr.docs });
+    await expect(docs).toBeVisible();
+    await expect(docs).toHaveCSS('text-decoration-line', 'underline');
+    const linkColor = await docs.evaluate((el) => getComputedStyle(el).color);
+    const bodyColor = await page.evaluate(() => getComputedStyle(document.body).color);
+    expect(linkColor).not.toBe(bodyColor);
+
+    // Fokus tastaturom (da bi :focus-visible važio): Tab do linka.
+    for (let i = 0; i < 40; i++) {
+      await page.keyboard.press('Tab');
+      if (await docs.evaluate((el) => el === document.activeElement)) break;
+    }
+    await expect(docs).toBeFocused();
+    await expect(docs).not.toHaveCSS('outline-style', 'none');
+  });
 });
