@@ -36,9 +36,9 @@ These apply to every headless (`-p`) session. They are non-negotiable.
 
 4. **Conservative-choice rule.** When a decision needs business knowledge you
    cannot infer from the code or the ticket, make the safest conventional
-   choice from the table for your layer and emit a single-line warning:
+   choice from the table for your layer and record a single-line assumption marker above the line:
    ```ts
-   // WARNING: assumed optional field — verify against BE contract before merging
+   // AGENT-ASSUMPTION: optional field; verify against the BE contract
    ```
 
 5. **Export or it does not exist.** Anything another module needs must be
@@ -48,7 +48,7 @@ These apply to every headless (`-p`) session. They are non-negotiable.
    `from '@fe/domain/entities/Business'`.
 
 7. **Forbidden imports are absolute.** If a file seems to require a forbidden
-   import, the boundary is wrong — emit a WARNING and implement without it.
+   import, the boundary is wrong — record an AGENT-ASSUMPTION and implement without it.
 
 8. **After writing all files**, run the pre-exit checklist for your layer.
 
@@ -240,11 +240,17 @@ import { getBusinessUseCase } from '../../app/container';
 
 ---
 
-## Global Warning Comment Format
+## Agent Assumption Marker
 
 ```ts
-// WARNING: <reason> — verify before merging
+// AGENT-ASSUMPTION: <what was assumed>; <what to verify>
 ```
+
+Put it on its own line, directly above the line it concerns, in the file's comment
+syntax (`{/* */}` inside JSX, `#` in yaml/sh, `<!-- -->` in md/html). The
+orchestration removes the marker before commit and posts it as an inline comment on
+the PR, plus a checklist on the epic's summary PR. Do not write
+`// WARNING: ... verify before merging`.
 
 Use it for: assumed optionality, assumed HTTP path or auth requirement, assumed
 status-to-error mapping, assumed business rule, assumed empty/loading
