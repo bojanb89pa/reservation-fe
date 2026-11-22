@@ -116,24 +116,38 @@ test.describe('E2E-002b jedinstvena pretraga sa autocomplete-om', () => {
   }) => {
     const { category, city, business } = await prepareFixture();
 
-    await typeInSearch(page, category.name);
+    // Upit je jedinstveni grad ovog fixture-a: lista sigurno sadrži mesto i biznis fixture-a,
+    // bez obzira na ostatke drugih testova u istoj kategoriji.
+    await typeInSearch(page, city);
 
     await expect(page.getByRole('option', { name: city, exact: true })).toBeVisible();
-    await expect(page.getByRole('option', { name: category.name, exact: true })).toBeVisible();
     await expect(page.getByRole('option', { name: business.name, exact: true })).toBeVisible();
 
     const names = await page.getByRole('option').allTextContents();
-    const placeIdx = names.indexOf(city);
-    const categoryIdx = names.indexOf(category.name);
-    const businessIdx = names.indexOf(business.name);
-    expect(placeIdx).toBeGreaterThanOrEqual(0);
-    expect(placeIdx).toBeLessThan(categoryIdx);
-    expect(categoryIdx).toBeLessThan(businessIdx);
+    expect(names.indexOf(city)).toBeGreaterThanOrEqual(0);
+    expect(names.indexOf(city)).toBeLessThan(names.indexOf(business.name));
 
     // Zaglavlja grupa označavaju tip.
     await expect(page.getByRole('group', { name: 'Places' })).toBeVisible();
-    await expect(page.getByRole('group', { name: 'Categories' })).toBeVisible();
     await expect(page.getByRole('group', { name: 'Businesses' })).toBeVisible();
+
+    // Upit po nazivu kategorije vraća i kategoriju. Lista biznisa je ograničena, pa ne
+    // zavisimo od toga da li je biznis fixture-a u njoj; proveravamo samo redosled grupa.
+    await typeInSearch(page, category.name);
+    await expect(page.getByRole('option', { name: category.name, exact: true })).toBeVisible();
+    const categoriesGroup = page.getByRole('group', { name: 'Categories' });
+    await expect(categoriesGroup).toBeVisible();
+    const categoriesY = (await categoriesGroup.boundingBox())!.y;
+    for (const [label, before] of [
+      ['Places', true],
+      ['Businesses', false],
+    ] as const) {
+      const group = page.getByRole('group', { name: label });
+      if ((await group.count()) === 0) continue;
+      const y = (await group.boundingBox())!.y;
+      if (before) expect(y).toBeLessThan(categoriesY);
+      else expect(categoriesY).toBeLessThan(y);
+    }
   });
 
   test('izbor mesta vodi na pretragu filtriranu tim mestom', async ({ page }) => {
@@ -163,9 +177,10 @@ test.describe('E2E-002b jedinstvena pretraga sa autocomplete-om', () => {
   });
 
   test('izbor biznisa vodi na njegov detalj', async ({ page }) => {
-    const { category, business } = await prepareFixture();
+    const { city, business } = await prepareFixture();
 
-    await typeInSearch(page, category.name);
+    // Jedinstveni grad fixture-a, da biznis ne ispadne iz ograničene liste predloga.
+    await typeInSearch(page, city);
     await page.getByRole('option', { name: business.name, exact: true }).click();
 
     await page.waitForURL((url) => url.pathname === `/businesses/${business.id}`);
