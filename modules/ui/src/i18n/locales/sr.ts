@@ -203,8 +203,9 @@ const sr: Translation = {
     eyebrow: 'Nalog',
     title: 'Tvoj nalog',
     error: 'Nalog nije moguće učitati.',
-    aiAssistantsLink: 'AI asistenti',
-    aiAssistantsLinkHint: 'Poveži Reservu sa Claude-om i upravljaj povezanim aplikacijama.',
+    aiAssistantsTitle: 'AI asistenti',
+    aiAssistantsDescription: 'Poveži Reservu sa Claude-om i upravljaj povezanim aplikacijama.',
+    aiAssistantsCta: 'Poveži sa Claude-om',
   },
   connectClaude: {
     eyebrow: 'AI asistenti',

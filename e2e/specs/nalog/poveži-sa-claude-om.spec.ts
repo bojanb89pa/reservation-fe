@@ -66,7 +66,10 @@ test.describe('Poveži sa Claude-om', () => {
       for (const step of t.steps) {
         await expect(page.getByText(step)).toBeVisible();
       }
-      await expect(page.getByRole('link', { name: t.docs })).toHaveAttribute('href', /mcp\.md$/);
+      await expect(page.getByRole('link', { name: t.docs })).toHaveAttribute(
+        'href',
+        'https://reserva-docs.bojanlab.com/guides/mcp/',
+      );
 
       await expect(page.getByRole('heading', { name: t.connectedTitle })).toBeVisible();
       await expect(page.getByText(t.empty)).toBeVisible();
