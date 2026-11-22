@@ -1,6 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
 import { env } from './env';
 
+// Pun MCP OAuth tok radi samo nad staging-om (CIMD mora da bude javan HTTPS);
+// job `mcp-staging` postavlja E2E_MCP_STAGING=1.
+const mcpStagingOnly = process.env['E2E_MCP_STAGING'] === '1';
+const MCP_STAGING_SPEC = '**/mcp-pun-oauth-tok-staging.spec.ts';
+
 export default defineConfig({
   testDir: './specs',
   // Svaki test sam pravi svoje podatke sa jedinstvenim imenima, pa mogu
@@ -22,7 +27,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      testIgnore: ['**/responsive/**', '**/widget-booking.spec.ts'],
+      testIgnore: ['**/responsive/**', '**/widget-booking.spec.ts', ...(mcpStagingOnly ? [] : [MCP_STAGING_SPEC])],
       use: { ...devices['Desktop Chrome'] },
     },
     {

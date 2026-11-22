@@ -7,6 +7,10 @@ name: E2E
 #   - PR koji dira e2e/** ili ovaj stack (e2e sloj agenata, na epic granu),
 #   - ručno (`target: stack`).
 #
+# Job `mcp-staging` (noću i ručno sa `target: mcp-staging`) pušta pun MCP OAuth tok
+# (`mcp-pun-oauth-tok-staging.spec.ts`) nad staging-om; upisuje (rezervaciju odmah
+# otkaže), pa nije @smoke. Ne radi na PR-ovima.
+#
 # Noću (i ručno sa `target: staging`) job `smoke-staging` pušta samo @smoke
 # testove nad https://reserva.bojanlab.com: bez stacka, bez seed-a i bez
 # upisa (`E2E_READ_ONLY=1` tera API pomoćne funkcije da odbiju svaki upis).
@@ -20,9 +24,9 @@ on:
   workflow_dispatch:
     inputs:
       target:
-        description: "stack = ceo suite nad svežim stackom; staging = @smoke nad staging-om (read-only)"
+        description: "stack = ceo suite nad svežim stackom; staging = @smoke nad staging-om (read-only); mcp-staging = pun MCP OAuth tok nad staging-om"
         type: choice
-        options: [stack, staging]
+        options: [stack, staging, mcp-staging]
         default: stack
 
 concurrency:
@@ -50,7 +54,7 @@ jobs:
   e2e:
     needs: changes
     if: >-
-      always() && github.event_name != 'schedule' && inputs.target != 'staging' && (
+      always() && github.event_name != 'schedule' && inputs.target != 'staging' && inputs.target != 'mcp-staging' && (
         github.event_name != 'pull_request' ||
         github.base_ref == 'main' ||
         needs.changes.outputs.e2e == 'true'
