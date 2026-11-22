@@ -23,6 +23,8 @@ export { SearchNearbyBusinessesUseCaseImpl } from './use-cases/business/SearchNe
 export { SetBusinessImageUseCaseImpl } from './use-cases/business/SetBusinessImageUseCaseImpl';
 export { RemoveBusinessImageUseCaseImpl } from './use-cases/business/RemoveBusinessImageUseCaseImpl';
 export { UpdateOverlappingPendingSettingUseCaseImpl } from './use-cases/business/UpdateOverlappingPendingSettingUseCaseImpl';
+export { SetCancellationDeadlineUseCaseImpl } from './use-cases/business/SetCancellationDeadlineUseCaseImpl';
+export { RemoveCancellationDeadlineUseCaseImpl } from './use-cases/business/RemoveCancellationDeadlineUseCaseImpl';
 export { NotifyBusinessMembershipUseCaseImpl } from './use-cases/business/NotifyBusinessMembershipUseCaseImpl';
 
 export { UploadFileUseCaseImpl } from './use-cases/file/UploadFileUseCaseImpl';

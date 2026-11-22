@@ -14,6 +14,7 @@ const business: Business = {
   category: null,
   imageUrl: null,
   allowOverlappingPendingReservations: false,
+  minNoticeMinutes: null,
 };
 
 const repoWith = (
