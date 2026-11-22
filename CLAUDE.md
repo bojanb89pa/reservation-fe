@@ -125,7 +125,10 @@ layers its contracts require. Each session runs headless (`claude -p`) in its
 own git worktree and must not stop to ask. If uncertain:
 
 1. Apply the conservative-choice rule from `skills/implementation-workflow.md`.
-2. Emit a single-line `// WARNING: <reason> — verify before merging` comment.
+2. Record the assumption on its own line, right above the line it concerns:
+   `// AGENT-ASSUMPTION: <what was assumed>; <what to verify>` (see "Agent
+   assumption marker" in `skills/implementation-workflow.md`). The orchestration
+   removes the marker before commit and posts it as a PR comment.
 3. Continue and complete the implementation.
 
 Only genuine contract ambiguity — something that changes the shape of a public
