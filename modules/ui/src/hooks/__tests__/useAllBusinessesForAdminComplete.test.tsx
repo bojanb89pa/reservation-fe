@@ -25,6 +25,7 @@ function business(id: string): Business {
     category: null,
     imageUrl: null,
     allowOverlappingPendingReservations: true,
+    minNoticeMinutes: null,
   };
 }
 

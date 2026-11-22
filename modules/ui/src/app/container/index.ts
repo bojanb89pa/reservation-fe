@@ -71,6 +71,8 @@ import {
   SetBusinessImageUseCaseImpl,
   RemoveBusinessImageUseCaseImpl,
   UpdateOverlappingPendingSettingUseCaseImpl,
+  SetCancellationDeadlineUseCaseImpl,
+  RemoveCancellationDeadlineUseCaseImpl,
   UploadFileUseCaseImpl,
   CreateBusinessServiceUseCaseImpl,
   ListBusinessServicesUseCaseImpl,
@@ -265,6 +267,12 @@ export const setBusinessImageUseCase = new SetBusinessImageUseCaseImpl(businessR
 export const removeBusinessImageUseCase = new RemoveBusinessImageUseCaseImpl(businessRepository);
 export const updateOverlappingPendingSettingUseCase =
   new UpdateOverlappingPendingSettingUseCaseImpl(businessRepository);
+export const setCancellationDeadlineUseCase = new SetCancellationDeadlineUseCaseImpl(
+  businessRepository,
+);
+export const removeCancellationDeadlineUseCase = new RemoveCancellationDeadlineUseCaseImpl(
+  businessRepository,
+);
 
 export const createBusinessLocationUseCase = new CreateBusinessLocationUseCaseImpl(
   businessLocationRepository,

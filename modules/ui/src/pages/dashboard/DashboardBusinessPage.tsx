@@ -16,6 +16,7 @@ import { LocationSection } from '../../components/dashboard/LocationSection';
 import { BusinessCategorySection } from '../../components/dashboard/BusinessCategorySection';
 import { BusinessImageSection } from '../../components/dashboard/BusinessImageSection';
 import { OverlappingPendingSection } from '../../components/dashboard/OverlappingPendingSection';
+import { CancellationDeadlineSection } from '../../components/dashboard/CancellationDeadlineSection';
 import { ServiceSection } from '../../components/business-service/ServiceSection';
 import type { ResourceType, DayOfWeek } from '@fe/domain';
 import { DAYS_ORDERED, DAY_LABELS } from '@fe/domain';
@@ -181,6 +182,7 @@ export function DashboardBusinessPage() {
 
       <BusinessImageSection business={business} />
       <OverlappingPendingSection business={business} />
+      <CancellationDeadlineSection business={business} />
       <BusinessCategorySection business={business} />
       <ServiceSection businessId={id!} />
       <LocationSection businessId={id!} />
