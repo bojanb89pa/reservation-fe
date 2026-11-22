@@ -1,0 +1,12 @@
+{
+  "client_id": "https://reserva.bojanlab.com/e2e/mcp-client-metadata.json",
+  "client_name": "Reserva E2E",
+  "redirect_uris": ["http://127.0.0.1:43437/callback"],
+  "grant_types": [
+    "authorization_code",
+    "refresh_token",
+    "urn:ietf:params:oauth:grant-type:jwt-bearer"
+  ],
+  "response_types": ["code"],
+  "token_endpoint_auth_method": "none"
+}
