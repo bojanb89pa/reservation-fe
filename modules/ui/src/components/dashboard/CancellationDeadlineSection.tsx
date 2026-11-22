@@ -6,7 +6,7 @@ import {
   MAX_CANCELLATION_NOTICE_MINUTES,
 } from '@fe/domain';
 import type { Business } from '@fe/domain';
-import { useCurrentUserId } from '../../hooks/useCurrentRoles';
+import { useIsBusinessOwner } from '../../hooks/useBusinessMembers';
 import {
   useSetCancellationDeadline,
   useRemoveCancellationDeadline,
@@ -38,7 +38,7 @@ function splitMinutes(total: number): { amount: number; unit: Unit } {
 /** Owner-only form for the reservation cancellation deadline. */
 export function CancellationDeadlineSection({ business }: Props) {
   const { t } = useTranslation();
-  const userId = useCurrentUserId();
+  const isOwner = useIsBusinessOwner(business.id ?? undefined);
   const { mutateAsync: setDeadline, isPending: saving } = useSetCancellationDeadline(
     business.id ?? '',
   );
@@ -49,7 +49,7 @@ export function CancellationDeadlineSection({ business }: Props) {
   const [unit, setUnit] = useState<Unit>('hours');
   const [error, setError] = useState<string | null>(null);
 
-  if (!userId || business.ownerId !== userId) return null;
+  if (!isOwner) return null;
 
   const busy = saving || removing;
   const current = business.minNoticeMinutes;
