@@ -28,6 +28,8 @@ const mockRepo: BusinessRepository = {
   setImage: vi.fn(),
   removeImage: vi.fn(),
   updateOverlappingPendingSetting: vi.fn(),
+  setCancellationDeadline: vi.fn(),
+  removeCancellationDeadline: vi.fn(),
 };
 
 describe('GetMyBusinessesUseCaseImpl', () => {
