@@ -5,6 +5,7 @@ import type {
   SetBusinessCategoryCommand,
   SetBusinessImageCommand,
   UpdateOverlappingPendingSettingCommand,
+  SetCancellationDeadlineCommand,
 } from '../entities/Business';
 import type { PageRequest, PageResponse } from '../types/Page';
 import type { BusinessSearchFilter } from '../types/BusinessSearchFilter';
@@ -27,4 +28,6 @@ export interface BusinessRepository {
     id: string,
     command: UpdateOverlappingPendingSettingCommand,
   ): Promise<Business>;
+  setCancellationDeadline(id: string, command: SetCancellationDeadlineCommand): Promise<Business>;
+  removeCancellationDeadline(id: string): Promise<Business>;
 }

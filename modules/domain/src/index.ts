@@ -28,6 +28,11 @@ export type {
   SetBusinessCategoryCommand,
   SetBusinessImageCommand,
   UpdateOverlappingPendingSettingCommand,
+  SetCancellationDeadlineCommand,
+} from './entities/Business';
+export {
+  MIN_CANCELLATION_NOTICE_MINUTES,
+  MAX_CANCELLATION_NOTICE_MINUTES,
 } from './entities/Business';
 export type { PendingUpload, UploadType, UploadFileCommand } from './entities/PendingUpload';
 export { BUSINESS_IMAGE_UPLOAD_TYPE, PROFILE_PICTURE_UPLOAD_TYPE } from './entities/PendingUpload';
@@ -194,6 +199,7 @@ export {
   ReservationSlotTakenError,
   ReservationErrorCode,
   BusinessErrorCode,
+  ReservationCancellationErrorCode,
 } from './errors/ReservationError';
 export {
   ClientApplicationIntegrationErrorCode,
@@ -268,6 +274,8 @@ export type { SetBusinessCategoryUseCase } from './use-cases/business/SetBusines
 export type { SetBusinessImageUseCase } from './use-cases/business/SetBusinessImageUseCase';
 export type { RemoveBusinessImageUseCase } from './use-cases/business/RemoveBusinessImageUseCase';
 export type { UpdateOverlappingPendingSettingUseCase } from './use-cases/business/UpdateOverlappingPendingSettingUseCase';
+export type { SetCancellationDeadlineUseCase } from './use-cases/business/SetCancellationDeadlineUseCase';
+export type { RemoveCancellationDeadlineUseCase } from './use-cases/business/RemoveCancellationDeadlineUseCase';
 export type { UploadFileUseCase } from './use-cases/file/UploadFileUseCase';
 export type { SetProfilePictureUseCase } from './use-cases/user/SetProfilePictureUseCase';
 export type { DeleteProfilePictureUseCase } from './use-cases/user/DeleteProfilePictureUseCase';

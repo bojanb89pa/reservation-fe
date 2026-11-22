@@ -20,4 +20,11 @@ export class ReservationSlotTakenError extends DomainError {
 export enum BusinessErrorCode {
   /** BE message key for a 409 when a non-owner changes owner-only settings. */
   OWNER_REQUIRED = 'error.business.owner_required',
+  /** BE message key for a 422 when the deadline is outside 1..43200 minutes. */
+  CANCELLATION_MIN_NOTICE_INVALID = 'error.business.cancellation_min_notice_invalid',
+}
+
+export enum ReservationCancellationErrorCode {
+  /** BE message key for a 422 when a reservation is cancelled after the business deadline. */
+  CANCELLATION_DEADLINE_PASSED = 'error.reservation.cancellation_deadline_passed',
 }
