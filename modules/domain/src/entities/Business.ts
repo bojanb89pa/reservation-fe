@@ -14,6 +14,16 @@ export interface Business {
   imageUrl: string | null;
   /** When false, a new PENDING reservation cannot overlap another PENDING one. Defaults to true on the BE. */
   allowOverlappingPendingReservations: boolean;
+  /** Latest cancellation deadline in minutes before the slot starts (1..43200). null = no deadline. */
+  minNoticeMinutes: number | null;
+}
+
+export const MIN_CANCELLATION_NOTICE_MINUTES = 1;
+export const MAX_CANCELLATION_NOTICE_MINUTES = 43200;
+
+export interface SetCancellationDeadlineCommand {
+  /** Whole number, MIN_CANCELLATION_NOTICE_MINUTES..MAX_CANCELLATION_NOTICE_MINUTES. */
+  minNoticeMinutes: number;
 }
 
 export interface UpdateOverlappingPendingSettingCommand {
