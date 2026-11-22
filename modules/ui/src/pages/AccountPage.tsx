@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useCurrentUser } from '../hooks/useProfilePicture';
 import { ErrorState } from '../components/ErrorState';
+import { AiAssistantsSection } from '../components/account/AiAssistantsSection';
 import { ProfileNameSection } from '../components/account/ProfileNameSection';
 import { ProfilePictureSection } from '../components/account/ProfilePictureSection';
 import styles from './AccountPage.module.css';
@@ -40,11 +40,7 @@ export function AccountPage() {
         <>
           <ProfileNameSection user={user} />
           <ProfilePictureSection user={user} />
-          <p>
-            <Link to="/account/ai-assistants">{t('account.aiAssistantsLink')}</Link>
-            {' — '}
-            {t('account.aiAssistantsLinkHint')}
-          </p>
+          <AiAssistantsSection />
         </>
       )}
     </div>

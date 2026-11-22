@@ -69,6 +69,24 @@ a {
   cursor: pointer;
 }
 
+/* Inline text links (not navigation/buttons): visibly links, AA contrast via --primary */
+a.text-link {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+a.text-link:hover {
+  color: var(--primary-hover);
+  text-decoration-thickness: 2px;
+}
+
+a.text-link:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 button {
   font-family: inherit;
 }
