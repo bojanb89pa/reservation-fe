@@ -1,5 +1,9 @@
 import type { AxiosInstance } from 'axios';
-import type { BusinessContactInfoRepository, BusinessContactInfo, ContactInfoType } from '@fe/domain';
+import type {
+  BusinessContactInfoRepository,
+  BusinessContactInfo,
+  ContactInfoType,
+} from '@fe/domain';
 
 export class BusinessContactInfoApiRepository implements BusinessContactInfoRepository {
   constructor(private readonly client: AxiosInstance) {}

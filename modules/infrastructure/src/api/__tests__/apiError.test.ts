@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { AxiosError } from 'axios';
-import { ConflictError, ReservationSlotTakenError } from '@fe/domain';
+import { ConflictError, ReservationSlotTakenError, UnprocessableEntityError } from '@fe/domain';
 import { ApiError, normalizeAxiosError, type ApiErrorBody } from '../apiError';
 
 function make(
@@ -42,5 +42,55 @@ describe('normalizeAxiosError RESERVATION_SLOT_TAKEN', () => {
       }),
     );
     expect(result).toBeInstanceOf(ConflictError);
+  });
+});
+
+describe('normalizeAxiosError cancellation deadline', () => {
+  it('maps owner_required 409 on PUT/DELETE cancellation-deadline to ConflictError', () => {
+    for (const method of ['put', 'delete']) {
+      const result = normalizeAxiosError(
+        make(method, '/businesses/b1/cancellation-deadline', 409, {
+          message: 'Samo vlasnik',
+          code: 'error.business.owner_required',
+        }),
+      );
+      expect(result).toBeInstanceOf(ConflictError);
+      expect(result.message).toBe('Samo vlasnik');
+    }
+  });
+
+  it('maps invalid min notice 422 to UnprocessableEntityError with the BE code', () => {
+    const result = normalizeAxiosError(
+      make('put', '/businesses/b1/cancellation-deadline', 422, {
+        message: 'Rok van opsega',
+        code: 'error.business.cancellation_min_notice_invalid',
+      }),
+    );
+    expect(result).toBeInstanceOf(UnprocessableEntityError);
+    expect(result.message).toBe('Rok van opsega');
+    expect((result as UnprocessableEntityError).code).toBe(
+      'error.business.cancellation_min_notice_invalid',
+    );
+  });
+
+  it('maps deadline passed 422 on reservation cancel with the BE code', () => {
+    const result = normalizeAxiosError(
+      make('post', '/resources/r1/reservations/x1/cancel', 422, {
+        message: 'Rok je istekao',
+        code: 'error.reservation.cancellation_deadline_passed',
+      }),
+    );
+    expect(result).toBeInstanceOf(UnprocessableEntityError);
+    expect(result.message).toBe('Rok je istekao');
+    expect((result as UnprocessableEntityError).code).toBe(
+      'error.reservation.cancellation_deadline_passed',
+    );
+  });
+
+  it('keeps other cancel 422 as UnprocessableEntityError', () => {
+    const result = normalizeAxiosError(
+      make('post', '/resources/r1/reservations/x1/cancel', 422, { message: 'x' }),
+    );
+    expect(result).toBeInstanceOf(UnprocessableEntityError);
   });
 });

@@ -65,7 +65,11 @@ describe('attachAuthInterceptors — session-expiry redirect deduplication', () 
     const client = axios.create({ adapter: unauthorizedAdapter });
     attachAuthInterceptors(client);
 
-    const results = await Promise.allSettled([client.get('/a'), client.get('/b'), client.get('/c')]);
+    const results = await Promise.allSettled([
+      client.get('/a'),
+      client.get('/b'),
+      client.get('/c'),
+    ]);
 
     expect(results.every((r) => r.status === 'rejected')).toBe(true);
     // The refresh call itself was already deduplicated before this ticket; kept here as a sanity check.

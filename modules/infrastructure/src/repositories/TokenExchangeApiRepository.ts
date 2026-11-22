@@ -29,7 +29,8 @@ export class TokenExchangeApiRepository implements TokenExchangeRepository {
       grant_type: 'urn:ietf:params:oauth:grant-type:token-exchange',
       client_id: command.clientApplicationId,
       subject_token: command.idToken,
-      subject_token_type: SUBJECT_TOKEN_TYPE_URN[command.subjectTokenType ?? DEFAULT_IDENTITY_TOKEN_TYPE],
+      subject_token_type:
+        SUBJECT_TOKEN_TYPE_URN[command.subjectTokenType ?? DEFAULT_IDENTITY_TOKEN_TYPE],
     });
     if (command.scopes && command.scopes.length > 0) {
       params.set('scope', command.scopes.join(' '));
