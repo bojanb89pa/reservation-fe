@@ -3,8 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { env } from '../../app/container';
 import styles from './ConnectClaude.module.css';
 
-// WARNING: docs URL assumed (guides/mcp.md in the BE repo) — verify before merging
-const DOCS_URL = 'https://github.com/bojanb89pa/reservation-be/blob/main/docs/guides/mcp.md';
+const DOCS_URL = 'https://reserva-docs.bojanlab.com/guides/mcp/';
 
 export function ConnectClaudeInstructions() {
   const { t } = useTranslation();
@@ -46,7 +45,7 @@ export function ConnectClaudeInstructions() {
         <li>{t('connectClaude.step2')}</li>
         <li>{t('connectClaude.step3')}</li>
       </ol>
-      <a href={DOCS_URL} target="_blank" rel="noopener noreferrer">
+      <a className="text-link" href={DOCS_URL} target="_blank" rel="noopener noreferrer">
         {t('connectClaude.docs')}
       </a>
     </section>

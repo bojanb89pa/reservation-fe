@@ -201,8 +201,9 @@ const en = {
     eyebrow: 'Account',
     title: 'Your account',
     error: 'Could not load your account.',
-    aiAssistantsLink: 'AI assistants',
-    aiAssistantsLinkHint: 'Connect Reserva to Claude and manage connected apps.',
+    aiAssistantsTitle: 'AI assistants',
+    aiAssistantsDescription: 'Connect Reserva to Claude and manage connected apps.',
+    aiAssistantsCta: 'Connect with Claude',
   },
   connectClaude: {
     eyebrow: 'AI assistants',
