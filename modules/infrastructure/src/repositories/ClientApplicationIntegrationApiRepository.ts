@@ -7,9 +7,7 @@ import type {
 } from '@fe/domain';
 import { ApiError } from '../api/apiError';
 
-export class ClientApplicationIntegrationApiRepository
-  implements ClientApplicationIntegrationRepository
-{
+export class ClientApplicationIntegrationApiRepository implements ClientApplicationIntegrationRepository {
   /**
    * @param client authenticated auth-service client (Bearer) for the admin routes
    * @param publicClient unauthenticated auth-service client for the public route

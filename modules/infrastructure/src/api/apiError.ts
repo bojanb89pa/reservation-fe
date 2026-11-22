@@ -9,6 +9,8 @@ import {
   UnauthorizedError,
   ReservationSlotTakenError,
   ReservationErrorCode,
+  BusinessErrorCode,
+  ReservationCancellationErrorCode,
   TokenExchangeError,
 } from '@fe/domain';
 
@@ -67,6 +69,8 @@ const CLIENT_APPLICATION_RESERVATION_CANCEL_PATH =
   /\/client-applications\/reservations\/[^/]+\/cancel\/?$/;
 /** `PATCH /businesses/{id}/overlapping-pending-reservations` — owner-only setting. */
 const OVERLAPPING_PENDING_PATH = /\/businesses\/[^/]+\/overlapping-pending-reservations\/?$/;
+/** `PUT|DELETE /businesses/{id}/cancellation-deadline` — owner-only cancellation deadline. */
+const CANCELLATION_DEADLINE_PATH = /\/businesses\/[^/]+\/cancellation-deadline\/?$/;
 /** `GET /admin/client-applications/{id}` — partner detail (resource-service). */
 const CLIENT_APPLICATION_DETAIL_PATH = /\/admin\/client-applications\/([^/]+)\/?$/;
 /** `GET|PUT /admin/client-applications/{id}/integration` — partner integration (auth-service). */
@@ -172,6 +176,36 @@ function isOverlappingPendingRequest(config: InternalAxiosRequestConfig | undefi
   return method === 'PATCH' && OVERLAPPING_PENDING_PATH.test(path);
 }
 
+function isCancellationDeadlineRequest(config: InternalAxiosRequestConfig | undefined): boolean {
+  const path = (config?.url ?? '').split('?')[0];
+  const method = (config?.method ?? '').toUpperCase();
+  return (method === 'PUT' || method === 'DELETE') && CANCELLATION_DEADLINE_PATH.test(path);
+}
+
+/** UnprocessableEntityError has a fixed `code`; carry the BE code so the UI can branch on it. */
+function toUnprocessableWithCode(
+  message: string,
+  body: ApiErrorBody | undefined,
+): UnprocessableEntityError {
+  const error = new UnprocessableEntityError(message);
+  if (body?.code) Object.assign(error, { code: body.code });
+  return error;
+}
+
+function toCancellationDeadlineError(
+  status: number,
+  message: string,
+  body: ApiErrorBody | undefined,
+): ConflictError | UnprocessableEntityError | null {
+  if (status === 409 && body?.code === BusinessErrorCode.OWNER_REQUIRED) {
+    return new ConflictError(message);
+  }
+  if (status === 422 && body?.code === BusinessErrorCode.CANCELLATION_MIN_NOTICE_INVALID) {
+    return toUnprocessableWithCode(message, body);
+  }
+  return null;
+}
+
 function toClientApplicationError(
   config: InternalAxiosRequestConfig | undefined,
   status: number,
@@ -180,7 +214,9 @@ function toClientApplicationError(
   const path = (config?.url ?? '').split('?')[0];
   const integrationId = CLIENT_APPLICATION_INTEGRATION_PATH.exec(path)?.[1];
   if (integrationId) {
-    return CLIENT_APPLICATION_INTEGRATION_REASON_BY_STATUS[status]?.(message, integrationId) ?? null;
+    return (
+      CLIENT_APPLICATION_INTEGRATION_REASON_BY_STATUS[status]?.(message, integrationId) ?? null
+    );
   }
   const detailId = CLIENT_APPLICATION_DETAIL_PATH.exec(path)?.[1];
   if (detailId && status === 404) return new NotFoundError('ClientApplication', detailId);
@@ -274,7 +310,18 @@ export function normalizeAxiosError(
     if (widgetCancelError) return widgetCancelError;
   }
 
+  if (isCancellationDeadlineRequest(error.config)) {
+    const cancellationDeadlineError = toCancellationDeadlineError(status, message, body);
+    if (cancellationDeadlineError) return cancellationDeadlineError;
+  }
+
   if (isReservationCancelRequest(error.config)) {
+    if (
+      status === 422 &&
+      body?.code === ReservationCancellationErrorCode.CANCELLATION_DEADLINE_PASSED
+    ) {
+      return toUnprocessableWithCode(message, body);
+    }
     const toDomainError = RESERVATION_CANCEL_REASON_BY_STATUS[status];
     if (toDomainError) return toDomainError(message);
   }
