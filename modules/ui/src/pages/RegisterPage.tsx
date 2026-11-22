@@ -1,17 +1,24 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
 import { registerUseCase, env } from '../app/container';
 import styles from './AuthPage.module.css';
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export function RegisterPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [form, setForm] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
+  const [searchParams] = useSearchParams();
+  const [form, setForm] = useState(() => {
+    // Invitation emails link to /register?email=<email>; prefill only a valid address.
+    const inviteEmail = searchParams.get('email') ?? '';
+    return {
+      firstName: '',
+      lastName: '',
+      email: EMAIL_PATTERN.test(inviteEmail) ? inviteEmail : '',
+      password: '',
+    };
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
