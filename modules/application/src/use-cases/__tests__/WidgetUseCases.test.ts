@@ -144,9 +144,7 @@ describe('CancelClientApplicationReservationUseCaseImpl', () => {
   });
 
   it('propagates UnprocessableEntityError with RESERVATION_CANCELLATION_NOT_ALLOWED', async () => {
-    const error = Object.assign(new UnprocessableEntityError('nope'), {
-      code: 'RESERVATION_CANCELLATION_NOT_ALLOWED',
-    });
+    const error = new UnprocessableEntityError('nope', 'RESERVATION_CANCELLATION_NOT_ALLOWED');
     const repo = widgetRepo();
     repo.cancelReservation = vi.fn().mockRejectedValue(error);
 
@@ -175,9 +173,7 @@ describe('resolveWidgetAvailability', () => {
 
 describe('mapReservationErrorToUnavailableReason', () => {
   it('maps the consent error code', () => {
-    const error = Object.assign(new UnprocessableEntityError('x'), {
-      code: 'CLIENT_APPLICATION_LOCATION_CONSENT_NOT_APPROVED',
-    });
+    const error = new UnprocessableEntityError('x', 'CLIENT_APPLICATION_LOCATION_CONSENT_NOT_APPROVED');
     expect(mapReservationErrorToUnavailableReason(error)).toBe('CONSENT_NOT_APPROVED');
   });
 
