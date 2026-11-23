@@ -84,9 +84,6 @@ function redirectToAuthorize(): void {
   window.location.href = `${env.authBaseUrl}/oauth2/authorize?${params.toString()}`;
 }
 
-// WARNING: still hard-redirects straight to the OAuth authorize screen; a UI-layer ticket should
-// listen for AUTH_SESSION_EXPIRED_EVENT / tokenStorage.consumeSessionExpiredFlag() to show an
-// in-app "session expired" message before/around this redirect — verify before merging
 function handleSessionExpired(): void {
   if (sessionExpiredHandled) return;
   sessionExpiredHandled = true;
