@@ -41,7 +41,6 @@ export function DashboardCategoriesPage() {
   };
 
   const saveErrorMessage = (err: unknown): string => {
-    // WARNING: assumed category PUT/POST errors surface as ApiError with a status (normalizeAxiosError does not map category routes) — verify before merging
     const status = (err as { status?: number } | null)?.status;
     if (status === 409) return t('dashboardCategories.errorCodeTaken');
     if (status === 422) return t('dashboardCategories.errorSelfParent');

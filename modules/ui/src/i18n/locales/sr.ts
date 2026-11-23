@@ -446,6 +446,11 @@ const sr: Translation = {
     enableConfirm: 'Uključi partnera',
     errorForbidden: 'Nemate dozvolu da izmenite ovog partnera ili izmena nije uspela.',
     errorNotFound: 'Ovaj partner više ne postoji.',
+    errorGeneric: 'Izmena nije sačuvana. Pokušaj ponovo.',
+  },
+  sessionExpired: {
+    notice: 'Sesija je istekla, prijavljeni ste ponovo.',
+    dismiss: 'Zatvori',
   },
   consentStatus: {
     PENDING: 'Na čekanju',

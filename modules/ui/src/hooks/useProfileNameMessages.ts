@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
  * Translates a rejected name update. The HTTP status is what we branch on —
  * the raw backend/axios message never reaches the user.
  */
-// WARNING: infrastructure returns a plain ApiError with `status` for this route, so the status is read structurally — verify before merging
 export function useProfileNameMessages() {
   const { t } = useTranslation();
 
