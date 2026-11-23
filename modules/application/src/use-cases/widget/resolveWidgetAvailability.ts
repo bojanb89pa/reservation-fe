@@ -18,7 +18,6 @@ export function resolveWidgetAvailability(config: WidgetConfig, locationId: stri
 }
 
 /** Maps a failed reservation creation to an unavailable reason; `null` when the error is unrelated. */
-// WARNING: matches on `error.code` carrying the BE code of the 422 — verify before merging
 export function mapReservationErrorToUnavailableReason(error: unknown): WidgetUnavailableReason | null {
   if (typeof error === 'object' && error !== null && 'code' in error) {
     if ((error as { code?: unknown }).code === ClientApplicationConsentErrorCode.CONSENT_NOT_APPROVED) {
