@@ -17,7 +17,6 @@ import { BusinessImage } from '../components/business/BusinessImage';
 import { BusinessLocationsList } from '../components/business/BusinessLocationsList';
 import styles from './BusinessDetailPage.module.css';
 
-// WARNING: assumed the normalized API error exposes a numeric `status` — verify before merging
 function isNotFoundError(error: unknown): boolean {
   return (
     typeof error === 'object' && error !== null && (error as { status?: number }).status === 404

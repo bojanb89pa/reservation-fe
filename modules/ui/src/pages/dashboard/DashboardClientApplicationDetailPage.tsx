@@ -34,6 +34,15 @@ function integrationErrorKey(err: unknown): string | null {
   return code ? INTEGRATION_ERROR_KEYS[code] : null;
 }
 
+/** 404 → not found, HTTP 403 → forbidden, anything else (500, network) → generic. */
+function toggleErrorKey(err: unknown): string {
+  if (err instanceof NotFoundError) return 'clientApplicationEnabled.errorNotFound';
+  const status = (err as { status?: unknown } | null)?.status;
+  return status === 403
+    ? 'clientApplicationEnabled.errorForbidden'
+    : 'clientApplicationEnabled.errorGeneric';
+}
+
 export function DashboardClientApplicationDetailPage() {
   const { t, i18n } = useTranslation();
   const { id = '' } = useParams<{ id: string }>();
@@ -65,12 +74,7 @@ export function DashboardClientApplicationDetailPage() {
       await setEnabled({ clientApplicationId: id, enabled });
       return true;
     } catch (err: unknown) {
-      // WARNING: 403 is not a distinct domain error, so every non-404 failure shows the forbidden/generic message — verify before merging
-      setToggleError(
-        err instanceof NotFoundError
-          ? t('clientApplicationEnabled.errorNotFound')
-          : t('clientApplicationEnabled.errorForbidden'),
-      );
+      setToggleError(t(toggleErrorKey(err)));
       return false;
     }
   };

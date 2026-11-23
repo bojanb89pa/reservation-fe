@@ -19,7 +19,6 @@ export function ProfileNameSection({ user }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
-  // WARNING: blank-name check duplicates the backend rule, kept only to avoid a pointless request — verify before merging
   const isBlank = firstName.trim() === '' || lastName.trim() === '';
 
   const handleSubmit = (event: React.FormEvent) => {
