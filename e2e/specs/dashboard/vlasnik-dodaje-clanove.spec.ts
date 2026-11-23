@@ -307,6 +307,13 @@ test.describe('E2E-014 vlasnik dodaje zaposlene i suvlasnike', () => {
       normalize(invitation, unregistered),
       'pozivnica za registraciju treba da ima drugačiji sadržaj od obaveštenja o članstvu',
     ).not.toEqual(normalize(notice, existing.email));
+
+    // Link iz pozivnice (`<register-url>?email=<email>`) otvara registraciju sa popunjenim emailom.
+    const link = /https?:\/\/[^\s"'<>]+\/register\?email=[^\s"'<>]+/.exec(mailText(invitation));
+    expect(link, 'pozivnica treba da sadrži link za registraciju sa ?email=').not.toBeNull();
+    const query = new URL(link![0].replace(/&amp;/g, '&')).search;
+    await page.goto(`/register${query}`);
+    await expect(page.getByLabel('Email')).toHaveValue(unregistered);
   });
 
   test('predlozi iz pretrage nude člana zajedničkog biznisa, a email van predloga se i dalje može uneti', async ({
