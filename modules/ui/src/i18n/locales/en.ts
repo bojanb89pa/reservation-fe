@@ -648,8 +648,7 @@ const en = {
     changeUser: 'Change',
     remove: 'Remove',
     errorAdd: 'Failed to add member.',
-    addNotConfirmed:
-      'Could not confirm the member was added — you may not have permission to do this.',
+    addForbidden: 'You do not have permission to add members to this business.',
     notifySuccess: 'Invitation sent to {{email}}',
     OWNER: {
       empty: 'No owners yet.',
