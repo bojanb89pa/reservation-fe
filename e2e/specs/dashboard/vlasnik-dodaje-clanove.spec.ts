@@ -395,9 +395,8 @@ test.describe('E2E-014 vlasnik dodaje zaposlene i suvlasnike', () => {
       const attempt = await employeeApi.post(`/businesses/${business.id}/owners`, {
         data: { email: candidate.email },
       });
-      // BE može da odbije (403) ili da vrati isti oblik bez kreiranja (fe-brief #77);
-      // u oba slučaja kandidat ne sme da postane vlasnik niti da vidi biznis.
-      expect([200, 403], `HTTP ${attempt.status()} ${await attempt.text()}`).toContain(attempt.status());
+      // BE odbija sa 403 (epic #117); kandidat ne sme da postane vlasnik niti da vidi biznis.
+      expect(attempt.status(), `HTTP ${attempt.status()} ${await attempt.text()}`).toBe(403);
 
       const owners = await listMembers(ownerApi, business.id, 'owners');
       expect(owners.map((m) => m.email)).not.toContain(candidate.email);
