@@ -650,8 +650,7 @@ const sr: Translation = {
     changeUser: 'Promeni',
     remove: 'Ukloni',
     errorAdd: 'Greška pri dodavanju člana.',
-    addNotConfirmed:
-      'Nije moguće potvrditi da je član dodat — možda nemate ovlašćenje za ovu akciju.',
+    addForbidden: 'Nemate dozvolu da dodajete članove u ovom biznisu.',
     notifySuccess: 'Pozivnica poslata na {{email}}',
     OWNER: {
       empty: 'Nema vlasnika.',
