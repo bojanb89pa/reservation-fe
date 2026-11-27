@@ -128,6 +128,24 @@ describe('DashboardClientApplicationDetailPage', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('This partner no longer exists.');
   });
 
+  it('shows the forbidden message only when the switch fails with HTTP 403', async () => {
+    setEnabled.execute.mockRejectedValue(Object.assign(new Error('forbidden'), { status: 403 }));
+    renderPage();
+    fireEvent.click(await screen.findByRole('switch', { name: 'Partner Acme Widget enabled' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Disable partner' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent(/not allowed to change this partner/i);
+  });
+
+  it('shows a generic message when the switch fails with HTTP 500', async () => {
+    setEnabled.execute.mockRejectedValue(Object.assign(new Error('boom'), { status: 500 }));
+    renderPage();
+    fireEvent.click(await screen.findByRole('switch', { name: 'Partner Acme Widget enabled' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Disable partner' }));
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent('The change could not be saved. Please try again.');
+    expect(alert).not.toHaveTextContent(/not allowed/i);
+  });
+
   it('saves the integration and translates a 422 key', async () => {
     updateIntegration.execute.mockRejectedValue(
       new UnprocessableEntityError(ClientApplicationIntegrationErrorCode.ORIGIN_INVALID),

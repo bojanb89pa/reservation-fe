@@ -444,6 +444,11 @@ const en = {
     enableConfirm: 'Enable partner',
     errorForbidden: 'You are not allowed to change this partner, or the change failed.',
     errorNotFound: 'This partner no longer exists.',
+    errorGeneric: 'The change could not be saved. Please try again.',
+  },
+  sessionExpired: {
+    notice: 'Your session expired, you have been signed in again.',
+    dismiss: 'Dismiss',
   },
   consentStatus: {
     PENDING: 'Pending',

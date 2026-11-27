@@ -6,7 +6,6 @@ import { updateOwnProfileUseCase } from '../app/container';
  * Patches the signed-in user's name and writes the returned `User` into every
  * cached user lookup, so the page shows the new name without a refetch.
  */
-// WARNING: the auth store holds only the token session (no user fields), so there is nothing to update there — verify before merging
 export function useUpdateOwnProfile() {
   const queryClient = useQueryClient();
   return useMutation({

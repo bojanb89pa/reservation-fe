@@ -222,7 +222,7 @@ test.describe('E2E-462 rok za otkazivanje rezervacije', () => {
     }
   });
 
-  test('tuđi biznis ne može da postavi ni ukloni rok (409), rok ostaje nepromenjen', async () => {
+  test('tuđi biznis ne može da postavi ni ukloni rok (403), rok ostaje nepromenjen', async () => {
     const { owner, business } = await createBookableBusiness();
     const stranger = await createActivatedUser();
     const ownerApi = await ApiClient.as(owner);
@@ -236,11 +236,11 @@ test.describe('E2E-462 rok za otkazivanje rezervacije', () => {
       const setAttempt = await strangerApi.put(deadlinePath(business.id), {
         data: { minNoticeMinutes: 120 },
       });
-      await expectStatus(setAttempt, 409, 'PUT cancellation-deadline (tuđi biznis)');
+      await expectStatus(setAttempt, 403, 'PUT cancellation-deadline (tuđi biznis)');
       expect(((await setAttempt.json()) as ErrorDto).code).toBe('error.business.owner_required');
 
       const removeAttempt = await strangerApi.delete(deadlinePath(business.id));
-      await expectStatus(removeAttempt, 409, 'DELETE cancellation-deadline (tuđi biznis)');
+      await expectStatus(removeAttempt, 403, 'DELETE cancellation-deadline (tuđi biznis)');
 
       expect((await getBusiness(ownerApi, business.id)).minNoticeMinutes).toBe(60);
     } finally {

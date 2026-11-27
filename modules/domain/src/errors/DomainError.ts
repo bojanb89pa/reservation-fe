@@ -40,8 +40,8 @@ export class ConflictError extends DomainError {
 }
 
 export class UnprocessableEntityError extends DomainError {
-  constructor(message: string) {
-    super(message, 'UNPROCESSABLE_ENTITY');
+  constructor(message: string, code: string = 'UNPROCESSABLE_ENTITY') {
+    super(message, code);
     this.name = 'UnprocessableEntityError';
   }
 }

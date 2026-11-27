@@ -145,14 +145,6 @@ function isAdminUserAccountsRequest(config: InternalAxiosRequestConfig | undefin
   return ADMIN_USER_ACCOUNTS_PATH.test(path);
 }
 
-function isClientApplicationReservationCancelRequest(
-  config: InternalAxiosRequestConfig | undefined,
-): boolean {
-  const path = (config?.url ?? '').split('?')[0];
-  const method = (config?.method ?? '').toUpperCase();
-  return method === 'POST' && CLIENT_APPLICATION_RESERVATION_CANCEL_PATH.test(path);
-}
-
 function isReservationCancelRequest(config: InternalAxiosRequestConfig | undefined): boolean {
   const path = (config?.url ?? '').split('?')[0];
   const method = (config?.method ?? '').toUpperCase();
@@ -182,14 +174,12 @@ function isCancellationDeadlineRequest(config: InternalAxiosRequestConfig | unde
   return (method === 'PUT' || method === 'DELETE') && CANCELLATION_DEADLINE_PATH.test(path);
 }
 
-/** UnprocessableEntityError has a fixed `code`; carry the BE code so the UI can branch on it. */
+/** Carry the BE code through the constructor so the UI can branch on it. */
 function toUnprocessableWithCode(
   message: string,
   body: ApiErrorBody | undefined,
 ): UnprocessableEntityError {
-  const error = new UnprocessableEntityError(message);
-  if (body?.code) Object.assign(error, { code: body.code });
-  return error;
+  return new UnprocessableEntityError(message, body?.code ?? undefined);
 }
 
 function toCancellationDeadlineError(
@@ -261,21 +251,11 @@ function toWidgetError(
   }
   if (method === 'POST' && CLIENT_APPLICATION_RESERVATION_CANCEL_PATH.test(path)) {
     if (status === 404) return new NotFoundError('Reservation');
-    if (status === 422) {
-      const error = new UnprocessableEntityError(message);
-      // WARNING: UnprocessableEntityError has a fixed `code`; overriding it at runtime with the BE code (RESERVATION_CANCELLATION_NOT_ALLOWED) — verify before merging
-      if (body?.code) Object.assign(error, { code: body.code });
-      return error;
-    }
+    if (status === 422) return new UnprocessableEntityError(message, body?.code ?? undefined);
   }
   if (method === 'POST' && CLIENT_APPLICATION_RESERVATION_PATH.test(path)) {
     if (status === 404) return new NotFoundError('Resource');
-    if (status === 422) {
-      const error = new UnprocessableEntityError(message);
-      // WARNING: UnprocessableEntityError has a fixed `code`; overriding it at runtime with the BE code so the application layer can read it — verify before merging
-      if (body?.code) Object.assign(error, { code: body.code });
-      return error;
-    }
+    if (status === 422) return new UnprocessableEntityError(message, body?.code ?? undefined);
   }
   return null;
 }
@@ -305,10 +285,9 @@ export function normalizeAxiosError(
     if (toDomainError) return toDomainError(message);
   }
 
-  if (isClientApplicationReservationCancelRequest(error.config)) {
-    const widgetCancelError = toWidgetError(error.config, status, message, body);
-    if (widgetCancelError) return widgetCancelError;
-  }
+  // Must run before the generic reservation-cancel mapping, whose path regex also matches the widget cancel route.
+  const widgetError = toWidgetError(error.config, status, message, body);
+  if (widgetError) return widgetError;
 
   if (isCancellationDeadlineRequest(error.config)) {
     const cancellationDeadlineError = toCancellationDeadlineError(status, message, body);
@@ -338,9 +317,6 @@ export function normalizeAxiosError(
     const tokenExchangeError = toTokenExchangeError(body);
     if (tokenExchangeError) return tokenExchangeError;
   }
-
-  const widgetError = toWidgetError(error.config, status, message, body);
-  if (widgetError) return widgetError;
 
   if (
     status === 409 &&

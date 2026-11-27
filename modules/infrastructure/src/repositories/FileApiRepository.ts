@@ -2,9 +2,6 @@ import type { AxiosInstance } from 'axios';
 import type { FileUploadRepository, PendingUpload, UploadFileCommand } from '@fe/domain';
 import { PROFILE_PICTURE_UPLOAD_TYPE } from '@fe/domain';
 
-// WARNING: constructor now takes a second client for the auth-service host — the composition
-// root wiring (`new FileApiRepository(resourceAxiosClient)`) must be updated to pass
-// `authenticatedAuthAxiosClient` as the second argument — verify before merging
 export class FileApiRepository implements FileUploadRepository {
   constructor(
     private readonly resourceClient: AxiosInstance,
