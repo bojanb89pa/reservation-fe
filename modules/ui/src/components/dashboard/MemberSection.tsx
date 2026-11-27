@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { BusinessMemberRole, UserSummary } from '@fe/domain';
+import { UnauthorizedError, type BusinessMemberRole, type UserSummary } from '@fe/domain';
 import {
   useBusinessMembers,
   useAddBusinessMember,
@@ -20,7 +20,7 @@ interface Props {
 
 export function MemberSection({ businessId, role, title }: Props) {
   const { t } = useTranslation();
-  const { data: members = [], refetch: refetchMembers } = useBusinessMembers(businessId, role);
+  const { data: members = [] } = useBusinessMembers(businessId, role);
   const memberUserIds = useMemo(
     () => members.map((m) => m.userId).filter((id): id is string => id !== null),
     [members],
@@ -44,30 +44,21 @@ export function MemberSection({ businessId, role, title }: Props) {
   // only helps. `inputKey` remounts the input to clear it after a successful add.
   const [typedEmail, setTypedEmail] = useState('');
   const [inputKey, setInputKey] = useState(0);
-  const [addNotConfirmed, setAddNotConfirmed] = useState(false);
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     const email = selectedUser?.email ?? typedEmail.trim();
     if (!email) return;
-    const userId = selectedUser?.id;
     setNotifiedEmail(null);
-    setAddNotConfirmed(false);
-    await addMember(email);
-    // A resolved promise doesn't prove the membership was created — an unauthorized
-    // caller gets the same 200 shape (fe-brief #77) — so re-fetch and look for the
-    // member before showing success, per AddBusinessMemberUseCase's doc comment.
-    const { data: freshMembers } = await refetchMembers();
-    const wasAdded = (freshMembers ?? []).some(
-      (m) => (userId !== undefined && m.userId === userId) || m.email === email,
-    );
+    try {
+      await addMember(email);
+    } catch {
+      // The failure is shown through `addError`; nothing to confirm here.
+      return;
+    }
     setSelectedUser(null);
     setTypedEmail('');
     setInputKey((k) => k + 1);
-    if (!wasAdded) {
-      setAddNotConfirmed(true);
-      return;
-    }
     setNotifiedEmail(email);
     // Best-effort: the invitation email is transparent to the add flow, so its outcome
     // never blocks or overrides the confirmation shown to the user.
@@ -123,11 +114,14 @@ export function MemberSection({ businessId, role, title }: Props) {
         </button>
       </form>
       {addError && (
-        <div className={styles.error}>
-          {addError instanceof Error ? addError.message : t('memberSection.errorAdd')}
+        <div role="alert" className={styles.error}>
+          {addError instanceof UnauthorizedError
+            ? t('memberSection.addForbidden')
+            : addError instanceof Error
+              ? addError.message
+              : t('memberSection.errorAdd')}
         </div>
       )}
-      {addNotConfirmed && <div className={styles.error}>{t('memberSection.addNotConfirmed')}</div>}
       {notifiedEmail && (
         <div className={styles.notice}>
           {t('memberSection.notifySuccess', { email: notifiedEmail })}
