@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import type { AxiosError } from 'axios';
-import { ConflictError, ReservationSlotTakenError, UnprocessableEntityError } from '@fe/domain';
+import {
+  ConflictError,
+  ReservationSlotTakenError,
+  UnauthorizedError,
+  UnprocessableEntityError,
+} from '@fe/domain';
 import { ApiError, normalizeAxiosError, type ApiErrorBody } from '../apiError';
 
 function make(
@@ -42,6 +47,27 @@ describe('normalizeAxiosError RESERVATION_SLOT_TAKEN', () => {
       }),
     );
     expect(result).toBeInstanceOf(ConflictError);
+  });
+});
+
+describe('normalizeAxiosError adding a business member', () => {
+  const body = {
+    message: 'Only an owner of the business can perform this action',
+    code: 'BUSINESS_OWNER_REQUIRED',
+  };
+
+  it.each(['/businesses/b1/owners', '/businesses/b1/employees'])(
+    'maps 403 on POST %s to UnauthorizedError',
+    (url) => {
+      expect(normalizeAxiosError(make('post', url, 403, body))).toBeInstanceOf(UnauthorizedError);
+    },
+  );
+
+  it('keeps 409 (already a member) and other methods as ApiError', () => {
+    const conflict = normalizeAxiosError(make('post', '/businesses/b1/owners', 409, body));
+    expect(conflict).toBeInstanceOf(ApiError);
+    const remove = normalizeAxiosError(make('delete', '/businesses/b1/owners/u1', 403, body));
+    expect(remove).toBeInstanceOf(ApiError);
   });
 });
 

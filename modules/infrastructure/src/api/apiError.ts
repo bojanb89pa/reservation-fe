@@ -55,6 +55,8 @@ const BUSINESS_IMAGE_PATH = /\/businesses\/[^/]+\/image\/?$/;
 const PROFILE_PICTURE_PATH = /\/users\/me\/profile-picture\/?$/;
 /** `GET|POST|PUT|PATCH|DELETE /auth/users/admin/accounts(/{id}...)` — admin user management routes. */
 const ADMIN_USER_ACCOUNTS_PATH = /\/users\/admin\/accounts(\/.*)?$/;
+/** `POST /businesses/{id}/owners|employees` — adding a business member (BE answers 403 to a non-owner, non-admin caller). */
+const BUSINESS_MEMBER_ADD_PATH = /\/businesses\/[^/]+\/(owners|employees)\/?$/;
 /** `POST /resources/{resourceId}/reservations/{id}/cancel` — user-initiated reservation cancel. */
 const RESERVATION_CANCEL_PATH = /\/reservations\/[^/]+\/cancel\/?$/;
 
@@ -143,6 +145,12 @@ function isFileRelatedRequest(config: InternalAxiosRequestConfig | undefined): b
 function isAdminUserAccountsRequest(config: InternalAxiosRequestConfig | undefined): boolean {
   const path = (config?.url ?? '').split('?')[0];
   return ADMIN_USER_ACCOUNTS_PATH.test(path);
+}
+
+function isBusinessMemberAddRequest(config: InternalAxiosRequestConfig | undefined): boolean {
+  const path = (config?.url ?? '').split('?')[0];
+  const method = (config?.method ?? '').toUpperCase();
+  return method === 'POST' && BUSINESS_MEMBER_ADD_PATH.test(path);
 }
 
 function isReservationCancelRequest(config: InternalAxiosRequestConfig | undefined): boolean {
@@ -283,6 +291,11 @@ export function normalizeAxiosError(
   if (isAdminUserAccountsRequest(error.config)) {
     const toDomainError = ADMIN_USER_REASON_BY_STATUS[status];
     if (toDomainError) return toDomainError(message);
+  }
+
+  // The member section shows its own "no permission" message for UnauthorizedError.
+  if (status === 403 && isBusinessMemberAddRequest(error.config)) {
+    return new UnauthorizedError();
   }
 
   // Must run before the generic reservation-cancel mapping, whose path regex also matches the widget cancel route.
