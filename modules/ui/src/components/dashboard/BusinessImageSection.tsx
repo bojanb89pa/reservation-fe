@@ -62,7 +62,6 @@ export function BusinessImageSection({ business }: Props) {
       </div>
 
       <div className={styles.layout}>
-        {/* WARNING: assumed a replaced image is served fresh on the same path — verify before merging */}
         <div className={styles.current}>
           <BusinessImage
             name={business.name}
