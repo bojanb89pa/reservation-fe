@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { BusinessLocation } from '@fe/domain';
 import type { PlaceAutocompleteSuggestion } from '@fe/domain';
@@ -7,6 +7,8 @@ import { usePlaceSearch } from '../../hooks/usePlaceSearch';
 import { usePlaceDetails } from '../../hooks/usePlaceDetails';
 import { LocationAssignmentsSection } from '../business-location/LocationAssignmentsSection';
 import { ConfirmLocationBanner } from '../business-location/ConfirmLocationBanner';
+import { DEFAULT_TIMEZONE } from '../booking/businessToday';
+import { listTimezones } from './timezones';
 import styles from './LocationSection.module.css';
 
 interface Props {
@@ -29,7 +31,7 @@ export function LocationSection({ businessId }: Props) {
   // User-provided
   const [locationName, setLocationName] = useState('');
   const [addressLine2, setAddressLine2] = useState('');
-  const [timezone, setTimezone] = useState('');
+  const [timezone, setTimezone] = useState(DEFAULT_TIMEZONE);
   const [email, setEmail] = useState('');
 
   // Pre-filled from place (user can override)
@@ -49,7 +51,11 @@ export function LocationSection({ businessId }: Props) {
     }
   }, [placeDetails]);
 
+  const timezones = useMemo(() => listTimezones(), []);
+  const timezoneValid = !timezone.trim() || timezones.includes(timezone.trim());
+
   const canSubmit =
+    timezoneValid &&
     !!locationName.trim() &&
     !!placeDetails &&
     placeDetails.latitude != null &&
@@ -79,6 +85,7 @@ export function LocationSection({ businessId }: Props) {
     const trimmedName = locationName.trim();
     if (!trimmedName) return;
     if (!placeDetails || placeDetails.latitude == null || placeDetails.longitude == null) return;
+    if (!timezoneValid) return;
 
     await createLocation({
       name: trimmedName,
@@ -89,7 +96,7 @@ export function LocationSection({ businessId }: Props) {
       countryCode: placeDetails.countryCode ?? undefined,
       latitude: placeDetails.latitude,
       longitude: placeDetails.longitude,
-      timezone: timezone.trim() || undefined,
+      timezone: timezone.trim() || DEFAULT_TIMEZONE,
       phone: phone.trim() || undefined,
       email: email.trim() || undefined,
       website: website.trim() || undefined,
@@ -99,7 +106,7 @@ export function LocationSection({ businessId }: Props) {
 
     setLocationName('');
     setAddressLine2('');
-    setTimezone('');
+    setTimezone(DEFAULT_TIMEZONE);
     setEmail('');
     setPhone('');
     setWebsite('');
@@ -250,13 +257,26 @@ export function LocationSection({ businessId }: Props) {
                 />
               </div>
               <div className="form-field">
-                <label className="form-label">{t('locationSection.timezoneLabel')}</label>
+                <label className="form-label" htmlFor="location-timezone">
+                  {t('locationSection.timezoneLabel')}
+                </label>
                 <input
+                  id="location-timezone"
                   className="form-input"
+                  list="location-timezone-options"
+                  autoComplete="off"
                   placeholder={t('locationSection.timezonePlaceholder')}
                   value={timezone}
                   onChange={(e) => setTimezone(e.target.value)}
                 />
+                <datalist id="location-timezone-options">
+                  {timezones.map((z) => (
+                    <option key={z} value={z} />
+                  ))}
+                </datalist>
+                {!timezoneValid && (
+                  <div className={styles.error}>{t('locationSection.timezoneInvalid')}</div>
+                )}
               </div>
               <div className="form-field">
                 <label className="form-label">{t('locationSection.emailLabel')}</label>

@@ -161,6 +161,7 @@ export function BusinessDetailPage() {
           onResourceChange={setSelectedResource}
           onConfirm={handleConfirm}
           isLoading={isPending}
+          timezone={locations?.find((l) => l.timezone)?.timezone}
         />
       </div>
     </>

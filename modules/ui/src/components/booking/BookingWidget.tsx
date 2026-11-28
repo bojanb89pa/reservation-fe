@@ -6,6 +6,7 @@ import type { AvailabilityBlock, BusinessService, Resource } from '@fe/domain';
 import { useResourceSlots } from '../../hooks/useResourceSlots';
 import { ErrorState } from '../ErrorState';
 import { useAvailabilityBlocks } from '../../hooks/useAvailabilityBlocks';
+import { businessToday } from './businessToday';
 import styles from './BookingWidget.module.css';
 
 /** Step section — enters with fade + lift + blur-in as the flow progresses. */
@@ -138,6 +139,8 @@ export interface BookingWidgetProps {
    * partner widget who has to sign in on the partner's site first.
    */
   confirmNotice?: string;
+  /** IANA zone of the business location; "today" is computed in it. Defaults to Europe/Belgrade. */
+  timezone?: string | null;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -151,6 +154,7 @@ export function BookingWidget({
   isLoading,
   hideHeader = false,
   confirmNotice,
+  timezone,
 }: BookingWidgetProps) {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
@@ -161,7 +165,8 @@ export function BookingWidget({
       : unit === 'DAYS'
         ? t('bookingWidget.unitDays')
         : t('bookingWidget.unitMinutes');
-  const now = new Date();
+  // "Today" is the business's calendar date, not the user's.
+  const now = businessToday(timezone);
 
   const [selectedService, setSelectedService] = useState<BusinessService | null>(
     services.length === 1 ? services[0]! : null,
@@ -291,9 +296,7 @@ export function BookingWidget({
     title?: string;
   } {
     const dateStr = toDateStr(d);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const isPast = d < today;
+    const isPast = d < now;
     const isToday = sameDay(d, now);
 
     if (!canPick) {
